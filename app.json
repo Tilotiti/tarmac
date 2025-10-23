@@ -1,0 +1,67 @@
+{
+    "name": "Tarmac",
+    "description": "Club management system",
+    "repository": "https://github.com/your-org/tarmac",
+    "logo": "https://www.tarmac.app/logo.png",
+    "stack": "heroku-24",
+    "keywords": [
+        "symfony",
+        "club",
+        "management"
+    ],
+    "success_url": "/",
+    "env": {
+        "APP_ENV": {
+            "description": "Application environment",
+            "value": "prod",
+            "required": true
+        },
+        "APP_SECRET": {
+            "description": "Secret key for encryption",
+            "generator": "secret"
+        },
+        "DATABASE_URL": {
+            "description": "Database connection string",
+            "value": "postgresql://localhost/tarmac"
+        },
+        "DOMAIN": {
+            "description": "Application domain for cookies and URLs",
+            "value": "herokuapp.com",
+            "required": true
+        },
+        "TZ": {
+            "description": "Timezone for the application",
+            "value": "Europe/Paris",
+            "required": true
+        },
+        "TRUSTED_PROXIES": {
+            "description": "Trusted proxy IPs (Heroku uses proxies)",
+            "value": "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16",
+            "required": true
+        },
+        "MAILER_DSN": {
+            "description": "Mailer DSN for sending emails",
+            "value": "null://null",
+            "required": false
+        },
+        "PROFILER_ALLOWED_IPS": {
+            "description": "Comma-separated list of IPs allowed to access profiler",
+            "value": "",
+            "required": false
+        }
+    },
+    "formation": {
+        "web": {
+            "quantity": 1,
+            "size": "basic"
+        }
+    },
+    "addons": [
+        "heroku-postgresql:essential-0"
+    ],
+    "buildpacks": [
+        {
+            "url": "heroku/php"
+        }
+    ]
+}

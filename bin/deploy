@@ -21,7 +21,7 @@ echo -e "${YELLOW}Working directory: $DEPLOY_DIR${NC}"
 
 # Step 1: Install Composer dependencies (production mode)
 echo -e "${GREEN}[1/5] Installing Composer dependencies...${NC}"
-php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
 # Step 2: Install and compile assets
 echo -e "${GREEN}[2/5] Installing and compiling assets...${NC}"

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# Exit on error
+set -e
+
+# Move to the project root directory
+cd "$(dirname "$0")/.."
+
+echo "========================================="
+echo "Release script for Heroku deployment"
+echo "========================================="
+
+# Safety check: never load fixtures in this script
+if [ "$APP_ENV" = "review" ] || [ "$APP_ENV" = "dev" ] || [ "$APP_ENV" = "test" ]; then
+    echo "WARNING: Running release in $APP_ENV environment"
+    echo "For review apps, fixtures should be loaded via postdeploy script"
+fi
+
+echo ""
+echo "Running database migrations..."
+php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+
+echo ""
+echo "Clearing cache..."
+bin/console cache:clear
+
+echo ""
+echo "Compiling asset maps..."
+php bin/console asset-map:compile
+
+echo ""
+echo "========================================="
+echo "Release commands completed successfully!"
+echo "========================================="
+
