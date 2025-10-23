@@ -22,7 +22,7 @@ security:
             provider: app_user_provider
             user_checker: App\Security\UserChecker
             form_login:
-                login_path: https://www.tarmac.wip/login
+                login_path: public_login
                 check_path: public_login
                 enable_csrf: true
                 default_target_path: public_landing
