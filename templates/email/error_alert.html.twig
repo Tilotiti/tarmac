@@ -1,0 +1,212 @@
+{% extends 'email/base.html.twig' %}
+
+{% block email_header %}
+	🚨 Critical Error Alert
+{% endblock %}
+
+{% block email_body %}
+	<div style="margin-bottom: 24px;">
+		<div style="background: #fee; border-left: 4px solid #d32f2f; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+			<p style="margin: 0; color: #d32f2f; font-weight: 600; font-size: 16px;">
+				A critical error occurred on your production environment
+			</p>
+		</div>
+	</div>
+
+	{% for record in records %}
+		{% set webInfo = record.extra.web|default(null) %}
+		{% set userInfo = record.extra.user|default(null) %}
+
+		{# Context Type Banner #}
+		<div style="margin-bottom: 24px;">
+			{% if webInfo and webInfo.url is defined %}
+				<div style="background: #e3f1d0; border-left: 4px solid #74b816; padding: 16px; border-radius: 4px;">
+					<p style="margin: 0; color: #5e9125; font-weight: 600; font-size: 14px;">
+						🌐 Web Request Error
+					</p>
+					<p style="margin: 8px 0 0 0; font-size: 16px; font-weight: 700; color: #333; word-break: break-all;">
+						{{ webInfo.url }}
+					</p>
+				</div>
+			{% else %}
+				<div style="background: #fdeccc; border-left: 4px solid #f59f00; padding: 16px; border-radius: 4px;">
+					<p style="margin: 0; color: #e69500; font-weight: 600; font-size: 14px;">
+						⚙️ Background Job Error (CLI)
+					</p>
+					<p style="margin: 4px 0 0 0; font-size: 13px; color: #666;">
+						This error occurred outside of a web request context
+					</p>
+				</div>
+			{% endif %}
+		</div>
+
+		{# Request Information #}
+		{% if webInfo %}
+			<div style="margin-bottom: 32px;">
+				<h2 style="color: #066FD1; font-size: 18px; font-weight: 600; margin: 0 0 16px 0; padding: 0;">
+					📍 Request Information
+				</h2>
+				<table cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+					{% if webInfo.url is defined %}
+						<tr>
+							<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">URL</td>
+							<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee; word-break: break-all;">
+								<code style="background: #f1f5f9; padding: 2px 6px; border-radius: 3px; font-size: 13px;">{{ webInfo.url }}</code>
+							</td>
+						</tr>
+					{% endif %}
+					{% if webInfo.http_method is defined %}
+						<tr>
+							<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">Method</td>
+							<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee;">
+								<span style="background: #066FD1; color: white; padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 600;">{{ webInfo.http_method }}</span>
+							</td>
+						</tr>
+					{% endif %}
+					{% if webInfo.ip is defined %}
+						<tr>
+							<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">IP Address</td>
+							<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee;">{{ webInfo.ip }}</td>
+						</tr>
+					{% endif %}
+					{% if webInfo.referrer is defined and webInfo.referrer %}
+						<tr>
+							<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">Referrer</td>
+							<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee; word-break: break-all;">{{ webInfo.referrer }}</td>
+						</tr>
+					{% endif %}
+				</table>
+			</div>
+		{% endif %}
+
+		{# User Information #}
+		{% if userInfo %}
+			<div style="margin-bottom: 32px;">
+				<h2 style="color: #066FD1; font-size: 18px; font-weight: 600; margin: 0 0 16px 0; padding: 0;">
+					👤 User Information
+				</h2>
+				<table cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+					{% if userInfo.authenticated is defined %}
+						<tr>
+							<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">Status</td>
+							<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee;">
+								{% if userInfo.authenticated %}
+									<span style="background: #2fb344; color: white; padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 600;">✓ Authenticated</span>
+								{% else %}
+									<span style="background: #d63939; color: white; padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 600;">✗ Anonymous</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endif %}
+					{% if userInfo.username is defined %}
+						<tr>
+							<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">Username</td>
+							<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee;">{{ userInfo.username }}</td>
+						</tr>
+					{% endif %}
+					{% if userInfo.email is defined %}
+						<tr>
+							<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">Email</td>
+							<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee;">
+								<a href="mailto:{{ userInfo.email }}" style="color: #066FD1;">{{ userInfo.email }}</a>
+							</td>
+						</tr>
+					{% endif %}
+					{% if userInfo.full_name is defined %}
+						<tr>
+							<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">Full Name</td>
+							<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee;">{{ userInfo.full_name }}</td>
+						</tr>
+					{% endif %}
+					{% if userInfo.roles is defined %}
+						<tr>
+							<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">Roles</td>
+							<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee;">
+								{% for role in userInfo.roles %}
+									<span style="background: #f1f5f9; padding: 2px 6px; border-radius: 3px; font-size: 12px; margin-right: 4px;">{{ role }}</span>
+								{% endfor %}
+							</td>
+						</tr>
+					{% endif %}
+				</table>
+			</div>
+		{% endif %}
+
+		{# Error Details #}
+		<div style="margin-bottom: 32px;">
+			<h2 style="color: #d32f2f; font-size: 18px; font-weight: 600; margin: 0 0 16px 0; padding: 0;">
+				⚠️ Error Details
+			</h2>
+			<table cellpadding="0" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+				<tr>
+					<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">Message</td>
+					<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee; color: #d32f2f; font-weight: 500;">
+						{{ record.message }}
+					</td>
+				</tr>
+				<tr>
+					<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">Time</td>
+					<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee;">
+						{{ record.datetime|date('Y-m-d H:i:s T') }}
+					</td>
+				</tr>
+				<tr>
+					<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">Level</td>
+					<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee;">
+						<span style="background: #d32f2f; color: white; padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 600;">{{ record.level_name }}</span>
+					</td>
+				</tr>
+				<tr>
+					<td style="padding: 8px 12px; background: #f9fafb; border: 1px solid #e8ebee; font-weight: 600; width: 140px; vertical-align: top;">Channel</td>
+					<td style="padding: 8px 12px; background: #ffffff; border: 1px solid #e8ebee;">{{ record.channel }}</td>
+				</tr>
+			</table>
+		</div>
+
+		{# Exception Details #}
+		{% if record.context.exception is defined %}
+			{% set exception = record.context.exception %}
+			<div style="margin-bottom: 32px;">
+				<h2 style="color: #d32f2f; font-size: 18px; font-weight: 600; margin: 0 0 16px 0; padding: 0;">
+					🐛 Exception Trace
+				</h2>
+				<div style="background: #fef3f3; border: 1px solid #fee; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
+					<div style="font-weight: 600; color: #d32f2f; margin-bottom: 8px;">
+						{{ exception.class ?? 'Exception' }}
+					</div>
+					<div style="margin-bottom: 12px; color: #666;">
+						{{ exception.message }}
+					</div>
+					<div style="font-size: 13px; color: #888;">
+						<strong>File:</strong>
+						{{ exception.file }}<br>
+						<strong>Line:</strong>
+						{{ exception.line }}
+					</div>
+				</div>
+				{% if exception.trace is defined %}
+					<div style="background: #f9fafb; padding: 12px; border-radius: 4px; border: 1px solid #e8ebee;">
+						<strong style="color: #066FD1;">Stack Trace</strong>
+						<pre style="margin: 8px 0 0 0; padding: 12px; background: #fff; border-radius: 4px; overflow-x: auto; font-size: 11px; line-height: 1.5; color: #333;">{{ exception.trace }}</pre>
+					</div>
+				{% endif %}
+			</div>
+		{% endif %}
+
+		{# Context Data #}
+		{% if record.context|length > 0 and record.context.exception is not defined %}
+			<div style="margin-bottom: 32px;">
+				<h2 style="color: #667382; font-size: 18px; font-weight: 600; margin: 0 0 16px 0; padding: 0;">
+					📋 Context
+				</h2>
+				<pre style="background: #f9fafb; padding: 16px; border-radius: 4px; border: 1px solid #e8ebee; overflow-x: auto; font-size: 12px; line-height: 1.6; margin: 0;">{{ record.context|json_encode(192) }}</pre>
+			</div>
+		{% endif %}
+
+	{% endfor %}
+
+	<div style="background: #f1f5f9; padding: 16px; border-radius: 4px; margin-top: 32px; font-size: 13px; color: #667382;">
+		<strong>Note:</strong>
+		This email was sent because a critical error (level 500+) occurred on the production environment.
+	</div>
+{% endblock %}

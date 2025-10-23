@@ -27,5 +27,30 @@ services:
         arguments:
             - "%env(DATABASE_URL)%"
 
+    # Monolog: Custom Twig email handler
+    App\Service\Logging\TwigEmailHandler:
+        arguments:
+            $fromEmail: "%env(MAILER_FROM_EMAIL)%"
+            $toEmail: "%env(MAILER_ADMIN_EMAIL)%"
+            $subject: "[Tarmac] Critical Error Alert"
+            $level: 500 # Critical level
+        tags:
+            - { name: "monolog.handler", handler: "twig_email" }
+
+    # Monolog: Custom formatter for error emails (fallback)
+    App\Service\Logging\ErrorEmailFormatter:
+        tags: ["monolog.formatter"]
+
+    # Monolog: User information processor
+    App\Service\Logging\UserLogProcessor:
+        tags:
+            - { name: "monolog.processor" }
+
+    # Monolog: Web request processor
+    monolog.processor.web:
+        class: Monolog\Processor\WebProcessor
+        tags:
+            - { name: "monolog.processor" }
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
