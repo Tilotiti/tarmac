@@ -1,29 +1,60 @@
 security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
+
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            lazy: true
-            provider: users_in_memory
-
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
+            lazy: false
+            provider: app_user_provider
+            user_checker: App\Security\UserChecker
+            form_login:
+                login_path: https://www.tarmac.wip/login
+                check_path: public_login
+                enable_csrf: true
+                default_target_path: public_landing
+                use_referer: true
+            logout:
+                path: public_logout
+                target: public_landing
+            remember_me:
+                secret: "%kernel.secret%"
+                lifetime: 604800 # 1 week in seconds
+            stateless: false
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        # Public subdomain - allow access to login and security routes for everyone
+        # These routes are accessible to both authenticated and unauthenticated users
+        # Note: We don't use PUBLIC_ACCESS here because it bypasses the firewall
+        # Instead, we let these routes go through the firewall but don't require authentication
+        - { path: ^/login, roles: [] }
+        - { path: ^/reset-password, roles: [] }
+        - { path: ^/invitation, roles: [] }
+        - { path: ^/$, roles: [] }
+
+        # Admin routes on www subdomain
+        - { path: ^/users, roles: ROLE_ADMIN }
+        - { path: ^/clubs, roles: ROLE_ADMIN }
+        - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/$, roles: ROLE_USER }
+
+        # Club subdomain - authenticated users with club access
+        - { path: ^/, roles: ROLE_USER }
 
 when@test:
     security:

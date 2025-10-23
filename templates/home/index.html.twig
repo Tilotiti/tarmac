@@ -1,0 +1,40 @@
+{% extends 'app/base.html.twig' %}
+
+{% block title %}Home
+{% endblock %}
+
+{% block body %}
+	<div class="page-header d-print-none">
+		<div class="row g-2 align-items-center">
+			<div class="col">
+				<h2 class="page-title">
+					Dashboard
+				</h2>
+			</div>
+		</div>
+	</div>
+
+	<div class="page-body">
+		<div class="container-xl d-flex flex-column justify-content-center">
+			<div class="empty">
+				<div class="empty-img">
+					<img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjY0IiByPSI1MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGFlMWU3IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iNDAiIHkxPSI2NCIgeDI9Ijg4IiB5Mj0iNjQiIHN0cm9rZT0iI2RhZTFlNyIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGxpbmUgeDE9IjY0IiB5MT0iNDAiIHgyPSI2NCIgeTI9Ijg4IiBzdHJva2U9IiNkYWUxZTciIHN0cm9rZS13aWR0aD0iMiIvPgo8L3N2Zz4=" alt="Empty state illustration" height="128">
+				</div>
+				<p class="empty-title">Welcome to Tarmac</p>
+				<p class="empty-subtitle text-secondary">
+					Your application is ready. Start building by adding content here.
+				</p>
+				<div class="empty-action">
+					<a href="#" class="btn btn-primary">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+							<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+							<path d="M12 5l0 14"/>
+							<path d="M5 12l14 0"/>
+						</svg>
+						Get started
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

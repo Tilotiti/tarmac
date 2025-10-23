@@ -1,0 +1,79 @@
+{% extends "layout/base.html.twig" %}
+
+{% block title %}
+	{{ block('page_title') }}
+	-
+	{{ club.name ?? 'Club' }}
+{% endblock %}
+
+{% block navbar_brand %}
+	<a href="{{ path('club_dashboard') }}">
+		<img src="{{ asset('logo.png') }}" alt="Tarmac">
+	</a>
+{% endblock %}
+
+{% block user_dropdown_subtitle %}
+	<div class="mt-1 small text-secondary">{{ club.name|default('Club') }}</div>
+{% endblock %}
+
+{% block navbar_menu %}
+	<div class="navbar-nav flex-row order-md-last">
+		{% if is_granted('MANAGE', club) %}
+			<a href="{{ path('club_members') }}" class="nav-link {{ app.request.get('_route') starts with 'club_member' or app.request.get('_route') starts with 'club_invitation' ? 'active' : '' }}">
+				<span class="nav-link-icon d-md-none d-lg-inline-block">
+					<i class="ti ti-users"></i>
+				</span>
+				<span class="nav-link-title">
+					Membres
+				</span>
+			</a>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block user_dropdown_menu %}
+	<a href="{{ path('app_profile_edit') }}" class="dropdown-item">
+		<i class="ti ti-user"></i>
+		Mon profil
+	</a>
+	<div class="dropdown-divider"></div>
+	<a href="{{ path('app_dashboard') }}" class="dropdown-item">
+		<i class="ti ti-home"></i>
+		Retour à l'application
+	</a>
+	<div class="dropdown-divider"></div>
+	<a href="{{ path('public_logout') }}" class="dropdown-item">
+		<i class="ti ti-logout"></i>
+		Déconnexion
+	</a>
+{% endblock %}
+
+{% block body %}
+	{# Page Header with Title #}
+	<div class="page-header d-print-none">
+		<div class="container-xl">
+			<div class="row g-2 align-items-center">
+				<div class="col">
+					{% block page_header %}
+						<h2 class="page-title">
+							{{ block('page_title') }}
+						</h2>
+					{% endblock %}
+				</div>
+				<div class="col-auto ms-auto d-print-none">
+					{% block page_actions %}{% endblock %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{# Page Body with Container #}
+	<div class="page-body">
+		<div class="container-xl">
+			{% block page_content %}{% endblock %}
+		</div>
+	</div>
+{% endblock %}
+
+{# Define the page_title block that child templates will override #}
+{% block page_title %}{% endblock %}

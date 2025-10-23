@@ -1,0 +1,83 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}Créer votre compte
+{% endblock %}
+
+{% block body %}
+	<div class="page page-center">
+		<div class="container container-tight py-4">
+			<div class="text-center mb-4">
+				<a href="{{ path('public_landing') }}" class="navbar-brand navbar-brand-autodark">
+					<img src="{{ asset('logo.svg') }}" height="48" alt="Tarmac">
+				</a>
+			</div>
+			<div class="card card-md">
+				<div class="card-body">
+					<h2 class="h2 text-center mb-4">Bienvenue !</h2>
+
+					{% if invitation is defined %}
+						<div class="alert alert-info mb-4">
+							<i class="ti ti-mail me-2"></i>
+							<strong>Invitation de
+								{{ invitation.club.name }}</strong>
+							<p class="mb-0 mt-2 small">
+								{% if invitation.fullname %}
+									Bonjour
+									<strong>{{ invitation.fullname }}</strong>,<br>
+								{% endif %}
+								Vous avez été invité(e) à rejoindre ce club
+								{% if invitation.rolesText != 'Membre' %}
+									en tant que
+									<strong>{{ invitation.rolesText }}</strong>
+								{% endif %}.
+							</p>
+						</div>
+					{% endif %}
+
+					<p class="text-center text-secondary mb-4">
+						{% if invitation is defined and invitation.isLocked %}
+							Vous avez déjà un compte.
+							<a href="{{ loginUrl }}">Connectez-vous pour accepter l'invitation</a>
+						{% else %}
+							Créez votre compte pour accepter l'invitation
+						{% endif %}
+					</p>
+
+					{{ form_start(registrationForm) }}
+
+					{% if invitation is defined and not invitation.isLocked %}
+						{% if not invitation.firstname %}
+							{{ form_row(registrationForm.firstname) }}
+						{% endif %}
+						{% if not invitation.lastname %}
+							{{ form_row(registrationForm.lastname) }}
+						{% endif %}
+					{% endif %}
+
+					{{ form_row(registrationForm.plainPassword) }}
+
+					<div class="form-footer">
+						<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">
+							<i class="ti ti-check me-2"></i>
+							{% if invitation is defined %}
+								Créer mon compte et rejoindre
+							{% else %}
+								Créer mon compte
+							{% endif %}
+						</button>
+					</div>
+					{{ form_end(registrationForm) }}
+
+					{% if invitation is defined %}
+						<div class="text-center mt-3">
+							<a href="{{ loginUrl }}" class="text-secondary">
+								<i class="ti ti-login me-1"></i>
+								Vous avez déjà un compte ? Connectez-vous
+							</a>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

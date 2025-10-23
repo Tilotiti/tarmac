@@ -1,0 +1,100 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}Inviter un membre
+{% endblock %}
+
+{% block page_content %}
+	<div class="card">
+		<div class="card-body">
+			<div class="alert alert-info mb-4">
+				<i class="ti ti-info-circle me-2"></i>
+				<strong>Comment ça marche ?</strong>
+				<ul class="mb-0 mt-2">
+					<li>L'invitation sera envoyée par email</li>
+					<li>Si l'utilisateur a déjà un compte, il pourra accepter directement</li>
+					<li>Sinon, il pourra créer son compte en acceptant l'invitation</li>
+					<li>L'invitation est valable 7 jours</li>
+				</ul>
+			</div>
+
+			{{ form_start(form) }}
+
+			<div class="mb-3">
+				{{ form_label(form.email) }}
+				{{ form_widget(form.email, {
+					'attr': {
+						'class': 'form-control',
+						'autofocus': true
+					}
+				}) }}
+				{{ form_errors(form.email) }}
+			</div>
+
+			<div class="row">
+				<div class="col-12 col-md-6 mb-3">
+					{{ form_label(form.firstname) }}
+					{{ form_widget(form.firstname, {
+						'attr': {'class': 'form-control'}
+					}) }}
+					{{ form_errors(form.firstname) }}
+				</div>
+				<div class="col-12 col-md-6 mb-3">
+					{{ form_label(form.lastname) }}
+					{{ form_widget(form.lastname, {
+						'attr': {'class': 'form-control'}
+					}) }}
+					{{ form_errors(form.lastname) }}
+				</div>
+			</div>
+
+			<div class="card mb-3">
+				<div class="card-header">
+					<h4 class="card-title">Rôles dans le club</h4>
+				</div>
+				<div class="card-body">
+					<div class="mb-3">
+						<div class="form-check">
+							<input type="checkbox" id="{{ form.isManager.vars.id }}" name="{{ form.isManager.vars.full_name }}" class="form-check-input" value="1" {% if form.isManager.vars.checked %} checked {% endif %}>
+							<label class="form-check-label" for="{{ form.isManager.vars.id }}">
+								<div>{{ form.isManager.vars.label }}</div>
+								{% if form.isManager.vars.help %}
+									<div class="text-secondary small">{{ form.isManager.vars.help }}</div>
+								{% endif %}
+							</label>
+						</div>
+						{{ form_errors(form.isManager) }}
+					</div>
+
+					<div>
+						<div class="form-check">
+							<input type="checkbox" id="{{ form.isInspector.vars.id }}" name="{{ form.isInspector.vars.full_name }}" class="form-check-input" value="1" {% if form.isInspector.vars.checked %} checked {% endif %}>
+							<label class="form-check-label" for="{{ form.isInspector.vars.id }}">
+								<div>{{ form.isInspector.vars.label }}</div>
+								{% if form.isInspector.vars.help %}
+									<div class="text-secondary small">{{ form.isInspector.vars.help }}</div>
+								{% endif %}
+							</label>
+						</div>
+						{{ form_errors(form.isInspector) }}
+					</div>
+				</div>
+			</div>
+
+			{# Mark fields as rendered so form_end doesn't render them again #}
+			{% do form.isManager.setRendered %}
+			{% do form.isInspector.setRendered %}
+
+			<div class="form-footer">
+				<button type="submit" class="btn btn-primary w-100 w-md-auto" style="min-height: 44px;">
+					<i class="ti ti-mail me-2"></i>
+					Envoyer l'invitation
+				</button>
+				<a href="{{ path('club_members') }}" class="btn btn-link w-100 w-md-auto mt-2 mt-md-0" style="min-height: 44px;">
+					Annuler
+				</a>
+			</div>
+
+			{{ form_end(form) }}
+		</div>
+	</div>
+{% endblock %}

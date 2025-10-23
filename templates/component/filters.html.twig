@@ -1,0 +1,152 @@
+{% set style = style ?? 'default' %}
+{% set defaults = form.vars.defaults ?? {} %}
+
+{# Collect all filter data (including defaults) for exports #}
+{% set filterData = {} %}
+{% for filter in form %}
+	{# Use filter.vars.value (view data) if filter.vars.data (normalized data) is empty #}
+	{% set value = filter.vars.data is not empty ? filter.vars.data : filter.vars.value %}
+	{% if value is not empty %}
+		{# Convert DateTime objects to ISO strings #}
+		{% if value is instanceof('DateTime') %}
+			{% set value = value | date('Y-m-d\\TH:i:sP') %}
+			{# Handle nested arrays (like date ranges) - convert DateTime objects #}
+		{% elseif value is iterable and not (value.id is defined) %}
+			{% set convertedValue = {} %}
+			{% for key, val in value %}
+				{% if val is instanceof('DateTime') %}
+					{% set convertedValue = convertedValue | merge({(key): val | date('Y-m-d\\TH:i:sP')}) %}
+				{% elseif val is not empty %}
+					{% set convertedValue = convertedValue | merge({(key): val}) %}
+				{% endif %}
+			{% endfor %}
+			{% set value = convertedValue %}
+			{# Convert entity objects to their IDs (must be after iterable check to avoid treating entities as iterables) #}
+		{% elseif value.id is defined and value.id is not empty %}
+			{% set value = value.id %}
+		{% endif %}
+		{% set filterData = filterData | merge({(filter.vars.name): value}) %}
+	{% endif %}
+{% endfor %}
+
+{# Count active filters #}
+{% set activeFiltersCount = 0 %}
+{% for filter in form %}
+	{# Check if filter has any meaningful data #}
+	{% set hasData = false %}
+	{% if filter.vars.data is not empty and filter.vars.data is not iterable %}
+		{% set hasData = true %}
+	{% elseif filter.vars.data is iterable %}
+		{% for child in filter.vars.data %}
+			{% if child is not empty %}
+				{% set hasData = true %}
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+	{% if hasData %}
+		{% set activeFiltersCount = activeFiltersCount + 1 %}
+	{% endif %}
+{% endfor %}
+
+<div class="filters {% if style == 'default' %}mb-3{% endif %} {% if style == 'small' %}d-block w-100{% endif %}">
+	<div class="row align-items-center">
+		<div class="col d-none d-sm-block">
+			{% for filter in form %}
+				{# Check if filter has any meaningful data #}
+				{% set hasData = false %}
+				{% if filter.vars.data is not empty and filter.vars.data is not iterable %}
+					{% set hasData = true %}
+				{% elseif filter.vars.data is iterable %}
+					{% for child in filter.vars.data %}
+						{% if child is not empty %}
+							{% set hasData = true %}
+						{% endif %}
+					{% endfor %}
+				{% endif %}
+
+				{% if hasData %}
+					<span class="tag">
+						<strong>{{ filter.vars.name | trans }}</strong>
+						:
+						{% if filter.vars.data is instanceof('DateTime') %}
+							{{ filter.vars.data | date('d/m/Y') }}
+						{% elseif filter.vars.data is iterable and filter.vars.data.startAt is instanceof('DateTime') and filter.vars.data.endAt is instanceof('DateTime') %}
+							Du
+							{{ filter.vars.data.startAt | date('d/m/Y') }}
+							au
+							{{ filter.vars.data.endAt | date('d/m/Y') }}
+						{% elseif filter.vars.data is iterable and filter.vars.data.endAt is instanceof('DateTime') %}
+							Jusqu'au
+							{{ filter.vars.data.endAt | date('d/m/Y') }}
+						{% elseif filter.vars.data is iterable and filter.vars.data.startAt is instanceof('DateTime') %}
+							À partir du
+							{{ filter.vars.data.startAt | date('d/m/Y') }}
+							{# Booleans and 1/0 should display as Yes/No (translated) #}
+						{% elseif filter.vars.data is same as(true) %}
+							Oui
+						{% elseif filter.vars.data is same as(false) %}
+							Non
+						{% elseif filter.vars.data is instanceof('string') and (filter.vars.data == '1') %}
+							Oui
+						{% elseif filter.vars.data is instanceof('string') and (filter.vars.data == '0') %}
+							Non
+						{% elseif filter.vars.data is instanceof('string') %}
+							{{ filter.vars.data | trans }}
+						{% elseif filter.vars.data is iterable %}
+							{% set items = [] %}
+							{% for value in filter.vars.data %}
+								{% if value is not empty %}
+									{% set items = items|merge([value|trans]) %}
+								{% endif %}
+							{% endfor %}
+							{{ items|join(', ') }}
+						{% else %}
+							{{ filter.vars.data }}
+						{% endif %}
+
+						<a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params') | merge(app.request.query.all) | merge({(filter.vars.name): ''})) }}" class="btn-close"></a>
+					</span>
+				{% endif %}
+			{% endfor %}
+		</div>
+		<div class="ms-auto col-auto">
+			<button class="btn {% if style == 'small' %}btn-sm{% endif %} position-relative" data-bs-toggle="offcanvas" data-bs-target="#offCanvasFilters">
+				<i class="ti ti-filter me-2"></i>
+				Filtrer
+				{% if activeFiltersCount > 0 %}
+					<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary text-white">
+						{{ activeFiltersCount }}
+						<span class="visually-hidden">filtres actifs</span>
+					</span>
+				{% endif %}
+			</button>
+		</div>
+	</div>
+	<div class="offcanvas offcanvas-end" id="offCanvasFilters" tabindex="-1">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title">Filtrer</h5>
+			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
+		</div>
+		<div class="offcanvas-body">
+			{{ form_start(form) }}
+			{{ form_rest(form) }}
+			<div class="mb-3">
+				<div class="row">
+					<div class="col-12 col-md-6">
+						<button class="btn btn-primary w-100">
+							<i class="ti ti-search me-2"></i>
+							Filtrer
+						</button>
+					</div>
+					<div class="col-12 col-md-6">
+						<a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" class="btn btn-outline-secondary w-100">
+							<i class="ti ti-x me-2"></i>
+							Effacer
+						</a>
+					</div>
+				</div>
+			</div>
+			{{ form_end(form) }}
+		</div>
+	</div>
+</div>

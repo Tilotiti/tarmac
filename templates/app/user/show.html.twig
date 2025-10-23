@@ -1,0 +1,161 @@
+{% extends 'app/base.html.twig' %}
+
+{% block page_title %}
+	{{ user.fullname }}
+{% endblock %}
+
+{% block page_header %}
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<a href="{{ path('app_user_index') }}">Utilisateurs</a>
+			</li>
+			<li class="breadcrumb-item active" aria-current="page">{{ user.fullname }}</li>
+		</ol>
+	</nav>
+	<h2 class="page-title {% if not user.active %}text-danger{% endif %}">
+		{{ user.fullname }}
+		{% if not user.active %}
+			<span class="badge bg-danger ms-2">Désactivé</span>
+		{% endif %}
+	</h2>
+{% endblock %}
+
+{% block page_actions %}
+	<a href="{{ path('app_user_edit', {id: user.id}) }}" class="btn btn-primary me-2" style="min-height: 44px;">
+		<i class="ti ti-edit me-2"></i>
+		<span class="d-none d-sm-inline">Modifier</span>
+		<span class="d-inline d-sm-none">Modifier</span>
+	</a>
+	<a href="{{ path('app_user_index') }}" class="btn btn-outline-secondary" style="min-height: 44px;">
+		<i class="ti ti-arrow-left me-2"></i>
+		<span class="d-none d-sm-inline">Retour</span>
+		<span class="d-inline d-sm-none">Retour</span>
+	</a>
+{% endblock %}
+
+{% block page_content %}
+	<div
+		class="row">
+		{# User Information #}
+		<div class="col-12 col-md-6 mb-3">
+			<div class="card {% if not user.active %}border-danger{% endif %}">
+				<div class="card-header">
+					<h3 class="card-title">Informations</h3>
+				</div>
+				<div class="card-body">
+					<dl class="row">
+						<dt class="col-5">Prénom</dt>
+						<dd class="col-7 {% if not user.active %}text-danger{% endif %}">{{ user.firstname ?: '-' }}</dd>
+
+						<dt class="col-5">Nom</dt>
+						<dd class="col-7 {% if not user.active %}text-danger{% endif %}">{{ user.lastname ?: '-' }}</dd>
+
+						<dt class="col-5">Email</dt>
+						<dd class="col-7 {% if not user.active %}text-danger{% endif %}">{{ user.email }}</dd>
+
+						<dt class="col-5">Statut</dt>
+						<dd class="col-7">
+							{% if user.active %}
+								<span class="badge bg-green-lt">Actif</span>
+							{% else %}
+								<span class="badge bg-danger">Désactivé</span>
+							{% endif %}
+						</dd>
+
+						<dt class="col-5">Vérifié</dt>
+						<dd class="col-7">
+							{% if user.isVerified %}
+								<span class="badge bg-green-lt">Oui</span>
+							{% else %}
+								<span class="badge bg-yellow-lt">Non</span>
+							{% endif %}
+						</dd>
+
+						<dt class="col-5">Créé le</dt>
+						<dd class="col-7">{{ user.createdAt|date('d/m/Y à H:i') }}</dd>
+					</dl>
+				</div>
+			</div>
+		</div>
+
+		{# User Memberships #}
+		<div class="col-12 col-md-6 mb-3">
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">Clubs ({{ user.memberships|length }})</h3>
+				</div>
+				<div class="card-body p-0">
+					{% if user.memberships|length > 0 %}
+						<div class="list-group list-group-flush">
+							{% for membership in user.memberships %}
+								<div class="list-group-item">
+									<div class="d-flex align-items-center justify-content-between">
+										<div>
+											<div class="fw-bold">{{ membership.club.name }}</div>
+											<div class="text-secondary small">
+												{% if membership.isManager %}
+													<span class="badge bg-blue-lt me-1">Manager</span>
+												{% endif %}
+												{% if membership.isInspector %}
+													<span class="badge bg-green-lt">Inspecteur</span>
+												{% endif %}
+												{% if not membership.isManager and not membership.isInspector %}
+													<span class="text-muted">Membre</span>
+												{% endif %}
+											</div>
+										</div>
+										<div class="text-secondary small">
+											Depuis le
+											{{ membership.joinedAt|date('d/m/Y') }}
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+					{% else %}
+						<div class="card-body text-center text-secondary">
+							<em>Aucun club</em>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+
+		{# Actions #}
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">Actions</h3>
+				</div>
+				<div class="card-body">
+					<div class="d-grid gap-2">
+						<a href="{{ path('app_user_edit', {id: user.id}) }}" class="btn btn-primary" style="min-height: 44px;">
+							<i class="ti ti-edit me-2"></i>
+							Modifier l'utilisateur
+						</a>
+
+						{% if user.id != app.user.id %}
+							<form method="post" action="{{ path('app_user_disable', {id: user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir {{ user.active ? 'désactiver' : 'activer' }} cet utilisateur ?');">
+								<button type="submit" class="btn {% if user.active %}btn-outline-warning{% else %}btn-outline-success{% endif %} w-100" style="min-height: 44px;">
+									<i class="ti ti-{% if user.active %}ban{% else %}check{% endif %} me-2"></i>
+									{{ user.active ? 'Désactiver l\'utilisateur' : 'Activer l\'utilisateur' }}
+								</button>
+							</form>
+
+							<a href="{{ path('app_user_delete', {id: user.id}) }}" class="btn btn-outline-danger" style="min-height: 44px;" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.');">
+								<i class="ti ti-trash me-2"></i>
+								Supprimer l'utilisateur
+							</a>
+						{% else %}
+							<div class="alert alert-info mb-0">
+								<i class="ti ti-info-circle me-2"></i>
+								Vous ne pouvez pas désactiver ou supprimer votre propre compte.
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

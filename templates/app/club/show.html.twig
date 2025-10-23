@@ -1,0 +1,73 @@
+{% extends 'app/base.html.twig' %}
+
+{% block page_title %}
+	{{ club.name }}
+{% endblock %}
+
+{% block page_actions %}
+	<div class="d-flex gap-2">
+		<a href="{{ subdomain_service.generateClubUrl(club.subdomain) }}" class="btn btn-outline-primary" style="min-height: 44px;" target="_blank">
+			<i class="ti ti-external-link me-2"></i>
+			<span class="d-none d-sm-inline">Accéder</span>
+			<span class="d-inline d-sm-none">Ouvrir</span>
+		</a>
+		<a href="{{ path('app_club_edit', {id: club.id}) }}" class="btn btn-primary" style="min-height: 44px;">
+			<i class="ti ti-edit me-2"></i>
+			<span class="d-none d-sm-inline">Modifier</span>
+			<span class="d-inline d-sm-none">Modifier</span>
+		</a>
+		{% if club.active %}
+			<form method="post" action="{{ path('app_club_delete', {id: club.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver ce club ?');" class="d-inline">
+				<button type="submit" class="btn btn-outline-danger" style="min-height: 44px;">
+					<i class="ti ti-ban me-2"></i>
+					<span class="d-none d-sm-inline">Désactiver</span>
+					<span class="d-inline d-sm-none">Désactiver</span>
+				</button>
+			</form>
+		{% else %}
+			<form method="post" action="{{ path('app_club_activate', {id: club.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir réactiver ce club ?');" class="d-inline">
+				<button type="submit" class="btn btn-outline-success" style="min-height: 44px;">
+					<i class="ti ti-check me-2"></i>
+					<span class="d-none d-sm-inline">Activer</span>
+					<span class="d-inline d-sm-none">Activer</span>
+				</button>
+			</form>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block page_content %}
+	<div class="card">
+		<div class="card-header">
+			<h3 class="card-title">Informations</h3>
+		</div>
+		<div class="card-body">
+			<dl class="row">
+				<dt class="col-5 col-sm-4">Nom</dt>
+				<dd class="col-7 col-sm-8">{{ club.name }}</dd>
+
+				<dt class="col-5 col-sm-4">Sous-domaine</dt>
+				<dd class="col-7 col-sm-8">
+					<code>{{ club.subdomain }}.{{ domain }}</code>
+				</dd>
+
+				<dt class="col-5 col-sm-4">Statut</dt>
+				<dd class="col-7 col-sm-8">
+					{% if club.active %}
+						<span class="badge bg-green-lt">Actif</span>
+					{% else %}
+						<span class="badge bg-secondary-lt">Inactif</span>
+					{% endif %}
+				</dd>
+
+				<dt class="col-5 col-sm-4">Créé le</dt>
+				<dd class="col-7 col-sm-8">{{ club.createdAt|date('d/m/Y à H:i') }}</dd>
+
+				<dt class="col-5 col-sm-4">Membres</dt>
+				<dd class="col-7 col-sm-8">
+					<span class="badge bg-blue-lt">{{ club.memberships|length }}</span>
+				</dd>
+			</dl>
+		</div>
+	</div>
+{% endblock %}

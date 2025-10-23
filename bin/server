@@ -1,0 +1,166 @@
+#!/usr/bin/env bash
+
+# --- Styling utilities -------------------------------------------------------
+setup_colors() {
+  if [ -t 1 ] && command -v tput >/dev/null 2>&1; then
+    local ncolors
+    ncolors=$(tput colors 2>/dev/null || echo 0)
+    if [ "$ncolors" -ge 8 ]; then
+      BOLD="$(tput bold)"; DIM="$(tput dim)"; RESET="$(tput sgr0)"
+      RED="$(tput setaf 1)"; GREEN="$(tput setaf 2)"; YELLOW="$(tput setaf 3)"; BLUE="$(tput setaf 4)"
+    fi
+  fi
+  : "${BOLD:=}" "${DIM:=}" "${RESET:=}" "${RED:=}" "${GREEN:=}" "${YELLOW:=}" "${BLUE:=}"
+}
+
+ts() { date +"%H:%M:%S"; }
+log_info()    { printf "%s %s[INFO]%s %s\n"    "$(ts)" "${BLUE}${BOLD}" "${RESET}" "$*"; }
+log_warn()    { printf "%s %s[WARN]%s %s\n"    "$(ts)" "${YELLOW}${BOLD}" "${RESET}" "$*"; }
+log_error()   { printf "%s %s[ERROR]%s %s\n"   "$(ts)" "${RED}${BOLD}" "${RESET}" "$*"; }
+log_success() { printf "%s %s[OK]%s %s\n"      "$(ts)" "${GREEN}${BOLD}" "${RESET}" "$*"; }
+
+# --- Environment -------------------------------------------------------------
+setup_colors
+
+# Global flag for graceful shutdown
+SHUTDOWN_REQUESTED=0
+
+# Load environment variables (if present)
+set -a
+if [ -f .env ]; then
+  # shellcheck disable=SC1091
+  source .env
+else
+  log_warn ".env not found; continuing with current environment"
+fi
+if [ -f .env.local ]; then
+  # shellcheck disable=SC1091
+  source .env.local
+fi
+set +a
+
+APP_ENV="${APP_ENV:-dev}"
+DOMAIN="${DOMAIN:-localhost}"
+
+# Pre-flight checks
+if ! command -v symfony >/dev/null 2>&1; then
+  log_error "Symfony CLI is required but not found. Install from https://symfony.com/download"
+  exit 1
+fi
+
+# Display PHP version
+PHP_VERSION=$(symfony php -r 'echo PHP_VERSION;')
+log_info "Using PHP ${BOLD}${PHP_VERSION}${RESET}"
+
+function cleanup {
+  SHUTDOWN_REQUESTED=1
+  log_info "Stopping Symfony server and proxy"
+  symfony server:stop >/dev/null 2>&1 || true
+  symfony proxy:stop >/dev/null 2>&1 || true
+  log_success "Shutdown complete"
+  exit 0
+}
+
+trap cleanup INT TERM SIGHUP
+
+log_info "Starting Transipal server for ${BOLD}${DOMAIN}${RESET} (env: ${APP_ENV})"
+
+# In dev, ensure compiled assets are not forcing stale files
+if [ "$APP_ENV" = "dev" ]; then
+  if [ -d public/assets ]; then
+    log_warn "Dev mode: clearing compiled assets directory public/assets"
+    rm -rf public/assets
+  else
+    log_info "Dev mode: no compiled assets found (good)"
+  fi
+fi
+
+log_info "Starting Symfony local proxy"
+symfony proxy:start >/dev/null 2>&1 || true
+
+# Attach domain to proxy
+log_info "Attaching domain ${BOLD}${DOMAIN}${RESET} to proxy"
+# Remove .wip TLD for proxy attachment and add subdomain wildcard
+PROXY_DOMAIN="${DOMAIN%.wip}"
+symfony proxy:domain:attach "*.${PROXY_DOMAIN}"
+
+# Configure Xdebug discovery for local debugging (non-breaking if Xdebug absent)
+export XDEBUG_MODE=debug
+export XDEBUG_CONFIG="client_port=9005 client_host=127.0.0.1 discover_client_host=1"
+log_info "Xdebug configured (mode=${XDEBUG_MODE})"
+
+log_info "Starting Symfony server (background)"
+symfony serve -d >/dev/null 2>&1 || true
+
+# Wait until backend is reachable to avoid early browser hits
+log_info "Waiting for Symfony server to become ready"
+READY=0
+SERVER_PORT=""
+LAST_STATUS=""
+for i in {1..60}; do
+  # Check if shutdown was requested
+  if [ "$SHUTDOWN_REQUESTED" -eq 1 ]; then
+    log_info "Shutdown requested during startup wait"
+    exit 0
+  fi
+  
+  # Get the server URL from status
+  if [ -z "$SERVER_PORT" ]; then
+    SERVER_URL=$(symfony server:status 2>/dev/null | grep -oE 'https?://127\.0\.0\.1:[0-9]+' | head -n1 || echo "")
+    if [ -n "$SERVER_URL" ]; then
+      SERVER_PORT=$(echo "$SERVER_URL" | grep -oE '[0-9]+$')
+      if [ "$LAST_STATUS" != "found_port" ]; then
+        log_info "Symfony server found at ${BOLD}${SERVER_URL}${RESET}, checking response..."
+        LAST_STATUS="found_port"
+      fi
+    fi
+  fi
+  
+  if [ -n "$SERVER_URL" ]; then
+    # Check server directly on its local URL (bypass proxy for health check)
+    # Try HTTPS first
+    HTTP_CODE=$(curl -sk -o /dev/null -w "%{http_code}" "${SERVER_URL}/" 2>/dev/null)
+    
+    # If HTTPS fails (000), try HTTP
+    if [ "$HTTP_CODE" = "000" ]; then
+      HTTP_URL="${SERVER_URL/https/http}"
+      HTTP_CODE=$(curl -sk -o /dev/null -w "%{http_code}" "${HTTP_URL}/" 2>/dev/null)
+    fi
+    
+    # Consider 2xx, 3xx, and even 404 as "server is responding"
+    # (404 is fine - it means server is up but route needs the proper host)
+    if [ "$HTTP_CODE" -ge 200 ] 2>/dev/null && [ "$HTTP_CODE" -lt 500 ] 2>/dev/null; then
+      READY=1
+      break
+    fi
+  fi
+  sleep 0.5
+done
+
+if [ "$READY" -eq 1 ]; then
+  log_success "✓ Symfony server is ready and responding (HTTP $HTTP_CODE)"
+else
+  log_error "✗ Symfony server failed to respond after 30 seconds"
+  if [ -n "$HTTP_CODE" ]; then
+    log_error "Last HTTP code: $HTTP_CODE"
+  else
+    log_error "Server may not have started. Check logs below."
+  fi
+fi
+
+# Check once more before opening browser
+if [ "$SHUTDOWN_REQUESTED" -eq 1 ]; then
+  exit 0
+fi
+
+# Only open browser if server is actually ready
+if [ "$READY" -eq 1 ]; then
+  log_info "Opening https://www.${DOMAIN} in browser"
+  open "https://www.$DOMAIN" > /dev/null 2>&1 || true
+else
+  log_warn "Skipping browser launch - server not ready"
+fi
+
+# Stream server logs in foreground so the script keeps running
+log_info "Streaming Symfony server logs (press Ctrl+C to stop)"
+symfony server:log

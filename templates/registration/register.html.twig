@@ -1,0 +1,37 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}Créer votre compte
+{% endblock %}
+
+{% block body %}
+	<div class="page page-center">
+		<div class="container container-tight py-4">
+			<div class="text-center mb-4">
+				<a href="{{ path('public_landing') }}" class="navbar-brand navbar-brand-autodark">
+					<img src="{{ asset('logo.svg') }}" height="48" alt="Tarmac">
+				</a>
+			</div>
+			<div class="card card-md">
+				<div class="card-body">
+					<h2 class="h2 text-center mb-4">Bienvenue !</h2>
+					<p class="text-center text-secondary mb-4">
+						Bonjour
+						<strong>{{ user.fullname }}</strong>,<br>
+						Veuillez créer votre mot de passe pour accéder à votre compte.
+					</p>
+
+					{{ form_start(registrationForm) }}
+					{{ form_row(registrationForm.plainPassword) }}
+
+					<div class="form-footer">
+						<button type="submit" class="btn btn-primary w-100">
+							<i class="ti ti-check me-2"></i>
+							Créer mon compte
+						</button>
+					</div>
+					{{ form_end(registrationForm) }}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}Connexion
+{% endblock %}
+
+{% block body %}
+	<div class="page page-center">
+		<div class="container container-tight py-4">
+			<div class="text-center mb-4">
+				<a href="{{ path('public_landing') }}" class="navbar-brand navbar-brand-autodark">
+					<img src="{{ asset('logo.svg') }}" height="48" alt="Tarmac">
+				</a>
+			</div>
+			<div class="card card-md">
+				<div class="card-body">
+					<h2 class="h2 text-center mb-4">Connexion à votre compte</h2>
+
+					{% if error %}
+						<div class="alert alert-danger" role="alert">
+							<div class="d-flex">
+								<div>
+									<i class="ti ti-alert-circle me-2"></i>
+								</div>
+								<div>
+									{{ error.messageKey|trans(error.messageData, 'security') }}
+								</div>
+							</div>
+						</div>
+					{% endif %}
+
+					<form action="{{ path('public_login') }}" method="post" autocomplete="off">
+						<div class="mb-3">
+							<label class="form-label">E-mail</label>
+							<input type="email" name="_username" value="{{ last_username }}" class="form-control" placeholder="votre@email.fr" required autocomplete="email"/>
+						</div>
+						<div class="mb-2">
+							<label class="form-label">
+								Mot de passe
+								<span class="form-label-description">
+									<a href="{{ path('public_reset_password_request') }}">Mot de passe oublié ?</a>
+								</span>
+							</label>
+							<input type="password" name="_password" class="form-control" placeholder="Votre mot de passe" autocomplete="current-password" required/>
+						</div>
+						<div class="mb-2">
+							<label class="form-check">
+								<input type="checkbox" name="_remember_me" class="form-check-input"/>
+								<span class="form-check-label">Se souvenir de moi</span>
+							</label>
+						</div>
+						<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+						<div class="form-footer">
+							<button type="submit" class="btn btn-primary w-100">
+								<i class="ti ti-login me-2"></i>
+								Se connecter
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

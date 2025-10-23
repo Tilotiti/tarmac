@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e "${GREEN}========================================${NC}"
+echo -e "${GREEN}Starting Deployment${NC}"
+echo -e "${GREEN}========================================${NC}"
+
+# Get the directory where the script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DEPLOY_DIR="$(dirname "$SCRIPT_DIR")"
+
+cd "$DEPLOY_DIR"
+
+echo -e "${YELLOW}Working directory: $DEPLOY_DIR${NC}"
+
+# Step 1: Install Composer dependencies (production mode)
+echo -e "${GREEN}[1/5] Installing Composer dependencies...${NC}"
+php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+# Step 2: Install and compile assets
+echo -e "${GREEN}[2/5] Installing and compiling assets...${NC}"
+php bin/console importmap:install --no-interaction
+php bin/console asset-map:compile --no-interaction
+
+# Step 3: Run database migrations
+echo -e "${GREEN}[3/5] Running database migrations...${NC}"
+php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+
+# Step 4: Clear and warm up cache
+echo -e "${GREEN}[4/5] Clearing and warming up cache...${NC}"
+php bin/console cache:clear --env=prod --no-interaction
+php bin/console cache:warmup --env=prod --no-interaction
+
+# Step 5: Set proper file permissions
+echo -e "${GREEN}[5/5] Setting file permissions...${NC}"
+chmod -R 775 var/
+chmod -R 775 public/
+
+echo -e "${GREEN}========================================${NC}"
+echo -e "${GREEN}Deployment completed successfully!${NC}"
+echo -e "${GREEN}========================================${NC}"
+
+

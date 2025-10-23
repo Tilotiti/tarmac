@@ -1,0 +1,11 @@
+# Local Environment Configuration
+
+## Domain
+- Local development domain: `tarmac.wip`
+- Always use the Symfony proxy when making CURL requests to the local environment
+
+## Symfony Server
+- Use `bin/server` to start the Symfony server with the proxy
+- Do not use `php bin/console server:start` (not available in this setup)
+- Do not try to restart the server manually. It has no effect most of the time.
+- When trying to clear the cache, use `symfony console cache:clear` instead of `bin/console cache:clear`

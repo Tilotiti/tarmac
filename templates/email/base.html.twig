@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				line-height: 1.6;
+				color: #333;
+				margin: 0;
+				padding: 0;
+				background-color: #f4f4f4;
+			}
+			.email-container {
+				max-width: 600px;
+				margin: 0 auto;
+				background-color: #ffffff;
+			}
+			.email-header {
+				background-color: #206bc4;
+				color: #ffffff;
+				padding: 30px 20px;
+				text-align: center;
+			}
+			.email-header h1 {
+				margin: 0;
+				font-size: 28px;
+			}
+			.email-body {
+				padding: 30px 20px;
+			}
+			.email-footer {
+				background-color: #f8f9fa;
+				padding: 20px;
+				text-align: center;
+				font-size: 12px;
+				color: #6c757d;
+			}
+			.btn {
+				display: inline-block;
+				padding: 12px 30px;
+				background-color: #206bc4;
+				color: white !important;
+				text-decoration: none;
+				border-radius: 4px;
+				font-weight: bold;
+				margin: 20px 0;
+			}
+			.btn:hover {
+				background-color: #1a5ca8;
+			}
+			.alert {
+				padding: 15px;
+				margin: 15px 0;
+				border-radius: 4px;
+				border-left: 4px solid;
+			}
+			.alert-info {
+				background-color: #e3f2fd;
+				border-left-color: #206bc4;
+				color: #1565c0;
+			}
+			@media only screen and(max-width: 600px) {
+				.email-body {
+					padding: 20px 15px;
+				}
+				.email-header h1 {
+					font-size: 24px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="email-container">
+			<div class="email-header">
+				<h1>
+					{% block email_header %}Tarmac
+					{% endblock %}
+				</h1>
+			</div>
+
+			<div class="email-body"> {% block email_body %}{% endblock %}
+				</div>
+
+				<div class="email-footer">
+					<p>©
+						{{ 'now'|date('Y') }}
+						Tarmac. Tous droits réservés.</p>
+				</div>
+			</div>
+		</body>
+	</html>

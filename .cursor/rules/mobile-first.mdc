@@ -1,0 +1,95 @@
+---
+alwaysApply: true
+---
+
+# Mobile-First Tarmac Application
+
+This is a **mobile-first webapp** built with Symfony and Tabler.io. Always prioritize mobile experience first, then enhance for larger screens.
+
+## Core Principles
+
+### Mobile-First Design
+- **Start with mobile**: Design and code for mobile screens (320px-768px) first
+- **Progressive enhancement**: Add features for tablet (768px+) and desktop (1024px+) 
+- **Touch-optimized**: All interactions must work perfectly on touch devices
+- **Performance-first**: Optimize for mobile networks and slower devices
+
+### Tabler.io Integration
+- **Use Tabler components**: Leverage Tabler's mobile-optimized components
+- **Follow Tabler patterns**: Use Tabler's responsive utilities and classes
+- **Maintain consistency**: Stick to Tabler's design system and spacing
+- **Customize when needed**: Extend Tabler styles for mobile-specific needs
+
+## Development Guidelines
+
+### Layout & Components
+- **Single column** layouts on mobile by default
+- **Card-based** designs for better mobile readability
+- **Touch targets**: Minimum 44px × 44px for all interactive elements
+- **Navigation**: Collapsible hamburger menu on mobile
+- **Tables**: Card layout or horizontal scroll on mobile
+
+### Typography & Spacing
+- **Base font**: 16px minimum for mobile readability
+- **Line height**: 1.5 for mobile, 1.4 for desktop
+- **Spacing**: Use Tabler's spacing scale (4px, 8px, 16px, 24px, 32px)
+- **Text scaling**: Support up to 200% zoom without horizontal scroll
+
+### Performance Requirements
+- **First Contentful Paint**: < 1.5s on 3G
+- **Largest Contentful Paint**: < 2.5s on 3G
+- **Cumulative Layout Shift**: < 0.1
+- **Images**: WebP format with proper sizing
+- **JavaScript**: Lazy load non-critical scripts
+
+### Forms & Interactions
+- **Full-width inputs** on mobile
+- **Always visible labels** (not placeholder-only)
+- **Touch-friendly controls** with proper spacing
+- **Inline validation** that doesn't block interaction
+- **Progressive enhancement**: Core functionality works without JS
+
+### Testing & Quality
+- **Real device testing**: iPhone SE, iPhone 12, Samsung Galaxy
+- **Network testing**: 3G, 4G, WiFi conditions
+- **Accessibility**: WCAG AA compliance, screen reader support
+- **Cross-browser**: Chrome Mobile, Safari Mobile, Firefox Mobile
+
+## Code Standards
+
+### Twig Templates
+- Use Tabler's responsive classes: `d-block d-md-none`, `d-none d-md-block`
+- Implement mobile-first media queries: `@media (min-width: 768px)`
+- Use semantic HTML5 elements with proper ARIA labels
+- Keep templates DRY with includes and blocks
+
+### CSS/Styling
+- Extend Tabler styles in `/assets/styles/app.css`
+- Use Tabler utility classes for rapid development
+- Implement mobile-first media queries
+- Critical CSS inlined for above-the-fold content
+
+### JavaScript
+- Use Stimulus controllers for interactive components
+- Implement touch-friendly event handlers
+- Debounce scroll and resize events
+- Progressive enhancement approach
+
+## Anti-Patterns to Avoid
+- ❌ Desktop-first responsive design
+- ❌ Fixed widths that don't scale
+- ❌ Horizontal scrolling on mobile
+- ❌ Tiny touch targets (< 44px)
+- ❌ Hover states as primary interaction
+- ❌ Complex multi-step forms
+- ❌ Blocking JavaScript in head
+- ❌ Large images without optimization
+
+## Success Metrics
+- **Mobile PageSpeed Score**: > 90
+- **Mobile Lighthouse Score**: > 90
+- **Time to Interactive**: < 3s on 3G
+- **Bounce Rate**: < 40% on mobile
+- **Task Completion**: > 85% on mobile
+
+Remember: Every feature, component, and page must work perfectly on mobile first. Desktop and tablet experiences are enhancements, not the starting point.

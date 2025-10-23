@@ -1,0 +1,35 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}Accueil
+{% endblock %}
+
+{% block body %}
+	<div class="page page-center">
+		<div class="container container-tight py-4">
+			<div class="text-center mb-4">
+				<a href="{{ path('public_landing') }}" class="navbar-brand navbar-brand-autodark">
+					<img src="{{ asset('logo.svg') }}" height="48" alt="Tarmac">
+				</a>
+			</div>
+			<div class="card card-md">
+				<div class="card-body">
+					<h2 class="h2 text-center mb-4">Bienvenue sur Tarmac</h2>
+					<p class="text-center text-secondary mb-4">
+						Plateforme de gestion pour clubs aéronautiques
+					</p>
+
+					<div class="d-grid gap-2">
+						<a href="{{ path('public_login') }}" class="btn btn-primary" style="min-height: 44px;">
+							<i class="ti ti-login me-2"></i>
+							Se connecter
+						</a>
+						<a href="{{ path('public_reset_password_request') }}" class="btn btn-outline-secondary" style="min-height: 44px;">
+							<i class="ti ti-key me-2"></i>
+							Mot de passe oublié ?
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'club/base.html.twig' %}
+
+{% form_theme filterForm 'component/filters.html.twig' %}
+
+{% block page_title %}Membres
+{% endblock %}
+
+{% block page_actions %}
+	<div class="d-flex gap-2">
+		<a href="{{ path('club_invitations') }}" class="btn btn-outline-primary" style="min-height: 44px;">
+			<i class="ti ti-mail me-2"></i>
+			<span class="d-none d-sm-inline">Invitations</span>
+			<span class="d-inline d-sm-none">Invit.</span>
+		</a>
+		<a href="{{ path('club_member_invite') }}" class="btn btn-primary" style="min-height: 44px;">
+			<i class="ti ti-plus me-2"></i>
+			<span class="d-none d-sm-inline">Inviter</span>
+			<span class="d-inline d-sm-none">Inviter</span>
+		</a>
+	</div>
+{% endblock %}
+
+{% block page_content %}
+	{% include 'component/filters.html.twig' with { form: filterForm } %}
+
+	{# Member cards - Mobile-first design #}
+	<div class="row">
+		{% for membership in memberships %}
+			<div class="col-12 col-md-6 col-lg-4 mb-3">
+				<div class="card h-100 {% if not membership.user.active %}border-danger{% endif %}">
+					<div class="card-body">
+						<div class="d-flex align-items-start mb-3">
+							<span class="avatar me-3">{{ membership.user.firstname[:1] }}{{ membership.user.lastname[:1] }}</span>
+							<div class="flex-fill">
+								<div class="font-weight-medium {% if not membership.user.active %}text-danger{% else %}text-dark{% endif %}">
+									{{ membership.user.fullname }}
+								</div>
+								<div class="text-secondary small">{{ membership.user.email }}</div>
+
+								{# Roles #}
+								<div class="mt-2">
+									{% if membership.isManager %}
+										<span class="badge bg-blue-lt me-1">Manager</span>
+									{% endif %}
+									{% if membership.isInspector %}
+										<span class="badge bg-green-lt">Inspecteur</span>
+									{% endif %}
+									{% if not membership.isManager and not membership.isInspector %}
+										<span class="text-muted small">Membre</span>
+									{% endif %}
+								</div>
+
+								{# Status #}
+								{% if not membership.user.active %}
+									<div class="mt-2">
+										<span class="badge bg-danger">Désactivé</span>
+									</div>
+								{% endif %}
+							</div>
+						</div>
+
+						<div class="text-secondary small">
+							<i class="ti ti-calendar me-1"></i>
+							Membre depuis le
+							{{ membership.joinedAt|date('d/m/Y') }}
+						</div>
+					</div>
+					<div class="card-footer">
+						<form method="post" action="{{ path('club_member_delete', {id: membership.id}) }}" onsubmit="return confirm('Retirer {{ membership.user.fullname }} du club ?');">
+							<button type="submit" class="btn btn-outline-danger btn-sm w-100" style="min-height: 44px;">
+								<i class="ti ti-trash me-2"></i>
+								Retirer du club
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		{% else %}
+			<div class="col-12">
+				<div class="card">
+					<div class="card-body text-center text-secondary">
+						<em>Aucun membre trouvé</em>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+
+	{# Pagination #}
+	<div class="d-flex justify-content-center mt-4">
+		{{ pagination(memberships) }}
+	</div>
+{% endblock %}

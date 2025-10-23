@@ -1,0 +1,52 @@
+{% extends 'email/base.html.twig' %}
+
+{% block email_header %}Invitation
+{% endblock %}
+
+{% block email_body %}
+	<h2 style="margin-top: 0;">Bienvenue !</h2>
+
+	<p>Bonjour
+		{% if invitation.fullname %}
+			<strong>{{ invitation.fullname }}</strong>
+		{% endif %},</p>
+
+	<p>Vous avez été invité(e) à rejoindre le club
+		<strong>{{ invitation.club.name }}</strong>
+		sur Tarmac.</p>
+
+	<div class="alert alert-info">
+		<p style="margin: 0;">
+			<strong>Vos rôles :</strong><br>
+			{{ invitation.rolesText }}
+		</p>
+	</div>
+
+	<p>Pour accepter cette invitation et
+		{% if invitation.isLocked %}accéder{% else %}créer votre compte
+		{% endif %}, veuillez cliquer sur le bouton ci-dessous :</p>
+
+	<div style="text-align: center; margin: 30px 0;">
+		<a href="{{ invitationUrl }}" class="btn">
+			{% if invitation.isLocked %}
+				Accepter l'invitation
+			{% else %}
+				Créer mon compte
+			{% endif %}
+		</a>
+	</div>
+
+	<p style="font-size: 14px; color: #6c757d;">
+		Cette invitation est valable jusqu'au
+		<strong>{{ invitation.expiresAt|date('d/m/Y à H:i') }}</strong>.
+	</p>
+
+	<p style="font-size: 14px; color: #6c757d;">
+		Si vous n'avez pas demandé cette invitation, vous pouvez ignorer cet e-mail en toute sécurité.
+	</p>
+
+	<p style="font-size: 14px; color: #6c757d; margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6;">
+		Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :<br>
+		<a href="{{ invitationUrl }}" style="color: #206bc4; word-break: break-all;">{{ invitationUrl }}</a>
+	</p>
+{% endblock %}

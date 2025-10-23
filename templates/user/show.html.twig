@@ -1,0 +1,126 @@
+{% extends 'app/base.html.twig' %}
+
+{% block title %}
+	{{ user.fullname }}
+{% endblock %}
+
+{% block body %}
+	<div class="page-header d-print-none">
+		<div class="container-xl">
+			<div class="row g-2 align-items-center">
+				<div class="col">
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item">
+								<a href="{{ path('app_user_index') }}">Utilisateurs</a>
+							</li>
+							<li class="breadcrumb-item active" aria-current="page">{{ user.fullname }}</li>
+						</ol>
+					</nav>
+					<h2 class="page-title">
+						{{ user.fullname }}
+					</h2>
+				</div>
+				<div class="col-auto ms-auto d-print-none">
+					<a href="{{ path('app_user_index') }}" class="btn btn-outline-secondary" style="min-height: 44px;">
+						<i class="ti ti-arrow-left me-2"></i>
+						<span class="d-none d-sm-inline">Retour à la liste</span>
+						<span class="d-inline d-sm-none">Retour</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="page-body">
+		<div
+			class="container-xl">
+			{# Mobile-first: Single column layout #}
+			<div class="row">
+				<div class="col-12">
+					<div class="card">
+						<div
+							class="card-body">
+							{# User header - Mobile first #}
+							<div class="text-center mb-4">
+								<span class="avatar avatar-xl mb-3">{{ user.firstname[:1] }}{{ user.lastname[:1] }}</span>
+								<h3 class="mb-2">{{ user.fullname }}</h3>
+								<div class="text-secondary mb-3">{{ user.email }}</div>
+
+								{# Status badges - Mobile friendly #}
+								<div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
+									{% if user.isPending %}
+										<span class="badge bg-yellow-lt">En attente</span>
+									{% elseif user.active %}
+										<span class="badge bg-green-lt">Actif</span>
+									{% else %}
+										<span class="badge bg-secondary-lt">Inactif</span>
+									{% endif %}
+
+									{% if user.isVerified %}
+										<span class="badge bg-green-lt">Vérifié</span>
+									{% else %}
+										<span class="badge bg-yellow-lt">Non vérifié</span>
+									{% endif %}
+								</div>
+							</div>
+
+							{# User details - Mobile first grid #}
+							<div class="row">
+								<div class="col-12 col-md-6 mb-3">
+									<div class="text-muted small">Rôles</div>
+									<div>
+										{% for role in user.roles %}
+											{% if role != 'ROLE_USER' %}
+												<span class="badge bg-blue-lt me-1">
+													{% if role == 'ROLE_ADMIN' %}
+														Administrateur
+													{% elseif role == 'ROLE_MANAGER' %}
+														Manager
+													{% elseif role == 'ROLE_INSPECTOR' %}
+														Inspecteur
+													{% endif %}
+												</span>
+											{% endif %}
+										{% endfor %}
+										{% if user.roles|length == 1 and 'ROLE_USER' in user.roles %}
+											<span class="text-muted">Utilisateur standard</span>
+										{% endif %}
+									</div>
+								</div>
+
+								{% if user.createdAt %}
+									<div class="col-12 col-md-6 mb-3">
+										<div class="text-muted small">Créé le</div>
+										<div>{{ user.createdAt|date('d/m/Y à H:i') }}</div>
+									</div>
+								{% endif %}
+
+								{% if user.invitationToken %}
+									<div class="col-12 mb-3">
+										<div class="text-muted small">Token d'invitation</div>
+										<div class="text-break">
+											<code class="small">{{ user.invitationToken }}</code>
+										</div>
+									</div>
+								{% endif %}
+							</div>
+						</div>
+
+						{# Actions - Mobile friendly #}
+						{% if user.id != app.user.id %}
+							<div class="card-footer">
+								<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+									<a href="{{ path('app_user_delete', {id: user.id}) }}" class="btn btn-outline-danger" style="min-height: 44px;" onclick="return confirm('Êtes-vous sûr de vouloir {{ user.isPending ? 'annuler cette invitation' : 'supprimer cet utilisateur' }} ?');">
+										<i class="ti ti-trash me-2"></i>
+										{{ user.isPending ? 'Annuler l\'invitation' : 'Supprimer l\'utilisateur' }}
+									</a>
+								</div>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

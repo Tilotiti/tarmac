@@ -1,0 +1,71 @@
+{% extends 'app/base.html.twig' %}
+
+{% block page_title %}Clubs
+{% endblock %}
+
+{% block page_actions %}
+	<a href="{{ path('app_club_new') }}" class="btn btn-primary" style="min-height: 44px;">
+		<i class="ti ti-plus me-2"></i>
+		<span class="d-none d-sm-inline">Nouveau club</span>
+		<span class="d-inline d-sm-none">Nouveau</span>
+	</a>
+{% endblock %}
+
+{% block page_content %}
+	{# Filter Component - Mobile-first with offcanvas #}
+	{% include 'component/filters.html.twig' with {form: filterForm} %}
+
+	{# Club cards - Mobile-first design #}
+	<div class="row">
+		{% for club in clubs %}
+			<div class="col-12 col-md-6 col-lg-4 mb-3">
+				<a href="{{ path('app_club_show', {id: club.id}) }}" class="card h-100 text-decoration-none" style="transition: all 0.2s ease; cursor: pointer;">
+					<div class="card-body">
+						<div class="d-flex align-items-center mb-3">
+							<span class="avatar me-3 bg-blue-lt">
+								<i class="ti ti-windsock"></i>
+							</span>
+							<div class="flex-fill">
+								<div class="font-weight-medium text-dark">{{ club.name }}</div>
+								<div class="text-secondary">{{ club.subdomain }}.{{ domain }}</div>
+							</div>
+							<i class="ti ti-arrow-right text-muted"></i>
+						</div>
+
+						<div class="row">
+							<div class="col-6">
+								<div class="text-muted small">Membres</div>
+								<div>
+									<span class="badge bg-blue-lt">{{ club.memberships|length }}</span>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="text-muted small">Statut</div>
+								<div>
+									{% if club.active %}
+										<span class="badge bg-green-lt">Actif</span>
+									{% else %}
+										<span class="badge bg-danger-lt">Inactif</span>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+		{% else %}
+			<div class="col-12">
+				<div class="card">
+					<div class="card-body text-center text-secondary">
+						<em>Aucun club trouvé</em>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+
+	{# Pagination #}
+	<div class="d-flex justify-content-center mt-4">
+		{{ pagination(clubs) }}
+	</div>
+{% endblock %}

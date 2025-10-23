@@ -1,0 +1,121 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}Invitations en attente
+{% endblock %}
+
+{% block page_actions %}
+	<div class="d-flex gap-2">
+		<a href="{{ path('club_members') }}" class="btn btn-outline-secondary" style="min-height: 44px;">
+			<i class="ti ti-arrow-left me-2"></i>
+			<span class="d-none d-sm-inline">Retour aux membres</span>
+			<span class="d-inline d-sm-none">Retour</span>
+		</a>
+		<a href="{{ path('club_member_invite') }}" class="btn btn-primary" style="min-height: 44px;">
+			<i class="ti ti-plus me-2"></i>
+			<span class="d-none d-sm-inline">Inviter</span>
+			<span class="d-inline d-sm-none">Inviter</span>
+		</a>
+	</div>
+{% endblock %}
+
+{% block page_content %}
+	{# Invitation cards - Mobile-first design #}
+	<div class="row">
+		{% for invitation in invitations %}
+			<div class="col-12 col-md-6 col-lg-4 mb-3">
+				<div class="card h-100">
+					<div class="card-body">
+						<div class="d-flex align-items-start mb-3">
+							<span class="avatar me-3 bg-yellow-lt">
+								<i class="ti ti-mail"></i>
+							</span>
+							<div class="flex-fill">
+								<div class="font-weight-medium text-dark">
+									{% if invitation.fullname %}
+										{{ invitation.fullname }}
+									{% else %}
+										{{ invitation.email }}
+									{% endif %}
+								</div>
+								<div class="text-secondary small">{{ invitation.email }}</div>
+
+								{# Roles #}
+								<div class="mt-2">
+									{% if invitation.isManager %}
+										<span class="badge bg-blue-lt me-1">Manager</span>
+									{% endif %}
+									{% if invitation.isInspector %}
+										<span class="badge bg-green-lt">Inspecteur</span>
+									{% endif %}
+									{% if not invitation.isManager and not invitation.isInspector %}
+										<span class="text-muted small">Membre</span>
+									{% endif %}
+								</div>
+
+								{# Locked status #}
+								{% if invitation.isLocked %}
+									<div class="mt-2">
+										<span class="badge bg-blue-lt">
+											<i class="ti ti-lock me-1"></i>
+											Utilisateur existant
+										</span>
+									</div>
+								{% endif %}
+							</div>
+						</div>
+
+						<div class="row text-secondary small">
+							<div class="col-12 mb-1">
+								<i class="ti ti-calendar me-1"></i>
+								Envoyée le
+								{{ invitation.createdAt|date('d/m/Y') }}
+							</div>
+							<div class="col-12">
+								<i class="ti ti-clock me-1"></i>
+								Expire le
+								{{ invitation.expiresAt|date('d/m/Y') }}
+							</div>
+						</div>
+					</div>
+					<div class="card-footer">
+						<div class="d-flex gap-2">
+							<form method="post" action="{{ path('club_invitation_resend', {id: invitation.id}) }}" class="flex-fill">
+								<button type="submit" class="btn btn-outline-primary btn-sm w-100" style="min-height: 44px;">
+									<i class="ti ti-send me-2"></i>
+									Renvoyer
+								</button>
+							</form>
+							<form method="post" action="{{ path('club_invitation_delete', {id: invitation.id}) }}" onsubmit="return confirm('Annuler cette invitation ?');">
+								<button type="submit" class="btn btn-outline-danger btn-sm" style="min-height: 44px;">
+									<i class="ti ti-trash"></i>
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		{% else %}
+			<div class="col-12">
+				<div class="card">
+					<div class="card-body text-center text-secondary">
+						<i class="ti ti-mail-opened mb-3" style="font-size: 3rem;"></i>
+						<p class="mb-3">
+							<em>Aucune invitation en attente</em>
+						</p>
+						<a href="{{ path('club_member_invite') }}" class="btn btn-primary" style="min-height: 44px;">
+							<i class="ti ti-plus me-2"></i>
+							Inviter un nouveau membre
+						</a>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+
+	{# Pagination #}
+	{% if invitations|length > 0 %}
+		<div class="d-flex justify-content-center mt-4">
+			{{ pagination(invitations) }}
+		</div>
+	{% endif %}
+{% endblock %}

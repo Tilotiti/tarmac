@@ -1,0 +1,77 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ club.name }}
+{% endblock %}
+
+{% block page_content %}
+	<div
+		class="row row-deck row-cards">
+		{# Welcome card #}
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">Bienvenue</h3>
+				</div>
+				<div class="card-body">
+					<p class="text-secondary">
+						Bonjour
+						<strong>{{ app.user.fullName }}</strong>
+						!
+					</p>
+					<p class="mb-0">
+						Vous êtes membre du club
+						<strong>{{ club.name }}</strong>
+						{% if app.user.isManagerOfClub(club) %}
+							<span class="badge bg-blue-lt">Manager</span>
+						{% endif %}
+						{% if app.user.isInspectorOfClub(club) %}
+							<span class="badge bg-green-lt">Inspecteur</span>
+						{% endif %}
+					</p>
+				</div>
+			</div>
+		</div>
+
+		{# Action cards #}
+		{% if app.user.isManagerOfClub(club) or app.user.isAdmin %}
+			<div class="col-12 col-md-6 col-lg-4">
+				<div class="card">
+					<div class="card-body">
+						<div class="d-flex align-items-center">
+							<div class="subheader">Gestion</div>
+						</div>
+						<div class="h1 mb-3">
+							<i class="ti ti-users"></i>
+						</div>
+						<div class="d-flex mb-2">
+							<div>Membres du club</div>
+						</div>
+						<a href="{{ path('club_members') }}" class="btn btn-primary w-100" style="min-height: 44px;">
+							Voir les membres
+						</a>
+					</div>
+				</div>
+			</div>
+		{% endif %}
+
+		<div class="col-12 col-md-6 col-lg-4">
+			<div class="card">
+				<div class="card-body">
+					<div class="d-flex align-items-center">
+						<div class="subheader">Mon compte</div>
+					</div>
+					<div class="h1 mb-3">
+						<i class="ti ti-user"></i>
+					</div>
+					<div class="d-flex mb-2">
+						<div>Profil</div>
+					</div>
+					<a href="{{ path('app_profile_edit') }}" class="btn btn-outline-primary w-100" style="min-height: 44px;">
+						Modifier mon profil
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
