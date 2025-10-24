@@ -14,10 +14,10 @@ class ClubFilterType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nom',
+                'label' => 'name',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Rechercher par nom',
+                    'placeholder' => 'searchByName',
                     'class' => 'form-control',
                 ],
                 'label_attr' => [
@@ -25,10 +25,10 @@ class ClubFilterType extends AbstractType
                 ],
             ])
             ->add('subdomain', TextType::class, [
-                'label' => 'Sous-domaine',
+                'label' => 'subdomain',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Rechercher par sous-domaine',
+                    'placeholder' => 'searchBySubdomain',
                     'class' => 'form-control',
                 ],
                 'label_attr' => [
@@ -36,11 +36,11 @@ class ClubFilterType extends AbstractType
                 ],
             ])
             ->add('active', ChoiceType::class, [
-                'label' => 'Statut',
+                'label' => 'status',
                 'choices' => [
-                    'Tous' => '',
-                    'Actif' => '1',
-                    'Inactif' => '0',
+                    'all' => '',
+                    'active' => '1',
+                    'inactive' => '0',
                 ],
                 'required' => false,
                 'attr' => [

@@ -4,46 +4,70 @@
 {% endblock %}
 
 {% block page_content %}
-	<div class="row justify-content-center">
-		<div class="col-12 col-md-8 col-lg-6">
-			<div class="card">
-				<div class="card-header">
-					<h3 class="card-title">Nouvel équipement</h3>
-				</div>
-				<div class="card-body">
-					{{ form_start(form) }}
-					<div class="mb-3">
-						{{ form_label(form.name) }}
-						{{ form_widget(form.name) }}
-						{{ form_errors(form.name) }}
-					</div>
-
-					<div class="mb-3">
-						{{ form_label(form.type) }}
-						{{ form_widget(form.type) }}
-						{{ form_errors(form.type) }}
-					</div>
-
-					<div class="mb-3">
-						<div class="form-check form-switch">
-							{{ form_widget(form.active) }}
-							{{ form_label(form.active) }}
-						</div>
-						{{ form_errors(form.active) }}
-						<small class="form-hint">
-							Un équipement inactif n'apparaîtra pas dans la liste pour les membres
-						</small>
-					</div>
-
-					<div>
-						<button type="submit" class="btn btn-primary" style="min-height: 44px;">
-							<i class="ti ti-check me-2"></i>
-							Créer
-						</button>
-					</div>
-					{{ form_end(form) }}
-				</div>
+	<div class="card">
+		<div class="card-header">
+			<h3 class="card-title">Nouvel équipement</h3>
+		</div>
+		<div class="card-body" data-controller="equipment-privacy">
+			{{ form_start(form) }}
+			<div class="mb-3">
+				{{ form_label(form.name) }}
+				{{ form_widget(form.name) }}
+				{{ form_errors(form.name) }}
 			</div>
+
+			<div class="mb-3">
+				{{ form_label(form.type) }}
+				{{ form_widget(form.type) }}
+				{{ form_errors(form.type) }}
+			</div>
+
+			<div class="mb-3">
+				{{ form_label(form.owner) }}
+				<div data-action="change->equipment-privacy#toggleOwners">
+					{{ form_widget(form.owner) }}
+				</div>
+				{{ form_errors(form.owner) }}
+				<small class="form-hint">
+					Équipement du club (propriété collective) ou privé (propriété d'un ou plusieurs membres)
+				</small>
+			</div>
+
+			<div class="mb-3 d-none" data-equipment-privacy-target="ownersContainer">
+				{{ form_label(form.owners) }}
+
+				{# Filter input #}
+				<div class="mb-2">
+					<input type="text" class="form-control" placeholder="Filtrer par nom..." data-equipment-privacy-target="filterInput" data-action="input->equipment-privacy#filterUsers">
+				</div>
+
+				{# Scrollable user list #}
+				<div class="owners-list-container">
+					{{ form_widget(form.owners, {
+							attr: {
+								'data-action': 'change->equipment-privacy#updateCounter'
+							}
+						}) }}
+					<div class="text-center text-secondary py-3 d-none" data-equipment-privacy-target="noResults">
+						<i class="ti ti-search-off mb-2" style="font-size: 2rem; opacity: 0.5;"></i>
+						<p class="mb-0">Aucun utilisateur trouvé</p>
+					</div>
+				</div>
+				{{ form_errors(form.owners) }}
+
+				{# Selection counter #}
+				<small class="form-hint" data-equipment-privacy-target="counter">
+					Aucun utilisateur sélectionné
+				</small>
+			</div>
+
+			<div>
+				<button type="submit" class="btn btn-primary" style="min-height: 44px;">
+					<i class="ti ti-check me-2"></i>
+					Créer
+				</button>
+			</div>
+			{{ form_end(form) }}
 		</div>
 	</div>
 {% endblock %}

@@ -14,14 +14,14 @@ class MembershipType extends AbstractType
     {
         $builder
             ->add('isManager', CheckboxType::class, [
-                'label' => 'Manager',
+                'label' => 'manager',
                 'required' => false,
-                'help' => 'Peut gérer le club',
+                'help' => 'managerHelp',
             ])
             ->add('isInspector', CheckboxType::class, [
-                'label' => 'Inspecteur',
+                'label' => 'inspector',
                 'required' => false,
-                'help' => 'Peut inspecter et valider les activités sensibles du club',
+                'help' => 'inspectorHelp',
             ])
         ;
     }

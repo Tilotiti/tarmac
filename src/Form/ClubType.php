@@ -15,23 +15,23 @@ class ClubType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nom du club',
+                'label' => 'clubName',
                 'attr' => [
-                    'placeholder' => 'Ex: Les Planeurs de Bailleau',
+                    'placeholder' => 'clubNamePlaceholder',
                     'class' => 'form-control',
                 ],
             ])
             ->add('subdomain', TextType::class, [
-                'label' => 'Sous-domaine',
-                'help' => 'Ce sous-domaine sera utilisé pour accéder au club (ex: cvve)',
+                'label' => 'subdomain',
+                'help' => 'subdomainHelp',
                 'attr' => [
-                    'placeholder' => 'Ex: cvve',
+                    'placeholder' => 'subdomainPlaceholder',
                     'class' => 'form-control',
                 ],
             ])
             ->add('active', CheckboxType::class, [
-                'label' => 'Actif',
-                'help' => 'Un club inactif ne sera pas accessible',
+                'label' => 'active',
+                'help' => 'activeHelp',
                 'required' => false,
                 'attr' => [
                     'class' => 'form-check-input',

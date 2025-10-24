@@ -50,19 +50,19 @@
 										{% block user_dropdown_menu %}
 											<a href="{{ path('public_profile_edit') }}" class="dropdown-item">
 												<i class="ti ti-user"></i>
-												Mon profil
+												{{ 'myProfile'|trans }}
 											</a>
 											{% if is_granted('ROLE_ADMIN') %}
 												<div class="dropdown-divider"></div>
 												<a href="{{ path('admin_dashboard') }}" class="dropdown-item">
 													<i class="ti ti-shield"></i>
-													Administration
+													{{ 'administration'|trans }}
 												</a>
 											{% endif %}
 											<div class="dropdown-divider"></div>
 											<a href="{{ path('public_logout') }}" class="dropdown-item">
 												<i class="ti ti-logout"></i>
-												Déconnexion
+												{{ 'logout'|trans }}
 											</a>
 										{% endblock %}
 									</div>
@@ -88,10 +88,10 @@
 												<i class="ti ti-{{ label == 'success' ? 'check' : label == 'warning' ? 'alert-triangle' : label == 'danger' ? 'alert-circle' : 'info-circle' }} me-2"></i>
 											</div>
 											<div>
-												{{ message }}
+												{{ message|trans }}
 											</div>
 										</div>
-										<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+										<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ 'close'|trans }}"></button>
 									</div>
 								{% endfor %}
 							{% endfor %}

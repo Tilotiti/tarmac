@@ -79,6 +79,15 @@ abstract class ExtendedController extends AbstractController
         return $this->container->get('form.factory')->createNamed('', $type, $data, $options);
     }
 
+    /**
+     * Extracts and cleans filter data from a form, removing null and empty values.
+     */
+    protected function getFilterData(FormInterface $form): array
+    {
+        $filters = $form->getData();
+        return array_filter($filters, fn($value) => $value !== null && $value !== '');
+    }
+
     protected function back(): RedirectResponse
     {
         $request = $this->container->get('request_stack')->getCurrentRequest();

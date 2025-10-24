@@ -1,0 +1,15 @@
+translation:
+  locales: ["en", "fr"]
+  configs:
+    app:
+      dirs: ["%kernel.project_dir%/src", "%kernel.project_dir%/templates"]
+      output_dir: "%kernel.project_dir%/translations"
+      excluded_names: ["*TestCase.php", "*Test.php"]
+      excluded_dirs: ["cache", "var", "vendor", "public"]
+      output_format: "yaml"
+
+  webui:
+    enabled: true
+    allow_delete: true
+    allow_create: true
+    file_base_path: "%kernel.project_dir%/translations"

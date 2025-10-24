@@ -17,4 +17,5 @@ return [
     Tiloweb\PaginationBundle\TilowebPaginationBundle::class => ['all' => true],
     Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
     SlopeIt\BreadcrumbBundle\SlopeItBreadcrumbBundle::class => ['all' => true],
+    Translation\Bundle\TranslationBundle::class => ['dev' => true],
 ];

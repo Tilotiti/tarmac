@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Club;
 use App\Entity\Equipment;
+use App\Entity\EquipmentOwner;
 use App\Entity\EquipmentType;
 use App\Service\ClubResolver;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -89,35 +90,31 @@ class EquipmentRepository extends ServiceEntityRepository
     }
 
     /**
+     * Filter by owner type
+     */
+    public function filterByOwner(QueryBuilder $dql, EquipmentOwner|string $owner): QueryBuilder
+    {
+        if (is_string($owner)) {
+            $owner = EquipmentOwner::from($owner);
+        }
+
+        $dql->andWhere('equipment.owner = :owner')
+            ->setParameter('owner', $owner);
+
+        return $dql;
+    }
+
+    /**
      * Query equipments with filters
      */
     public function queryByFilters(?array $filters = []): QueryBuilder
     {
         $dql = $this->queryAll();
 
-        if (!empty($filters['search'])) {
-            $dql = $this->filterBySearch($dql, $filters['search']);
+        // Force club context if provided
+        if (!empty($filters['club'])) {
+            $dql = $this->filterByClub($dql, $filters['club']);
         }
-
-        if (!empty($filters['type'])) {
-            $dql = $this->filterByType($dql, $filters['type']);
-        }
-
-        if (isset($filters['active']) && $filters['active'] !== '') {
-            $dql = $this->filterByActive($dql, (bool) $filters['active']);
-        }
-
-        return $dql;
-    }
-
-    /**
-     * Query equipments by club with filters (for explicit club context)
-     */
-    public function queryByClubAndFilters(Club $club, array $filters = []): QueryBuilder
-    {
-        $dql = $this->createQueryBuilder('equipment');
-        $dql = $this->filterByClub($dql, $club);
-        $dql->orderBy('equipment.name', 'ASC');
 
         if (!empty($filters['search'])) {
             $dql = $this->filterBySearch($dql, $filters['search']);
@@ -131,15 +128,11 @@ class EquipmentRepository extends ServiceEntityRepository
             $dql = $this->filterByActive($dql, (bool) $filters['active']);
         }
 
+        if (isset($filters['owner']) && $filters['owner'] !== '') {
+            $dql = $this->filterByOwner($dql, $filters['owner']);
+        }
+
         return $dql;
     }
 
-    /**
-     * Get only active equipments for club members
-     */
-    public function queryActiveByClubAndFilters(Club $club, array $filters = []): QueryBuilder
-    {
-        $filters['active'] = true;
-        return $this->queryByClubAndFilters($club, $filters);
-    }
 }

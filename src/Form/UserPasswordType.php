@@ -16,7 +16,7 @@ class UserPasswordType extends AbstractType
     {
         $builder
             ->add('oldPassword', PasswordType::class, [
-                'label' => 'Mot de passe actuel',
+                'label' => 'currentPassword',
                 'mapped' => false,
                 'attr' => [
                     'autocomplete' => 'current-password',
@@ -24,7 +24,7 @@ class UserPasswordType extends AbstractType
                 ],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Veuillez saisir votre mot de passe actuel',
+                        'message' => 'currentPasswordRequired',
                     ]),
                 ],
             ])
@@ -39,20 +39,20 @@ class UserPasswordType extends AbstractType
                 'first_options' => [
                     'constraints' => [
                         new NotBlank([
-                            'message' => 'Veuillez saisir un mot de passe',
+                            'message' => 'passwordRequired',
                         ]),
                         new Length([
                             'min' => 6,
-                            'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
+                            'minMessage' => 'passwordMinLength',
                             'max' => 4096,
                         ]),
                     ],
-                    'label' => 'Nouveau mot de passe',
+                    'label' => 'newPassword',
                 ],
                 'second_options' => [
-                    'label' => 'Confirmer le nouveau mot de passe',
+                    'label' => 'confirmNewPassword',
                 ],
-                'invalid_message' => 'Les mots de passe doivent correspondre.',
+                'invalid_message' => 'passwordMatch',
                 'mapped' => false,
             ])
         ;

@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" target-language="fr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <!-- Flash Messages: Club -->
+      <trans-unit id="1" resname="clubCreated">
+        <source>clubCreated</source>
+        <target>Le club a été créé avec succès.</target>
+      </trans-unit>
+      <trans-unit id="2" resname="clubUpdated">
+        <source>clubUpdated</source>
+        <target>Le club a été mis à jour.</target>
+      </trans-unit>
+      <trans-unit id="3" resname="clubDisabled">
+        <source>clubDisabled</source>
+        <target>Le club a été désactivé.</target>
+      </trans-unit>
+      <trans-unit id="4" resname="clubEnabled">
+        <source>clubEnabled</source>
+        <target>Le club a été réactivé.</target>
+      </trans-unit>
+
+      <!-- Flash Messages: User -->
+      <trans-unit id="5" resname="userUpdated">
+        <source>userUpdated</source>
+        <target>L'utilisateur a été mis à jour.</target>
+      </trans-unit>
+      <trans-unit id="6" resname="cannotDisableSelf">
+        <source>cannotDisableSelf</source>
+        <target>Vous ne pouvez pas désactiver votre propre compte.</target>
+      </trans-unit>
+      <trans-unit id="7" resname="cannotDeleteSelf">
+        <source>cannotDeleteSelf</source>
+        <target>Vous ne pouvez pas supprimer votre propre compte.</target>
+      </trans-unit>
+      <trans-unit id="8" resname="userDeleted">
+        <source>userDeleted</source>
+        <target>L'utilisateur a été supprimé.</target>
+      </trans-unit>
+      <trans-unit id="9" resname="userEnabled">
+        <source>userEnabled</source>
+        <target>L'utilisateur a été activé.</target>
+      </trans-unit>
+      <trans-unit id="10" resname="userDisabled">
+        <source>userDisabled</source>
+        <target>L'utilisateur a été désactivé.</target>
+      </trans-unit>
+
+      <!-- Flash Messages: Equipment -->
+      <trans-unit id="11" resname="equipmentCreated">
+        <source>equipmentCreated</source>
+        <target>L'équipement a été créé avec succès.</target>
+      </trans-unit>
+      <trans-unit id="12" resname="equipmentUpdated">
+        <source>equipmentUpdated</source>
+        <target>L'équipement a été modifié avec succès.</target>
+      </trans-unit>
+      <trans-unit id="13" resname="equipmentDisabled">
+        <source>equipmentDisabled</source>
+        <target>L'équipement a été désactivé.</target>
+      </trans-unit>
+      <trans-unit id="14" resname="equipmentEnabled">
+        <source>equipmentEnabled</source>
+        <target>L'équipement a été réactivé.</target>
+      </trans-unit>
+
+      <!-- Flash Messages: Invitation -->
+      <trans-unit id="15" resname="invitationSent">
+        <source>invitationSent</source>
+        <target>L'invitation a été envoyée avec succès.</target>
+      </trans-unit>
+      <trans-unit id="16" resname="invitationResent">
+        <source>invitationResent</source>
+        <target>L'invitation a été renvoyée.</target>
+      </trans-unit>
+      <trans-unit id="17" resname="invitationCancelled">
+        <source>invitationCancelled</source>
+        <target>L'invitation a été annulée.</target>
+      </trans-unit>
+      <trans-unit id="18" resname="invitationInvalid">
+        <source>invitationInvalid</source>
+        <target>Cette invitation n'est pas valide ou a expiré.</target>
+      </trans-unit>
+      <trans-unit id="19" resname="invitationAccepted">
+        <source>invitationAccepted</source>
+        <target>Vous avez rejoint {clubName} !</target>
+      </trans-unit>
+      <trans-unit id="20" resname="invitationsAutoAccepted">
+        <source>invitationsAutoAccepted</source>
+        <target>Vos invitations ont été acceptées automatiquement.</target>
+      </trans-unit>
+      <trans-unit id="21" resname="accountCreated">
+        <source>accountCreated</source>
+        <target>Votre compte a été créé ! Veuillez vous connecter pour rejoindre {clubName}.</target>
+      </trans-unit>
+
+      <!-- Flash Messages: Member -->
+      <trans-unit id="22" resname="memberRemoved">
+        <source>memberRemoved</source>
+        <target>{memberName} a été retiré du club.</target>
+      </trans-unit>
+      <trans-unit id="23" resname="cannotLeaveLastManager">
+        <source>cannotLeaveLastManager</source>
+        <target>Vous ne pouvez pas vous retirer, vous êtes le dernier manager du club.</target>
+      </trans-unit>
+      <trans-unit id="24" resname="cannotRemoveLastManager">
+        <source>cannotRemoveLastManager</source>
+        <target>Vous ne pouvez pas retirer vos droits de manager, vous êtes le dernier manager du club.</target>
+      </trans-unit>
+      <trans-unit id="25" resname="rolesUpdated">
+        <source>rolesUpdated</source>
+        <target>Les rôles ont été mis à jour avec succès.</target>
+      </trans-unit>
+
+      <!-- Flash Messages: Profile -->
+      <trans-unit id="26" resname="profileUpdated">
+        <source>profileUpdated</source>
+        <target>Votre profil a été mis à jour.</target>
+      </trans-unit>
+      <trans-unit id="27" resname="passwordIncorrect">
+        <source>passwordIncorrect</source>
+        <target>Le mot de passe actuel est incorrect.</target>
+      </trans-unit>
+      <trans-unit id="28" resname="passwordChanged">
+        <source>passwordChanged</source>
+        <target>Votre mot de passe a été modifié.</target>
+      </trans-unit>
+
+      <!-- Flash Messages: Password Reset -->
+      <trans-unit id="29" resname="passwordResetSuccess">
+        <source>passwordResetSuccess</source>
+        <target>Votre mot de passe a été réinitialisé avec succès. Vous êtes maintenant connecté.</target>
+      </trans-unit>
+      <trans-unit id="30" resname="passwordResetEmailSent">
+        <source>passwordResetEmailSent</source>
+        <target>Si cette adresse e-mail existe dans notre base de données, vous recevrez un lien de réinitialisation.</target>
+      </trans-unit>
+      <trans-unit id="31" resname="passwordResetAlreadyRequested">
+        <source>passwordResetAlreadyRequested</source>
+        <target>Un e-mail de réinitialisation vous a déjà été envoyé. Veuillez vérifier votre boîte de réception ou réessayer dans quelques minutes.</target>
+      </trans-unit>
+
+      <!-- Form Labels: Club -->
+      <trans-unit id="40" resname="clubName">
+        <source>clubName</source>
+        <target>Nom du club</target>
+      </trans-unit>
+      <trans-unit id="41" resname="clubNamePlaceholder">
+        <source>clubNamePlaceholder</source>
+        <target>Ex: Les Planeurs de Bailleau</target>
+      </trans-unit>
+      <trans-unit id="42" resname="subdomain">
+        <source>subdomain</source>
+        <target>Sous-domaine</target>
+      </trans-unit>
+      <trans-unit id="43" resname="subdomainPlaceholder">
+        <source>subdomainPlaceholder</source>
+        <target>Ex: cvve</target>
+      </trans-unit>
+      <trans-unit id="44" resname="subdomainHelp">
+        <source>subdomainHelp</source>
+        <target>Ce sous-domaine sera utilisé pour accéder au club (ex: cvve)</target>
+      </trans-unit>
+      <trans-unit id="45" resname="active">
+        <source>active</source>
+        <target>Actif</target>
+      </trans-unit>
+      <trans-unit id="46" resname="activeHelp">
+        <source>activeHelp</source>
+        <target>Un club inactif ne sera pas accessible</target>
+      </trans-unit>
+
+      <!-- Form Labels: Equipment -->
+      <trans-unit id="50" resname="name">
+        <source>name</source>
+        <target>Nom</target>
+      </trans-unit>
+      <trans-unit id="51" resname="equipmentNamePlaceholder">
+        <source>equipmentNamePlaceholder</source>
+        <target>Ex: F-CGCD ou Remorqueur</target>
+      </trans-unit>
+      <trans-unit id="52" resname="type">
+        <source>type</source>
+        <target>Type</target>
+      </trans-unit>
+      <trans-unit id="53" resname="owner">
+        <source>owner</source>
+        <target>Propriété</target>
+      </trans-unit>
+      <trans-unit id="54" resname="owners">
+        <source>owners</source>
+        <target>Propriétaires</target>
+      </trans-unit>
+
+      <!-- Form Labels: User -->
+      <trans-unit id="60" resname="email">
+        <source>email</source>
+        <target>E-mail</target>
+      </trans-unit>
+      <trans-unit id="61" resname="emailPlaceholder">
+        <source>emailPlaceholder</source>
+        <target>exemple@domaine.fr</target>
+      </trans-unit>
+      <trans-unit id="62" resname="firstname">
+        <source>firstname</source>
+        <target>Prénom</target>
+      </trans-unit>
+      <trans-unit id="63" resname="firstnamePlaceholder">
+        <source>firstnamePlaceholder</source>
+        <target>Jean</target>
+      </trans-unit>
+      <trans-unit id="64" resname="lastname">
+        <source>lastname</source>
+        <target>Nom</target>
+      </trans-unit>
+      <trans-unit id="65" resname="lastnamePlaceholder">
+        <source>lastnamePlaceholder</source>
+        <target>Dupont</target>
+      </trans-unit>
+      <trans-unit id="66" resname="password">
+        <source>password</source>
+        <target>Mot de passe</target>
+      </trans-unit>
+      <trans-unit id="67" resname="currentPassword">
+        <source>currentPassword</source>
+        <target>Mot de passe actuel</target>
+      </trans-unit>
+      <trans-unit id="68" resname="newPassword">
+        <source>newPassword</source>
+        <target>Nouveau mot de passe</target>
+      </trans-unit>
+      <trans-unit id="69" resname="confirmPassword">
+        <source>confirmPassword</source>
+        <target>Confirmer le mot de passe</target>
+      </trans-unit>
+      <trans-unit id="70" resname="confirmNewPassword">
+        <source>confirmNewPassword</source>
+        <target>Confirmer le nouveau mot de passe</target>
+      </trans-unit>
+
+      <!-- Form Labels: Membership -->
+      <trans-unit id="80" resname="canManageClub">
+        <source>canManageClub</source>
+        <target>Peut gérer le club</target>
+      </trans-unit>
+      <trans-unit id="81" resname="canInspect">
+        <source>canInspect</source>
+        <target>Peut inspecter et valider les activités sensibles du club</target>
+      </trans-unit>
+      <trans-unit id="82" resname="canManageMembers">
+        <source>canManageMembers</source>
+        <target>Peut gérer les membres du club</target>
+      </trans-unit>
+
+      <!-- Filter Labels -->
+      <trans-unit id="90" resname="searchByName">
+        <source>searchByName</source>
+        <target>Rechercher par nom</target>
+      </trans-unit>
+      <trans-unit id="91" resname="searchBySubdomain">
+        <source>searchBySubdomain</source>
+        <target>Rechercher par sous-domaine</target>
+      </trans-unit>
+      <trans-unit id="92" resname="status">
+        <source>status</source>
+        <target>Statut</target>
+      </trans-unit>
+      <trans-unit id="93" resname="all">
+        <source>all</source>
+        <target>Tous</target>
+      </trans-unit>
+      <trans-unit id="94" resname="inactive">
+        <source>inactive</source>
+        <target>Inactif</target>
+      </trans-unit>
+      <trans-unit id="95" resname="equipmentName">
+        <source>equipmentName</source>
+        <target>Nom de l'équipement</target>
+      </trans-unit>
+      <trans-unit id="96" resname="search">
+        <source>search</source>
+        <target>Rechercher</target>
+      </trans-unit>
+      <trans-unit id="97" resname="allTypes">
+        <source>allTypes</source>
+        <target>Tous les types</target>
+      </trans-unit>
+      <trans-unit id="98" resname="allOwners">
+        <source>allOwners</source>
+        <target>Toutes les propriétés</target>
+      </trans-unit>
+      <trans-unit id="99" resname="searchMember">
+        <source>searchMember</source>
+        <target>Nom, prénom ou e-mail</target>
+      </trans-unit>
+      <trans-unit id="100" resname="allRoles">
+        <source>allRoles</source>
+        <target>Tous les rôles</target>
+      </trans-unit>
+      <trans-unit id="101" resname="role">
+        <source>role</source>
+        <target>Rôle</target>
+      </trans-unit>
+
+      <!-- Equipment Types -->
+      <trans-unit id="110" resname="glider">
+        <source>glider</source>
+        <target>Planeur</target>
+      </trans-unit>
+      <trans-unit id="111" resname="infrastructure">
+        <source>infrastructure</source>
+        <target>Infrastructure</target>
+      </trans-unit>
+
+      <!-- Equipment Owners -->
+      <trans-unit id="120" resname="club">
+        <source>club</source>
+        <target>Club</target>
+      </trans-unit>
+      <trans-unit id="121" resname="private">
+        <source>private</source>
+        <target>Privé</target>
+      </trans-unit>
+
+      <!-- Roles -->
+      <trans-unit id="130" resname="manager">
+        <source>manager</source>
+        <target>Manager</target>
+      </trans-unit>
+      <trans-unit id="131" resname="inspector">
+        <source>inspector</source>
+        <target>Inspecteur</target>
+      </trans-unit>
+      <trans-unit id="132" resname="member">
+        <source>member</source>
+        <target>Membre</target>
+      </trans-unit>
+
+      <!-- Navigation -->
+      <trans-unit id="140" resname="myProfile">
+        <source>myProfile</source>
+        <target>Mon profil</target>
+      </trans-unit>
+      <trans-unit id="141" resname="administration">
+        <source>administration</source>
+        <target>Administration</target>
+      </trans-unit>
+      <trans-unit id="142" resname="logout">
+        <source>logout</source>
+        <target>Déconnexion</target>
+      </trans-unit>
+
+      <!-- Breadcrumbs -->
+      <trans-unit id="150" resname="home">
+        <source>home</source>
+        <target>Accueil</target>
+      </trans-unit>
+      <trans-unit id="151" resname="clubs">
+        <source>clubs</source>
+        <target>Clubs</target>
+      </trans-unit>
+      <trans-unit id="152" resname="users">
+        <source>users</source>
+        <target>Utilisateurs</target>
+      </trans-unit>
+      <trans-unit id="153" resname="equipments">
+        <source>equipments</source>
+        <target>Équipements</target>
+      </trans-unit>
+      <trans-unit id="154" resname="members">
+        <source>members</source>
+        <target>Membres</target>
+      </trans-unit>
+      <trans-unit id="155" resname="invitations">
+        <source>invitations</source>
+        <target>Invitations</target>
+      </trans-unit>
+      <trans-unit id="156" resname="add">
+        <source>add</source>
+        <target>Ajouter</target>
+      </trans-unit>
+      <trans-unit id="157" resname="edit">
+        <source>edit</source>
+        <target>Modifier</target>
+      </trans-unit>
+      <trans-unit id="158" resname="invite">
+        <source>invite</source>
+        <target>Inviter</target>
+      </trans-unit>
+      <trans-unit id="159" resname="equipment">
+        <source>equipment</source>
+        <target>Équipements</target>
+      </trans-unit>
+
+      <!-- Buttons -->
+      <trans-unit id="160" resname="close">
+        <source>close</source>
+        <target>Fermer</target>
+      </trans-unit>
+      <trans-unit id="161" resname="save">
+        <source>save</source>
+        <target>Enregistrer</target>
+      </trans-unit>
+      <trans-unit id="162" resname="cancel">
+        <source>cancel</source>
+        <target>Annuler</target>
+      </trans-unit>
+      <trans-unit id="163" resname="addEquipment">
+        <source>addEquipment</source>
+        <target>Ajouter un équipement</target>
+      </trans-unit>
+      <trans-unit id="164" resname="noEquipmentFound">
+        <source>noEquipmentFound</source>
+        <target>Aucun équipement trouvé</target>
+      </trans-unit>
+      <trans-unit id="165" resname="disable">
+        <source>disable</source>
+        <target>Désactiver</target>
+      </trans-unit>
+      <trans-unit id="166" resname="reactivate">
+        <source>reactivate</source>
+        <target>Réactiver</target>
+      </trans-unit>
+      <trans-unit id="167" resname="createdAt">
+        <source>createdAt</source>
+        <target>Date de création</target>
+      </trans-unit>
+      <trans-unit id="168" resname="createdBy">
+        <source>createdBy</source>
+        <target>Créé par</target>
+      </trans-unit>
+      <trans-unit id="169" resname="confirmDisableEquipment">
+        <source>confirmDisableEquipment</source>
+        <target>Voulez-vous vraiment désactiver cet équipement ?</target>
+      </trans-unit>
+
+      <!-- Form Help Text -->
+      <trans-unit id="170" resname="managerHelp">
+        <source>managerHelp</source>
+        <target>Peut gérer le club et ses membres</target>
+      </trans-unit>
+      <trans-unit id="171" resname="inspectorHelp">
+        <source>inspectorHelp</source>
+        <target>Peut inspecter et valider les activités sensibles</target>
+      </trans-unit>
+
+      <!-- Validation Messages -->
+      <trans-unit id="200" resname="subdomainUnique">
+        <source>subdomainUnique</source>
+        <target>Un club existe déjà avec ce sous-domaine</target>
+      </trans-unit>
+      <trans-unit id="201" resname="nameRequired">
+        <source>nameRequired</source>
+        <target>Le nom est obligatoire</target>
+      </trans-unit>
+      <trans-unit id="202" resname="typeRequired">
+        <source>typeRequired</source>
+        <target>Le type est obligatoire</target>
+      </trans-unit>
+      <trans-unit id="203" resname="ownerRequired">
+        <source>ownerRequired</source>
+        <target>Le type de propriété est obligatoire</target>
+      </trans-unit>
+      <trans-unit id="204" resname="emailUnique">
+        <source>emailUnique</source>
+        <target>Un compte existe déjà avec cet e-mail</target>
+      </trans-unit>
+      <trans-unit id="205" resname="emailRequired">
+        <source>emailRequired</source>
+        <target>Veuillez saisir votre e-mail</target>
+      </trans-unit>
+      <trans-unit id="206" resname="passwordRequired">
+        <source>passwordRequired</source>
+        <target>Veuillez saisir un mot de passe</target>
+      </trans-unit>
+      <trans-unit id="207" resname="passwordMinLength">
+        <source>passwordMinLength</source>
+        <target>Votre mot de passe doit contenir au moins {limit} caractères</target>
+      </trans-unit>
+      <trans-unit id="208" resname="passwordMatch">
+        <source>passwordMatch</source>
+        <target>Les mots de passe doivent correspondre.</target>
+      </trans-unit>
+      <trans-unit id="209" resname="firstnameRequired">
+        <source>firstnameRequired</source>
+        <target>Veuillez saisir votre prénom</target>
+      </trans-unit>
+      <trans-unit id="210" resname="firstnameMinLength">
+        <source>firstnameMinLength</source>
+        <target>Votre prénom doit contenir au moins {limit} caractères</target>
+      </trans-unit>
+      <trans-unit id="211" resname="lastnameRequired">
+        <source>lastnameRequired</source>
+        <target>Veuillez saisir votre nom</target>
+      </trans-unit>
+      <trans-unit id="212" resname="lastnameMinLength">
+        <source>lastnameMinLength</source>
+        <target>Votre nom doit contenir au moins {limit} caractères</target>
+      </trans-unit>
+      <trans-unit id="213" resname="currentPasswordRequired">
+        <source>currentPasswordRequired</source>
+        <target>Veuillez saisir votre mot de passe actuel</target>
+      </trans-unit>
+      <trans-unit id="214" resname="firstnameMaxLength">
+        <source>firstnameMaxLength</source>
+        <target>Votre prénom ne peut pas dépasser {limit} caractères</target>
+      </trans-unit>
+      <trans-unit id="215" resname="lastnameMaxLength">
+        <source>lastnameMaxLength</source>
+        <target>Votre nom ne peut pas dépasser {limit} caractères</target>
+      </trans-unit>
+      <trans-unit id="216" resname="searchByNameOrEmail">
+        <source>searchByNameOrEmail</source>
+        <target>Rechercher par nom ou e-mail</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
+

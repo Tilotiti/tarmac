@@ -10,16 +10,16 @@ enum EquipmentType: string
     public function getLabel(): string
     {
         return match ($this) {
-            self::GLIDER => 'Planeur',
-            self::FACILITY => 'Infrastructure',
+            self::GLIDER => 'glider',
+            self::FACILITY => 'infrastructure',
         };
     }
 
     public static function getChoices(): array
     {
         return [
-            'Planeur' => self::GLIDER->value,
-            'Infrastructure' => self::FACILITY->value,
+            'glider' => self::GLIDER->value,
+            'infrastructure' => self::FACILITY->value,
         ];
     }
 }

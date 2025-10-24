@@ -5,17 +5,18 @@ namespace App\Controller\Club;
 use App\Entity\Club;
 use App\Entity\Equipment;
 use App\Form\EquipmentType;
-use App\Form\Filter\EquipmentFilterType;
-use App\Repository\EquipmentRepository;
 use App\Repository\Paginator;
-use App\Controller\ExtendedController;
 use App\Service\ClubResolver;
+use App\Entity\EquipmentOwner;
 use App\Service\SubdomainService;
+use App\Controller\ExtendedController;
+use App\Repository\EquipmentRepository;
+use App\Form\Filter\EquipmentFilterType;
 use Doctrine\ORM\EntityManagerInterface;
-use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/equipments', host: '{subdomain}.%domain%', requirements: ['subdomain' => '(?!www|app).*'])]
@@ -36,36 +37,68 @@ class EquipmentController extends ExtendedController
     {
         $club = $this->clubResolver->resolve();
 
-        // Handle filters
-        $filterForm = $this->createForm(EquipmentFilterType::class);
+        // Handle filters - default to club equipment
+        $filterForm = $this->createFilter(EquipmentFilterType::class, [
+            'owner' => EquipmentOwner::CLUB->value
+        ]);
         $filterForm->handleRequest($request);
 
-        $filters = [];
-        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
-            $filters = $filterForm->getData();
-            $filters = array_filter($filters, fn($value) => $value !== null && $value !== '');
+        $filters = $this->getFilterData($filterForm);
+
+        // Force club context
+        $filters['club'] = $club;
+
+        // Members can only see active equipments, managers can see all
+        if (!$this->isGranted('MANAGE')) {
+            $filters['active'] = true;
         }
 
         // Get equipments with pagination
-        // Members can only see active equipments, managers can see all
-        if ($this->isGranted('MANAGE')) {
-            $equipments = Paginator::paginate(
-                $this->equipmentRepository->queryByClubAndFilters($club, $filters),
-                $request->query->getInt('page', 1),
-                20
-            );
-        } else {
-            $equipments = Paginator::paginate(
-                $this->equipmentRepository->queryActiveByClubAndFilters($club, $filters),
-                $request->query->getInt('page', 1),
-                20
-            );
-        }
+        $equipments = Paginator::paginate(
+            $this->equipmentRepository->queryByFilters($filters),
+            $request->query->getInt('page', 1),
+            20
+        );
 
         return $this->render('club/equipment/index.html.twig', [
             'club' => $club,
             'equipments' => $equipments,
             'filterForm' => $filterForm,
+        ]);
+    }
+
+    #[Route('/new', name: 'club_equipment_new')]
+    #[IsGranted('MANAGE')]
+    #[Breadcrumb([
+        ['label' => 'home', 'route' => 'club_dashboard'],
+        ['label' => 'Équipements', 'route' => 'club_equipments'],
+        ['label' => 'Ajouter'],
+    ])]
+    public function new(Request $request): Response
+    {
+        $club = $this->clubResolver->resolve();
+
+        $equipment = new Equipment();
+        $equipment->setClub($club);
+
+        $form = $this->createForm(EquipmentType::class, $equipment, [
+            'club' => $club,
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $equipment->setCreatedBy($this->getUser());
+            $this->entityManager->persist($equipment);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'equipmentCreated');
+
+            return $this->redirectToRoute('club_equipments');
+        }
+
+        return $this->render('club/equipment/new.html.twig', [
+            'club' => $club,
+            'form' => $form,
         ]);
     }
 
@@ -90,39 +123,6 @@ class EquipmentController extends ExtendedController
         ]);
     }
 
-    #[Route('/new', name: 'club_equipment_new')]
-    #[IsGranted('MANAGE')]
-    #[Breadcrumb([
-        ['label' => 'home', 'route' => 'club_dashboard'],
-        ['label' => 'Équipements', 'route' => 'club_equipments'],
-        ['label' => 'Ajouter'],
-    ])]
-    public function new(Request $request): Response
-    {
-        $club = $this->clubResolver->resolve();
-
-        $equipment = new Equipment();
-        $equipment->setClub($club);
-
-        $form = $this->createForm(EquipmentType::class, $equipment);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $equipment->setCreatedBy($this->getUser());
-            $this->entityManager->persist($equipment);
-            $this->entityManager->flush();
-
-            $this->addFlash('success', 'L\'équipement a été créé avec succès.');
-
-            return $this->redirectToRoute('club_equipments');
-        }
-
-        return $this->render('club/equipment/new.html.twig', [
-            'club' => $club,
-            'form' => $form,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'club_equipment_edit')]
     #[IsGranted('MANAGE')]
     #[Breadcrumb([
@@ -140,13 +140,15 @@ class EquipmentController extends ExtendedController
             throw $this->createNotFoundException();
         }
 
-        $form = $this->createForm(EquipmentType::class, $equipment);
+        $form = $this->createForm(EquipmentType::class, $equipment, [
+            'club' => $club,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'L\'équipement a été modifié avec succès.');
+            $this->addFlash('success', 'equipmentUpdated');
 
             return $this->redirectToRoute('club_equipments');
         }
@@ -172,7 +174,7 @@ class EquipmentController extends ExtendedController
         $equipment->setActive(false);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'L\'équipement a été désactivé.');
+        $this->addFlash('success', 'equipmentDisabled');
 
         return $this->redirectToRoute('club_equipments');
     }
@@ -191,7 +193,7 @@ class EquipmentController extends ExtendedController
         $equipment->setActive(true);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'L\'équipement a été réactivé.');
+        $this->addFlash('success', 'equipmentEnabled');
 
         return $this->redirectToRoute('club_equipments');
     }

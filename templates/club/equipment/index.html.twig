@@ -2,15 +2,16 @@
 
 {% form_theme filterForm 'component/filters.html.twig' %}
 
-{% block page_title %}Équipements
+{% block page_title %}
+	{{ 'equipment'|trans }}
 {% endblock %}
 
 {% block page_actions %}
 	{% if is_granted('MANAGE', club) %}
 		<a href="{{ path('club_equipment_new') }}" class="btn btn-primary" style="min-height: 44px;">
 			<i class="ti ti-plus me-2"></i>
-			<span class="d-none d-sm-inline">Ajouter un équipement</span>
-			<span class="d-inline d-sm-none">Ajouter</span>
+			<span class="d-none d-sm-inline">{{ 'addEquipment'|trans }}</span>
+			<span class="d-inline d-sm-none">{{ 'add'|trans }}</span>
 		</a>
 	{% endif %}
 {% endblock %}
@@ -23,7 +24,23 @@
 		{% for equipment in equipments %}
 			<div class="col-12 col-md-6 col-lg-4 mb-3">
 				<a href="{{ path('club_equipment_show', {id: equipment.id}) }}" class="text-decoration-none">
-					<div class="card h-100 card-link {% if not equipment.active %}opacity-75{% endif %}" style="cursor: pointer;">
+					<div
+						class="card h-100 card-link {% if not equipment.active %}opacity-75{% endif %}" style="cursor: pointer; position: relative;">
+						{# Owner badge - top right corner #}
+						<div class="equipment-owner-badge">
+							{% if equipment.isPrivate %}
+								<span class="badge bg-orange-lt" title="{{ 'private'|trans }}">
+									<i class="ti ti-user" style="font-size: 0.75rem;"></i>
+									<span class="d-none d-sm-inline ms-1">{{ 'private'|trans }}</span>
+								</span>
+							{% else %}
+								<span class="badge bg-blue-lt" title="{{ 'club'|trans }}">
+									<i class="ti ti-building" style="font-size: 0.75rem;"></i>
+									<span class="d-none d-sm-inline ms-1">{{ 'club'|trans }}</span>
+								</span>
+							{% endif %}
+						</div>
+
 						<div class="card-body">
 							<div
 								class="d-flex align-items-center">
@@ -39,7 +56,7 @@
 									</h3>
 									{# Subtitle: Equipment type label #}
 									<div class="text-secondary">
-										{{ equipment.type.label }}
+										{{ equipment.type.label|trans }}
 									</div>
 								</div>
 							</div>
@@ -53,12 +70,12 @@
 					<div class="card-body text-center text-secondary">
 						<i class="ti ti-package-off" style="font-size: 3rem; opacity: 0.5;"></i>
 						<p class="mt-3 mb-0">
-							<em>Aucun équipement trouvé</em>
+							<em>{{ 'noEquipmentFound'|trans }}</em>
 						</p>
 						{% if is_granted('MANAGE', club) %}
 							<a href="{{ path('club_equipment_new') }}" class="btn btn-primary mt-3" style="min-height: 44px;">
 								<i class="ti ti-plus me-2"></i>
-								Ajouter un équipement
+								{{ 'addEquipment'|trans }}
 							</a>
 						{% endif %}
 					</div>

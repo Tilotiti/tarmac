@@ -76,7 +76,7 @@ class UserController extends ExtendedController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'L\'utilisateur a été mis à jour.');
+            $this->addFlash('success', 'userUpdated');
 
             return $this->redirectToRoute('admin_user_show', ['id' => $user->getId()]);
         }
@@ -92,7 +92,7 @@ class UserController extends ExtendedController
     {
         // Prevent self-disabling
         if ($user === $this->getUser()) {
-            $this->addFlash('danger', 'Vous ne pouvez pas désactiver votre propre compte.');
+            $this->addFlash('danger', 'cannotDisableSelf');
             return $this->redirectToRoute('admin_user_show', ['id' => $user->getId()]);
         }
 
@@ -100,8 +100,8 @@ class UserController extends ExtendedController
         $this->entityManager->flush();
 
         $message = $user->isActive()
-            ? 'L\'utilisateur a été activé.'
-            : 'L\'utilisateur a été désactivé.';
+            ? 'userEnabled'
+            : 'userDisabled';
 
         $this->addFlash('success', $message);
 
@@ -113,14 +113,14 @@ class UserController extends ExtendedController
     {
         // Prevent self-deletion
         if ($user === $this->getUser()) {
-            $this->addFlash('danger', 'Vous ne pouvez pas supprimer votre propre compte.');
+            $this->addFlash('danger', 'cannotDeleteSelf');
             return $this->redirectToRoute('admin_user_index');
         }
 
         $this->entityManager->remove($user);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'L\'utilisateur a été supprimé.');
+        $this->addFlash('success', 'userDeleted');
 
         return $this->redirectToRoute('admin_user_index');
     }

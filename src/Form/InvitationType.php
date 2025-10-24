@@ -16,34 +16,34 @@ class InvitationType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'label' => 'E-mail',
+                'label' => 'email',
                 'attr' => [
-                    'placeholder' => 'exemple@domaine.fr',
+                    'placeholder' => 'emailPlaceholder',
                 ],
             ])
             ->add('firstname', TextType::class, [
-                'label' => 'Prénom',
+                'label' => 'firstname',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Jean',
+                    'placeholder' => 'firstnamePlaceholder',
                 ],
             ])
             ->add('lastname', TextType::class, [
-                'label' => 'Nom',
+                'label' => 'lastname',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Dupont',
+                    'placeholder' => 'lastnamePlaceholder',
                 ],
             ])
             ->add('isManager', CheckboxType::class, [
-                'label' => 'Manager',
+                'label' => 'manager',
                 'required' => false,
-                'help' => 'Peut gérer les membres du club',
+                'help' => 'managerHelp',
             ])
             ->add('isInspector', CheckboxType::class, [
-                'label' => 'Inspecteur',
+                'label' => 'inspector',
                 'required' => false,
-                'help' => 'Peut inspecter et valider les activités sensibles du club',
+                'help' => 'inspectorHelp',
             ])
         ;
     }

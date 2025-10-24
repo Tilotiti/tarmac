@@ -1,0 +1,68 @@
+---
+description: Translation workflow (global)
+globs: ["*", "**/*"]
+priority: 150
+alwaysApply: true
+---
+
+## Workflow
+
+1) Use camelCase keys in code/Twig: `{{ 'yourTranslationKey'|trans }}`
+2) After any change that affects translations, run:
+
+```bash
+symfony console translation:extract --force --format=xlf fr
+```
+
+3) Update FR catalog: `translations/messages+intl-icu.fr.xlf`
+
+### Mandatory translation workflow (FR only)
+
+1. Run extraction after any template/text changes:
+
+```bash
+symfony console translation:extract --force --format=xlf fr
+```
+
+2. Open the catalog and translate new/changed keys immediately:
+- `translations/messages+intl-icu.fr.xlf`
+
+3. Do not leave placeholder targets (like `__key`). Ensure proper French translations. Reuse existing keys where meaning matches.
+
+4. If new UI text is added in code/Twig, prefer using translation keys in lowerCamelCase and ICU format. Never hard-code user-facing strings.
+
+5. After translating, clear cache and verify the UI renders the correct strings.
+
+## Conventions
+
+- Never translate the site name "Tarmac"
+- Use ICU format for variables/plurals: `{variable}` or `{count, plural, one {# item} other {# items}}`
+- Avoid duplicate keys; reuse when meaning matches
+- Keep keys simple and descriptive (e.g., `clubCreated`, `equipmentList`, `addMember`)
+
+## Example
+
+```twig
+{{ 'welcomeUser'|trans({'{name}': user.name}) }}
+{{ 'itemsCount'|trans({'{count}': items|length}) }}
+```
+
+## Glossary (must respect)
+
+- Club → FR: Club
+- Equipment → FR: Équipement
+- Glider → FR: Planeur
+- Member → FR: Membre
+- Manager → FR: Manager
+- Inspector → FR: Inspecteur
+
+## Handling dynamic translation keys
+
+When a translation key is dynamically created via Twig concatenation (e.g.,
+`{{ (equipment.type.value ~ 'Type')|trans }}`), Symfony's extractor cannot detect it. 
+In these cases, you MUST manually add the generated keys to the catalog right away.
+
+Process:
+1) Run extraction `symfony console translation:extract --force --format=xlf fr`.
+2) Manually add any missing concatenated keys to the XLF catalog.
+3) Do not leave placeholders. Keep casing and glossary consistent.

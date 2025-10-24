@@ -27,20 +27,20 @@ class ChangePasswordFormType extends AbstractType
                 'first_options' => [
                     'constraints' => [
                         new NotBlank([
-                            'message' => 'Veuillez saisir un mot de passe',
+                            'message' => 'passwordRequired',
                         ]),
                         new Length([
                             'min' => 6,
-                            'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
+                            'minMessage' => 'passwordMinLength',
                             'max' => 4096,
                         ]),
                     ],
-                    'label' => 'Nouveau mot de passe',
+                    'label' => 'newPassword',
                 ],
                 'second_options' => [
-                    'label' => 'Confirmer le mot de passe',
+                    'label' => 'confirmPassword',
                 ],
-                'invalid_message' => 'Les mots de passe doivent correspondre.',
+                'invalid_message' => 'passwordMatch',
                 'mapped' => false,
             ])
         ;

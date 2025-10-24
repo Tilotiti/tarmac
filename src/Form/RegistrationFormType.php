@@ -17,19 +17,19 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('firstname', TextType::class, [
-                'label' => 'Prénom',
+                'label' => 'firstname',
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
-                    'placeholder' => 'Jean',
+                    'placeholder' => 'firstnamePlaceholder',
                 ],
             ])
             ->add('lastname', TextType::class, [
-                'label' => 'Nom',
+                'label' => 'lastname',
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
-                    'placeholder' => 'Dupont',
+                    'placeholder' => 'lastnamePlaceholder',
                 ],
             ])
             ->add('plainPassword', RepeatedType::class, [
@@ -42,20 +42,20 @@ class RegistrationFormType extends AbstractType
                 'first_options' => [
                     'constraints' => [
                         new NotBlank([
-                            'message' => 'Veuillez saisir un mot de passe',
+                            'message' => 'passwordRequired',
                         ]),
                         new Length([
                             'min' => 6,
-                            'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
+                            'minMessage' => 'passwordMinLength',
                             'max' => 4096,
                         ]),
                     ],
-                    'label' => 'Mot de passe',
+                    'label' => 'password',
                 ],
                 'second_options' => [
-                    'label' => 'Confirmer le mot de passe',
+                    'label' => 'confirmPassword',
                 ],
-                'invalid_message' => 'Les mots de passe doivent correspondre.',
+                'invalid_message' => 'passwordMatch',
                 'mapped' => false,
             ])
         ;

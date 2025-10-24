@@ -53,7 +53,7 @@ class SecurityController extends AbstractController
             $acceptedClubs = $this->invitationService->autoAcceptInvitationsForUser($user);
 
             if (!empty($acceptedClubs)) {
-                $this->addFlash('success', 'Vos invitations ont été acceptées automatiquement.');
+                $this->addFlash('success', 'invitationsAutoAccepted');
                 // Redirect to the first club
                 $clubUrl = $this->subdomainService->generateClubUrl($acceptedClubs[0]->getSubdomain());
                 return new RedirectResponse($clubUrl);
@@ -102,7 +102,7 @@ class SecurityController extends AbstractController
         $invitation = $this->invitationRepository->findValidByToken($token);
 
         if (!$invitation) {
-            $this->addFlash('danger', 'Cette invitation n\'est pas valide ou a expiré.');
+            $this->addFlash('danger', 'invitationInvalid');
             return $this->redirectToRoute('public_login');
         }
 
@@ -110,7 +110,7 @@ class SecurityController extends AbstractController
         if ($this->getUser() instanceof User) {
             try {
                 $this->invitationService->acceptInvitation($this->getUser(), $invitation);
-                $this->addFlash('success', 'Vous avez rejoint ' . $invitation->getClub()->getName() . ' !');
+                $this->addFlash('success', 'invitationAccepted', ['clubName' => $invitation->getClub()->getName()]);
 
                 // Redirect to club dashboard
                 $clubUrl = $this->subdomainService->generateClubUrl($invitation->getClub()->getSubdomain());
@@ -140,7 +140,7 @@ class SecurityController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Votre compte a été créé ! Veuillez vous connecter pour rejoindre ' . $invitation->getClub()->getName() . '.');
+            $this->addFlash('success', 'accountCreated', ['clubName' => $invitation->getClub()->getName()]);
 
             // Redirect to login page with invitation token to auto-accept after login
             return $this->redirectToRoute('public_login', ['invitation' => $token]);
@@ -230,7 +230,7 @@ class SecurityController extends AbstractController
             // The session is cleaned up after the password has been changed.
             $this->cleanSessionAfterReset();
 
-            $this->addFlash('success', 'Votre mot de passe a été réinitialisé avec succès. Vous êtes maintenant connecté.');
+            $this->addFlash('success', 'passwordResetSuccess');
 
             // Auto-login the user and redirect to app dashboard
             return $userAuthenticator->authenticateUser(
@@ -252,7 +252,7 @@ class SecurityController extends AbstractController
         ]);
 
         // Always show the same message to prevent email enumeration attacks
-        $this->addFlash('success', 'Si cette adresse e-mail existe dans notre base de données, vous recevrez un lien de réinitialisation.');
+        $this->addFlash('success', 'passwordResetEmailSent');
 
         // Do not reveal whether a user account was found or not.
         if (!$user) {
@@ -265,7 +265,7 @@ class SecurityController extends AbstractController
             // If there's already an active request, inform the user to check their email
             // This is safe to show as the generic message was already added above
             if (str_contains($e->getReason(), 'already requested')) {
-                $this->addFlash('info', 'Un e-mail de réinitialisation vous a déjà été envoyé. Veuillez vérifier votre boîte de réception ou réessayer dans quelques minutes.');
+                $this->addFlash('info', 'passwordResetAlreadyRequested');
             }
             return $this->redirectToRoute('public_login');
         }

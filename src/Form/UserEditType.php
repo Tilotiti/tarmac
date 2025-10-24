@@ -15,23 +15,23 @@ class UserEditType extends AbstractType
     {
         $builder
             ->add('firstname', TextType::class, [
-                'label' => 'Prénom',
+                'label' => 'firstname',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Jean',
+                    'placeholder' => 'firstnamePlaceholder',
                 ],
             ])
             ->add('lastname', TextType::class, [
-                'label' => 'Nom',
+                'label' => 'lastname',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Dupont',
+                    'placeholder' => 'lastnamePlaceholder',
                 ],
             ])
             ->add('email', EmailType::class, [
-                'label' => 'E-mail',
+                'label' => 'email',
                 'attr' => [
-                    'placeholder' => 'exemple@domaine.fr',
+                    'placeholder' => 'emailPlaceholder',
                 ],
             ])
         ;

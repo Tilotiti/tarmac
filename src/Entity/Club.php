@@ -12,7 +12,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: ClubRepository::class)]
 #[ORM\Table(name: 'club')]
 #[ORM\UniqueConstraint(name: 'UNIQ_CLUB_SUBDOMAIN', fields: ['subdomain'])]
-#[UniqueEntity(fields: ['subdomain'], message: 'Un club existe déjà avec ce sous-domaine')]
+#[UniqueEntity(fields: ['subdomain'], message: 'subdomainUnique')]
 class Club
 {
     #[ORM\Id]

@@ -117,7 +117,7 @@ class MemberController extends ExtendedController
             // Send invitation email
             $this->invitationService->sendInvitation($invitation);
 
-            $this->addFlash('success', 'L\'invitation a été envoyée avec succès.');
+            $this->addFlash('success', 'invitationSent');
 
             return $this->redirectToRoute('club_members');
         }
@@ -148,7 +148,7 @@ class MemberController extends ExtendedController
                 ->getSingleScalarResult();
 
             if ($managerCount <= 1) {
-                $this->addFlash('danger', 'Vous ne pouvez pas vous retirer, vous êtes le dernier manager du club.');
+                $this->addFlash('danger', 'cannotLeaveLastManager');
                 return $this->redirectToRoute('club_members');
             }
         }
@@ -157,7 +157,7 @@ class MemberController extends ExtendedController
         $this->entityManager->remove($membership);
         $this->entityManager->flush();
 
-        $this->addFlash('success', sprintf('%s a été retiré du club.', $userName));
+        $this->addFlash('success', 'memberRemoved', ['memberName' => $userName]);
 
         return $this->redirectToRoute('club_members');
     }
@@ -175,7 +175,7 @@ class MemberController extends ExtendedController
 
         $this->invitationService->resendInvitation($invitation);
 
-        $this->addFlash('success', 'L\'invitation a été renvoyée.');
+        $this->addFlash('success', 'invitationResent');
 
         return $this->redirectToRoute('club_invitations');
     }
@@ -193,7 +193,7 @@ class MemberController extends ExtendedController
 
         $this->invitationService->cancelInvitation($invitation);
 
-        $this->addFlash('success', 'L\'invitation a été annulée.');
+        $this->addFlash('success', 'invitationCancelled');
 
         return $this->redirectToRoute('club_invitations');
     }
@@ -232,14 +232,14 @@ class MemberController extends ExtendedController
                     ->getSingleScalarResult();
 
                 if ($managerCount <= 1) {
-                    $this->addFlash('danger', 'Vous ne pouvez pas retirer vos droits de manager, vous êtes le dernier manager du club.');
+                    $this->addFlash('danger', 'cannotRemoveLastManager');
                     return $this->redirectToRoute('club_member_show', ['id' => $membership->getId()]);
                 }
             }
 
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Les rôles ont été mis à jour avec succès.');
+            $this->addFlash('success', 'rolesUpdated');
 
             return $this->redirectToRoute('club_member_show', ['id' => $membership->getId()]);
         } elseif ($form && $form->isSubmitted()) {

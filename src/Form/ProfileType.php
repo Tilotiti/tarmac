@@ -16,38 +16,38 @@ class ProfileType extends AbstractType
     {
         $builder
             ->add('firstname', TextType::class, [
-                'label' => 'Prénom',
+                'label' => 'firstname',
                 'attr' => [
-                    'placeholder' => 'Jean',
+                    'placeholder' => 'firstnamePlaceholder',
                     'class' => 'form-control',
                 ],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Veuillez saisir votre prénom',
+                        'message' => 'firstnameRequired',
                     ]),
                     new Length([
                         'min' => 2,
                         'max' => 50,
-                        'minMessage' => 'Votre prénom doit contenir au moins {{ limit }} caractères',
-                        'maxMessage' => 'Votre prénom ne peut pas dépasser {{ limit }} caractères',
+                        'minMessage' => 'firstnameMinLength',
+                        'maxMessage' => 'firstnameMaxLength',
                     ]),
                 ],
             ])
             ->add('lastname', TextType::class, [
-                'label' => 'Nom',
+                'label' => 'lastname',
                 'attr' => [
-                    'placeholder' => 'Dupont',
+                    'placeholder' => 'lastnamePlaceholder',
                     'class' => 'form-control',
                 ],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Veuillez saisir votre nom',
+                        'message' => 'lastnameRequired',
                     ]),
                     new Length([
                         'min' => 2,
                         'max' => 50,
-                        'minMessage' => 'Votre nom doit contenir au moins {{ limit }} caractères',
-                        'maxMessage' => 'Votre nom ne peut pas dépasser {{ limit }} caractères',
+                        'minMessage' => 'lastnameMinLength',
+                        'maxMessage' => 'lastnameMaxLength',
                     ]),
                 ],
             ])

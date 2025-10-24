@@ -71,7 +71,7 @@ class ClubController extends ExtendedController
             $this->entityManager->persist($club);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Le club a été créé avec succès.');
+            $this->addFlash('success', 'clubCreated');
 
             return $this->redirectToRoute('admin_club_index');
         }
@@ -111,7 +111,7 @@ class ClubController extends ExtendedController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Le club a été mis à jour.');
+            $this->addFlash('success', 'clubUpdated');
 
             return $this->redirectToRoute('admin_club_index');
         }
@@ -128,7 +128,7 @@ class ClubController extends ExtendedController
         $club->setActive(false);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'Le club a été désactivé.');
+        $this->addFlash('success', 'clubDisabled');
 
         return $this->redirectToRoute('admin_club_index');
     }
@@ -139,7 +139,7 @@ class ClubController extends ExtendedController
         $club->setActive(true);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'Le club a été réactivé.');
+        $this->addFlash('success', 'clubEnabled');
 
         return $this->redirectToRoute('admin_club_show', ['id' => $club->getId()]);
     }

@@ -39,7 +39,7 @@ class ProfileController extends AbstractController
         // Handle profile form submission
         if ($profileForm->isSubmitted() && $profileForm->isValid()) {
             $this->entityManager->flush();
-            $this->addFlash('success', 'Votre profil a été mis à jour.');
+            $this->addFlash('success', 'profileUpdated');
             return $this->redirectToRoute('public_profile_edit');
         }
 
@@ -48,7 +48,7 @@ class ProfileController extends AbstractController
             // Verify old password
             $oldPassword = $passwordForm->get('oldPassword')->getData();
             if (!$passwordHasher->isPasswordValid($user, $oldPassword)) {
-                $this->addFlash('danger', 'Le mot de passe actuel est incorrect.');
+                $this->addFlash('danger', 'passwordIncorrect');
                 return $this->redirectToRoute('public_profile_edit');
             }
 
@@ -57,7 +57,7 @@ class ProfileController extends AbstractController
             $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
 
             $this->entityManager->flush();
-            $this->addFlash('success', 'Votre mot de passe a été modifié.');
+            $this->addFlash('success', 'passwordChanged');
             return $this->redirectToRoute('public_profile_edit');
         }
 

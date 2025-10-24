@@ -14,20 +14,20 @@ class MemberFilterType extends AbstractType
     {
         $builder
             ->add('search', TextType::class, [
-                'label' => 'Rechercher',
+                'label' => 'search',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Nom, prénom ou email',
+                    'placeholder' => 'searchByNameOrEmail',
                 ],
             ])
             ->add('role', ChoiceType::class, [
-                'label' => 'Rôle',
+                'label' => 'role',
                 'required' => false,
-                'placeholder' => 'Tous les rôles',
+                'placeholder' => 'allRoles',
                 'choices' => [
-                    'Manager' => 'manager',
-                    'Inspecteur' => 'inspector',
-                    'Membre' => 'member',
+                    'manager' => 'manager',
+                    'inspector' => 'inspector',
+                    'member' => 'member',
                 ],
             ])
         ;

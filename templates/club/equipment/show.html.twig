@@ -9,23 +9,23 @@
 		<div class="d-flex gap-2 flex-wrap">
 			<a href="{{ path('club_equipment_edit', {id: equipment.id}) }}" class="btn btn-primary" style="min-height: 44px;">
 				<i class="ti ti-edit me-2"></i>
-				<span class="d-none d-sm-inline">Modifier</span>
-				<span class="d-inline d-sm-none">Modifier</span>
+				<span class="d-none d-sm-inline">{{ 'edit'|trans }}</span>
+				<span class="d-inline d-sm-none">{{ 'edit'|trans }}</span>
 			</a>
 			{% if equipment.active %}
-				<form method="post" action="{{ path('club_equipment_disable', {id: equipment.id}) }}" class="d-inline" onsubmit="return confirm('Voulez-vous vraiment désactiver cet équipement ?');">
+				<form method="post" action="{{ path('club_equipment_disable', {id: equipment.id}) }}" class="d-inline" onsubmit="return confirm('{{ 'confirmDisableEquipment'|trans }}');">
 					<button type="submit" class="btn btn-outline-danger" style="min-height: 44px;">
 						<i class="ti ti-x me-2"></i>
-						<span class="d-none d-sm-inline">Désactiver</span>
-						<span class="d-inline d-sm-none">Désact.</span>
+						<span class="d-none d-sm-inline">{{ 'disable'|trans }}</span>
+						<span class="d-inline d-sm-none">{{ 'disable'|trans }}</span>
 					</button>
 				</form>
 			{% else %}
 				<form method="post" action="{{ path('club_equipment_enable', {id: equipment.id}) }}" class="d-inline">
 					<button type="submit" class="btn btn-outline-success" style="min-height: 44px;">
 						<i class="ti ti-check me-2"></i>
-						<span class="d-none d-sm-inline">Réactiver</span>
-						<span class="d-inline d-sm-none">Réact.</span>
+						<span class="d-none d-sm-inline">{{ 'reactivate'|trans }}</span>
+						<span class="d-inline d-sm-none">{{ 'reactivate'|trans }}</span>
 					</button>
 				</form>
 			{% endif %}
@@ -46,7 +46,7 @@
 				<div class="flex-fill">
 					<h2 class="mb-1">{{ equipment.name }}</h2>
 					<div class="text-secondary h4 mb-0">
-						{{ equipment.type.label }}
+						{{ equipment.type.label|trans }}
 					</div>
 				</div>
 			</div>
@@ -57,33 +57,50 @@
 			{# Equipment details #}
 			<div class="row">
 				<div class="col-12 col-md-6 mb-3">
-					<div class="text-secondary small mb-1">Type</div>
+					<div class="text-secondary small mb-1">{{ 'type'|trans }}</div>
 					<div>
 						<span class="badge bg-{{ equipment.type.value == 'glider' ? 'blue' : 'green' }}-lt">
-							{{ equipment.type.label }}
+							{{ equipment.type.label|trans }}
 						</span>
 					</div>
 				</div>
 
 				<div class="col-12 col-md-6 mb-3">
-					<div class="text-secondary small mb-1">Statut</div>
+					<div class="text-secondary small mb-1">{{ 'status'|trans }}</div>
 					<div>
 						{% if equipment.active %}
 							<span class="badge bg-success-lt">
 								<i class="ti ti-check me-1"></i>
-								Actif
+								{{ 'active'|trans }}
 							</span>
 						{% else %}
 							<span class="badge bg-secondary-lt">
 								<i class="ti ti-x me-1"></i>
-								Inactif
+								{{ 'inactive'|trans }}
 							</span>
 						{% endif %}
 					</div>
 				</div>
 
 				<div class="col-12 col-md-6 mb-3">
-					<div class="text-secondary small mb-1">Date de création</div>
+					<div class="text-secondary small mb-1">{{ 'owner'|trans }}</div>
+					<div>
+						{% if equipment.isPrivate %}
+							<span class="badge badge-private">
+								<i class="ti ti-user me-1"></i>
+								{{ 'private'|trans }}
+							</span>
+						{% else %}
+							<span class="badge bg-blue-lt">
+								<i class="ti ti-building me-1"></i>
+								{{ 'club'|trans }}
+							</span>
+						{% endif %}
+					</div>
+				</div>
+
+				<div class="col-12 col-md-6 mb-3">
+					<div class="text-secondary small mb-1">{{ 'createdAt'|trans }}</div>
 					<div>
 						<i class="ti ti-calendar me-1"></i>
 						{{ equipment.createdAt|date('d/m/Y à H:i') }}
@@ -92,10 +109,24 @@
 
 				{% if equipment.createdBy %}
 					<div class="col-12 col-md-6 mb-3">
-						<div class="text-secondary small mb-1">Créé par</div>
+						<div class="text-secondary small mb-1">{{ 'createdBy'|trans }}</div>
 						<div>
 							<i class="ti ti-user me-1"></i>
 							{{ equipment.createdBy.fullname }}
+						</div>
+					</div>
+				{% endif %}
+
+				{% if equipment.isPrivate and equipment.owners|length > 0 %}
+					<div class="col-12 mb-3">
+						<div class="text-secondary small mb-2">{{ 'owners'|trans }}</div>
+						<div class="d-flex flex-wrap gap-2">
+							{% for owner in equipment.owners %}
+								<span class="badge bg-azure-lt">
+									<i class="ti ti-user me-1"></i>
+									{{ owner.fullname ?: owner.email }}
+								</span>
+							{% endfor %}
 						</div>
 					</div>
 				{% endif %}

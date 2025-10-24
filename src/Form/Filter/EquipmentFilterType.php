@@ -2,6 +2,7 @@
 
 namespace App\Form\Filter;
 
+use App\Entity\EquipmentOwner;
 use App\Entity\EquipmentType as EquipmentTypeEnum;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,19 +15,30 @@ class EquipmentFilterType extends AbstractFilterType
         $builder
             ->add('search', TextType::class, [
                 'required' => false,
-                'label' => 'Rechercher',
+                'label' => 'search',
                 'attr' => [
-                    'placeholder' => 'Nom de l\'équipement',
+                    'placeholder' => 'searchByName',
                 ],
             ])
             ->add('type', ChoiceType::class, [
                 'required' => false,
-                'label' => 'Type',
+                'label' => 'type',
+                'placeholder' => 'allTypes',
                 'choices' => [
-                    'Tous les types' => '',
-                    'Planeur' => EquipmentTypeEnum::GLIDER->value,
-                    'Infrastructure' => EquipmentTypeEnum::FACILITY->value,
+                    'glider' => EquipmentTypeEnum::GLIDER->value,
+                    'infrastructure' => EquipmentTypeEnum::FACILITY->value,
                 ],
+                'choice_translation_domain' => 'messages',
+            ])
+            ->add('owner', ChoiceType::class, [
+                'required' => false,
+                'label' => 'owner',
+                'placeholder' => 'allOwners',
+                'choices' => [
+                    'club' => EquipmentOwner::CLUB->value,
+                    'private' => EquipmentOwner::PRIVATE ->value,
+                ],
+                'choice_translation_domain' => 'messages',
             ])
         ;
     }

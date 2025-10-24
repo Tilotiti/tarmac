@@ -1,4 +1,13 @@
 {
+    "doctrine/annotations": {
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.10",
+            "ref": "64d8583af5ea57b7afa4aba4b159907f3a148b05"
+        }
+    },
     "doctrine/deprecations": {
         "version": "1.1",
         "recipe": {
@@ -46,6 +55,15 @@
             "config/packages/doctrine_migrations.yaml",
             "migrations/.gitignore"
         ]
+    },
+    "php-translation/symfony-bundle": {
+        "version": "0.16",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "0.10",
+            "ref": "f3ca4e4da63897d177e58da78626c20648c0e102"
+        }
     },
     "phpunit/phpunit": {
         "version": "12.4",
