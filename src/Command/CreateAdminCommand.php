@@ -29,30 +29,31 @@ class CreateAdminCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         // Check if admin already exists
-        $existingAdmin = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin@tarmac.com']);
+        $existingAdmin = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'thibault@henry.pro']);
+
         if ($existingAdmin) {
             $io->warning('Admin user already exists! Resetting password...');
             $admin = $existingAdmin;
         } else {
             $admin = new User();
-            $admin->setEmail('admin@tarmac.com');
-            $admin->setFirstname('Admin');
-            $admin->setLastname('Tarmac');
+            $admin->setEmail('thibault@henry.pro');
+            $admin->setFirstname('Thibault');
+            $admin->setLastname('Henry');
             $admin->setRoles(['ROLE_ADMIN']);
             $admin->setActive(true);
             $admin->setVerified(true);
         }
 
         // Set password to "admin"
-        $hashedPassword = $this->passwordHasher->hashPassword($admin, 'admin');
+        $hashedPassword = $this->passwordHasher->hashPassword($admin, 'password');
         $admin->setPassword($hashedPassword);
 
         $this->entityManager->persist($admin);
         $this->entityManager->flush();
 
         $io->success('Admin user created/updated successfully!');
-        $io->info('Email: admin@tarmac.com');
-        $io->info('Password: admin');
+        $io->info('Email: thibault@henry.pro');
+        $io->info('Password: password');
 
         return Command::SUCCESS;
     }

@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+
+# --- Styling utilities -------------------------------------------------------
+setup_colors() {
+  if [ -t 1 ] && command -v tput >/dev/null 2>&1; then
+    local ncolors
+    ncolors=$(tput colors 2>/dev/null || echo 0)
+    if [ "$ncolors" -ge 8 ]; then
+      BOLD="$(tput bold)"; DIM="$(tput dim)"; RESET="$(tput sgr0)"
+      RED="$(tput setaf 1)"; GREEN="$(tput setaf 2)"; YELLOW="$(tput setaf 3)"; BLUE="$(tput setaf 4)"
+    fi
+  fi
+  : "${BOLD:=}" "${DIM:=}" "${RESET:=}" "${RED:=}" "${GREEN:=}" "${YELLOW:=}" "${BLUE:=}"
+}
+
+ts() { date +"%H:%M:%S"; }
+log_info()    { printf "%s %s[INFO]%s %s\n"    "$(ts)" "${BLUE}${BOLD}" "${RESET}" "$*"; }
+log_warn()    { printf "%s %s[WARN]%s %s\n"    "$(ts)" "${YELLOW}${BOLD}" "${RESET}" "$*"; }
+log_error()   { printf "%s %s[ERROR]%s %s\n"   "$(ts)" "${RED}${BOLD}" "${RESET}" "$*"; }
+log_success() { printf "%s %s[OK]%s %s\n"      "$(ts)" "${GREEN}${BOLD}" "${RESET}" "$*"; }
+
+# --- Environment -------------------------------------------------------------
+setup_colors
+
+# Load environment variables (if present)
+set -a
+if [ -f .env ]; then
+  # shellcheck disable=SC1091
+  source .env
+fi
+if [ -f .env.local ]; then
+  # shellcheck disable=SC1091
+  source .env.local
+fi
+set +a
+
+APP_NAME="${APP_NAME:-tarmac}"
+DB_USER="${DB_USER:-postgres}"
+HEROKU_APP="${HEROKU_APP:-$APP_NAME}"
+LATEST_DB="${APP_NAME}_last"
+CURRENT_DB="${APP_NAME}"
+
+# --- Checks ------------------------------------------------------------------
+require_cmd() { command -v "$1" >/dev/null 2>&1 || { log_error "Missing command: $1"; exit 1; }; }
+
+require_cmd symfony
+require_cmd psql
+require_cmd createdb
+require_cmd dropdb
+require_cmd pg_restore
+
+# Heroku CLI only required for refresh
+if [[ "$*" == *"-r"* || "$*" == *"--refresh"* ]]; then
+  require_cmd heroku
+fi
+
+help() {
+  printf "Usage: %s [options]\n" "$0"
+  printf "  -r, --refresh   Pull latest production backup and seed local template (%s)\n" "$LATEST_DB"
+  printf "  -h, --help      Show this help\n"
+  exit 0
+}
+
+refresh() {
+  log_info "Refreshing local template database: ${BOLD}${LATEST_DB}${RESET} (user: ${DB_USER})"
+
+  log_info "Dropping existing template database if exists"
+  dropdb "$LATEST_DB" --if-exists -U "$DB_USER"
+  rm -f latest.dump
+
+  log_info "Capturing and downloading latest Heroku backup (app: ${HEROKU_APP})"
+  heroku pg:backups:capture --app "$HEROKU_APP"
+  heroku pg:backups:download --app "$HEROKU_APP"
+
+  log_info "Creating template database"
+  createdb "$LATEST_DB" -U "$DB_USER"
+
+  log_info "Restoring into template database (excluding _heroku schema)"
+  pg_restore -U "$DB_USER" -d "$LATEST_DB" latest.dump --exclude-schema=_heroku --no-owner
+
+  # Trim volatile tables
+  log_info "Truncating volatile tables (sessions, messenger_messages)"
+  psql -U "$DB_USER" -d "$LATEST_DB" -c "TRUNCATE TABLE sessions, messenger_messages;"
+
+  log_success "Template database refreshed: ${LATEST_DB}"
+}
+
+update_db() {
+  log_info "Updating current database: ${BOLD}${CURRENT_DB}${RESET} from template ${BOLD}${LATEST_DB}${RESET}"
+
+  log_info "Dropping current database if exists"
+  dropdb "$CURRENT_DB" -U "$DB_USER" --if-exists
+
+  log_info "Creating current database from template"
+  psql -U "$DB_USER" -c "CREATE DATABASE \"${CURRENT_DB}\" WITH TEMPLATE \"${LATEST_DB}\";"
+
+  log_info "Running Doctrine migrations"
+  symfony console doctrine:migration:migrate --no-interaction --no-debug
+
+  log_success "Database updated: ${CURRENT_DB}"
+}
+
+# Check if a program is available on the OS
+checkProgram() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    -h|--help) help ;;
+    -r|--refresh) DO_REFRESH=1 ;;
+    *) log_error "Unknown parameter: $1"; exit 1 ;;
+  esac
+  shift
+done
+
+if [ -n "${DO_REFRESH:-}" ]; then
+  refresh
+fi
+
+update_db
+
+# Notifications ---------------------------------------------------------------
+# MacOS
+if checkProgram "osascript"; then
+  osascript -e 'display notification "The database has been updated." with title "'${APP_NAME}'"'
+fi
+# Linux
+if checkProgram "notify-send"; then
+  notify-send "The database '${APP_NAME}' has been updated."
+fi
+

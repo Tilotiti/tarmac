@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
@@ -99,9 +100,7 @@ class SecurityController extends AbstractController
     public function acceptInvitation(
         string $token,
         Request $request,
-        UserPasswordHasherInterface $userPasswordHasher,
-        UserAuthenticatorInterface $userAuthenticator,
-        FormLoginAuthenticator $authenticator
+        UserPasswordHasherInterface $userPasswordHasher
     ): Response {
         // Find invitation by token
         $invitation = $this->invitationRepository->findValidByToken($token);
@@ -145,17 +144,10 @@ class SecurityController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
-            // Accept invitation
-            $this->invitationService->acceptInvitation($user, $invitation);
+            $this->addFlash('success', 'Votre compte a été créé ! Veuillez vous connecter pour rejoindre ' . $invitation->getClub()->getName() . '.');
 
-            $this->addFlash('success', 'Votre compte a été créé et vous avez rejoint ' . $invitation->getClub()->getName() . ' !');
-
-            // Authenticate and redirect to club
-            return $userAuthenticator->authenticateUser(
-                $user,
-                $authenticator,
-                $request
-            );
+            // Redirect to login page with invitation token to auto-accept after login
+            return $this->redirectToRoute('public_login', ['invitation' => $token]);
         }
 
         return $this->render('public/security/register.html.twig', [
@@ -194,7 +186,8 @@ class SecurityController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         UserAuthenticatorInterface $userAuthenticator,
-        FormLoginAuthenticator $authenticator,
+        #[Autowire(service: 'security.authenticator.form_login.main')]
+        FormLoginAuthenticator $formLoginAuthenticator,
         ?string $token = null
     ): Response {
         if ($token) {
@@ -241,12 +234,12 @@ class SecurityController extends AbstractController
             // The session is cleaned up after the password has been changed.
             $this->cleanSessionAfterReset();
 
-            $this->addFlash('success', 'Votre mot de passe a été réinitialisé avec succès.');
+            $this->addFlash('success', 'Votre mot de passe a été réinitialisé avec succès. Vous êtes maintenant connecté.');
 
-            // Auto-login the user
+            // Auto-login the user and redirect to app dashboard
             return $userAuthenticator->authenticateUser(
                 $user,
-                $authenticator,
+                $formLoginAuthenticator,
                 $request
             );
         }
@@ -262,6 +255,9 @@ class SecurityController extends AbstractController
             'email' => $emailFormData,
         ]);
 
+        // Always show the same message to prevent email enumeration attacks
+        $this->addFlash('success', 'Si cette adresse e-mail existe dans notre base de données, vous recevrez un lien de réinitialisation.');
+
         // Do not reveal whether a user account was found or not.
         if (!$user) {
             return $this->redirectToRoute('public_login');
@@ -270,13 +266,16 @@ class SecurityController extends AbstractController
         try {
             $resetToken = $this->resetPasswordHelper->generateResetToken($user);
         } catch (ResetPasswordExceptionInterface $e) {
-            $this->addFlash('danger', 'Un problème est survenu lors de la génération du lien de réinitialisation.');
-
+            // If there's already an active request, inform the user to check their email
+            // This is safe to show as the generic message was already added above
+            if (str_contains($e->getReason(), 'already requested')) {
+                $this->addFlash('info', 'Un e-mail de réinitialisation vous a déjà été envoyé. Veuillez vérifier votre boîte de réception ou réessayer dans quelques minutes.');
+            }
             return $this->redirectToRoute('public_login');
         }
 
         $email = (new TemplatedEmail())
-            ->from(new Address('noreply@tarmac.com', 'Tarmac'))
+            ->from(new Address('contact@tarmac.center', 'Tarmac'))
             ->to((string) $user->getEmail())
             ->subject('Votre demande de réinitialisation de mot de passe')
             ->htmlTemplate('email/resetPassword.html.twig')
@@ -290,8 +289,6 @@ class SecurityController extends AbstractController
 
         // Store the token object in session for retrieval in check-email route.
         $this->setTokenObjectInSession($resetToken);
-
-        $this->addFlash('success', 'Un e-mail de réinitialisation a été envoyé.');
 
         return $this->redirectToRoute('public_login');
     }
