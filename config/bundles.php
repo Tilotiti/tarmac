@@ -16,4 +16,5 @@ return [
     SymfonyCasts\Bundle\ResetPassword\SymfonyCastsResetPasswordBundle::class => ['all' => true],
     Tiloweb\PaginationBundle\TilowebPaginationBundle::class => ['all' => true],
     Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
+    SlopeIt\BreadcrumbBundle\SlopeItBreadcrumbBundle::class => ['all' => true],
 ];

@@ -4,18 +4,11 @@
 {% endblock %}
 
 {% block page_actions %}
-	<div class="d-flex gap-2">
-		<a href="{{ path('club_members') }}" class="btn btn-outline-secondary" style="min-height: 44px;">
-			<i class="ti ti-arrow-left me-2"></i>
-			<span class="d-none d-sm-inline">Retour aux membres</span>
-			<span class="d-inline d-sm-none">Retour</span>
-		</a>
-		<a href="{{ path('club_member_invite') }}" class="btn btn-primary" style="min-height: 44px;">
-			<i class="ti ti-plus me-2"></i>
-			<span class="d-none d-sm-inline">Inviter</span>
-			<span class="d-inline d-sm-none">Inviter</span>
-		</a>
-	</div>
+	<a href="{{ path('club_member_invite') }}" class="btn btn-primary" style="min-height: 44px;">
+		<i class="ti ti-plus me-2"></i>
+		<span class="d-none d-sm-inline">Inviter</span>
+		<span class="d-inline d-sm-none">Inviter</span>
+	</a>
 {% endblock %}
 
 {% block page_content %}

@@ -1,0 +1,74 @@
+{% extends 'club/base.html.twig' %}
+
+{% form_theme filterForm 'component/filters.html.twig' %}
+
+{% block page_title %}Équipements
+{% endblock %}
+
+{% block page_actions %}
+	{% if is_granted('MANAGE', club) %}
+		<a href="{{ path('club_equipment_new') }}" class="btn btn-primary" style="min-height: 44px;">
+			<i class="ti ti-plus me-2"></i>
+			<span class="d-none d-sm-inline">Ajouter un équipement</span>
+			<span class="d-inline d-sm-none">Ajouter</span>
+		</a>
+	{% endif %}
+{% endblock %}
+
+{% block page_content %}
+	{% include 'component/filters.html.twig' with { form: filterForm } %}
+
+	{# Equipment cards - Mobile-first design #}
+	<div class="row">
+		{% for equipment in equipments %}
+			<div class="col-12 col-md-6 col-lg-4 mb-3">
+				<a href="{{ path('club_equipment_show', {id: equipment.id}) }}" class="text-decoration-none">
+					<div class="card h-100 card-link {% if not equipment.active %}opacity-75{% endif %}" style="cursor: pointer;">
+						<div class="card-body">
+							<div
+								class="d-flex align-items-center">
+								{# Avatar with icon based on type #}
+								<span class="avatar avatar-lg me-3 bg-{{ equipment.type.value == 'glider' ? 'blue' : 'green' }}-lt">
+									<i class="ti ti-{{ equipment.type.value == 'glider' ? 'plane' : 'tool' }} text-{{ equipment.type.value == 'glider' ? 'blue' : 'green' }}" style="font-size: 1.5rem;"></i>
+								</span>
+								<div
+									class="flex-fill">
+									{# Title: Equipment name #}
+									<h3 class="card-title mb-1 {% if not equipment.active %}text-secondary{% endif %}">
+										{{ equipment.name }}
+									</h3>
+									{# Subtitle: Equipment type label #}
+									<div class="text-secondary">
+										{{ equipment.type.label }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+		{% else %}
+			<div class="col-12">
+				<div class="card">
+					<div class="card-body text-center text-secondary">
+						<i class="ti ti-package-off" style="font-size: 3rem; opacity: 0.5;"></i>
+						<p class="mt-3 mb-0">
+							<em>Aucun équipement trouvé</em>
+						</p>
+						{% if is_granted('MANAGE', club) %}
+							<a href="{{ path('club_equipment_new') }}" class="btn btn-primary mt-3" style="min-height: 44px;">
+								<i class="ti ti-plus me-2"></i>
+								Ajouter un équipement
+							</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+
+	{# Pagination #}
+	<div class="d-flex justify-content-center mt-4">
+		{{ pagination(equipments) }}
+	</div>
+{% endblock %}

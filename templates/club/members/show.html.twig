@@ -4,13 +4,6 @@
 	{{ membership.user.fullname }}
 {% endblock %}
 
-{% block page_pretitle %}
-	<a href="{{ path('club_members') }}" class="text-decoration-none">
-		<i class="ti ti-arrow-left me-2"></i>
-		Retour aux membres
-	</a>
-{% endblock %}
-
 {% block page_actions %}
 	{% if is_granted('MANAGE', club) %}
 		<div class="d-flex gap-2">
@@ -151,11 +144,11 @@
 
 		{% if openModal %}{# Auto-open modal if form has errors #}
 			 <script>
-										document.addEventListener('DOMContentLoaded', function() {
-											var modal = new bootstrap.Modal(document.getElementById('modal-edit-roles'));
-											modal.show();
-										});
-									</script>
+																document.addEventListener('DOMContentLoaded', function() {
+																	var modal = new bootstrap.Modal(document.getElementById('modal-edit-roles'));
+																	modal.show();
+																});
+															</script>
 		{% endif %}
 	{% endif %}
 {% endblock %}

@@ -44,12 +44,19 @@ class Club
     #[ORM\OneToMany(targetEntity: Invitation::class, mappedBy: 'club', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'EXTRA_LAZY')]
     private Collection $invitations;
 
+    /**
+     * @var Collection<int, Equipment>
+     */
+    #[ORM\OneToMany(targetEntity: Equipment::class, mappedBy: 'club', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'EXTRA_LAZY')]
+    private Collection $equipments;
+
     public function __construct()
     {
         $this->active = true;
         $this->createdAt = new \DateTimeImmutable();
         $this->memberships = new ArrayCollection();
         $this->invitations = new ArrayCollection();
+        $this->equipments = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -196,6 +203,36 @@ class Club
             // set the owning side to null (unless already changed)
             if ($invitation->getClub() === $this) {
                 $invitation->setClub(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Equipment>
+     */
+    public function getEquipments(): Collection
+    {
+        return $this->equipments;
+    }
+
+    public function addEquipment(Equipment $equipment): static
+    {
+        if (!$this->equipments->contains($equipment)) {
+            $this->equipments->add($equipment);
+            $equipment->setClub($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEquipment(Equipment $equipment): static
+    {
+        if ($this->equipments->removeElement($equipment)) {
+            // set the owning side to null (unless already changed)
+            if ($equipment->getClub() === $this) {
+                $equipment->setClub(null);
             }
         }
 

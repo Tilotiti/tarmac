@@ -62,6 +62,9 @@
             "bin/phpunit"
         ]
     },
+    "slope-it/breadcrumb-bundle": {
+        "version": "2.1.2"
+    },
     "symfony/amazon-mailer": {
         "version": "7.3",
         "recipe": {

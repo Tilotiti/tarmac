@@ -1,0 +1,139 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block page_title %}
+	{{ user.fullname }}
+	{% if not user.active %}
+		<span class="badge bg-danger ms-2">Désactivé</span>
+	{% endif %}
+{% endblock %}
+
+{% block page_actions %}
+	<div class="btn-list">
+		<a href="{{ path('admin_user_edit', {id: user.id}) }}" class="btn btn-primary" style="min-height: 44px;">
+			<i class="ti ti-edit me-2"></i>
+			<span class="d-none d-sm-inline">Modifier</span>
+			<span class="d-inline d-sm-none">Modifier</span>
+		</a>
+		{% if user.id != app.user.id %}
+			{% if is_granted('ROLE_ADMIN') and user.active and user.isVerified %}
+				<a href="{{ path('admin_user_show', {id: user.id, _switch_user: user.email}) }}" class="btn btn-info" style="min-height: 44px;">
+					<i class="ti ti-user-check me-2"></i>
+					<span class="d-none d-sm-inline">Se connecter</span>
+					<span class="d-inline d-sm-none">Se connecter</span>
+				</a>
+			{% endif %}
+			{% if user.active %}
+				<form method="post" action="{{ path('admin_user_disable', {id: user.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver cet utilisateur ?');">
+					<button type="submit" class="btn btn-outline-warning" style="min-height: 44px;">
+						<i class="ti ti-ban me-2"></i>
+						<span class="d-none d-sm-inline">Désactiver</span>
+						<span class="d-inline d-sm-none">Désactiver</span>
+					</button>
+				</form>
+			{% else %}
+				<form method="post" action="{{ path('admin_user_disable', {id: user.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir activer cet utilisateur ?');">
+					<button type="submit" class="btn btn-outline-success" style="min-height: 44px;">
+						<i class="ti ti-check me-2"></i>
+						<span class="d-none d-sm-inline">Activer</span>
+						<span class="d-inline d-sm-none">Activer</span>
+					</button>
+				</form>
+			{% endif %}
+			<a href="{{ path('admin_user_delete', {id: user.id}) }}" class="btn btn-outline-danger" style="min-height: 44px;" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.');">
+				<i class="ti ti-trash me-2"></i>
+				<span class="d-none d-sm-inline">Supprimer</span>
+				<span class="d-inline d-sm-none">Supprimer</span>
+			</a>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block page_content %}
+	<div
+		class="row">
+		{# User Information #}
+		<div class="col-12 col-md-6 mb-3">
+			<div class="card {% if not user.active %}border-danger{% endif %}">
+				<div class="card-header">
+					<h3 class="card-title">Informations</h3>
+				</div>
+				<div class="card-body">
+					<dl class="row">
+						<dt class="col-5">Prénom</dt>
+						<dd class="col-7 {% if not user.active %}text-danger{% endif %}">{{ user.firstname ?: '-' }}</dd>
+
+						<dt class="col-5">Nom</dt>
+						<dd class="col-7 {% if not user.active %}text-danger{% endif %}">{{ user.lastname ?: '-' }}</dd>
+
+						<dt class="col-5">Email</dt>
+						<dd class="col-7 {% if not user.active %}text-danger{% endif %}">{{ user.email }}</dd>
+
+						<dt class="col-5">Statut</dt>
+						<dd class="col-7">
+							{% if user.active %}
+								<span class="badge bg-green-lt">Actif</span>
+							{% else %}
+								<span class="badge bg-danger">Désactivé</span>
+							{% endif %}
+						</dd>
+
+						<dt class="col-5">Vérifié</dt>
+						<dd class="col-7">
+							{% if user.isVerified %}
+								<span class="badge bg-green-lt">Oui</span>
+							{% else %}
+								<span class="badge bg-yellow-lt">Non</span>
+							{% endif %}
+						</dd>
+
+						<dt class="col-5">Créé le</dt>
+						<dd class="col-7">{{ user.createdAt|date('d/m/Y à H:i') }}</dd>
+					</dl>
+				</div>
+			</div>
+		</div>
+
+		{# User Memberships #}
+		<div class="col-12 col-md-6 mb-3">
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">Clubs ({{ user.memberships|length }})</h3>
+				</div>
+				<div class="card-body p-0">
+					{% if user.memberships|length > 0 %}
+						<div class="list-group list-group-flush">
+							{% for membership in user.memberships %}
+								<div class="list-group-item">
+									<div class="d-flex align-items-center justify-content-between">
+										<div>
+											<div class="fw-bold">{{ membership.club.name }}</div>
+											<div class="text-secondary small">
+												{% if membership.isManager %}
+													<span class="badge bg-blue-lt me-1">Manager</span>
+												{% endif %}
+												{% if membership.isInspector %}
+													<span class="badge bg-green-lt">Inspecteur</span>
+												{% endif %}
+												{% if not membership.isManager and not membership.isInspector %}
+													<span class="text-muted">Membre</span>
+												{% endif %}
+											</div>
+										</div>
+										<div class="text-secondary small">
+											Depuis le
+											{{ membership.joinedAt|date('d/m/Y') }}
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+					{% else %}
+						<div class="card-body text-center text-secondary">
+							<em>Aucun club</em>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

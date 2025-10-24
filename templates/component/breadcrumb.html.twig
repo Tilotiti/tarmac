@@ -1,0 +1,17 @@
+{% if items|length >= 3 %}
+	<ol class="breadcrumb text-muted" aria-label="breadcrumbs">
+		{% for item in items %}
+			<li class="breadcrumb-item {% if loop.last %}active{% endif %}">
+				{% if item.translatedLabel == 'home' %}
+					<a href="{{ item.url }}">
+						<i class="ti ti-home"></i>
+					</a>
+				{% elseif item.url %}
+					<a href="{{ item.url }}">{{ item.translatedLabel }}</a>
+				{% else %}
+					{{ item.translatedLabel }}
+				{% endif %}
+			</li>
+		{% endfor %}
+	</ol>
+{% endif %}

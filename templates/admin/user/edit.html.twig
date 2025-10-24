@@ -1,0 +1,45 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block page_title %}Modifier
+	{{ user.fullname }}
+{% endblock %}
+
+{% block page_header %}
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<a href="{{ path('admin_user_index') }}">Utilisateurs</a>
+			</li>
+			<li class="breadcrumb-item">
+				<a href="{{ path('admin_user_show', {id: user.id}) }}">{{ user.fullname }}</a>
+			</li>
+			<li class="breadcrumb-item active" aria-current="page">Modifier</li>
+		</ol>
+	</nav>
+	<h2 class="page-title">
+		Modifier
+		{{ user.fullname }}
+	</h2>
+{% endblock %}
+
+{% block page_content %}
+	<div class="card">
+		<div class="card-body">
+			{{ form_start(form) }}
+			{{ form_row(form.firstname) }}
+			{{ form_row(form.lastname) }}
+			{{ form_row(form.email) }}
+
+			<div class="form-footer">
+				<button type="submit" class="btn btn-primary w-100 w-md-auto" style="min-height: 44px;">
+					<i class="ti ti-check me-2"></i>
+					Enregistrer
+				</button>
+				<a href="{{ path('admin_user_show', {id: user.id}) }}" class="btn btn-link w-100 w-md-auto mt-2 mt-md-0" style="min-height: 44px;">
+					Retour
+				</a>
+			</div>
+			{{ form_end(form) }}
+		</div>
+	</div>
+{% endblock %}

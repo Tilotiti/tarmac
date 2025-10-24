@@ -18,6 +18,14 @@
 
 {% block navbar_menu %}
 	<div class="navbar-nav flex-row order-md-last">
+		<a href="{{ path('club_equipments') }}" class="nav-link {{ app.request.get('_route') starts with 'club_equipment' ? 'active' : '' }}">
+			<span class="nav-link-icon d-md-none d-lg-inline-block">
+				<i class="ti ti-plane"></i>
+			</span>
+			<span class="nav-link-title">
+				Équipements
+			</span>
+		</a>
 		{% if is_granted('MANAGE', club) %}
 			<a href="{{ path('club_members') }}" class="nav-link {{ app.request.get('_route') starts with 'club_member' or app.request.get('_route') starts with 'club_invitation' ? 'active' : '' }}">
 				<span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -33,21 +41,28 @@
 
 {% block user_dropdown_menu %}
 	{% if is_granted('ROLE_PREVIOUS_ADMIN') %}
-		<a href="{{ path('app_dashboard', {_switch_user: '_exit'}) }}" class="dropdown-item text-primary">
+		<a href="{{ path('public_clubs', {_switch_user: '_exit'}) }}" class="dropdown-item text-primary">
 			<i class="ti ti-logout"></i>
 			Retour à l'admin
 		</a>
 		<div class="dropdown-divider"></div>
 	{% endif %}
-	<a href="{{ path('app_profile_edit') }}" class="dropdown-item">
+	<a href="{{ path('club_profile_edit') }}" class="dropdown-item">
 		<i class="ti ti-user"></i>
 		Mon profil
 	</a>
 	{% if app.user.isAdmin() or app.user.getMemberships()|length > 1 %}
 		<div class="dropdown-divider"></div>
-		<a href="{{ path('app_dashboard') }}" class="dropdown-item">
+		<a href="{{ path('public_clubs') }}" class="dropdown-item">
 			<i class="ti ti-home"></i>
-			Retour à l'application
+			Mes clubs
+		</a>
+	{% endif %}
+	{% if is_granted('ROLE_ADMIN') %}
+		<div class="dropdown-divider"></div>
+		<a href="{{ path('admin_dashboard') }}" class="dropdown-item">
+			<i class="ti ti-shield"></i>
+			Administration
 		</a>
 	{% endif %}
 	<div class="dropdown-divider"></div>
@@ -64,6 +79,8 @@
 			<div class="row g-2 align-items-center">
 				<div class="col">
 					{% block page_header %}
+						{{ slope_it_breadcrumb() }}
+						{% block page_pretitle %}{% endblock %}
 						<h2 class="page-title">
 							{{ block('page_title') }}
 						</h2>

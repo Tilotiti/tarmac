@@ -1,0 +1,80 @@
+{% extends 'layout/base.html.twig' %}
+
+{% block title %}Mes clubs
+{% endblock %}
+
+{% block navbar_brand %}
+	<a href="{{ path('public_clubs') }}">
+		<img src="{{ asset('logo.svg') }}" alt="Tarmac" height="10">
+	</a>
+{% endblock %}
+
+{% block body %}
+	<div class="page-header d-print-none">
+		<div class="container-xl">
+			<div class="row g-2 align-items-center">
+				<div class="col">
+					<h2 class="page-title">
+						Mes clubs
+					</h2>
+					<div class="text-secondary mt-1">
+						Bonjour
+						{{ app.user.fullName }}
+						!
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="page-body">
+		<div class="container-xl">
+			{% if clubs|length > 0 %}
+				<div class="row g-3">
+					{% for club in clubs %}
+						<div class="col-12 col-md-6 col-lg-4">
+							<a href="{{ subdomainService.generateClubUrl(club.subdomain, '/') }}" class="card card-link" style="min-height: 100px;">
+								<div class="card-body">
+									<div class="d-flex align-items-center mb-3">
+										<span class="avatar avatar-lg me-3 bg-blue-lt">
+											<i class="ti ti-windsock"></i>
+										</span>
+										<div class="flex-fill">
+											<div class="fw-bold text-dark">{{ club.name }}</div>
+											<div class="text-secondary small">{{ club.subdomain }}.{{ subdomainService.domain }}</div>
+										</div>
+										<i class="ti ti-chevron-right text-muted"></i>
+									</div>
+									<div class="d-flex gap-2">
+										{% if app.user.isManagerOfClub(club) %}
+											<span class="badge bg-green text-white">Gestionnaire</span>
+										{% endif %}
+										{% if app.user.isInspectorOfClub(club) %}
+											<span class="badge bg-yellow text-white">Inspecteur</span>
+										{% endif %}
+										{% if not app.user.isManagerOfClub(club) and not app.user.isInspectorOfClub(club) %}
+											<span class="badge bg-blue-lt">Membre</span>
+										{% endif %}
+									</div>
+								</div>
+							</a>
+						</div>
+					{% endfor %}
+				</div>
+			{% else %}
+				<div class="empty">
+					<div class="empty-img">
+						<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Ccircle cx='64' cy='64' r='50' fill='none' stroke='%23dae1e7' stroke-width='2'/%3E%3C/svg%3E" alt="" height="128">
+					</div>
+					<p class="empty-title">Aucun club</p>
+					<p class="empty-subtitle text-secondary">
+						Vous n'avez pas encore accès à un club actif.
+					</p>
+					<p class="empty-subtitle text-secondary">
+						Contactez votre gestionnaire de club pour obtenir une invitation.
+					</p>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}

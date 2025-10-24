@@ -1,0 +1,62 @@
+{% extends 'admin/base.html.twig' %}
+
+{% form_theme filters 'component/filters.html.twig' %}
+
+{% block page_title %}Utilisateurs
+{% endblock %}
+
+{% block page_content %}
+	{% include 'component/filters.html.twig' with { form: filters } %}
+
+	{# User cards - Mobile-first design for all screen sizes #}
+	<div class="row">
+		{% for user in users %}
+			<div class="col-12 col-md-6 col-lg-4 mb-3">
+				<a href="{{ path('admin_user_show', {id: user.id}) }}" class="card h-100 text-decoration-none {% if not user.active %}border-danger{% endif %}" style="transition: all 0.2s ease; cursor: pointer;">
+					<div class="card-body">
+						<div class="d-flex align-items-center mb-3">
+							<span class="avatar me-3">{{ user.firstname[:1] }}{{ user.lastname[:1] }}</span>
+							<div class="flex-fill">
+								<div class="font-weight-medium {% if not user.active %}text-danger{% else %}text-dark{% endif %}">{{ user.fullname }}</div>
+								<div class="{% if not user.active %}text-danger{% else %}text-secondary{% endif %}">{{ user.email }}</div>
+							</div>
+							<i class="ti ti-arrow-right text-muted"></i>
+						</div>
+
+						<div class="row">
+							<div class="col-6">
+								<div class="text-muted small">Clubs</div>
+								<div>
+									<span class="badge bg-blue-lt">{{ user.memberships|length }}</span>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="text-muted small">Statut</div>
+								<div>
+									{% if user.active %}
+										<span class="badge bg-green-lt">Actif</span>
+									{% else %}
+										<span class="badge bg-danger">Désactivé</span>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+		{% else %}
+			<div class="col-12">
+				<div class="card">
+					<div class="card-body text-center text-secondary">
+						<em>Aucun utilisateur trouvé</em>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+
+	{# Pagination #}
+	<div class="d-flex justify-content-center mt-4">
+		{{ pagination(users) }}
+	</div>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ equipment.name }}
+{% endblock %}
+
+{% block page_actions %}
+	{% if is_granted('MANAGE', club) %}
+		<div class="d-flex gap-2 flex-wrap">
+			<a href="{{ path('club_equipment_edit', {id: equipment.id}) }}" class="btn btn-primary" style="min-height: 44px;">
+				<i class="ti ti-edit me-2"></i>
+				<span class="d-none d-sm-inline">Modifier</span>
+				<span class="d-inline d-sm-none">Modifier</span>
+			</a>
+			{% if equipment.active %}
+				<form method="post" action="{{ path('club_equipment_disable', {id: equipment.id}) }}" class="d-inline" onsubmit="return confirm('Voulez-vous vraiment désactiver cet équipement ?');">
+					<button type="submit" class="btn btn-outline-danger" style="min-height: 44px;">
+						<i class="ti ti-x me-2"></i>
+						<span class="d-none d-sm-inline">Désactiver</span>
+						<span class="d-inline d-sm-none">Désact.</span>
+					</button>
+				</form>
+			{% else %}
+				<form method="post" action="{{ path('club_equipment_enable', {id: equipment.id}) }}" class="d-inline">
+					<button type="submit" class="btn btn-outline-success" style="min-height: 44px;">
+						<i class="ti ti-check me-2"></i>
+						<span class="d-none d-sm-inline">Réactiver</span>
+						<span class="d-inline d-sm-none">Réact.</span>
+					</button>
+				</form>
+			{% endif %}
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block page_content %}
+	{# Main equipment card #}
+	<div class="card mb-3">
+		<div class="card-body">
+			<div
+				class="d-flex align-items-center mb-4">
+				{# Avatar with icon based on type #}
+				<span class="avatar avatar-xl me-3 bg-{{ equipment.type.value == 'glider' ? 'blue' : 'green' }}-lt">
+					<i class="ti ti-{{ equipment.type.value == 'glider' ? 'plane' : 'tool' }} text-{{ equipment.type.value == 'glider' ? 'blue' : 'green' }}" style="font-size: 2.5rem;"></i>
+				</span>
+				<div class="flex-fill">
+					<h2 class="mb-1">{{ equipment.name }}</h2>
+					<div class="text-secondary h4 mb-0">
+						{{ equipment.type.label }}
+					</div>
+				</div>
+			</div>
+
+			<hr
+			class="my-4">
+
+			{# Equipment details #}
+			<div class="row">
+				<div class="col-12 col-md-6 mb-3">
+					<div class="text-secondary small mb-1">Type</div>
+					<div>
+						<span class="badge bg-{{ equipment.type.value == 'glider' ? 'blue' : 'green' }}-lt">
+							{{ equipment.type.label }}
+						</span>
+					</div>
+				</div>
+
+				<div class="col-12 col-md-6 mb-3">
+					<div class="text-secondary small mb-1">Statut</div>
+					<div>
+						{% if equipment.active %}
+							<span class="badge bg-success-lt">
+								<i class="ti ti-check me-1"></i>
+								Actif
+							</span>
+						{% else %}
+							<span class="badge bg-secondary-lt">
+								<i class="ti ti-x me-1"></i>
+								Inactif
+							</span>
+						{% endif %}
+					</div>
+				</div>
+
+				<div class="col-12 col-md-6 mb-3">
+					<div class="text-secondary small mb-1">Date de création</div>
+					<div>
+						<i class="ti ti-calendar me-1"></i>
+						{{ equipment.createdAt|date('d/m/Y à H:i') }}
+					</div>
+				</div>
+
+				{% if equipment.createdBy %}
+					<div class="col-12 col-md-6 mb-3">
+						<div class="text-secondary small mb-1">Créé par</div>
+						<div>
+							<i class="ti ti-user me-1"></i>
+							{{ equipment.createdBy.fullname }}
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+{% endblock %}

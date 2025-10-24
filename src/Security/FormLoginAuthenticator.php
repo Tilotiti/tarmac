@@ -54,22 +54,9 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        // Redirect based on user role
-        $user = $token->getUser();
-
-        // Debug: log the user type and roles
-        $this->logger->info('User type: ' . gettype($user));
-        if ($user instanceof \App\Entity\User) {
-            $this->logger->info('User roles: ' . json_encode($user->getRoles()));
-        }
-
-        if ($user instanceof \App\Entity\User && in_array('ROLE_ADMIN', $user->getRoles(), true)) {
-            $this->logger->info('Redirecting to app_dashboard');
-            return new RedirectResponse($this->urlGenerator->generate('app_dashboard', [], UrlGeneratorInterface::ABSOLUTE_URL));
-        }
-
-        $this->logger->info('Redirecting to public_landing');
-        return new RedirectResponse($this->urlGenerator->generate('public_landing', [], UrlGeneratorInterface::ABSOLUTE_URL));
+        // Redirect all users to clubs page
+        $this->logger->info('Redirecting to public_clubs');
+        return new RedirectResponse($this->urlGenerator->generate('public_clubs', [], UrlGeneratorInterface::ABSOLUTE_URL));
     }
 
     protected function getLoginUrl(Request $request): string

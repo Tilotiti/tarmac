@@ -66,11 +66,7 @@ class SecurityController extends AbstractController
                 ]);
             }
 
-            if ($this->isGranted('ROLE_ADMIN')) {
-                return $this->redirectToRoute('app_dashboard');
-            }
-
-            return $this->redirectToRoute('public_landing');
+            return $this->redirectToRoute('public_clubs');
         }
 
         // get the login error if there is one
@@ -173,7 +169,7 @@ class SecurityController extends AbstractController
             return $this->processSendingPasswordResetEmail($email, $mailer);
         }
 
-        return $this->render('public/security/reset_password/request.html.twig', [
+        return $this->render('public/security/resetPassword/request.html.twig', [
             'requestForm' => $form,
         ]);
     }
@@ -244,7 +240,7 @@ class SecurityController extends AbstractController
             );
         }
 
-        return $this->render('public/security/reset_password/reset.html.twig', [
+        return $this->render('public/security/resetPassword/reset.html.twig', [
             'resetForm' => $form,
         ]);
     }

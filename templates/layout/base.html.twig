@@ -48,10 +48,17 @@
 									</a>
 									<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
 										{% block user_dropdown_menu %}
-											<a href="{{ path('app_profile_edit') }}" class="dropdown-item">
+											<a href="{{ path('public_profile_edit') }}" class="dropdown-item">
 												<i class="ti ti-user"></i>
 												Mon profil
 											</a>
+											{% if is_granted('ROLE_ADMIN') %}
+												<div class="dropdown-divider"></div>
+												<a href="{{ path('admin_dashboard') }}" class="dropdown-item">
+													<i class="ti ti-shield"></i>
+													Administration
+												</a>
+											{% endif %}
 											<div class="dropdown-divider"></div>
 											<a href="{{ path('public_logout') }}" class="dropdown-item">
 												<i class="ti ti-logout"></i>

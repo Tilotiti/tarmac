@@ -1,0 +1,155 @@
+# Breadcrumb Navigation Rules
+
+## Core Principle
+
+Breadcrumbs are displayed **only starting from the 3rd level** of navigation hierarchy to avoid clutter and provide clarity when users are deep in the application structure.
+
+## Navigation Hierarchy
+
+### Level Structure
+1. **Level 1 (Dashboard)**: No breadcrumb
+   - Examples: Club Dashboard, App Dashboard
+   
+2. **Level 2 (List/Index pages)**: No breadcrumb
+   - Examples: Equipment List, Members List, Users List, Clubs List
+   
+3. **Level 3+ (Detail/Action pages)**: Show breadcrumb
+   - Examples: Equipment Show/Edit/New, Member Show, User Show/Edit
+
+### Pattern Rule
+Breadcrumbs appear when there are **at least 3 items** in the path:
+- `Home > Section > Current Page` (minimum to show breadcrumb)
+- `Home > Section > Item > Action` (4-level example)
+
+### Example 1: Equipment
+- **Dashboard** (`/`): NO BREADCRUMB (Level 1)
+- **List page** (`/equipments`): NO BREADCRUMB (Level 2)
+- **Show page** (`/equipments/{id}`): `Home > Équipements > [Equipment Name]` ✓ (Level 3)
+- **Edit page** (`/equipments/{id}/edit`): `Home > Équipements > [Equipment Name] > Modifier` ✓ (Level 4)
+- **New page** (`/equipments/new`): `Home > Équipements > Ajouter` ✓ (Level 3)
+
+### Example 2: Members
+- **Dashboard** (`/`): NO BREADCRUMB (Level 1)
+- **List page** (`/members`): NO BREADCRUMB (Level 2)
+- **Show page** (`/members/{id}`): `Home > Membres > [Member Name]` ✓ (Level 3)
+- **Invitations page** (`/members/invitations`): `Home > Membres > Invitations` ✓ (Level 3)
+- **Invite page** (`/members/invite`): `Home > Membres > Inviter` ✓ (Level 3)
+
+### Example 3: Clubs (Admin)
+- **Dashboard** (`/`): NO BREADCRUMB (Level 1)
+- **List page** (`/clubs`): NO BREADCRUMB (Level 2)
+- **Show page** (`/clubs/{id}`): `Home > Clubs > [Club Name]` ✓ (Level 3)
+- **Edit page** (`/clubs/{id}/edit`): `Home > Clubs > [Club Name] > Modifier` ✓ (Level 4)
+- **New page** (`/clubs/new`): `Home > Clubs > Ajouter` ✓ (Level 3)
+
+### Example 4: Users (Admin)
+- **Dashboard** (`/`): NO BREADCRUMB (Level 1)
+- **List page** (`/users`): NO BREADCRUMB (Level 2)
+- **Show page** (`/users/{id}`): `Home > Utilisateurs > [User Name]` ✓ (Level 3)
+- **Edit page** (`/users/{id}/edit`): `Home > Utilisateurs > [User Name] > Modifier` ✓ (Level 4)
+
+## Implementation Guidelines
+
+### 1. NO Breadcrumbs on Dashboard or Index Actions
+Dashboard and list/index pages should NOT have breadcrumb attributes (Level 1 & 2).
+
+```php
+// ✓ CORRECT - No breadcrumb on index action
+#[Route('', name: 'club_equipments')]
+public function index(Request $request): Response
+
+// ✗ WRONG - Don't add breadcrumb to index actions
+#[Route('', name: 'club_equipments')]
+#[Breadcrumb([...])]  // NO!
+public function index(Request $request): Response
+```
+
+### 2. Detail Pages Always Have Breadcrumbs (Level 3+)
+When creating a `show()`, `edit()`, or `new()` action, always include the parent list route:
+
+```php
+#[Route('/{id}', name: 'club_equipment_show')]
+#[Breadcrumb([
+    ['label' => 'home', 'route' => 'club_dashboard'],
+    ['label' => 'Équipements', 'route' => 'club_equipments'],  // Parent list
+    ['label' => '$equipment.name'],
+])]
+public function show(Equipment $equipment): Response
+```
+
+### 3. Edit Pages Include the Detail Page
+Edit actions should include the detail page in the breadcrumb chain:
+
+```php
+#[Route('/{id}/edit', name: 'club_equipment_edit')]
+#[Breadcrumb([
+    ['label' => 'home', 'route' => 'club_dashboard'],
+    ['label' => 'Équipements', 'route' => 'club_equipments'],
+    ['label' => '$equipment.name', 'route' => 'club_equipment_show', 'parameters' => ['id' => '$equipment.id']],
+    ['label' => 'Modifier'],
+])]
+public function edit(Request $request, Equipment $equipment): Response
+```
+
+### 4. Home Icon Consistency
+ALWAYS start breadcrumbs with a home icon using the special label `'home'`:
+
+```php
+['label' => 'home', 'route' => 'club_dashboard']  // For club subdomain
+['label' => 'home', 'route' => 'app_dashboard']   // For www subdomain
+```
+
+The custom breadcrumb template will automatically render a home icon (`ti-home`) when it encounters the `'home'` label.
+
+## Validation Checklist
+
+Before completing any feature that adds new pages, verify:
+
+- [ ] Every `index()` action has a breadcrumb
+- [ ] Every `show()` action references its parent list in the breadcrumb
+- [ ] Every `edit()` action references both the list and the detail page
+- [ ] Every `new()` action references its parent list
+- [ ] All breadcrumbs start with the home icon
+- [ ] The breadcrumb hierarchy matches the URL structure
+- [ ] All labels use consistent French translations
+
+## Common Mistakes to Avoid
+
+❌ **Adding breadcrumb to dashboard or index action (Level 1 & 2)**
+```php
+// WRONG - Index pages should not have breadcrumbs
+#[Route('', name: 'club_equipments')]
+#[Breadcrumb([...])]  // Don't do this!
+public function index(Request $request): Response
+```
+
+❌ **Detail page not referencing parent list**
+```php
+#[Breadcrumb([
+    ['label' => 'home', 'route' => 'club_dashboard'],
+    ['label' => '$equipment.name'],  // Missing 'Équipements' link!
+])]
+```
+
+❌ **Inconsistent home reference**
+```php
+['label' => 'Dashboard', 'route' => 'club_dashboard']  // Should use 'home' label
+```
+
+❌ **Edit page not including show page**
+```php
+#[Breadcrumb([
+    ['label' => 'home', 'route' => 'club_dashboard'],
+    ['label' => 'Équipements', 'route' => 'club_equipments'],
+    ['label' => 'Modifier'],  // Missing the equipment name + link!
+])]
+```
+
+## Testing Breadcrumbs
+
+When testing a new feature, navigate through the pages and verify:
+1. Each page shows a breadcrumb
+2. Clicking on any breadcrumb link takes you to the correct page
+3. The breadcrumb path makes logical sense
+4. The home icon appears and links to the correct dashboard
+5. The current page is not a link in the breadcrumb (it's the last item)

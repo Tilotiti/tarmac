@@ -16,6 +16,7 @@ use App\Service\ClubResolver;
 use App\Service\InvitationService;
 use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
+use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -67,6 +68,11 @@ class MemberController extends ExtendedController
 
     #[Route('/invitations', name: 'club_invitations')]
     #[IsGranted('MANAGE')]
+    #[Breadcrumb([
+        ['label' => 'home', 'route' => 'club_dashboard'],
+        ['label' => 'Membres', 'route' => 'club_members'],
+        ['label' => 'Invitations'],
+    ])]
     public function invitations(Request $request): Response
     {
         $club = $this->clubResolver->resolve();
@@ -86,6 +92,11 @@ class MemberController extends ExtendedController
 
     #[Route('/invite', name: 'club_member_invite')]
     #[IsGranted('MANAGE')]
+    #[Breadcrumb([
+        ['label' => 'home', 'route' => 'club_dashboard'],
+        ['label' => 'Membres', 'route' => 'club_members'],
+        ['label' => 'Inviter'],
+    ])]
     public function invite(Request $request): Response
     {
         $club = $this->clubResolver->resolve();
@@ -188,6 +199,11 @@ class MemberController extends ExtendedController
     }
 
     #[Route('/member/{id}', name: 'club_member_show')]
+    #[Breadcrumb([
+        ['label' => 'home', 'route' => 'club_dashboard'],
+        ['label' => 'Membres', 'route' => 'club_members'],
+        ['label' => '$membership.user.fullname'],
+    ])]
     public function show(Request $request, Membership $membership): Response
     {
         $club = $this->clubResolver->resolve();

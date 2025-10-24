@@ -1,0 +1,67 @@
+{% extends 'club/base.html.twig' %}
+
+{% block title %}Mon profil
+{% endblock %}
+
+{% block body %}
+	<div class="page-header d-print-none">
+		<div class="container-xl">
+			<div class="row g-2 align-items-center">
+				<div class="col">
+					<h2 class="page-title">
+						Mon profil
+					</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="page-body">
+		<div class="container-xl">
+			<div class="row">
+				<div class="col-12 col-md-8 col-lg-6">
+					<div class="card">
+						<div class="card-header">
+							<h3 class="card-title">Informations personnelles</h3>
+						</div>
+						<div class="card-body">
+							{{ form_start(profileForm) }}
+							{{ form_row(profileForm.firstname) }}
+							{{ form_row(profileForm.lastname) }}
+
+							<div class="form-footer">
+								<button type="submit" class="btn btn-primary w-100 w-md-auto" style="min-height: 44px;">
+									<i class="ti ti-check me-2"></i>
+									Enregistrer
+								</button>
+								<a href="{{ path('club_dashboard') }}" class="btn btn-link w-100 w-md-auto mt-2 mt-md-0" style="min-height: 44px;">
+									Retour
+								</a>
+							</div>
+							{{ form_end(profileForm) }}
+						</div>
+					</div>
+
+					<div class="card mt-3">
+						<div class="card-header">
+							<h3 class="card-title">Sécurité</h3>
+						</div>
+						<div class="card-body">
+							{{ form_start(passwordForm) }}
+							{{ form_row(passwordForm.oldPassword) }}
+							{{ form_row(passwordForm.plainPassword) }}
+
+							<div class="form-footer">
+								<button type="submit" class="btn btn-primary w-100 w-md-auto" style="min-height: 44px;">
+									<i class="ti ti-key me-2"></i>
+									Modifier mon mot de passe
+								</button>
+							</div>
+							{{ form_end(passwordForm) }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
