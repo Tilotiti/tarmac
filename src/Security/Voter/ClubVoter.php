@@ -4,6 +4,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Club;
 use App\Entity\User;
+use App\Service\ClubResolver;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -13,10 +14,15 @@ class ClubVoter extends Voter
     public const MANAGE = 'MANAGE';
     public const INSPECT = 'INSPECT';
 
+    public function __construct(
+        private readonly ClubResolver $clubResolver
+    ) {
+    }
+
     protected function supports(string $attribute, mixed $subject): bool
     {
-        // Only vote on Club objects with specific attributes
-        return $subject instanceof Club && in_array($attribute, [self::VIEW, self::MANAGE, self::INSPECT]);
+        // Vote on these attributes regardless of subject (will resolve club internally)
+        return in_array($attribute, [self::VIEW, self::MANAGE, self::INSPECT]);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -28,23 +34,28 @@ class ClubVoter extends Voter
             return false;
         }
 
-        $club = $subject;
-
         // Admins have access to everything
         if ($user->isAdmin()) {
             return true;
         }
 
-        // Check if user has access to this club
-        if (!$user->hasAccessToClub($club)) {
+        // Resolve club from subdomain
+        $club = $this->clubResolver->resolve();
+        if (!$club) {
             return false;
         }
 
-        // Check specific permissions
+        // Get user's membership for this club
+        $membership = $club->getMembership($user);
+        if (!$membership) {
+            return false;
+        }
+
+        // Check specific permissions based on membership
         return match ($attribute) {
-            self::VIEW => true, // User has access, so they can view
-            self::MANAGE => $user->isManagerOfClub($club),
-            self::INSPECT => $user->isInspectorOfClub($club) || $user->isManagerOfClub($club),
+            self::VIEW => true, // User has membership, so they can view
+            self::MANAGE => $membership->isManager(),
+            self::INSPECT => $membership->isInspector(),
             default => false,
         };
     }

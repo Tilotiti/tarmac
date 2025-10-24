@@ -6,6 +6,7 @@ use App\Entity\Club;
 use App\Entity\Invitation;
 use App\Entity\Membership;
 use App\Form\InvitationType;
+use App\Form\MembershipType;
 use App\Form\Filter\MemberFilterType;
 use App\Repository\InvitationRepository;
 use App\Repository\MembershipRepository;
@@ -21,7 +22,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/members', host: '{subdomain}.%domain%', requirements: ['subdomain' => '(?!www|app).*'])]
-#[IsGranted('ROLE_USER')]
+#[IsGranted('VIEW')]
 class MemberController extends ExtendedController
 {
     public function __construct(
@@ -39,7 +40,6 @@ class MemberController extends ExtendedController
     public function index(Request $request): Response
     {
         $club = $this->clubResolver->resolve();
-        $this->denyAccessUnlessGranted('MANAGE', $club);
 
         // Handle filters
         $filterForm = $this->createForm(MemberFilterType::class);
@@ -66,10 +66,10 @@ class MemberController extends ExtendedController
     }
 
     #[Route('/invitations', name: 'club_invitations')]
+    #[IsGranted('MANAGE')]
     public function invitations(Request $request): Response
     {
         $club = $this->clubResolver->resolve();
-        $this->denyAccessUnlessGranted('MANAGE', $club);
 
         // Get pending invitations with pagination
         $invitations = Paginator::paginate(
@@ -85,10 +85,10 @@ class MemberController extends ExtendedController
     }
 
     #[Route('/invite', name: 'club_member_invite')]
+    #[IsGranted('MANAGE')]
     public function invite(Request $request): Response
     {
         $club = $this->clubResolver->resolve();
-        $this->denyAccessUnlessGranted('MANAGE', $club);
 
         $invitation = new Invitation();
         $form = $this->createForm(InvitationType::class, $invitation);
@@ -118,10 +118,10 @@ class MemberController extends ExtendedController
     }
 
     #[Route('/member/{id}/delete', name: 'club_member_delete', methods: ['POST'])]
+    #[IsGranted('MANAGE')]
     public function deleteMember(Membership $membership): Response
     {
         $club = $this->clubResolver->resolve();
-        $this->denyAccessUnlessGranted('MANAGE', $club);
 
         // Ensure membership belongs to this club
         if ($membership->getClub() !== $club) {
@@ -152,10 +152,10 @@ class MemberController extends ExtendedController
     }
 
     #[Route('/invitation/{id}/resend', name: 'club_invitation_resend', methods: ['POST'])]
+    #[IsGranted('MANAGE')]
     public function resendInvitation(Invitation $invitation): Response
     {
         $club = $this->clubResolver->resolve();
-        $this->denyAccessUnlessGranted('MANAGE', $club);
 
         // Ensure invitation belongs to this club
         if ($invitation->getClub() !== $club) {
@@ -170,10 +170,10 @@ class MemberController extends ExtendedController
     }
 
     #[Route('/invitation/{id}/delete', name: 'club_invitation_delete', methods: ['POST'])]
+    #[IsGranted('MANAGE')]
     public function deleteInvitation(Invitation $invitation): Response
     {
         $club = $this->clubResolver->resolve();
-        $this->denyAccessUnlessGranted('MANAGE', $club);
 
         // Ensure invitation belongs to this club
         if ($invitation->getClub() !== $club) {
@@ -185,6 +185,58 @@ class MemberController extends ExtendedController
         $this->addFlash('success', 'L\'invitation a été annulée.');
 
         return $this->redirectToRoute('club_invitations');
+    }
+
+    #[Route('/member/{id}', name: 'club_member_show')]
+    public function show(Request $request, Membership $membership): Response
+    {
+        $club = $this->clubResolver->resolve();
+
+        // Ensure membership belongs to this club
+        if ($membership->getClub() !== $club) {
+            throw $this->createNotFoundException();
+        }
+
+        // Create form for the modal (only for managers)
+        $form = null;
+        $openModal = false;
+
+        if ($this->isGranted('MANAGE')) {
+            $form = $this->createForm(MembershipType::class, $membership);
+            $form->handleRequest($request);
+        }
+
+        if ($form && $form->isSubmitted() && $form->isValid()) {
+            // Prevent removing last manager
+            $user = $this->getUser();
+            if ($membership->getUser() === $user && !$membership->isManager()) {
+                $managerCount = $this->membershipRepository->queryByClubAndFilters($club, ['role' => 'manager'])
+                    ->select('COUNT(m.id)')
+                    ->getQuery()
+                    ->getSingleScalarResult();
+
+                if ($managerCount <= 1) {
+                    $this->addFlash('danger', 'Vous ne pouvez pas retirer vos droits de manager, vous êtes le dernier manager du club.');
+                    return $this->redirectToRoute('club_member_show', ['id' => $membership->getId()]);
+                }
+            }
+
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Les rôles ont été mis à jour avec succès.');
+
+            return $this->redirectToRoute('club_member_show', ['id' => $membership->getId()]);
+        } elseif ($form && $form->isSubmitted()) {
+            // Form was submitted but has errors, keep modal open
+            $openModal = true;
+        }
+
+        return $this->render('club/members/show.html.twig', [
+            'club' => $club,
+            'membership' => $membership,
+            'form' => $form,
+            'openModal' => $openModal,
+        ]);
     }
 }
 

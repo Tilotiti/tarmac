@@ -12,6 +12,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/', host: '{subdomain}.%domain%', requirements: ['subdomain' => '(?!www|app).*'])]
 #[IsGranted('ROLE_USER')]
+#[IsGranted('VIEW')]
 class DashboardController extends ExtendedController
 {
     public function __construct(
@@ -25,16 +26,6 @@ class DashboardController extends ExtendedController
     public function index(): Response
     {
         $club = $this->clubResolver->resolve();
-
-        // Check if user has access to this club
-        $user = $this->getUser();
-        if (!$user instanceof \App\Entity\User) {
-            throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
-        }
-
-        if (!$user->hasAccessToClub($club) && !$user->isAdmin()) {
-            throw $this->createAccessDeniedException('Vous n\'avez pas accès à ce club.');
-        }
 
         return $this->render('club/dashboard.html.twig', [
             'club' => $club,

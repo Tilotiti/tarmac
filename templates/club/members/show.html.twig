@@ -1,0 +1,161 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ membership.user.fullname }}
+{% endblock %}
+
+{% block page_pretitle %}
+	<a href="{{ path('club_members') }}" class="text-decoration-none">
+		<i class="ti ti-arrow-left me-2"></i>
+		Retour aux membres
+	</a>
+{% endblock %}
+
+{% block page_actions %}
+	{% if is_granted('MANAGE', club) %}
+		<div class="d-flex gap-2">
+			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-edit-roles" style="min-height: 44px;">
+				<i class="ti ti-edit me-2"></i>
+				<span class="d-none d-sm-inline">Modifier les rôles</span>
+				<span class="d-inline d-sm-none">Rôles</span>
+			</button>
+			<form method="post" action="{{ path('club_member_delete', {id: membership.id}) }}" onsubmit="return confirm('Retirer {{ membership.user.fullname }} du club ?');">
+				<button type="submit" class="btn btn-outline-danger" style="min-height: 44px;">
+					<i class="ti ti-trash me-2"></i>
+					<span class="d-none d-sm-inline">Retirer du club</span>
+					<span class="d-inline d-sm-none">Retirer</span>
+				</button>
+			</form>
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block page_content %}
+	{# Member Information Card #}
+	<div class="card mb-3">
+		<div class="card-header">
+			<h3 class="card-title">Informations du membre</h3>
+		</div>
+		<div class="card-body">
+			<div class="d-flex align-items-start flex-column flex-sm-row">
+				<span class="avatar avatar-xl me-3 mb-3 mb-sm-0">{{ membership.user.firstname[:1] }}{{ membership.user.lastname[:1] }}</span>
+				<div class="flex-fill">
+					<h3 class="mb-1 {% if not membership.user.active %}text-danger{% endif %}">
+						{{ membership.user.fullname }}
+					</h3>
+					<div class="text-secondary mb-2">
+						<i class="ti ti-mail me-1"></i>
+						{{ membership.user.email }}
+					</div>
+					{% if not membership.user.active %}
+						<span class="badge bg-danger">Compte désactivé</span>
+					{% endif %}
+				</div>
+				<div class="d-flex flex-wrap gap-2 align-items-start">
+					{% if membership.isManager %}
+						<span class="badge bg-blue-lt fs-5 py-2 px-3">
+							<i class="ti ti-user-star me-1"></i>
+							Manager
+						</span>
+					{% endif %}
+					{% if membership.isInspector %}
+						<span class="badge bg-green-lt fs-5 py-2 px-3">
+							<i class="ti ti-shield-check me-1"></i>
+							Inspecteur
+						</span>
+					{% endif %}
+					{% if not membership.isManager and not membership.isInspector %}
+						<span class="badge bg-secondary-lt fs-5 py-2 px-3">
+							<i class="ti ti-user me-1"></i>
+							Membre
+						</span>
+					{% endif %}
+				</div>
+			</div>
+
+			<hr class="my-4">
+
+			<div class="row">
+				<div class="col-12 col-sm-6 mb-3">
+					<div class="text-secondary small mb-1">Date d'adhésion</div>
+					<div>
+						<i class="ti ti-calendar me-1"></i>
+						{{ membership.joinedAt|date('d/m/Y à H:i') }}
+					</div>
+				</div>
+				<div class="col-12 col-sm-6 mb-3">
+					<div class="text-secondary small mb-1">Créé le</div>
+					<div>
+						<i class="ti ti-clock me-1"></i>
+						{{ membership.createdAt|date('d/m/Y à H:i') }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{# Modal for editing roles - Only for managers #}
+	{% if is_granted('MANAGE', club) %}
+		<div class="modal modal-blur fade" id="modal-edit-roles" tabindex="-1" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					{{ form_start(form, {'attr': {'id': 'form-edit-roles'}}) }}
+					<div class="modal-header">
+						<h5 class="modal-title">Modifier les rôles</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="mb-3">
+							<div class="form-check">
+								<input type="checkbox" id="{{ form.isManager.vars.id }}" name="{{ form.isManager.vars.full_name }}" class="form-check-input" value="1" {% if form.isManager.vars.checked %} checked {% endif %}>
+								<label class="form-check-label" for="{{ form.isManager.vars.id }}">
+									<div>{{ form.isManager.vars.label }}</div>
+									{% if form.isManager.vars.help %}
+										<div class="text-secondary small">{{ form.isManager.vars.help }}</div>
+									{% endif %}
+								</label>
+							</div>
+							{{ form_errors(form.isManager) }}
+						</div>
+
+						<div>
+							<div class="form-check">
+								<input type="checkbox" id="{{ form.isInspector.vars.id }}" name="{{ form.isInspector.vars.full_name }}" class="form-check-input" value="1" {% if form.isInspector.vars.checked %} checked {% endif %}>
+								<label class="form-check-label" for="{{ form.isInspector.vars.id }}">
+									<div>{{ form.isInspector.vars.label }}</div>
+									{% if form.isInspector.vars.help %}
+										<div class="text-secondary small">{{ form.isInspector.vars.help }}</div>
+									{% endif %}
+								</label>
+							</div>
+							{{ form_errors(form.isInspector) }}
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="min-height: 44px;">
+							<i class="ti ti-x me-2"></i>
+							Annuler
+						</button>
+						<button type="submit" class="btn btn-primary" style="min-height: 44px;">
+							<i class="ti ti-check me-2"></i>
+							Enregistrer
+						</button>
+					</div>
+					{# Mark fields as rendered so form_end doesn't render them again #}
+					{% do form.isManager.setRendered %}
+					{% do form.isInspector.setRendered %}
+					{{ form_end(form) }}
+				</div>
+			</div>
+		</div>
+
+		{% if openModal %}{# Auto-open modal if form has errors #}
+			 <script>
+										document.addEventListener('DOMContentLoaded', function() {
+											var modal = new bootstrap.Modal(document.getElementById('modal-edit-roles'));
+											modal.show();
+										});
+									</script>
+		{% endif %}
+	{% endif %}
+{% endblock %}
