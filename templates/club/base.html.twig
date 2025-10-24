@@ -18,23 +18,27 @@
 
 {% block navbar_menu %}
 	<div class="navbar-nav flex-row order-md-last">
-		<a href="{{ path('club_equipments') }}" class="nav-link {{ app.request.get('_route') starts with 'club_equipment' ? 'active' : '' }}">
-			<span class="nav-link-icon d-md-none d-lg-inline-block">
-				<i class="ti ti-plane"></i>
-			</span>
-			<span class="nav-link-title">
-				Équipements
-			</span>
-		</a>
-		{% if is_granted('MANAGE', club) %}
-			<a href="{{ path('club_members') }}" class="nav-link {{ app.request.get('_route') starts with 'club_member' or app.request.get('_route') starts with 'club_invitation' ? 'active' : '' }}">
+		<div class="nav-item {{ app.request.get('_route') starts with 'club_equipment' ? 'active' : '' }}">
+			<a href="{{ path('club_equipments') }}" class="nav-link">
 				<span class="nav-link-icon d-md-none d-lg-inline-block">
-					<i class="ti ti-users"></i>
+					<i class="ti ti-plane"></i>
 				</span>
 				<span class="nav-link-title">
-					Membres
+					Équipements
 				</span>
 			</a>
+		</div>
+		{% if is_granted('MANAGE', club) %}
+			<div class="nav-item {{ app.request.get('_route') starts with 'club_member' or app.request.get('_route') starts with 'club_invitation' ? 'active' : '' }}">
+				<a href="{{ path('club_members') }}" class="nav-link">
+					<span class="nav-link-icon d-md-none d-lg-inline-block">
+						<i class="ti ti-users"></i>
+					</span>
+					<span class="nav-link-title">
+						Membres
+					</span>
+				</a>
+			</div>
 		{% endif %}
 	</div>
 {% endblock %}

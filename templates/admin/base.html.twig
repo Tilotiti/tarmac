@@ -14,25 +14,29 @@
 {% block navbar_menu %}
 	<div class="navbar-nav">
 		{% if is_granted('ROLE_ADMIN') %}
-			<a class="nav-link {{ app.request.get('_route') starts with 'admin_club' ? 'active' : '' }}" href="{{ path('admin_club_index') }}" style="min-height: 44px;">
-				<span class="nav-link-icon d-md-none d-lg-inline-block">
-					<i class="ti ti-windsock"></i>
-				</span>
-				<span class="nav-link-title d-md-none d-lg-inline-block">
-					Clubs
-				</span>
-			</a>
+			<div class="nav-item {{ app.request.get('_route') starts with 'admin_club' ? 'active' : '' }}">
+				<a class="nav-link" href="{{ path('admin_club_index') }}" style="min-height: 44px;">
+					<span class="nav-link-icon d-md-none d-lg-inline-block">
+						<i class="ti ti-windsock"></i>
+					</span>
+					<span class="nav-link-title d-md-none d-lg-inline-block">
+						Clubs
+					</span>
+				</a>
+			</div>
 		{% endif %}
 
 		{% if is_granted('ROLE_ADMIN') %}
-			<a class="nav-link {{ app.request.get('_route') starts with 'admin_user' ? 'active' : '' }}" href="{{ path('admin_user_index') }}" style="min-height: 44px;">
-				<span class="nav-link-icon d-md-none d-lg-inline-block">
-					<i class="ti ti-users"></i>
-				</span>
-				<span class="nav-link-title d-md-none d-lg-inline-block">
-					Utilisateurs
-				</span>
-			</a>
+			<div class="nav-item {{ app.request.get('_route') starts with 'admin_user' ? 'active' : '' }}">
+				<a class="nav-link" href="{{ path('admin_user_index') }}" style="min-height: 44px;">
+					<span class="nav-link-icon d-md-none d-lg-inline-block">
+						<i class="ti ti-users"></i>
+					</span>
+					<span class="nav-link-title d-md-none d-lg-inline-block">
+						Utilisateurs
+					</span>
+				</a>
+			</div>
 		{% endif %}
 	</div>
 {% endblock %}
