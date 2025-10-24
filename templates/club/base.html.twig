@@ -32,15 +32,24 @@
 {% endblock %}
 
 {% block user_dropdown_menu %}
+	{% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+		<a href="{{ path('app_dashboard', {_switch_user: '_exit'}) }}" class="dropdown-item text-primary">
+			<i class="ti ti-logout"></i>
+			Retour à l'admin
+		</a>
+		<div class="dropdown-divider"></div>
+	{% endif %}
 	<a href="{{ path('app_profile_edit') }}" class="dropdown-item">
 		<i class="ti ti-user"></i>
 		Mon profil
 	</a>
-	<div class="dropdown-divider"></div>
-	<a href="{{ path('app_dashboard') }}" class="dropdown-item">
-		<i class="ti ti-home"></i>
-		Retour à l'application
-	</a>
+	{% if app.user.isAdmin() or app.user.getMemberships()|length > 1 %}
+		<div class="dropdown-divider"></div>
+		<a href="{{ path('app_dashboard') }}" class="dropdown-item">
+			<i class="ti ti-home"></i>
+			Retour à l'application
+		</a>
+	{% endif %}
 	<div class="dropdown-divider"></div>
 	<a href="{{ path('public_logout') }}" class="dropdown-item">
 		<i class="ti ti-logout"></i>

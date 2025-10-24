@@ -38,6 +38,13 @@
 {% endblock %}
 
 {% block user_dropdown_menu %}
+	{% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+		<a href="{{ path('app_dashboard', {_switch_user: '_exit'}) }}" class="dropdown-item text-primary">
+			<i class="ti ti-logout"></i>
+			Retour à l'admin
+		</a>
+		<div class="dropdown-divider"></div>
+	{% endif %}
 	<a href="{{ path('app_profile_edit') }}" class="dropdown-item">
 		<i class="ti ti-user"></i>
 		Mon profil

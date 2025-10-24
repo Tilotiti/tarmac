@@ -22,16 +22,49 @@
 {% endblock %}
 
 {% block page_actions %}
-	<a href="{{ path('app_user_edit', {id: user.id}) }}" class="btn btn-primary me-2" style="min-height: 44px;">
-		<i class="ti ti-edit me-2"></i>
-		<span class="d-none d-sm-inline">Modifier</span>
-		<span class="d-inline d-sm-none">Modifier</span>
-	</a>
-	<a href="{{ path('app_user_index') }}" class="btn btn-outline-secondary" style="min-height: 44px;">
-		<i class="ti ti-arrow-left me-2"></i>
-		<span class="d-none d-sm-inline">Retour</span>
-		<span class="d-inline d-sm-none">Retour</span>
-	</a>
+	<div class="btn-list">
+		<a href="{{ path('app_user_index') }}" class="btn btn-outline-secondary" style="min-height: 44px;">
+			<i class="ti ti-arrow-left me-2"></i>
+			<span class="d-none d-sm-inline">Retour</span>
+			<span class="d-inline d-sm-none">Retour</span>
+		</a>
+		<a href="{{ path('app_user_edit', {id: user.id}) }}" class="btn btn-primary" style="min-height: 44px;">
+			<i class="ti ti-edit me-2"></i>
+			<span class="d-none d-sm-inline">Modifier</span>
+			<span class="d-inline d-sm-none">Modifier</span>
+		</a>
+		{% if user.id != app.user.id %}
+			{% if is_granted('ROLE_ADMIN') and user.active and user.isVerified %}
+				<a href="{{ path('app_user_show', {id: user.id, _switch_user: user.email}) }}" class="btn btn-info" style="min-height: 44px;">
+					<i class="ti ti-user-check me-2"></i>
+					<span class="d-none d-sm-inline">Se connecter</span>
+					<span class="d-inline d-sm-none">Se connecter</span>
+				</a>
+			{% endif %}
+			{% if user.active %}
+				<form method="post" action="{{ path('app_user_disable', {id: user.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver cet utilisateur ?');">
+					<button type="submit" class="btn btn-outline-warning" style="min-height: 44px;">
+						<i class="ti ti-ban me-2"></i>
+						<span class="d-none d-sm-inline">Désactiver</span>
+						<span class="d-inline d-sm-none">Désactiver</span>
+					</button>
+				</form>
+			{% else %}
+				<form method="post" action="{{ path('app_user_disable', {id: user.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir activer cet utilisateur ?');">
+					<button type="submit" class="btn btn-outline-success" style="min-height: 44px;">
+						<i class="ti ti-check me-2"></i>
+						<span class="d-none d-sm-inline">Activer</span>
+						<span class="d-inline d-sm-none">Activer</span>
+					</button>
+				</form>
+			{% endif %}
+			<a href="{{ path('app_user_delete', {id: user.id}) }}" class="btn btn-outline-danger" style="min-height: 44px;" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.');">
+				<i class="ti ti-trash me-2"></i>
+				<span class="d-none d-sm-inline">Supprimer</span>
+				<span class="d-inline d-sm-none">Supprimer</span>
+			</a>
+		{% endif %}
+	</div>
 {% endblock %}
 
 {% block page_content %}
@@ -118,42 +151,6 @@
 							<em>Aucun club</em>
 						</div>
 					{% endif %}
-				</div>
-			</div>
-		</div>
-
-		{# Actions #}
-		<div class="col-12">
-			<div class="card">
-				<div class="card-header">
-					<h3 class="card-title">Actions</h3>
-				</div>
-				<div class="card-body">
-					<div class="d-grid gap-2">
-						<a href="{{ path('app_user_edit', {id: user.id}) }}" class="btn btn-primary" style="min-height: 44px;">
-							<i class="ti ti-edit me-2"></i>
-							Modifier l'utilisateur
-						</a>
-
-						{% if user.id != app.user.id %}
-							<form method="post" action="{{ path('app_user_disable', {id: user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir {{ user.active ? 'désactiver' : 'activer' }} cet utilisateur ?');">
-								<button type="submit" class="btn {% if user.active %}btn-outline-warning{% else %}btn-outline-success{% endif %} w-100" style="min-height: 44px;">
-									<i class="ti ti-{% if user.active %}ban{% else %}check{% endif %} me-2"></i>
-									{{ user.active ? 'Désactiver l\'utilisateur' : 'Activer l\'utilisateur' }}
-								</button>
-							</form>
-
-							<a href="{{ path('app_user_delete', {id: user.id}) }}" class="btn btn-outline-danger" style="min-height: 44px;" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.');">
-								<i class="ti ti-trash me-2"></i>
-								Supprimer l'utilisateur
-							</a>
-						{% else %}
-							<div class="alert alert-info mb-0">
-								<i class="ti ti-info-circle me-2"></i>
-								Vous ne pouvez pas désactiver ou supprimer votre propre compte.
-							</div>
-						{% endif %}
-					</div>
 				</div>
 			</div>
 		</div>
