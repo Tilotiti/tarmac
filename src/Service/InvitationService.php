@@ -64,7 +64,7 @@ class InvitationService
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $email = (new TemplatedEmail())
-            ->from(new Address('noreply@tarmac.com', 'Tarmac'))
+            ->from(new Address('contact@tarmac.center', 'Tarmac'))
             ->to($invitation->getEmail())
             ->subject('Invitation à rejoindre ' . $invitation->getClub()->getName())
             ->htmlTemplate('email/invitation.html.twig')
