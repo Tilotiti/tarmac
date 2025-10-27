@@ -42,8 +42,11 @@ final class Version20251027083248 extends AbstractMigration
             // Rename the primary key constraint
             $this->addSql('ALTER TABLE activity RENAME CONSTRAINT task_activity_pkey TO activity_pkey');
 
-            // Drop the old sequence
+            // Drop the old sequence and create new one
             $this->addSql('DROP SEQUENCE IF EXISTS task_activity_id_seq CASCADE');
+            $this->addSql('CREATE SEQUENCE activity_id_seq');
+            $this->addSql('SELECT setval(\'activity_id_seq\', GREATEST(COALESCE((SELECT MAX(id) FROM activity), 0), 1))');
+            $this->addSql('ALTER TABLE activity ALTER id SET DEFAULT nextval(\'activity_id_seq\')');
 
             // Update comment
             $this->addSql('COMMENT ON COLUMN activity.created_at IS \'(DC2Type:datetimetz_immutable)\'');
