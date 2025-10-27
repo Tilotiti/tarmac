@@ -20,31 +20,31 @@ final class Version20251027083248 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        
+
         // Check if activity table already exists
         $activityTableExists = $this->connection->fetchOne(
             "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'activity')"
         );
-        
+
         $taskActivityTableExists = $this->connection->fetchOne(
             "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'task_activity')"
         );
-        
+
         if (!$activityTableExists && $taskActivityTableExists) {
             // Normal case: rename task_activity to activity
             $this->addSql('ALTER TABLE task_activity RENAME TO activity');
-            
+
             // Update the constraint names to match the new table name
             $this->addSql('ALTER TABLE activity RENAME CONSTRAINT fk_ecb4e3168db60186 TO FK_AC74095A8DB60186');
             $this->addSql('ALTER TABLE activity RENAME CONSTRAINT fk_ecb4e316a76ed395 TO FK_AC74095AA76ED395');
             $this->addSql('ALTER TABLE activity RENAME CONSTRAINT fk_ecb4e316f26e5d72 TO FK_AC74095AF26E5D72');
-            
+
             // Rename the primary key constraint
             $this->addSql('ALTER TABLE activity RENAME CONSTRAINT task_activity_pkey TO activity_pkey');
-            
+
             // Drop the old sequence
             $this->addSql('DROP SEQUENCE IF EXISTS task_activity_id_seq CASCADE');
-            
+
             // Update comment
             $this->addSql('COMMENT ON COLUMN activity.created_at IS \'(DC2Type:datetimetz_immutable)\'');
         } elseif (!$activityTableExists && !$taskActivityTableExists) {
@@ -61,7 +61,7 @@ final class Version20251027083248 extends AbstractMigration
             $this->addSql('ALTER TABLE activity ADD CONSTRAINT FK_AC74095AA76ED395 FOREIGN KEY (user_id) REFERENCES "user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         }
         // If activity table already exists, do nothing (migration already applied)
-        
+
         $this->addSql('ALTER TABLE plan_application ALTER due_at TYPE DATE');
         $this->addSql('COMMENT ON COLUMN plan_application.due_at IS \'(DC2Type:date_immutable)\'');
         $this->addSql('ALTER TABLE task ALTER due_at TYPE DATE');
