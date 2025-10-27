@@ -125,6 +125,16 @@
 					</div>
 				{% endif %}
 
+				{% if equipment.responsible %}
+					<div class="col-12 col-md-6 mb-3">
+						<div class="text-secondary small mb-1">{{ 'responsible'|trans }}</div>
+						<div>
+							<i class="ti ti-user-shield me-1"></i>
+							{{ equipment.responsible.fullname }}
+						</div>
+					</div>
+				{% endif %}
+
 				{% if equipment.isPrivate and equipment.owners|length > 0 %}
 					<div class="col-12 mb-3">
 						<div class="text-secondary small mb-2">{{ 'owners'|trans }}</div>

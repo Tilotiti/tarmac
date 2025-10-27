@@ -580,6 +580,14 @@
         <source>createdBy</source>
         <target>Créé par</target>
       </trans-unit>
+      <trans-unit id="1421" resname="responsible">
+        <source>responsible</source>
+        <target>Responsable</target>
+      </trans-unit>
+      <trans-unit id="1422" resname="selectResponsible">
+        <source>selectResponsible</source>
+        <target>Sélectionner un responsable</target>
+      </trans-unit>
       <trans-unit id="102" resname="confirmDisableEquipment">
         <source>confirmDisableEquipment</source>
         <target>Voulez-vous vraiment désactiver cet équipement ?</target>
@@ -822,6 +830,10 @@
       <trans-unit id="157" resname="awaitingInspection">
         <source>awaitingInspection</source>
         <target>En attente d'inspection</target>
+      </trans-unit>
+      <trans-unit id="157a" resname="tasksToInspect">
+        <source>tasksToInspect</source>
+        <target>Tâches à inspecter</target>
       </trans-unit>
       <trans-unit id="158" resname="dueDate">
         <source>dueDate</source>
@@ -1286,6 +1298,18 @@
       <trans-unit id="267" resname="inspection">
         <source>inspection</source>
         <target>Inspection</target>
+      </trans-unit>
+      <trans-unit id="267a" resname="inspectionPlanned">
+        <source>inspectionPlanned</source>
+        <target>Inspection à prévoir</target>
+      </trans-unit>
+      <trans-unit id="267b" resname="inspectionPending">
+        <source>inspectionPending</source>
+        <target>Inspection en attente</target>
+      </trans-unit>
+      <trans-unit id="267c" resname="inspectionValidated">
+        <source>inspectionValidated</source>
+        <target>Inspection validée</target>
       </trans-unit>
       <trans-unit id="268" resname="allSubTasksMustBeDone">
         <source>allSubTasksMustBeDone</source>

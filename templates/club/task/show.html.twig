@@ -8,33 +8,33 @@
 
 {% block page_actions %}
 	<div class="btn-list">
-		{% if is_granted('TASK_EDIT', task) %}
+		{% if is_granted('TASK_EDIT', task) and not task.isClosed %}
 			<a href="{{ path('club_task_edit', {id: task.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
 				<i class="ti ti-edit me-2"></i>
 				<span class="d-none d-sm-inline">{{ 'edit'|trans }}</span>
 			</a>
 		{% endif %}
 
-		{% if is_granted('TASK_DO', task) and not task.isDone and task.status == 'open' %}
-			{# Check if all subtasks are done #}
-			{% set allSubTasksDone = true %}
-			{% if task.subTasks|length > 0 %}
-				{% for subtask in task.subTasks %}
-					{% if subtask.status != 'closed' %}
-						{% set allSubTasksDone = false %}
-					{% endif %}
-				{% endfor %}
-			{% endif %}
+		{# Check if all subtasks are done #}
+		{% set allSubTasksDone = true %}
+		{% if task.subTasks|length > 0 %}
+			{% for subtask in task.subTasks %}
+				{% if subtask.status != 'closed' %}
+					{% set allSubTasksDone = false %}
+				{% endif %}
+			{% endfor %}
+		{% endif %}
 
+		{% if is_granted('TASK_DO', task) and not task.isDone and task.status == 'open' and allSubTasksDone %}
 			<form method="post" action="{{ path('club_task_do', {id: task.id}) }}" class="d-inline">
-				<button type="submit" class="btn btn-success" style="min-height: 44px;" {{ not allSubTasksDone ? 'disabled' : '' }} {{ not allSubTasksDone ? 'title="' ~ 'allSubTasksMustBeDone'|trans ~ '"' : '' }}>
+				<button type="submit" class="btn btn-success" style="min-height: 44px;">
 					<i class="ti ti-check me-2"></i>
 					<span class="d-none d-sm-inline">{{ 'markAsDone'|trans }}</span>
 				</button>
 			</form>
 		{% endif %}
 
-		{% if is_granted('TASK_INSPECT', task) %}
+		{% if is_granted('TASK_INSPECT', task) and task.isDone and not task.isClosed and task.requiresInspection %}
 			<form method="post" action="{{ path('club_task_inspect_approve', {id: task.id}) }}" class="d-inline">
 				<button type="submit" class="btn btn-success" style="min-height: 44px;">
 					<i class="ti ti-circle-check me-2"></i>
@@ -95,7 +95,7 @@
 							</span>
 						{% else %}
 							<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'cancelled' ? 'danger' : 'info') }} text-white">
-								<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'cancelled' ? 'x' : (task.status == 'done' ? 'check' : (task.status == 'claimed' ? 'hourglass' : 'circle'))) }} me-1"></i>
+								<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'cancelled' ? 'x' : (task.status == 'done' ? 'check' : 'circle')) }} me-1"></i>
 								{{ task.status|trans }}
 							</span>
 						{% endif %}
@@ -142,6 +142,16 @@
 					<div class="text-secondary small mb-1">{{ 'createdAt'|trans }}</div>
 					<div>{{ task.createdAt|date('d/m/Y H:i') }}</div>
 				</div>
+
+				{% if task.equipment.responsible %}
+					<div class="col-12 col-md-6 mb-3">
+						<div class="text-secondary small mb-1">{{ 'responsible'|trans }}</div>
+						<div>
+							<i class="ti ti-user-shield me-1"></i>
+							{{ task.equipment.responsible.fullname }}
+						</div>
+					</div>
+				{% endif %}
 
 				{% if task.planApplication %}
 					<div class="col-12 col-md-6 mb-3">
@@ -197,7 +207,7 @@
 	<div class="card mb-3">
 		<div class="card-header">
 			<h3 class="card-title">{{ 'subTasks'|trans }}</h3>
-			{% if is_granted('TASK_CREATE_SUBTASK', task) %}
+			{% if is_granted('TASK_CREATE_SUBTASK', task) and not task.isDone %}
 				<div class="card-actions">
 					<a href="{{ path('club_subtask_new', {taskId: task.id}) }}" class="btn btn-primary btn-sm" style="min-height: 44px;">
 						<i class="ti ti-plus me-2"></i>
@@ -370,16 +380,4 @@
 			</div>
 		</div>
 	</div>
-{% endblock %}
-
-{% block javascripts %}
-	 <script>
-																		// Initialize Bootstrap tooltips
-																		document.addEventListener('DOMContentLoaded', function() {
-																			var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-																			var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-																				return new bootstrap.Tooltip(tooltipTriggerEl);
-																			});
-																		});
-																	</script>
 {% endblock %}

@@ -61,6 +61,15 @@
 				</small>
 			</div>
 
+			<div class="mb-3">
+				{{ form_label(form.responsible) }}
+				{{ form_widget(form.responsible) }}
+				{{ form_errors(form.responsible) }}
+				<small class="form-hint">
+					Personne responsable de cet équipement (optionnel)
+				</small>
+			</div>
+
 			<div>
 				<button type="submit" class="btn btn-primary" style="min-height: 44px;">
 					<i class="ti ti-check me-2"></i>

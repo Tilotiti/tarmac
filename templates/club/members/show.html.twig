@@ -24,6 +24,7 @@
 {% endblock %}
 
 {% block page_content %}
+	{% if openModal %}<div data-auto-open-modal="modal-edit-roles"></div>{% endif %}
 	{# Member Information Card #}
 	<div class="card mb-3">
 		<div class="card-header">
@@ -141,14 +142,5 @@
 				</div>
 			</div>
 		</div>
-
-		{% if openModal %}{# Auto-open modal if form has errors #}
-			 <script>
-																document.addEventListener('DOMContentLoaded', function() {
-																	var modal = new bootstrap.Modal(document.getElementById('modal-edit-roles'));
-																	modal.show();
-																});
-															</script>
-		{% endif %}
 	{% endif %}
 {% endblock %}

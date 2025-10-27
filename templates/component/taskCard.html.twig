@@ -1,0 +1,159 @@
+{#
+    Task Card Component
+    
+    Parameters:
+    - task: The Task entity to display
+#}
+<div class="col-12 mb-3">
+	<a href="{{ path('club_task_show', {id: task.id}) }}" class="text-decoration-none">
+		<div class="card card-link" style="cursor: pointer;">
+			<div class="card-body">
+				<div class="d-flex align-items-start mb-3">
+					{# Equipment Avatar - same style as equipment list #}
+					<span class="avatar avatar-lg me-3 bg-{{ task.equipment.type.value == 'glider' ? 'blue' : (task.equipment.type.value == 'facility' ? 'purple' : 'green') }}-lt">
+						<i class="ti ti-{{ task.equipment.type.value == 'glider' ? 'plane' : (task.equipment.type.value == 'facility' ? 'building' : 'tool') }} text-{{ task.equipment.type.value == 'glider' ? 'blue' : (task.equipment.type.value == 'facility' ? 'purple' : 'green') }}" style="font-size: 1.5rem;"></i>
+					</span>
+
+					{# Main content #}
+					<div class="flex-grow-1">
+						{# Equipment name (main title) #}
+						<h3 class="card-title mb-1">
+							{{ task.equipment.name }}
+						</h3>
+
+						{# Task name (subtitle) #}
+						<div class="text-secondary mb-2">
+							{{ task.title }}
+						</div>
+
+						{# Due date #}
+						<div class="text-secondary small">
+							{% if task.dueAt %}
+								<i class="ti ti-calendar me-1"></i>
+								{{ task.dueAt|date('d/m/Y') }}
+							{% endif %}
+						</div>
+					</div>
+
+					{# Badges on desktop - right side #}
+					<div class="ms-3 d-none d-md-flex gap-2 align-items-start">
+						{# Status badge with icon - only show if not waiting for inspection (inspection badge is more specific) #}
+						{% if not task.requiresInspection %}
+							<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'cancelled' ? 'danger' : 'info') }} text-white">
+								<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'cancelled' ? 'x' : (task.status == 'done' ? 'check' : 'circle')) }} me-1"></i>
+								{{ task.status|trans }}
+							</span>
+						{% endif %}
+
+						{# Inspection badge with icon - context-aware label #}
+						{% if task.requiresInspection %}
+							{% if task.status == 'closed' %}
+								{# Task was inspected and approved #}
+								<span class="badge bg-success text-white">
+									<i class="ti ti-circle-check me-1"></i>
+									{{ 'inspectionValidated'|trans }}
+								</span>
+							{% elseif task.isWaitingForApproval %}
+								{# Task is done and waiting for inspection #}
+								<span class="badge bg-orange text-white">
+									<i class="ti ti-hourglass me-1"></i>
+									{{ 'inspectionPending'|trans }}
+								</span>
+							{% else %}
+								{# Task is open and will require inspection when done #}
+								<span class="badge bg-purple text-white">
+									<i class="ti ti-eye-check me-1"></i>
+									{{ 'inspectionPlanned'|trans }}
+								</span>
+							{% endif %}
+						{% endif %}
+
+						{# Difficulty badge with icon and same style #}
+						{% set difficultyMap = {
+							1: 'debutant',
+							2: 'facile',
+							3: 'moyen',
+							4: 'difficile',
+							5: 'expert'
+						} %}
+						{% set difficultyColorMap = {
+							1: 'success',
+							2: 'info',
+							3: 'warning',
+							4: 'orange',
+							5: 'danger'
+						} %}
+						<span class="badge bg-{{ difficultyColorMap[task.difficulty] }} text-white">
+							<i class="ti ti-gauge me-1"></i>
+							{{ difficultyMap[task.difficulty]|trans }}
+						</span>
+					</div>
+				</div>
+
+				{# Badges on mobile - full width under avatar #}
+				<div class="d-flex d-md-none gap-2 flex-wrap mb-3">
+					{# Status badge with icon - only show if not waiting for inspection (inspection badge is more specific) #}
+					{% if not task.requiresInspection %}
+						<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'cancelled' ? 'danger' : 'info') }} text-white">
+							<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'cancelled' ? 'x' : (task.status == 'done' ? 'check' : 'circle')) }} me-1"></i>
+							{{ task.status|trans }}
+						</span>
+					{% endif %}
+
+					{# Inspection badge with icon - context-aware label #}
+					{% if task.requiresInspection %}
+						{% if task.status == 'closed' %}
+							{# Task was inspected and approved #}
+							<span class="badge bg-success text-white">
+								<i class="ti ti-circle-check me-1"></i>
+								{{ 'inspectionValidated'|trans }}
+							</span>
+						{% elseif task.isWaitingForApproval %}
+							{# Task is done and waiting for inspection #}
+							<span class="badge bg-orange text-white">
+								<i class="ti ti-hourglass me-1"></i>
+								{{ 'inspectionPending'|trans }}
+							</span>
+						{% else %}
+							{# Task is open and will require inspection when done #}
+							<span class="badge bg-purple text-white">
+								<i class="ti ti-eye-check me-1"></i>
+								{{ 'inspectionPlanned'|trans }}
+							</span>
+						{% endif %}
+					{% endif %}
+
+					{# Difficulty badge with icon and same style #}
+					<span class="badge bg-{{ difficultyColorMap[task.difficulty] }} text-white">
+						<i class="ti ti-gauge me-1"></i>
+						{{ difficultyMap[task.difficulty]|trans }}
+					</span>
+				</div>
+
+				{# Progress bar at the bottom - full width #}
+				{% if task.subTasks|length > 0 %}
+					{% set progress = 0 %}
+					{% set closed = 0 %}
+					{% for subtask in task.subTasks %}
+						{% if subtask.status == 'closed' %}
+							{% set closed = closed + 1 %}
+						{% endif %}
+					{% endfor %}
+					{% set progress = (closed / task.subTasks|length * 100)|round %}
+					<div class="progress progress-sm mb-2">
+						<div class="progress-bar bg-{{ progress == 100 ? 'success' : 'primary' }}" style="width: {{ progress }}%">
+							<span class="visually-hidden">{{ progress }}%</span>
+						</div>
+					</div>
+					<div class="text-secondary small">
+						{{ closed }}
+						/
+						{{ task.subTasks|length }}
+						{{ 'subTasks'|trans|lower }}
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</a>
+</div>
+

@@ -54,10 +54,10 @@
 			<div {{ stimulus_controller('collection-type') }} data-collection-type-prototype-name-value="__subtask_name__" data-collection-type-display-index-name-value="__INDEX__" data-prototype="{{ subtaskPrototype|e('html_attr') }}">
 				<div
 					data-collection-type-target="container">
-					{# Empty state placeholder #}
-					<div class="empty text-center py-3 mb-3" data-collection-type-target="placeholder" style="{{ form.subTasks|length > 0 ? 'display: none;' : '' }}">
-						<p class="text-muted small mb-0">{{ 'noSubTasksYet'|trans }}</p>
-					</div>
+				{# Empty state placeholder #}
+				<div class="empty text-center py-3 mb-3" data-collection-type-target="placeholder" style="{{ form.subTasks|length > 0 ? 'display: none;' : '' }}">
+					<p class="text-muted small mb-0">{{ 'noSubTasks'|trans }}</p>
+				</div>
 
 					{% for subtask in form.subTasks %}
 						<div class="card mb-3" data-collection-type-target="item">

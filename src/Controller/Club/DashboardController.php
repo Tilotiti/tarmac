@@ -45,10 +45,10 @@ class DashboardController extends ExtendedController
             $inspectionQb->join('task.equipment', 'eqInsp')
                 ->andWhere('task.requiresInspection = :true')
                 ->setParameter('true', true)
-                ->andWhere('task.status = :done')
-                ->setParameter('done', TaskStatus::DONE)
-                ->andWhere('task.doneAt IS NOT NULL')
-                ->andWhere('task.inspectedAt IS NULL');
+                ->andWhere('task.status = :open')
+                ->setParameter('open', TaskStatus::OPEN)
+                ->andWhere('task.doneBy IS NOT NULL')
+                ->andWhere('task.inspectedBy IS NULL');
 
             // Inspectors can see tasks on private equipment (exception to privacy rule)
             // No additional privacy filter needed for inspection tasks
@@ -67,14 +67,12 @@ class DashboardController extends ExtendedController
         }
 
         // === 2. PENDING PLAN APPLICATIONS ===
-        // Get applications with open tasks
+        // Get applications with tasks that still need work (open status, including those waiting for inspection)
         $applicationQb = $this->taskRepository->queryAll();
         $applicationQb->join('task.equipment', 'eqApp')
             ->andWhere('task.planApplication IS NOT NULL')
-            ->andWhere('task.status != :cancelled')
-            ->setParameter('cancelled', TaskStatus::CANCELLED)
-            ->andWhere('task.status != :closed')
-            ->setParameter('closed', TaskStatus::CLOSED);
+            ->andWhere('task.status = :openStatus')
+            ->setParameter('openStatus', TaskStatus::OPEN);
 
         // Apply privacy filter for non-managers
         if (!$isManager) {
@@ -117,13 +115,13 @@ class DashboardController extends ExtendedController
         }
 
         // === 3. STANDALONE OPEN TASKS ===
+        // Only show tasks that are open AND not done (exclude tasks waiting for inspection)
         $standaloneQb = $this->taskRepository->queryAll();
         $standaloneQb->join('task.equipment', 'eqStandalone')
             ->andWhere('task.planApplication IS NULL')
-            ->andWhere('task.status != :cancelled')
-            ->setParameter('cancelled', TaskStatus::CANCELLED)
-            ->andWhere('task.status != :closed')
-            ->setParameter('closed', TaskStatus::CLOSED);
+            ->andWhere('task.status = :open')
+            ->setParameter('open', TaskStatus::OPEN)
+            ->andWhere('task.doneBy IS NULL');
 
         // Apply privacy filter for non-managers
         if (!$isManager) {

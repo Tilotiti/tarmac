@@ -47,6 +47,26 @@ class EquipmentType extends AbstractType
                 'choice_translation_domain' => 'messages',
                 'expanded' => true,
             ])
+            ->add('responsible', EntityType::class, [
+                'class' => User::class,
+                'query_builder' => function (EntityRepository $er) use ($club) {
+                    return $er->createQueryBuilder('u')
+                        ->innerJoin('u.memberships', 'm')
+                        ->where('m.club = :club')
+                        ->setParameter('club', $club)
+                        ->orderBy('u.firstname', 'ASC')
+                        ->addOrderBy('u.lastname', 'ASC');
+                },
+                'choice_label' => function (User $user) {
+                    return $user->getFullName() ?: $user->getEmail();
+                },
+                'label' => 'responsible',
+                'required' => false,
+                'placeholder' => 'selectResponsible',
+                'attr' => [
+                    'class' => 'form-select',
+                ],
+            ])
             ->add('owners', EntityType::class, [
                 'class' => User::class,
                 'query_builder' => function (EntityRepository $er) use ($club) {
