@@ -51,8 +51,9 @@ security:
         - { path: ^/$, roles: [] }
 
         # Admin routes on www subdomain
-        - { path: ^/users, roles: ROLE_ADMIN }
-        - { path: ^/clubs, roles: ROLE_ADMIN }
+        - { path: ^/admin/users, roles: ROLE_ADMIN }
+        - { path: ^/admin/clubs, roles: ROLE_ADMIN }
+        - { path: ^/clubs, roles: ROLE_USER }
         - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/$, roles: ROLE_USER }
 

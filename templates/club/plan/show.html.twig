@@ -1,0 +1,191 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ plan.name }}
+{% endblock %}
+
+{% block page_actions %}
+	{% if is_granted('MANAGE', club) %}
+		<div class="btn-list" data-controller="confirm" data-confirm-title-value="{{ 'confirmDelete'|trans }}" data-confirm-yes-value="{{ 'delete'|trans }}" data-confirm-cancel-value="{{ 'cancel'|trans }}">
+			<a href="{{ path('club_plan_apply', {id: plan.id}) }}" class="btn btn-primary">
+				<i class="ti ti-clipboard-check me-2"></i>
+				{{ 'apply'|trans }}
+			</a>
+			<a href="{{ path('club_plan_edit', {id: plan.id}) }}" class="btn">
+				<i class="ti ti-edit me-2"></i>
+				{{ 'edit'|trans }}
+			</a>
+			<form method="post" action="{{ path('club_plan_delete', {id: plan.id}) }}" style="display: inline;">
+				<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ plan.id) }}">
+				<button type="submit" class="btn btn-danger" data-confirm="{{ 'confirmDeletePlanMessage'|trans({'{planName}': plan.name}) }}">
+					<i class="ti ti-trash me-2"></i>
+					{{ 'delete'|trans }}
+				</button>
+			</form>
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block page_content %}
+	{# Plan Information Card #}
+	<div class="row row-cards mb-3">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-body">
+					<div class="row align-items-center">
+						<div class="col">
+							<h3 class="card-title mb-2">{{ plan.name }}</h3>
+							<div class="mb-2">
+								<span class="badge bg-{{ plan.equipmentType.value == 'glider' ? 'blue' : 'green' }} text-white me-2">
+									<i class="ti ti-{{ plan.equipmentType.value == 'glider' ? 'plane' : 'building' }} me-1"></i>
+									{{ (plan.equipmentType.value ~ 'Type')|trans }}
+								</span>
+								<span class="badge bg-primary text-white me-2">
+									<i class="ti ti-checkbox me-1"></i>
+									{{ plan.taskTemplates|length }}
+									{{ 'tasks'|trans|lower }}
+								</span>
+								{% set totalSubTasks = 0 %}
+								{% for task in plan.taskTemplates %}
+									{% set totalSubTasks = totalSubTasks + task.subTaskTemplates|length %}
+								{% endfor %}
+								{% if totalSubTasks > 0 %}
+									<span class="badge bg-secondary text-white">
+										<i class="ti ti-list-check me-1"></i>
+										{{ totalSubTasks }}
+										{{ 'subTasks'|trans|lower }}
+									</span>
+								{% endif %}
+							</div>
+							{% if plan.description %}
+								<div class="text-secondary">
+									{{ plan.description }}
+								</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{# Tasks List #}
+	<div class="row row-cards">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">{{ 'tasks'|trans }}</h3>
+				</div>
+				<div class="card-body">
+					{% if plan.taskTemplates|length > 0 %}
+						{% for taskTemplate in plan.taskTemplates %}
+							<div class="mb-4 {% if not loop.last %}pb-4 border-bottom{% endif %}">
+								<div class="d-flex justify-content-between align-items-start mb-2">
+									<h4 class="mb-0">
+										<span class="badge badge-outline text-primary me-2">{{ loop.index }}</span>
+										{{ taskTemplate.title }}
+									</h4>
+									<div class="d-flex gap-2">
+										{% if taskTemplate.requiresInspection %}
+											<span class="badge bg-purple text-white">
+												<i class="ti ti-eye-check me-1"></i>
+												{{ 'requiresInspection'|trans }}
+											</span>
+										{% endif %}
+										{% include 'component/difficultyBadge.html.twig' with {'difficulty': taskTemplate.difficulty} %}
+									</div>
+								</div>
+
+								{% if taskTemplate.description %}
+									<p class="text-secondary mb-2">{{ taskTemplate.description }}</p>
+								{% endif %}
+
+								{# Subtasks #}
+								{% if taskTemplate.subTaskTemplates|length > 0 %}
+									<div class="mt-3">
+										<div class="list-group list-group-flush">
+											{% for subTaskTemplate in taskTemplate.subTaskTemplates %}
+												<div class="list-group-item px-0">
+													<div class="d-flex align-items-start">
+														<span class="badge badge-outline text-secondary me-2">{{ loop.parent.loop.index }}.{{ loop.index }}</span>
+														<div class="flex-grow-1">
+															<div class="fw-bold">{{ subTaskTemplate.title }}</div>
+															{% if subTaskTemplate.description %}
+																<div class="text-secondary small">{{ subTaskTemplate.description }}</div>
+															{% endif %}
+														</div>
+													</div>
+												</div>
+											{% endfor %}
+										</div>
+									</div>
+								{% endif %}
+							</div>
+						{% endfor %}
+					{% else %}
+						<div class="empty">
+							<div class="empty-icon">
+								<i class="ti ti-checkbox icon-lg"></i>
+							</div>
+							<p class="empty-title">{{ 'noTasksInPlan'|trans }}</p>
+							<p class="empty-subtitle text-secondary">
+								{{ 'noTasksInPlanDescription'|trans }}
+							</p>
+							{% if is_granted('MANAGE', club) %}
+								<div class="empty-action">
+									<a href="{{ path('club_plan_edit', {id: plan.id}) }}" class="btn btn-primary">
+										<i class="ti ti-plus"></i>
+										{{ 'addTasks'|trans }}
+									</a>
+								</div>
+							{% endif %}
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{# Applications Section #}
+	{% if applications|length > 0 %}
+		<div class="row row-cards mt-3">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">{{ 'activeApplications'|trans }}</h3>
+						<span class="badge bg-primary text-white ms-2">{{ applications|length }}</span>
+					</div>
+					<div class="card-body">
+						<div class="list-group list-group-flush">
+							{% for application in applications %}
+								<div class="list-group-item px-0">
+									<div class="row align-items-center">
+										<div class="col">
+											<a href="{{ path('club_equipment_show', {id: application.equipment.id}) }}" class="text-reset text-decoration-none">
+												<div class="fw-bold">{{ application.equipment.name }}</div>
+												<div class="text-secondary small">
+													{% if application.dueAt %}
+														{{ 'dueDate'|trans }}:
+														{{ application.dueAt|date('d/m/Y') }}
+													{% else %}
+														{{ 'noDueDate'|trans }}
+													{% endif %}
+												</div>
+											</a>
+										</div>
+										<div class="col-auto">
+											<span class="badge bg-primary text-white">
+												{{ application.tasks|length }}
+												{{ 'tasks'|trans|lower }}
+											</span>
+										</div>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}

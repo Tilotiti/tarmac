@@ -43,18 +43,12 @@ class MemberController extends ExtendedController
         $club = $this->clubResolver->resolve();
 
         // Handle filters
-        $filterForm = $this->createForm(MemberFilterType::class);
-        $filterForm->handleRequest($request);
-
-        $filters = [];
-        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
-            $filters = $filterForm->getData();
-            $filters = array_filter($filters, fn($value) => $value !== null && $value !== '');
-        }
+        $filters = $this->createFilter(MemberFilterType::class);
+        $filters->handleRequest($request);
 
         // Get members with pagination
         $memberships = Paginator::paginate(
-            $this->membershipRepository->queryByClubAndFilters($club, $filters),
+            $this->membershipRepository->queryByClubAndFilters($club, $filters->getData() ?? []),
             $request->query->getInt('page', 1),
             20
         );
@@ -62,7 +56,7 @@ class MemberController extends ExtendedController
         return $this->render('club/members/index.html.twig', [
             'club' => $club,
             'memberships' => $memberships,
-            'filterForm' => $filterForm,
+            'filters' => $filters->createView(),
         ]);
     }
 

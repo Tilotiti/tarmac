@@ -17,25 +17,45 @@
 {% endblock %}
 
 {% block navbar_menu %}
-	<div class="navbar-nav flex-row order-md-last">
+	<div class="navbar-nav flex-md-row order-md-last">
 		<div class="nav-item {{ app.request.get('_route') starts with 'club_equipment' ? 'active' : '' }}">
 			<a href="{{ path('club_equipments') }}" class="nav-link">
 				<span class="nav-link-icon d-md-none d-lg-inline-block">
 					<i class="ti ti-plane"></i>
 				</span>
 				<span class="nav-link-title">
-					Équipements
+					{{ 'equipments'|trans }}
+				</span>
+			</a>
+		</div>
+		<div class="nav-item {{ app.request.get('_route') starts with 'club_task' ? 'active' : '' }}">
+			<a href="{{ path('club_tasks') }}" class="nav-link">
+				<span class="nav-link-icon d-md-none d-lg-inline-block">
+					<i class="ti ti-checklist"></i>
+				</span>
+				<span class="nav-link-title">
+					{{ 'tasks'|trans }}
 				</span>
 			</a>
 		</div>
 		{% if is_granted('MANAGE', club) %}
+			<div class="nav-item {{ app.request.get('_route') starts with 'club_plan' ? 'active' : '' }}">
+				<a href="{{ path('club_plans') }}" class="nav-link">
+					<span class="nav-link-icon d-md-none d-lg-inline-block">
+						<i class="ti ti-file-check"></i>
+					</span>
+					<span class="nav-link-title">
+						{{ 'plans'|trans }}
+					</span>
+				</a>
+			</div>
 			<div class="nav-item {{ app.request.get('_route') starts with 'club_member' or app.request.get('_route') starts with 'club_invitation' ? 'active' : '' }}">
 				<a href="{{ path('club_members') }}" class="nav-link">
 					<span class="nav-link-icon d-md-none d-lg-inline-block">
 						<i class="ti ti-users"></i>
 					</span>
 					<span class="nav-link-title">
-						Membres
+						{{ 'members'|trans }}
 					</span>
 				</a>
 			</div>
@@ -44,35 +64,35 @@
 {% endblock %}
 
 {% block user_dropdown_menu %}
-	{% if is_granted('ROLE_PREVIOUS_ADMIN') %}
-		<a href="{{ path('public_clubs', {_switch_user: '_exit'}) }}" class="dropdown-item text-primary">
+	{% if is_granted('IS_IMPERSONATOR') %}
+		<a href="{{ path('admin_user_index', {_switch_user: '_exit'}) }}" class="dropdown-item text-primary">
 			<i class="ti ti-logout"></i>
-			Retour à l'admin
+			{{ 'backToAdmin'|trans }}
 		</a>
 		<div class="dropdown-divider"></div>
 	{% endif %}
 	<a href="{{ path('club_profile_edit') }}" class="dropdown-item">
 		<i class="ti ti-user"></i>
-		Mon profil
+		{{ 'myProfile'|trans }}
 	</a>
-	{% if app.user.isAdmin() or app.user.getMemberships()|length > 1 %}
+	{% if app.user.isAdmin() or app.user.getMemberships.count() > 1 %}
 		<div class="dropdown-divider"></div>
 		<a href="{{ path('public_clubs') }}" class="dropdown-item">
 			<i class="ti ti-home"></i>
-			Mes clubs
+			{{ 'myClubs'|trans }}
 		</a>
 	{% endif %}
 	{% if is_granted('ROLE_ADMIN') %}
 		<div class="dropdown-divider"></div>
 		<a href="{{ path('admin_dashboard') }}" class="dropdown-item">
 			<i class="ti ti-shield"></i>
-			Administration
+			{{ 'administration'|trans }}
 		</a>
 	{% endif %}
 	<div class="dropdown-divider"></div>
 	<a href="{{ path('public_logout') }}" class="dropdown-item">
 		<i class="ti ti-logout"></i>
-		Déconnexion
+		{{ 'logout'|trans }}
 	</a>
 {% endblock %}
 
@@ -81,7 +101,7 @@
 	<div class="page-header d-print-none">
 		<div class="container-xl">
 			<div class="row g-2 align-items-center">
-				<div class="col">
+				<div class="col-12 col-lg">
 					{% block page_header %}
 						{{ slope_it_breadcrumb() }}
 						{% block page_pretitle %}{% endblock %}
@@ -90,7 +110,7 @@
 						</h2>
 					{% endblock %}
 				</div>
-				<div class="col-auto ms-auto d-print-none">
+				<div class="col-12 col-lg-auto ms-lg-auto d-print-none">
 					{% block page_actions %}{% endblock %}
 				</div>
 			</div>

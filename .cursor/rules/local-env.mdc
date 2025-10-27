@@ -1,0 +1,38 @@
+---
+alwaysApply: true
+---
+
+# Local Environment Configuration
+
+## Domain
+- Local development domain: `tarmac.wip`
+- Local URL: `https://www.tarmac.wip`
+- The URL to test a club app is `https://demo.tarmac.wip`
+- Always use the Symfony proxy when making CURL requests to the local environment
+
+## Symfony Server
+- Use `bin/server` to start the Symfony server with the proxy
+- Do not use `php bin/console server:start` (not available in this setup)
+- Do not try to restart the server manually. It has no effect most of the time.
+- When trying to clear the cache, use `symfony console cache:clear` instead of `bin/console cache:clear`
+
+## Testing Workflow
+
+When the user asks to test the application:
+
+1. **First, verify the Symfony server is running**
+   - Do NOT attempt to start the Symfony server yourself
+   - If the server is not running, ask the user to start it manually
+   
+2. **Use the correct local URL**
+   - Always navigate to: `https://www.tarmac.wip`
+   
+3. **Chrome Proxy Configuration Fix**
+   - If Google Chrome shows an "UNRESOLVED" issue when trying to access the site:
+     - Navigate to: `chrome://net-internals/proxyservice.config#proxy`
+     - Click the "Reapply-settings" button
+     - Then retry accessing the site
+   - This is a common proxy configuration issue that requires this manual intervention
+   
+4. **Proceed with testing**
+   - Once the site loads properly, proceed with functional testing of the requested features

@@ -1,77 +1,306 @@
 {% extends 'club/base.html.twig' %}
 
 {% block page_title %}
-	{{ club.name }}
+	{{ 'dashboard'|trans }}
 {% endblock %}
 
 {% block page_content %}
-	<div
-		class="row row-deck row-cards">
-		{# Welcome card #}
-		<div class="col-12">
-			<div class="card">
-				<div class="card-header">
-					<h3 class="card-title">Bienvenue</h3>
-				</div>
-				<div class="card-body">
-					<p class="text-secondary">
-						Bonjour
-						<strong>{{ app.user.fullName }}</strong>
-						!
-					</p>
-					<p class="mb-0">
-						Vous êtes membre du club
-						<strong>{{ club.name }}</strong>
-						{% if app.user.isManagerOfClub(club) %}
-							<span class="badge bg-blue-lt">Manager</span>
-						{% endif %}
-						{% if app.user.isInspectorOfClub(club) %}
-							<span class="badge bg-green-lt">Inspecteur</span>
-						{% endif %}
-					</p>
-				</div>
+	{# Tasks Awaiting Inspection (Inspector View) #}
+	{% if is_granted('INSPECT') and awaitingInspection is not empty %}
+		<div class="mb-4">
+			<div class="d-flex align-items-center justify-content-between mb-3">
+				<h3 class="mb-0">
+					<i class="ti ti-eye-check text-purple"></i>
+					{{ 'awaitingInspection'|trans }}
+					<span class="badge bg-purple ms-2">{{ awaitingInspectionCount }}</span>
+				</h3>
+				{% if awaitingInspectionCount > 5 %}
+					<a href="{{ path('club_tasks', {'awaitingInspection': '1'}) }}" class="btn btn-sm btn-outline-purple">
+						{{ 'seeAll'|trans }}
+						<i class="ti ti-arrow-right ms-1"></i>
+					</a>
+				{% endif %}
+			</div>
+			<div class="row row-cards">
+				{% for task in awaitingInspection %}
+					<div class="col-12 col-md-6 col-lg-4">
+						<div class="card border-purple">
+							<div class="card-body">
+								<div class="d-flex align-items-start mb-3">
+									<div class="me-auto">
+										<h4 class="card-title mb-1">
+											<a href="{{ path('club_task_show', {id: task.id}) }}" class="text-reset text-decoration-none">
+												{{ task.title }}
+											</a>
+										</h4>
+										<div class="text-secondary small">
+											<i class="ti ti-{{ task.equipment.type.value == 'glider' ? 'plane' : (task.equipment.type.value == 'facility' ? 'building' : 'tool') }}"></i>
+											<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}">
+												{{ task.equipment.name }}
+											</a>
+										</div>
+									</div>
+									<span class="badge bg-purple-lt">
+										<i class="ti ti-eye-check"></i>
+										{{ 'toInspect'|trans }}
+									</span>
+								</div>
+								{% if task.doneBy %}
+									<div class="mb-2">
+										<small class="text-secondary">
+											<i class="ti ti-user"></i>
+											{{ 'doneBy'|trans }}:
+											{{ task.doneBy.fullName }}
+										</small>
+									</div>
+								{% endif %}
+								{% if task.doneAt %}
+									<div class="mb-2">
+										<small class="text-secondary">
+											<i class="ti ti-clock"></i>
+											{{ task.doneAt|date('d/m/Y H:i') }}
+										</small>
+									</div>
+								{% endif %}
+							</div>
+							<div class="card-footer">
+								<a href="{{ path('club_task_show', {id: task.id}) }}" class="btn btn-sm btn-primary w-100">
+									<i class="ti ti-eye"></i>
+									{{ 'inspect'|trans }}
+								</a>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
 			</div>
 		</div>
+	{% endif %}
 
-		{# Action cards #}
-		{% if app.user.isManagerOfClub(club) or app.user.isAdmin %}
-			<div class="col-12 col-md-6 col-lg-4">
-				<div class="card">
-					<div class="card-body">
-						<div class="d-flex align-items-center">
-							<div class="subheader">Gestion</div>
-						</div>
-						<div class="h1 mb-3">
-							<i class="ti ti-users"></i>
-						</div>
-						<div class="d-flex mb-2">
-							<div>Membres du club</div>
-						</div>
-						<a href="{{ path('club_members') }}" class="btn btn-primary w-100" style="min-height: 44px;">
-							Voir les membres
+	{# Pending Maintenance Plan Applications #}
+	{% if pendingApplications is not empty %}
+		<div class="mb-4">
+			<div class="d-flex align-items-center justify-content-between mb-3">
+				<h3 class="mb-0">
+					<i class="ti ti-file-check text-primary"></i>
+					{{ 'pendingPlans'|trans }}
+					<span class="badge bg-blue-lt ms-2">{{ pendingApplicationsCount }}</span>
+				</h3>
+				{% if pendingApplicationsCount > 5 %}
+					{# Link to tasks page filtered by open status #}
+					<a href="{{ path('club_tasks', {'status': 'open'}) }}" class="btn btn-sm btn-outline-primary">
+						{{ 'seeAll'|trans }}
+						<i class="ti ti-arrow-right ms-1"></i>
+					</a>
+				{% endif %}
+			</div>
+			<div class="row row-cards">
+				{% for item in pendingApplications %}
+					{% set application = item.application %}
+					{% set tasks = item.tasks %}
+					{% set totalTasks = application.tasks|length %}
+					{% set closedTasks = 0 %}
+					{% for task in application.tasks %}
+						{% if task.status == 'closed' %}
+							{% set closedTasks = closedTasks + 1 %}
+						{% endif %}
+					{% endfor %}
+					{% set progress = totalTasks > 0 ? (closedTasks / totalTasks * 100)|round : 0 %}
+
+					<div class="col-12">
+						<a href="{{ path('club_equipment_show', {id: application.equipment.id}) }}" class="text-decoration-none">
+							<div class="card card-link" style="cursor: pointer;">
+								<div
+									class="card-body">
+									{# Header with equipment avatar and plan name #}
+									<div
+										class="d-flex align-items-start mb-3">
+										{# Avatar with icon based on type #}
+										<span class="avatar avatar-lg me-3 bg-{{ application.equipment.type.value == 'glider' ? 'blue' : (application.equipment.type.value == 'facility' ? 'purple' : 'green') }}-lt">
+											<i class="ti ti-{{ application.equipment.type.value == 'glider' ? 'plane' : (application.equipment.type.value == 'facility' ? 'building' : 'tool') }} text-{{ application.equipment.type.value == 'glider' ? 'blue' : (application.equipment.type.value == 'facility' ? 'purple' : 'green') }}" style="font-size: 1.5rem;"></i>
+										</span>
+										<div
+											class="flex-fill">
+											{# Title: Equipment name #}
+											<h4 class="card-title mb-1">{{ application.equipment.name }}</h4>
+											{# Subtitle: Plan name #}
+											<div class="text-secondary">{{ application.plan.name }}</div>
+										</div>
+										{# Badges on the right #}
+										<div class="d-flex align-items-start flex-wrap gap-2 ms-2">
+											{% if application.dueAt %}
+												<span class="badge bg-azure-lt">
+													<i class="ti ti-calendar me-1"></i>
+													{{ application.dueAt|date('d/m/Y') }}
+												</span>
+											{% endif %}
+											{# Owner badge #}
+											{% if application.equipment.isPrivate %}
+												<span class="badge bg-orange-lt">
+													<i class="ti ti-user me-1"></i>
+													{{ 'private'|trans }}
+												</span>
+											{% else %}
+												<span class="badge bg-blue-lt">
+													<i class="ti ti-building me-1"></i>
+													{{ 'club'|trans }}
+												</span>
+											{% endif %}
+											{% if application.equipment.type.value == 'glider' %}
+												<span class="badge bg-blue-lt">
+													<i class="ti ti-plane me-1"></i>
+													{{ 'glider'|trans }}
+												</span>
+											{% elseif application.equipment.type.value == 'facility' %}
+												<span class="badge bg-purple-lt">
+													<i class="ti ti-building me-1"></i>
+													{{ 'infrastructure'|trans }}
+												</span>
+											{% else %}
+												<span class="badge bg-green-lt">
+													<i class="ti ti-tool me-1"></i>
+													{{ 'other'|trans }}
+												</span>
+											{% endif %}
+										</div>
+									</div>
+
+									{# Progress bar #}
+									<div>
+										<div class="d-flex align-items-center justify-content-between mb-2">
+											<span class="text-secondary">{{ 'progress'|trans }}</span>
+											<span>
+												<strong>{{ closedTasks }}</strong>
+												<span class="text-secondary">/</span>
+												<span class="text-secondary">{{ totalTasks }}</span>
+												<span class="text-secondary ms-2">({{ progress|number_format(0) }}%)</span>
+											</span>
+										</div>
+										<div class="progress" style="height: 0.5rem;">
+											<div class="progress-bar bg-primary" style="width: {{ progress }}%" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</a>
 					</div>
-				</div>
-			</div>
-		{% endif %}
-
-		<div class="col-12 col-md-6 col-lg-4">
-			<div class="card">
-				<div class="card-body">
-					<div class="d-flex align-items-center">
-						<div class="subheader">Mon compte</div>
-					</div>
-					<div class="h1 mb-3">
-						<i class="ti ti-user"></i>
-					</div>
-					<div class="d-flex mb-2">
-						<div>Profil</div>
-					</div>
-					<a href="{{ path('club_profile_edit') }}" class="btn btn-outline-primary w-100" style="min-height: 44px;">
-						Modifier mon profil
-					</a>
-				</div>
+				{% endfor %}
 			</div>
 		</div>
-	</div>
+	{% endif %}
+
+	{# Standalone Pending Tasks #}
+	{% if standaloneTasks is not empty %}
+		<div class="mb-4">
+			<div class="d-flex align-items-center justify-content-between mb-3">
+				<h3 class="mb-0">
+					<i class="ti ti-checklist text-info"></i>
+					{{ 'pendingTasks'|trans }}
+					<span class="badge bg-info ms-2">{{ standaloneTasksCount }}</span>
+				</h3>
+				{% if standaloneTasksCount > 5 %}
+					<a href="{{ path('club_tasks', {'status': 'open'}) }}" class="btn btn-sm btn-outline-info">
+						{{ 'seeAll'|trans }}
+						<i class="ti ti-arrow-right ms-1"></i>
+					</a>
+				{% endif %}
+			</div>
+			<div class="row row-cards">
+				{% for task in standaloneTasks %}
+					<div class="col-12 col-md-6 col-lg-4">
+						<div class="card">
+							<div class="card-body">
+								<div class="d-flex align-items-start mb-3">
+									<div class="me-auto">
+										<h4 class="card-title mb-1">
+											<a href="{{ path('club_task_show', {id: task.id}) }}" class="text-reset text-decoration-none">
+												{{ task.title }}
+											</a>
+										</h4>
+										<div class="text-secondary small">
+											<i class="ti ti-{{ task.equipment.type.value == 'glider' ? 'plane' : (task.equipment.type.value == 'facility' ? 'building' : 'tool') }}"></i>
+											<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}">
+												{{ task.equipment.name }}
+											</a>
+										</div>
+									</div>
+									<span class="badge bg-{{ task.status == 'open' ? 'yellow' : (task.status == 'done' ? 'blue' : 'green') }}-lt">
+										{{ ('taskStatus.' ~ task.status)|trans }}
+									</span>
+								</div>
+
+								{# Difficulty #}
+								<div class="mb-2">
+									<i class="ti ti-gauge"></i>
+									{% set difficultyLabels = {1: 'debutant', 2: 'facile', 3: 'moyen', 4: 'difficile', 5: 'expert'} %}
+									{% set difficultyColors = {1: 'success', 2: 'info', 3: 'warning', 4: 'orange', 5: 'danger'} %}
+									<span class="badge bg-{{ difficultyColors[task.difficulty] }}-lt">
+										{{ difficultyLabels[task.difficulty]|trans }}
+									</span>
+								</div>
+
+								{# Description #}
+								{% if task.description %}
+									<p class="text-secondary small mb-3">{{ task.description|u.truncate(100) }}</p>
+								{% endif %}
+
+								{# Claimed by #}
+								{% if task.claimedBy %}
+									<div class="mb-2">
+										<small class="text-secondary">
+											<i class="ti ti-user-check"></i>
+											{{ task.claimedBy.fullName }}
+										</small>
+									</div>
+								{% endif %}
+
+								{# Due date #}
+								{% if task.dueAt %}
+									<div class="mb-2">
+										<small class="text-secondary">
+											<i class="ti ti-calendar"></i>
+											{{ 'dueDate'|trans }}:
+											<strong>{{ task.dueAt|date('d/m/Y') }}</strong>
+										</small>
+									</div>
+								{% endif %}
+
+								{# Requires inspection badge #}
+								{% if task.requiresInspection %}
+									<span class="badge bg-purple-lt">
+										<i class="ti ti-eye-check"></i>
+										{{ 'requiresInspection'|trans }}
+									</span>
+								{% endif %}
+							</div>
+							<div class="card-footer">
+								<a href="{{ path('club_task_show', {id: task.id}) }}" class="btn btn-sm btn-primary w-100">
+									<i class="ti ti-eye"></i>
+									{{ 'viewTask'|trans }}
+								</a>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+
+	{# Empty state #}
+	{% if pendingApplications is empty and standaloneTasks is empty and (not is_granted('INSPECT') or awaitingInspection is empty) %}
+		<div class="empty">
+			<div class="empty-icon">
+				<i class="ti ti-clipboard-check"></i>
+			</div>
+			<p class="empty-title">{{ 'noPendingTasks'|trans }}</p>
+			<p class="empty-subtitle text-secondary">
+				{{ 'noPendingTasksDescription'|trans }}
+			</p>
+			<div class="empty-action">
+				<a href="{{ path('club_task_new') }}" class="btn btn-primary">
+					<i class="ti ti-plus"></i>
+					{{ 'newTask'|trans }}
+				</a>
+			</div>
+		</div>
+	{% endif %}
 {% endblock %}

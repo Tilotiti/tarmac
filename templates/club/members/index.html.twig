@@ -1,7 +1,5 @@
 {% extends 'club/base.html.twig' %}
 
-{% form_theme filterForm 'component/filters.html.twig' %}
-
 {% block page_title %}Membres
 {% endblock %}
 
@@ -23,7 +21,7 @@
 {% endblock %}
 
 {% block page_content %}
-	{% include 'component/filters.html.twig' with { form: filterForm } %}
+	{% include 'component/filters.html.twig' with { form: filters } %}
 
 	{# Member cards - Mobile-first design #}
 	<div class="row">

@@ -5,8 +5,16 @@
 {% endblock %}
 
 {% block page_actions %}
-	{% if is_granted('MANAGE', club) %}
-		<div class="d-flex gap-2 flex-wrap">
+	<div
+		class="d-flex gap-2 flex-wrap">
+		{# View all tasks for this equipment #}
+		<a href="{{ path('club_tasks', {'filters[equipment]': equipment.id, 'filters[status]': 'open'}) }}" class="btn btn-outline-primary" style="min-height: 44px;">
+			<i class="ti ti-checklist me-2"></i>
+			<span class="d-none d-sm-inline">{{ 'viewTasks'|trans }}</span>
+			<span class="d-inline d-sm-none">{{ 'tasks'|trans }}</span>
+		</a>
+
+		{% if is_granted('MANAGE', club) %}
 			<a href="{{ path('club_equipment_edit', {id: equipment.id}) }}" class="btn btn-primary" style="min-height: 44px;">
 				<i class="ti ti-edit me-2"></i>
 				<span class="d-none d-sm-inline">{{ 'edit'|trans }}</span>
@@ -29,8 +37,8 @@
 					</button>
 				</form>
 			{% endif %}
-		</div>
-	{% endif %}
+		{% endif %}
+	</div>
 {% endblock %}
 
 {% block page_content %}
@@ -40,8 +48,8 @@
 			<div
 				class="d-flex align-items-center mb-4">
 				{# Avatar with icon based on type #}
-				<span class="avatar avatar-xl me-3 bg-{{ equipment.type.value == 'glider' ? 'blue' : 'green' }}-lt">
-					<i class="ti ti-{{ equipment.type.value == 'glider' ? 'plane' : 'tool' }} text-{{ equipment.type.value == 'glider' ? 'blue' : 'green' }}" style="font-size: 2.5rem;"></i>
+				<span class="avatar avatar-xl me-3 bg-{{ equipment.type.value == 'glider' ? 'blue' : (equipment.type.value == 'facility' ? 'purple' : 'green') }}-lt">
+					<i class="ti ti-{{ equipment.type.value == 'glider' ? 'plane' : (equipment.type.value == 'facility' ? 'building' : 'tool') }} text-{{ equipment.type.value == 'glider' ? 'blue' : (equipment.type.value == 'facility' ? 'purple' : 'green') }}" style="font-size: 2.5rem;"></i>
 				</span>
 				<div class="flex-fill">
 					<h2 class="mb-1">{{ equipment.name }}</h2>
@@ -59,7 +67,7 @@
 				<div class="col-12 col-md-6 mb-3">
 					<div class="text-secondary small mb-1">{{ 'type'|trans }}</div>
 					<div>
-						<span class="badge bg-{{ equipment.type.value == 'glider' ? 'blue' : 'green' }}-lt">
+						<span class="badge bg-{{ equipment.type.value == 'glider' ? 'blue' : (equipment.type.value == 'facility' ? 'purple' : 'green') }}-lt">
 							{{ equipment.type.label|trans }}
 						</span>
 					</div>
@@ -133,4 +141,73 @@
 			</div>
 		</div>
 	</div>
+
+	{# Pending Tasks Section #}
+	{% if pendingTasks|length > 0 %}
+		<div class="card mb-3">
+			<div class="card-header">
+				<h3 class="card-title">
+					<i class="ti ti-checklist me-2"></i>
+					{{ 'pendingTasks'|trans }}
+				</h3>
+			</div>
+			<div class="list-group list-group-flush">
+				{% for task in pendingTasks %}
+					<a href="{{ path('club_task_show', {id: task.id}) }}" class="list-group-item list-group-item-action">
+						<div class="d-flex align-items-center mb-2">
+							<div class="flex-grow-1">
+								<div class="fw-bold">{{ task.title }}</div>
+								{% if task.dueAt %}
+									<div class="text-secondary small">
+										<i class="ti ti-calendar me-1"></i>
+										{{ task.dueAt|date('d/m/Y') }}
+									</div>
+								{% endif %}
+							</div>
+							<div
+								class="d-flex gap-2 align-items-center">
+								{# Difficulty badge #}
+								{% include 'component/difficultyBadge.html.twig' with {difficulty: task.difficulty} %}
+
+								{# Inspection badge #}
+								{% if task.requiresInspection %}
+									<span class="badge bg-purple text-white">
+										<i class="ti ti-eye-check"></i>
+									</span>
+								{% endif %}
+							</div>
+						</div>
+
+						{# Progress bar for subtasks #}
+						{% if task.subTasks|length > 0 %}
+							{% set progress = 0 %}
+							{% set closed = 0 %}
+							{% for subtask in task.subTasks %}
+								{% if subtask.status == 'closed' %}
+									{% set closed = closed + 1 %}
+								{% endif %}
+							{% endfor %}
+							{% set progress = (closed / task.subTasks|length * 100)|round %}
+							<div class="progress progress-sm mb-1">
+								<div class="progress-bar bg-{{ progress == 100 ? 'success' : 'primary' }}" style="width: {{ progress }}%">
+									<span class="visually-hidden">{{ progress }}%</span>
+								</div>
+							</div>
+							<div class="text-secondary small">
+								{{ closed }}
+								/
+								{{ task.subTasks|length }}
+								{{ 'subTasks'|trans|lower }}
+							</div>
+						{% endif %}
+					</a>
+				{% endfor %}
+			</div>
+			<div class="card-footer">
+				<a href="{{ path('club_tasks', {'filters[equipment]': equipment.id, 'filters[status]': 'open'}) }}" class="btn btn-primary w-100" style="min-height: 44px;">
+					{{ 'viewAllTasks'|trans }}
+				</a>
+			</div>
+		</div>
+	{% endif %}
 {% endblock %}

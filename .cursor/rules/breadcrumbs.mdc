@@ -1,3 +1,9 @@
+---
+description: Breadcrumb navigation rules for controllers
+globs: ["src/Controller/**/*.php"]
+priority: 120
+---
+
 # Breadcrumb Navigation Rules
 
 ## Core Principle

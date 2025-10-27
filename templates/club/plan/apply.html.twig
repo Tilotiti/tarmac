@@ -1,0 +1,141 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'applyPlan'|trans }}
+{% endblock %}
+
+{% block page_content %}
+	{{ form_start(form) }}
+
+	{# Plan Information Card #}
+	<div class="card mb-3">
+		<div class="card-header">
+			<h3 class="card-title">{{ plan.name }}</h3>
+		</div>
+		<div class="card-body">
+			<div class="mb-3">
+				<span class="badge bg-{{ plan.equipmentType.value == 'glider' ? 'blue' : 'green' }} text-white me-2">
+					<i class="ti ti-{{ plan.equipmentType.value == 'glider' ? 'plane' : 'building' }} me-1"></i>
+					{{ (plan.equipmentType.value ~ 'Type')|trans }}
+				</span>
+				<span class="badge bg-primary text-white me-2">
+					<i class="ti ti-checkbox me-1"></i>
+					{{ plan.taskTemplates|length }} {{ 'tasks'|trans|lower }}
+				</span>
+				{% set totalSubTasks = 0 %}
+				{% for task in plan.taskTemplates %}
+					{% set totalSubTasks = totalSubTasks + task.subTaskTemplates|length %}
+				{% endfor %}
+				{% if totalSubTasks > 0 %}
+					<span class="badge bg-secondary text-white">
+						<i class="ti ti-list-check me-1"></i>
+						{{ totalSubTasks }} {{ 'subTasks'|trans|lower }}
+					</span>
+				{% endif %}
+			</div>
+			{% if plan.description %}
+				<p class="text-secondary mb-0">{{ plan.description }}</p>
+			{% endif %}
+		</div>
+	</div>
+
+	{# Application Form Card #}
+	<div class="card mb-3">
+		<div class="card-header">
+			<h3 class="card-title">{{ 'applicationDetails'|trans }}</h3>
+		</div>
+		<div class="card-body">
+			<div class="mb-3">
+				{{ form_row(form.equipment) }}
+			</div>
+			<div class="mb-3">
+				{{ form_row(form.dueAt) }}
+			</div>
+		</div>
+	</div>
+
+	{# Timeline Preview (if equipment and date selected) #}
+	{% if timeline is defined and timeline|length > 0 %}
+		<div class="card mb-3">
+			<div class="card-header">
+				<h3 class="card-title">{{ 'maintenanceTimeline'|trans }}</h3>
+				<span class="badge bg-warning text-white ms-2">
+					<i class="ti ti-alert-triangle me-1"></i>
+					{{ 'existingMaintenancePlanned'|trans }}
+				</span>
+			</div>
+			<div class="card-body">
+				<div class="list-group list-group-flush">
+					{% for app in timeline %}
+						<div class="list-group-item px-0">
+							<div class="d-flex justify-content-between align-items-start">
+								<div>
+									<div class="fw-bold">{{ app.plan.name }}</div>
+									<div class="text-secondary small">
+										{{ 'dueDate'|trans }}: {{ app.dueAt|date('d/m/Y') }}
+									</div>
+								</div>
+								<span class="badge bg-{{ app.isOverdue ? 'danger' : (app.isDueSoon ? 'warning' : 'info') }} text-white">
+									{{ app.completionPercentage }}%
+								</span>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
+	{# Tasks Preview #}
+	<div class="card mb-3">
+		<div class="card-header">
+			<h3 class="card-title">{{ 'tasksToBeCreated'|trans }}</h3>
+			<span class="badge bg-primary text-white ms-2">{{ plan.taskTemplates|length }}</span>
+		</div>
+		<div class="card-body">
+			{% if plan.taskTemplates|length > 0 %}
+				<div class="list-group list-group-flush">
+					{% for taskTemplate in plan.taskTemplates %}
+						<div class="list-group-item px-0">
+							<div class="d-flex justify-content-between align-items-start mb-2">
+								<div class="flex-grow-1">
+									<span class="badge badge-outline text-primary me-2">{{ loop.index }}</span>
+									<span class="fw-bold">{{ taskTemplate.title }}</span>
+								</div>
+								<div class="d-flex gap-2">
+									{% if taskTemplate.requiresInspection %}
+										<span class="badge bg-purple text-white">
+											<i class="ti ti-eye-check me-1"></i>
+										</span>
+									{% endif %}
+									{% include 'component/difficultyBadge.html.twig' with {'difficulty': taskTemplate.difficulty, 'size': 'sm'} %}
+								</div>
+							</div>
+							
+							{# Subtasks count #}
+							{% if taskTemplate.subTaskTemplates|length > 0 %}
+								<div class="text-secondary small ms-4">
+									<i class="ti ti-list-check me-1"></i>
+									{{ taskTemplate.subTaskTemplates|length }} {{ 'subTasks'|trans|lower }}
+								</div>
+							{% endif %}
+						</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+		</div>
+	</div>
+
+	{# Submit Button - Sticky on mobile #}
+	<div class="card sticky-bottom-mobile">
+		<div class="card-body">
+			<button type="submit" class="btn btn-primary w-100">
+				<i class="ti ti-clipboard-check me-2"></i>
+				{{ 'applyPlan'|trans }}
+			</button>
+		</div>
+	</div>
+
+	{{ form_end(form) }}
+{% endblock %}
+

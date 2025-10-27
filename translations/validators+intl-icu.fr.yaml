@@ -1,0 +1,20 @@
+subdomainUnique: null
+nameRequired: null
+typeRequired: null
+ownerRequired: null
+equipmentTypeRequired: null
+titleRequired: null
+difficultyRequired: null
+difficultyRange: null
+equipmentRequired: null
+emailUnique: null
+passwordMatch: null
+passwordRequired: null
+passwordMinLength: null
+firstnameRequired: null
+firstnameMinLength: null
+lastnameRequired: null
+lastnameMinLength: null
+'Veuillez saisir votre e-mail': null
+messageRequired: null
+currentPasswordRequired: null

@@ -1,0 +1,82 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'edit'|trans }}
+	-
+	{{ task.equipment.name }}
+	-
+	{{ task.title }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		<div class="col-12">
+			{% if task.planApplication %}
+				{# Plan Information Card #}
+				<div class="card mb-3">
+					<div class="card-header">
+						<h3 class="card-title">
+							<i class="ti ti-clipboard-list me-2"></i>
+							{{ 'maintenancePlan'|trans }}
+						</h3>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-12 col-md-6 mb-2">
+								<div class="mb-3">
+									<label class="form-label">{{ task.planApplication.plan.name }}</label>
+									{% if task.planApplication.plan.description %}
+										<div class="text-muted small mt-1">{{ task.planApplication.plan.description }}</div>
+									{% endif %}
+								</div>
+							</div>
+							<div class="col-12 col-md-6 mb-2">
+								<div class="mb-3">
+									<label class="form-label">{{ 'appliedOn'|trans }}</label>
+									<div>{{ task.planApplication.appliedAt|date('d/m/Y') }}</div>
+								</div>
+								{% if task.planApplication.dueAt %}
+									<div class="mb-3">
+										<label class="form-label">{{ 'planDueDate'|trans }}</label>
+										<div>{{ task.planApplication.dueAt|date('d/m/Y') }}</div>
+									</div>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+
+			{# Task Edit Form Card #}
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">{{ 'edit'|trans }}
+						{{ 'task'|trans|lower }}</h3>
+				</div>
+				<div class="card-body">
+					{{ form_start(form) }}
+					{{ form_row(form.equipment) }}
+					{{ form_row(form.title) }}
+					{{ form_row(form.description) }}
+					{{ form_row(form.difficulty) }}
+					{{ form_row(form.dueAt) }}
+
+					{% if task.equipment and task.equipment.type.value == 'glider' %}
+						<div class="form-check form-switch mt-3">
+							{{ form_widget(form.requiresInspection) }}
+							{{ form_label(form.requiresInspection) }}
+						</div>
+					{% endif %}
+
+					<div class="form-footer">
+						<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">
+							<i class="ti ti-check me-2"></i>
+							{{ 'save'|trans }}
+						</button>
+					</div>
+					{{ form_end(form) }}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

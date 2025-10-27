@@ -32,18 +32,11 @@ class ClubController extends ExtendedController
     #[Route('', name: 'admin_club_index')]
     public function index(Request $request): Response
     {
-        $filterForm = $this->createForm(ClubFilterType::class);
-        $filterForm->handleRequest($request);
-
-        $filters = [];
-        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
-            $filters = $filterForm->getData();
-            // Remove empty values
-            $filters = array_filter($filters, fn($value) => $value !== null && $value !== '');
-        }
+        $filters = $this->createFilter(ClubFilterType::class);
+        $filters->handleRequest($request);
 
         $clubs = Paginator::paginate(
-            $this->clubRepository->queryByFilters($filters),
+            $this->clubRepository->queryByFilters($filters->getData() ?? []),
             $request->query->getInt('page', 1),
             12
         );
@@ -51,7 +44,7 @@ class ClubController extends ExtendedController
         return $this->render('admin/club/index.html.twig', [
             'clubs' => $clubs,
             'domain' => $this->subdomainService->getDomain(),
-            'filterForm' => $filterForm,
+            'filters' => $filters->createView(),
         ]);
     }
 

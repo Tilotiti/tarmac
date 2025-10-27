@@ -1,0 +1,60 @@
+---
+description: Template naming conventions
+globs: ["templates/**/*.twig"]
+priority: 130
+---
+
+# Template Naming Conventions
+
+## File and Folder Naming
+
+All Twig templates MUST use **camelCase** for both folders and filenames.
+
+### Rules
+
+1. **Template folders**: Use camelCase
+   - ✅ Good: `templates/club/`, `templates/clubManagement/`
+   - ❌ Bad: `templates/club_management/`, `templates/club-management/`
+
+2. **Template filenames**: Use camelCase with `.html.twig` extension
+   - ✅ Good: `index.html.twig`, `newPlan.html.twig`, `showEquipment.html.twig`
+   - ❌ Bad: `new_plan.html.twig`, `show_equipment.html.twig`, `new-plan.html.twig`
+
+3. **Component templates**: Use camelCase in `templates/component/`
+   - ✅ Good: `difficultyBadge.html.twig`, `filterForm.html.twig`
+   - ❌ Bad: `difficulty_badge.html.twig`, `filter_form.html.twig`
+
+### Examples
+
+```
+templates/
+├── component/
+│   ├── difficultyBadge.html.twig
+│   ├── filterForm.html.twig
+│   └── breadcrumbs.html.twig
+├── club/
+│   ├── dashboard.html.twig
+│   ├── equipment/
+│   │   ├── index.html.twig
+│   │   ├── show.html.twig
+│   │   └── newEquipment.html.twig
+│   └── plan/
+│       ├── index.html.twig
+│       ├── show.html.twig
+│       └── newPlan.html.twig
+└── public/
+    ├── homepage.html.twig
+    └── resetPassword.html.twig
+```
+
+### When Creating New Templates
+
+Always use camelCase immediately when creating new template files. Do not use snake_case or kebab-case.
+
+### When Renaming Existing Templates
+
+If you encounter a template with snake_case naming:
+1. Rename the file to camelCase
+2. Update all references in controllers (render calls)
+3. Update all `{% include %}` and `{% extends %}` statements
+4. Clear Symfony cache after renaming

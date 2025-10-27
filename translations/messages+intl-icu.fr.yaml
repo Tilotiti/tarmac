@@ -1,0 +1,297 @@
+clubCreated: "Le club a été créé avec succès."
+clubUpdated: "Le club a été mis à jour."
+clubDisabled: "Le club a été désactivé."
+clubEnabled: "Le club a été réactivé."
+userUpdated: "L'utilisateur a été mis à jour."
+cannotDisableSelf: "Vous ne pouvez pas désactiver votre propre compte."
+cannotDeleteSelf: "Vous ne pouvez pas supprimer votre propre compte."
+userDeleted: "L'utilisateur a été supprimé."
+equipmentCreated: "L'équipement a été créé avec succès."
+equipmentUpdated: "L'équipement a été modifié avec succès."
+equipmentDisabled: "L'équipement a été désactivé."
+equipmentEnabled: "L'équipement a été réactivé."
+noPlansAvailable: "Aucun plan de maintenance disponible pour ce type d'équipement."
+planApplied: "Le plan de maintenance a été appliqué à l'équipement."
+invitationSent: "L'invitation a été envoyée avec succès."
+cannotLeaveLastManager: "Vous ne pouvez pas vous retirer, vous êtes le dernier manager du club."
+memberRemoved: "{memberName} a été retiré du club."
+invitationResent: "L'invitation a été renvoyée."
+invitationCancelled: "L'invitation a été annulée."
+cannotRemoveLastManager: "Vous ne pouvez pas retirer vos droits de manager, vous êtes le dernier manager du club."
+rolesUpdated: "Les rôles ont été mis à jour avec succès."
+planCreated: "Le plan de maintenance a été créé avec succès."
+planUpdated: "Le plan de maintenance a été mis à jour."
+planDeleted: "Le plan a été supprimé avec succès."
+planApplicationCancelled: "L'application du plan de maintenance a été annulée."
+invalidRequest: "Requête invalide."
+"Votre profil a été mis à jour.": null
+"Le mot de passe actuel est incorrect.": null
+"Votre mot de passe a été modifié.": null
+subTaskCreated: "La sous-tâche a été créée avec succès."
+subTaskMarkedAsDone: "La sous-tâche a été marquée comme terminée."
+subTaskCancelled: "La sous-tâche a été annulée."
+commentAdded: "Votre commentaire a été ajouté."
+taskCreated: "La tâche a été créée avec succès."
+taskUpdated: "La tâche a été mise à jour."
+taskMarkedAsDone: "La tâche a été marquée comme terminée."
+taskCannotBeClosed: "Cette tâche ne peut pas être clôturée (sous-tâches non terminées ou inspection requise)."
+taskClosed: "La tâche a été clôturée."
+inspectionApproved: "Inspection approuvée"
+inspectionRejected: "Inspection rejetée"
+rejectionReasonRequired: "Veuillez indiquer la raison du rejet."
+taskCancelled: "La tâche a été annulée."
+profileUpdated: "Votre profil a été mis à jour."
+passwordIncorrect: "Le mot de passe actuel est incorrect."
+passwordChanged: "Votre mot de passe a été modifié."
+invitationsAutoAccepted: "Vos invitations ont été acceptées automatiquement."
+invitationInvalid: "Cette invitation n'est pas valide ou a expiré."
+invitationAccepted: "Vous avez rejoint {clubName} !"
+accountCreated: "Votre compte a été créé ! Veuillez vous connecter pour rejoindre {clubName}."
+passwordResetSuccess: "Votre mot de passe a été réinitialisé avec succès. Vous êtes maintenant connecté."
+passwordResetEmailSent: "Si cette adresse e-mail existe dans notre base de données, vous recevrez un lien de réinitialisation."
+passwordResetAlreadyRequested: "Un e-mail de réinitialisation vous a déjà été envoyé. Veuillez vérifier votre boîte de réception ou réessayer dans quelques minutes."
+"Plain password": null
+newPassword: "Nouveau mot de passe"
+confirmPassword: "Confirmer le mot de passe"
+clubNamePlaceholder: "Ex: Les Planeurs de Bailleau"
+subdomainPlaceholder: "Ex: cvve"
+clubName: "Nom du club"
+subdomain: Sous-domaine
+active: Actif
+subdomainHelp: "Ce sous-domaine sera utilisé pour accéder au club (ex: cvve)"
+activeHelp: "Un club inactif ne sera pas accessible"
+equipmentNamePlaceholder: "Ex: F-CGCD ou Remorqueur"
+name: Nom
+type: Type
+owner: Propriété
+owners: Propriétaires
+searchByName: "Rechercher par nom"
+searchBySubdomain: "Rechercher par sous-domaine"
+status: Statut
+all: Tous
+inactive: Inactif
+allTypes: "Tous les types"
+allOwners: "Toutes les propriétés"
+search: Rechercher
+glider: Planeur
+infrastructure: Infrastructure
+club: Club
+private: Privé
+searchByNameOrEmail: "Rechercher par nom ou e-mail"
+allRoles: "Tous les rôles"
+role: Rôle
+manager: Manager
+inspector: Inspecteur
+member: Membre
+plan: "Plan de maintenance"
+equipment: Équipements
+equipmentType: "Type d'équipement"
+dueDate: "Date d'échéance"
+cancelled: Annulé
+endOfWeek: "Fin de semaine"
+endOfMonth: "Fin du mois"
+searchPlans: "Rechercher un plan..."
+allEquipmentTypes: "Tous les types d'équipement"
+gliderType: Planeur
+infrastructureType: Infrastructure
+difficulty: Difficulté
+requiresInspection: "Requiert une inspection"
+awaitingInspection: "En attente d'inspection"
+claimedBy: "Pris en charge par"
+open: Ouvert
+closed: Clôturé
+debutant: Débutant
+facile: Facile
+moyen: Moyen
+difficile: Difficile
+expert: Expert
+"yes": Oui
+"no": null
+"Nom, prénom ou e-mail": null
+Rechercher: null
+emailPlaceholder: exemple@domaine.fr
+firstnamePlaceholder: Jean
+lastnamePlaceholder: Dupont
+email: E-mail
+firstname: Prénom
+lastname: Nom
+managerHelp: "Peut gérer le club et ses membres"
+inspectorHelp: "Peut inspecter et valider les activités sensibles"
+selectEquipment: "Sélectionner un équipement"
+dueDateHelp: "Date d'échéance du plan (optionnel)"
+title: Titre
+description: Description
+tasks: Tâches
+password: "Mot de passe"
+E-mail: null
+"": null
+message: null
+currentPassword: "Mot de passe actuel"
+confirmNewPassword: "Confirmer le nouveau mot de passe"
+equipments: Équipements
+plans: "Plans de maintenance"
+members: Membres
+dashboard: "Tableau de bord"
+facility: null
+pendingPlans: "Maintenance à réaliser"
+progress: Progression
+nextTasks: "Prochaines tâches"
+viewDetails: "Voir les détails"
+pendingTasks: null
+viewTask: "Voir la tâche"
+toInspect: "À inspecter"
+doneBy: null
+inspect: Inspecter
+myClaimedSubTasks: "Mes sous-tâches prises en charge"
+noPendingTasks: "Aucune tâche en attente"
+noPendingTasksDescription: "Vous n'avez aucune tâche en attente pour le moment. Créez-en une nouvelle pour commencer."
+newTask: "Nouvelle tâche"
+addEquipment: "Ajouter un équipement"
+add: Ajouter
+noEquipmentFound: "Aucun équipement trouvé"
+edit: Modifier
+confirmDisableEquipment: "Voulez-vous vraiment désactiver cet équipement ?"
+disable: Désactiver
+reactivate: Réactiver
+createdAt: "Date de création"
+createdBy: "Créé par"
+applyPlan: "Appliquer un plan de maintenance"
+subTasks: Sous-tâches
+applicationDetails: "Détails de l'application"
+maintenanceTimeline: "Calendrier de maintenance"
+existingMaintenancePlanned: "Maintenance existante prévue"
+tasksToBeCreated: "Tâches à créer"
+editPlan: "Modifier le plan"
+noTasksInPlan: "Aucune tâche dans ce plan"
+task: Tâche
+confirmDeleteTask: "Êtes-vous sûr de vouloir supprimer cette tâche ?"
+deleteThisTask: null
+noSubTasks: "Aucune sous-tâche"
+subTask: Sous-tâche
+confirmDeleteSubTask: "Êtes-vous sûr de vouloir supprimer cette sous-tâche ?"
+deleteThisSubTask: "Supprimer cette sous-tâche"
+addSubTask: "Ajouter une sous-tâche"
+addTask: "Ajouter une tâche"
+save: Enregistrer
+newPlan: "Nouveau plan"
+noPlans: "Aucun plan de maintenance"
+noPlansDescription: "Créez un plan de maintenance pour automatiser les tâches récurrentes sur vos équipements."
+confirmDelete: "Confirmer la suppression"
+delete: Supprimer
+cancel: Annuler
+apply: Appliquer
+confirmDeletePlanMessage: 'Êtes-vous sûr de vouloir supprimer le plan "{planName}" ? Cette action est irréversible.'
+noTasksInPlanDescription: "Ce plan ne contient aucune tâche. Ajoutez des tâches pour définir les étapes de maintenance."
+addTasks: "Ajouter des tâches"
+activeApplications: "Applications actives"
+noDueDate: "Pas de date d'échéance"
+maintenancePlan: "Plan de maintenance"
+appliedOn: "Appliqué le"
+planDueDate: "Date d'échéance du plan"
+inspection: Inspection
+noTasksFound: "Aucune tâche trouvée"
+taskInformation: "Informations de la tâche"
+noSubTasksYet: "Aucune sous-tâche pour le moment"
+allSubTasksMustBeDone: "Toutes les sous-tâches doivent être terminées"
+markAsDone: "Marquer comme terminée"
+approveInspection: "Approuver l'inspection"
+rejectInspection: "Rejeter l'inspection"
+cancelTask: "Annuler la tâche"
+noSubTasksFound: "Aucune sous-tâche"
+activity: Activité
+noActivityYet: "Aucune activité pour le moment"
+addComment: "Ajouter un commentaire..."
+cancellationReason: "Raison de l'annulation"
+optionalReason: "Raison (optionnel)..."
+rejectionReason: "Raison du rejet"
+explainReason: "Expliquez la raison..."
+newSubTask: "Nouvelle sous-tâche"
+close: Fermer
+myProfile: "Mon profil"
+administration: Administration
+logout: Déconnexion
+cannotEditCancelledApplication: "Impossible de modifier une application annulée."
+planApplicationUpdated: "L'application du plan a été mise à jour avec succès."
+subTaskClaimed: "Vous avez pris en charge cette sous-tâche."
+subTaskUnclaimed: "Vous avez libéré cette sous-tâche."
+taskClaimed: "Tâche prise en charge"
+taskUnclaimed: "Tâche libérée"
+applications: Applications
+confirmCancelApplication: "Annuler l'application"
+confirmCancelApplicationMessage: 'Êtes-vous sûr de vouloir annuler l''application "{applicationName}" ? Cette action ne peut pas être annulée.'
+keepIt: Conserver
+noApplicationsFound: "Aucune application de plan trouvée."
+browsePlans: "Parcourir les plans"
+editPlanApplication: "Modifier l'application du plan"
+applicationInformation: "Informations de l'application"
+changingDueDateWillUpdateAllTasks: "Le changement de date d'échéance mettra à jour automatiquement toutes les tâches et sous-tâches associées."
+changeDueDate: "Modifier la date d'échéance"
+affectedTasks: "Tâches concernées"
+allTaskDueDatesWillBeUpdated: "Les dates d'échéance de toutes les tâches et sous-tâches seront mises à jour en conséquence."
+claimTask: "Prendre en charge"
+unclaimTask: Libérer
+claim: Prendre
+approve: Approuver
+relativeDueDaysPlaceholder: "ex: -7 pour 7 jours avant"
+relativeDueDays: "Échéance relative (jours)"
+relativeDueDaysHelp: "Nombre de jours par rapport à la date d'échéance du plan (peut être négatif)"
+information: Informations
+userEnabled: "L'utilisateur a été activé."
+userDisabled: "L'utilisateur a été désactivé."
+canManageClub: "Peut gérer le club"
+canInspect: "Peut inspecter et valider les activités sensibles du club"
+canManageMembers: "Peut gérer les membres du club"
+equipmentName: "Nom de l'équipement"
+searchMember: "Nom, prénom ou e-mail"
+home: Accueil
+clubs: Clubs
+users: Utilisateurs
+invitations: Invitations
+invite: Inviter
+subdomainUnique: "Un club existe déjà avec ce sous-domaine"
+nameRequired: "Le nom est obligatoire"
+typeRequired: "Le type est obligatoire"
+ownerRequired: "Le type de propriété est obligatoire"
+emailUnique: "Un compte existe déjà avec cet e-mail"
+emailRequired: "Veuillez saisir votre e-mail"
+passwordRequired: "Veuillez saisir un mot de passe"
+passwordMinLength: "Votre mot de passe doit contenir au moins {limit} caractères"
+passwordMatch: "Les mots de passe doivent correspondre."
+firstnameRequired: "Veuillez saisir votre prénom"
+firstnameMinLength: "Votre prénom doit contenir au moins {limit} caractères"
+lastnameRequired: "Veuillez saisir votre nom"
+lastnameMinLength: "Votre nom doit contenir au moins {limit} caractères"
+currentPasswordRequired: "Veuillez saisir votre mot de passe actuel"
+firstnameMaxLength: "Votre prénom ne peut pas dépasser {limit} caractères"
+lastnameMaxLength: "Votre nom ne peut pas dépasser {limit} caractères"
+difficultyLevel: "Niveau de difficulté"
+filterByDifficulty: "Filtrer par difficulté"
+closeTask: "Clôturer la tâche"
+comment: Commentaire
+equipmentRequired: "L'équipement est obligatoire"
+titleRequired: "Le titre est obligatoire"
+difficultyRequired: "La difficulté est obligatoire"
+difficultyRange: "La difficulté doit être entre 1 et 5"
+equipmentTypeRequired: "Le type d'équipement est obligatoire"
+messageRequired: "Le message est obligatoire"
+done: Terminé
+claimed: "Pris en charge"
+unclaimed: Libéré
+undone: "Marqué comme non terminé"
+taskStatus.open: Ouvert
+taskStatus.in_progress: "En cours"
+taskStatus.done: Terminé
+taskStatus.closed: Clôturé
+taskStatus.cancelled: Annulé
+dueDateCannotBeInPast: "La date d'échéance ne peut pas être dans le passé."
+noTasksYet: "Aucune tâche"
+addTasksToPlan: "Ajoutez des tâches pour définir les étapes de maintenance."
+addSubTasksToOrganize: "Ajoutez des sous-tâches pour organiser le travail."
+filter: Filtrer
+areYouSure: "Êtes-vous sûr ?"
+taskDone: "Tâche marquée comme terminée"
+taskUndone: "Tâche marquée comme non terminée"
+subTaskDone: "Sous-tâche marquée comme terminée"
+subTaskUndone: "Sous-tâche marquée comme non terminée"
+applicationCancelled: "Application annulée"
+taskFromMaintenancePlan: "Cette tâche fait partie d'un plan de maintenance."

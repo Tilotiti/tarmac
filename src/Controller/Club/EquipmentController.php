@@ -5,9 +5,14 @@ namespace App\Controller\Club;
 use App\Entity\Club;
 use App\Entity\Equipment;
 use App\Form\EquipmentType;
+use App\Form\PlanApplyType;
+use App\Repository\PlanApplicationRepository;
+use App\Repository\PlanRepository;
 use App\Repository\Paginator;
+use App\Repository\TaskRepository;
 use App\Service\ClubResolver;
-use App\Entity\EquipmentOwner;
+use App\Entity\Enum\EquipmentOwner;
+use App\Service\Maintenance\PlanApplier;
 use App\Service\SubdomainService;
 use App\Controller\ExtendedController;
 use App\Repository\EquipmentRepository;
@@ -27,6 +32,10 @@ class EquipmentController extends ExtendedController
         SubdomainService $subdomainService,
         private readonly ClubResolver $clubResolver,
         private readonly EquipmentRepository $equipmentRepository,
+        private readonly PlanRepository $planRepository,
+        private readonly PlanApplicationRepository $applicationRepository,
+        private readonly TaskRepository $taskRepository,
+        private readonly PlanApplier $planApplier,
         private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($subdomainService);
@@ -38,24 +47,24 @@ class EquipmentController extends ExtendedController
         $club = $this->clubResolver->resolve();
 
         // Handle filters - default to club equipment
-        $filterForm = $this->createFilter(EquipmentFilterType::class, [
+        $filters = $this->createFilter(EquipmentFilterType::class, [
             'owner' => EquipmentOwner::CLUB->value
         ]);
-        $filterForm->handleRequest($request);
+        $filters->handleRequest($request);
 
-        $filters = $this->getFilterData($filterForm);
+        $params = $filters->getData() ?? [];
 
         // Force club context
-        $filters['club'] = $club;
+        $params['club'] = $club;
 
         // Members can only see active equipments, managers can see all
         if (!$this->isGranted('MANAGE')) {
-            $filters['active'] = true;
+            $params['active'] = true;
         }
 
         // Get equipments with pagination
         $equipments = Paginator::paginate(
-            $this->equipmentRepository->queryByFilters($filters),
+            $this->equipmentRepository->queryByFilters($params),
             $request->query->getInt('page', 1),
             20
         );
@@ -63,7 +72,7 @@ class EquipmentController extends ExtendedController
         return $this->render('club/equipment/index.html.twig', [
             'club' => $club,
             'equipments' => $equipments,
-            'filterForm' => $filterForm,
+            'filters' => $filters->createView(),
         ]);
     }
 
@@ -117,9 +126,21 @@ class EquipmentController extends ExtendedController
             throw $this->createNotFoundException();
         }
 
+        // Get maintenance plan applications for this equipment
+        $applications = $this->planApplier->getEquipmentApplications($equipment);
+
+        // Get pending tasks for this equipment
+        $qb = $this->taskRepository->queryAll();
+        $qb = $this->taskRepository->filterByEquipment($qb, $equipment);
+        $qb = $this->taskRepository->filterByStatus($qb, 'open');
+        $qb = $this->taskRepository->orderByRelevantDate($qb, 'ASC');
+        $pendingTasks = $qb->setMaxResults(10)->getQuery()->getResult();
+
         return $this->render('club/equipment/show.html.twig', [
             'club' => $club,
             'equipment' => $equipment,
+            'applications' => $applications,
+            'pendingTasks' => $pendingTasks,
         ]);
     }
 
@@ -196,6 +217,78 @@ class EquipmentController extends ExtendedController
         $this->addFlash('success', 'equipmentEnabled');
 
         return $this->redirectToRoute('club_equipments');
+    }
+
+    #[Route('/{id}/apply-plan', name: 'club_equipment_apply_plan', methods: ['GET', 'POST'])]
+    #[IsGranted('MANAGE')]
+    #[Breadcrumb([
+        ['label' => 'home', 'route' => 'club_dashboard'],
+        ['label' => 'Équipements', 'route' => 'club_equipments'],
+        ['label' => '$equipment.name', 'route' => 'club_equipment_show', 'parameters' => ['id' => '$equipment.id']],
+        ['label' => 'applyPlan'],
+    ])]
+    public function applyPlan(Equipment $equipment, Request $request): Response
+    {
+        $club = $this->clubResolver->resolve();
+
+        // Ensure equipment belongs to this club
+        if ($equipment->getClub() !== $club) {
+            throw $this->createNotFoundException();
+        }
+
+        // Get available maintenance plans for this equipment type
+        $qb = $this->planRepository->queryAll();
+        $qb = $this->planRepository->filterByEquipmentType($qb, $equipment->getType());
+        $availablePlans = $qb->getQuery()->getResult();
+
+        if (empty($availablePlans)) {
+            $this->addFlash('warning', 'noPlansAvailable');
+            return $this->redirectToRoute('club_equipment_show', ['id' => $equipment->getId()]);
+        }
+
+        $form = $this->createForm(PlanApplyType::class, [
+            'equipment' => $equipment,
+        ]);
+
+        // Add plan selection
+        $form->add('plan', \Symfony\Bridge\Doctrine\Form\Type\EntityType::class, [
+            'class' => \App\Entity\Plan::class,
+            'choices' => $availablePlans,
+            'choice_label' => 'name',
+            'label' => 'plan',
+            'required' => true,
+            'attr' => ['class' => 'form-select'],
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $plan = $data['plan'];
+            $dueAt = $data['dueAt'];
+
+            try {
+                $application = $this->planApplier->applyPlan(
+                    $plan,
+                    $equipment,
+                    $this->getUser(),
+                    $dueAt
+                );
+
+                $this->addFlash('success', 'planApplied');
+
+                return $this->redirectToRoute('club_equipment_show', ['id' => $equipment->getId()]);
+            } catch (\InvalidArgumentException $e) {
+                $this->addFlash('error', $e->getMessage());
+            }
+        }
+
+        return $this->render('club/equipment/apply_plan.html.twig', [
+            'club' => $club,
+            'equipment' => $equipment,
+            'availablePlans' => $availablePlans,
+            'form' => $form,
+        ]);
     }
 }
 

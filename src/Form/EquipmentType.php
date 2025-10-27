@@ -4,8 +4,8 @@ namespace App\Form;
 
 use App\Entity\Club;
 use App\Entity\Equipment;
-use App\Entity\EquipmentOwner;
-use App\Entity\EquipmentType as EquipmentTypeEnum;
+use App\Entity\Enum\EquipmentOwner;
+use App\Entity\Enum\EquipmentType as EquipmentTypeEnum;
 use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

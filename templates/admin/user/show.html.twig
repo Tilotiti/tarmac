@@ -16,7 +16,7 @@
 		</a>
 		{% if user.id != app.user.id %}
 			{% if is_granted('ROLE_ADMIN') and user.active and user.isVerified %}
-				<a href="{{ path('admin_user_show', {id: user.id, _switch_user: user.email}) }}" class="btn btn-info" style="min-height: 44px;">
+				<a href="{{ path('public_landing', {_switch_user: user.email}) }}" class="btn btn-info" style="min-height: 44px;">
 					<i class="ti ti-user-check me-2"></i>
 					<span class="d-none d-sm-inline">Se connecter</span>
 					<span class="d-inline d-sm-none">Se connecter</span>

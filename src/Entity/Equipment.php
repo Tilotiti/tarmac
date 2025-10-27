@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\EquipmentOwner;
+use App\Entity\Enum\EquipmentType;
 use App\Repository\EquipmentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

@@ -2,8 +2,8 @@
 
 namespace App\Form\Filter;
 
-use App\Entity\EquipmentOwner;
-use App\Entity\EquipmentType as EquipmentTypeEnum;
+use App\Entity\Enum\EquipmentOwner;
+use App\Entity\Enum\EquipmentType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -25,8 +25,8 @@ class EquipmentFilterType extends AbstractFilterType
                 'label' => 'type',
                 'placeholder' => 'allTypes',
                 'choices' => [
-                    'glider' => EquipmentTypeEnum::GLIDER->value,
-                    'infrastructure' => EquipmentTypeEnum::FACILITY->value,
+                    'glider' => EquipmentType::GLIDER->value,
+                    'infrastructure' => EquipmentType::FACILITY->value,
                 ],
                 'choice_translation_domain' => 'messages',
             ])

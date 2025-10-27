@@ -38,6 +38,31 @@
 
     .navbar-nav .nav-link {
         min-height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    /* Full width nav items on mobile for better touch experience */
+    .navbar-collapse .navbar-nav {
+        width: 100%;
+    }
+
+    .navbar-collapse .navbar-nav .nav-item {
+        width: 100%;
+    }
+}
+
+/* Desktop navbar alignment */
+@media (min-width: 768px) {
+
+    /* Ensure navbar items are inline on desktop */
+    .navbar-collapse .navbar-nav {
+        flex-direction: row !important;
+    }
+
+    .navbar-nav .nav-link {
+        display: flex;
+        align-items: center;
     }
 }
 
@@ -119,5 +144,117 @@
 @media (min-width: 768px) {
     .owners-list-container {
         max-height: 400px;
+    }
+}
+
+/* Sticky bottom card on mobile for form actions */
+@media (max-width: 767.98px) {
+    .sticky-bottom-mobile {
+        position: sticky;
+        bottom: 0;
+        z-index: 1020;
+        margin-top: 1rem !important;
+        margin-bottom: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Page actions - Mobile-first responsive behavior */
+
+/* Small screens (<576px): Action block 100% width, buttons 100% width */
+@media (max-width: 575.98px) {
+
+    /* Container for page actions */
+    .page-header .col-12.col-lg-auto {
+        margin-top: 1rem;
+    }
+
+    /* Make btn-list stack vertically */
+    .page-header .col-12.col-lg-auto .btn-list {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+
+    /* Make forms in btn-list display as block (not inline) */
+    .page-header .col-12.col-lg-auto .btn-list form {
+        display: block !important;
+        width: 100%;
+    }
+
+    /* Make buttons full width */
+    .page-header .col-12.col-lg-auto .btn {
+        width: 100% !important;
+        justify-content: center;
+    }
+
+    /* Stack buttons vertically with gap for d-flex containers */
+    .page-header .col-12.col-lg-auto .d-flex {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+
+    /* Hide the shortened text version */
+    .page-header .col-12.col-lg-auto .btn .d-inline.d-sm-none {
+        display: none !important;
+    }
+
+    /* Show the full text version */
+    .page-header .col-12.col-lg-auto .btn .d-none.d-sm-inline {
+        display: inline !important;
+    }
+}
+
+/* Medium screens (576px - 991.98px): Action block 100% width, buttons auto width */
+@media (min-width: 576px) and (max-width: 991.98px) {
+
+    /* Container for page actions - still full width but with spacing */
+    .page-header .col-12.col-lg-auto {
+        margin-top: 1rem;
+    }
+
+    /* Make btn-list horizontal on medium screens */
+    .page-header .col-12.col-lg-auto .btn-list {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+
+    /* Forms stay inline on medium screens */
+    .page-header .col-12.col-lg-auto .btn-list form {
+        display: inline-block !important;
+    }
+
+    /* Buttons auto width on medium screens */
+    .page-header .col-12.col-lg-auto .btn {
+        width: auto !important;
+    }
+
+    /* d-flex containers stay horizontal */
+    .page-header .col-12.col-lg-auto .d-flex {
+        flex-direction: row !important;
+        gap: 0.5rem !important;
+    }
+}
+
+/* Large screens (≥992px): Action block on the right, buttons auto width */
+@media (min-width: 992px) {
+
+    /* No margin-top needed - same row as title */
+    .page-header .col-12.col-lg-auto {
+        margin-top: 0;
+    }
+
+    /* Buttons auto width */
+    .page-header .col-12.col-lg-auto .btn {
+        width: auto !important;
+    }
+
+    /* btn-list horizontal with gap */
+    .page-header .col-12.col-lg-auto .btn-list {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
     }
 }

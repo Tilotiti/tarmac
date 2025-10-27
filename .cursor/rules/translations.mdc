@@ -1,8 +1,7 @@
 ---
-description: Translation workflow (global)
-globs: ["*", "**/*"]
+description: Translation workflow for templates and controllers
+globs: ["templates/**/*.twig", "src/Controller/**/*.php", "src/Form/**/*.php"]
 priority: 150
-alwaysApply: true
 ---
 
 ## Workflow

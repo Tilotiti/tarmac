@@ -1,3 +1,9 @@
+---
+description: Filter component usage for list pages
+globs: ["templates/**/*.twig", "src/Controller/**/*.php", "src/Form/**/*FilterType.php"]
+priority: 110
+---
+
 # Filter Component Rules
 
 ## Usage

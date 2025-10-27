@@ -1,7 +1,5 @@
 {% extends 'club/base.html.twig' %}
 
-{% form_theme filterForm 'component/filters.html.twig' %}
-
 {% block page_title %}
 	{{ 'equipment'|trans }}
 {% endblock %}
@@ -17,7 +15,7 @@
 {% endblock %}
 
 {% block page_content %}
-	{% include 'component/filters.html.twig' with { form: filterForm } %}
+	{% include 'component/filters.html.twig' with { form: filters } %}
 
 	{# Equipment cards - Mobile-first design #}
 	<div class="row">
@@ -45,8 +43,8 @@
 							<div
 								class="d-flex align-items-center">
 								{# Avatar with icon based on type #}
-								<span class="avatar avatar-lg me-3 bg-{{ equipment.type.value == 'glider' ? 'blue' : 'green' }}-lt">
-									<i class="ti ti-{{ equipment.type.value == 'glider' ? 'plane' : 'tool' }} text-{{ equipment.type.value == 'glider' ? 'blue' : 'green' }}" style="font-size: 1.5rem;"></i>
+								<span class="avatar avatar-lg me-3 bg-{{ equipment.type.value == 'glider' ? 'blue' : (equipment.type.value == 'facility' ? 'purple' : 'green') }}-lt">
+									<i class="ti ti-{{ equipment.type.value == 'glider' ? 'plane' : (equipment.type.value == 'facility' ? 'building' : 'tool') }} text-{{ equipment.type.value == 'glider' ? 'blue' : (equipment.type.value == 'facility' ? 'purple' : 'green') }}" style="font-size: 1.5rem;"></i>
 								</span>
 								<div
 									class="flex-fill">

@@ -10,6 +10,9 @@
 		{# Convert DateTime objects to ISO strings #}
 		{% if value is instanceof('DateTime') %}
 			{% set value = value | date('Y-m-d\\TH:i:sP') %}
+			{# Handle Enum objects - convert to their value #}
+		{% elseif value is instanceof('\\UnitEnum') %}
+			{% set value = value.value %}
 			{# Handle nested arrays (like date ranges) - convert DateTime objects #}
 		{% elseif value is iterable and not (value.id is defined) %}
 			{% set convertedValue = {} %}
@@ -34,7 +37,10 @@
 {% for filter in form %}
 	{# Check if filter has any meaningful data #}
 	{% set hasData = false %}
-	{% if filter.vars.data is not empty and filter.vars.data is not iterable %}
+	{# Handle enum values explicitly #}
+	{% if filter.vars.data is instanceof('\\UnitEnum') %}
+		{% set hasData = true %}
+	{% elseif filter.vars.data is not empty and filter.vars.data is not iterable %}
 		{% set hasData = true %}
 	{% elseif filter.vars.data is iterable %}
 		{% for child in filter.vars.data %}
@@ -54,7 +60,10 @@
 			{% for filter in form %}
 				{# Check if filter has any meaningful data #}
 				{% set hasData = false %}
-				{% if filter.vars.data is not empty and filter.vars.data is not iterable %}
+				{# Handle enum values explicitly #}
+				{% if filter.vars.data is instanceof('\\UnitEnum') %}
+					{% set hasData = true %}
+				{% elseif filter.vars.data is not empty and filter.vars.data is not iterable %}
 					{% set hasData = true %}
 				{% elseif filter.vars.data is iterable %}
 					{% for child in filter.vars.data %}
@@ -81,6 +90,9 @@
 						{% elseif filter.vars.data is iterable and filter.vars.data.startAt is instanceof('DateTime') %}
 							À partir du
 							{{ filter.vars.data.startAt | date('d/m/Y') }}
+							{# Handle Enum objects (e.g., EquipmentType) #}
+						{% elseif filter.vars.data is instanceof('\\UnitEnum') %}
+							{{ filter.vars.data.getLabel() | trans }}
 							{# Booleans and 1/0 should display as Yes/No (translated) #}
 						{% elseif filter.vars.data is same as(true) %}
 							Oui
@@ -104,7 +116,17 @@
 							{{ filter.vars.data }}
 						{% endif %}
 
-						<a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params') | merge(app.request.query.all) | merge({(filter.vars.name): ''})) }}" class="btn-close"></a>
+						{% set clearFilterParams = app.request.attributes.get('_route_params') | merge(app.request.query.all) | merge({(filter.vars.name): ''}) %}
+						{# Convert any enum values to strings for URL generation #}
+						{% set cleanedParams = {} %}
+						{% for key, value in clearFilterParams %}
+							{% if value is instanceof('\\UnitEnum') %}
+								{% set cleanedParams = cleanedParams | merge({(key): value.value}) %}
+							{% else %}
+								{% set cleanedParams = cleanedParams | merge({(key): value}) %}
+							{% endif %}
+						{% endfor %}
+						<a href="{{ path(app.request.attributes.get('_route'), cleanedParams) }}" class="btn-close"></a>
 					</span>
 				{% endif %}
 			{% endfor %}
@@ -138,8 +160,18 @@
 							Filtrer
 						</button>
 					</div>
-					<div class="col-12 col-md-6">
-						<a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" class="btn btn-outline-secondary w-100">
+					<div
+						class="col-12 col-md-6">
+						{# Clean route params from any enum values #}
+						{% set cleanRouteParams = {} %}
+						{% for key, value in app.request.attributes.get('_route_params') %}
+							{% if value is instanceof('\\UnitEnum') %}
+								{% set cleanRouteParams = cleanRouteParams | merge({(key): value.value}) %}
+							{% else %}
+								{% set cleanRouteParams = cleanRouteParams | merge({(key): value}) %}
+							{% endif %}
+						{% endfor %}
+						<a href="{{ path(app.request.attributes.get('_route'), cleanRouteParams) }}" class="btn btn-outline-secondary w-100">
 							<i class="ti ti-x me-2"></i>
 							Effacer
 						</a>

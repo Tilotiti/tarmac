@@ -1,0 +1,104 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'newTask'|trans }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		<div class="col-12">
+			{{ form_start(form) }}
+
+			{# Main Task Information Card #}
+			<div class="card mb-3">
+				<div class="card-header">
+					<h3 class="card-title">{{ 'taskInformation'|trans }}</h3>
+				</div>
+				<div class="card-body">
+					{{ form_row(form.equipment) }}
+					{{ form_row(form.title) }}
+					{{ form_row(form.description, {'attr': {'class': 'form-control w-100', 'rows': 3}}) }}
+
+					<div class="row">
+						<div class="col-12 col-md-6 mb-2">
+							{{ form_row(form.difficulty) }}
+						</div>
+						<div class="col-12 col-md-6 mb-2">
+							{{ form_row(form.dueAt) }}
+						</div>
+					</div>
+
+					<div class="form-check form-switch mt-3">
+						{{ form_widget(form.requiresInspection) }}
+						{{ form_label(form.requiresInspection) }}
+					</div>
+				</div>
+			</div>
+
+			{# SubTasks Section #}
+			{% set subtaskPrototype %}
+			<div class="card mb-3" data-collection-type-target="item">
+				<div class="card-header d-flex justify-content-between align-items-center">
+					<h5 class="card-title mb-0">{{ 'subTask'|trans }}
+						__INDEX__</h5>
+					<button type="button" class="btn btn-sm btn-danger" data-action="click->collection-type#removeItem" data-confirm="{{ 'confirmDeleteSubTask'|trans }}" aria-label="{{ 'deleteThisSubTask'|trans }}">
+						<i class="ti ti-trash"></i>
+					</button>
+				</div>
+				<div class="card-body">
+					{{ form_widget(form.subTasks.vars.prototype) }}
+				</div>
+			</div>
+			{% endset %}
+
+			<div {{ stimulus_controller('collection-type') }} data-collection-type-prototype-name-value="__subtask_name__" data-collection-type-display-index-name-value="__INDEX__" data-prototype="{{ subtaskPrototype|e('html_attr') }}">
+				<div
+					data-collection-type-target="container">
+					{# Empty state placeholder #}
+					<div class="empty text-center py-3 mb-3" data-collection-type-target="placeholder" style="{{ form.subTasks|length > 0 ? 'display: none;' : '' }}">
+						<p class="text-muted small mb-0">{{ 'noSubTasksYet'|trans }}</p>
+					</div>
+
+					{% for subtask in form.subTasks %}
+						<div class="card mb-3" data-collection-type-target="item">
+							<div class="card-header d-flex justify-content-between align-items-center">
+								<h5 class="card-title mb-0">{{ 'subTask'|trans }}
+									{{ loop.index }}</h5>
+								<button type="button" class="btn btn-sm btn-danger" data-action="click->collection-type#removeItem" data-confirm="{{ 'confirmDeleteSubTask'|trans }}" aria-label="{{ 'deleteThisSubTask'|trans }}">
+									<i class="ti ti-trash"></i>
+								</button>
+							</div>
+							<div class="card-body">
+								<div class="mb-2">
+									{{ form_row(subtask.title) }}
+								</div>
+								<div class="mb-2">
+									{{ form_row(subtask.description, {'attr': {'rows': 2}}) }}
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+
+				<div class="text-center mb-3">
+					<button type="button" class="btn btn-secondary" data-action="click->collection-type#addItem" aria-label="{{ 'addSubTask'|trans }}" style="min-height: 44px;">
+						<i class="ti ti-plus me-2"></i>
+						{{ 'addSubTask'|trans }}
+					</button>
+				</div>
+			</div>
+
+			{# Sticky Save Button for Mobile #}
+			<div class="card sticky-bottom-mobile">
+				<div class="card-body">
+					<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">
+						<i class="ti ti-check me-2"></i>
+						{{ 'save'|trans }}
+					</button>
+				</div>
+			</div>
+
+			{{ form_end(form) }}
+		</div>
+	</div>
+{% endblock %}

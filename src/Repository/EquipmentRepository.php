@@ -4,8 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Club;
 use App\Entity\Equipment;
-use App\Entity\EquipmentOwner;
-use App\Entity\EquipmentType;
+use App\Entity\Enum\EquipmentOwner;
+use App\Entity\Enum\EquipmentType;
 use App\Service\ClubResolver;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;

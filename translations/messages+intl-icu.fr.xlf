@@ -352,6 +352,14 @@
         <source>logout</source>
         <target>Déconnexion</target>
       </trans-unit>
+      <trans-unit id="143" resname="backToAdmin">
+        <source>backToAdmin</source>
+        <target>Retour à l'admin</target>
+      </trans-unit>
+      <trans-unit id="144" resname="myClubs">
+        <source>myClubs</source>
+        <target>Mes clubs</target>
+      </trans-unit>
 
       <!-- Breadcrumbs -->
       <trans-unit id="150" resname="home">
@@ -515,6 +523,657 @@
       <trans-unit id="216" resname="searchByNameOrEmail">
         <source>searchByNameOrEmail</source>
         <target>Rechercher par nom ou e-mail</target>
+      </trans-unit>
+
+      <!-- Maintenance System -->
+      <!-- Flash Messages: Tasks -->
+      <trans-unit id="300" resname="taskCreated">
+        <source>taskCreated</source>
+        <target>La tâche a été créée avec succès.</target>
+      </trans-unit>
+      <trans-unit id="301" resname="taskUpdated">
+        <source>taskUpdated</source>
+        <target>La tâche a été mise à jour.</target>
+      </trans-unit>
+      <trans-unit id="304" resname="taskMarkedAsDone">
+        <source>taskMarkedAsDone</source>
+        <target>La tâche a été marquée comme terminée.</target>
+      </trans-unit>
+      <trans-unit id="305" resname="taskClosed">
+        <source>taskClosed</source>
+        <target>La tâche a été clôturée.</target>
+      </trans-unit>
+      <trans-unit id="306" resname="taskCancelled">
+        <source>taskCancelled</source>
+        <target>La tâche a été annulée.</target>
+      </trans-unit>
+      <trans-unit id="307" resname="taskCannotBeClosed">
+        <source>taskCannotBeClosed</source>
+        <target>Cette tâche ne peut pas être clôturée (sous-tâches non terminées ou inspection requise).</target>
+      </trans-unit>
+      <trans-unit id="308" resname="commentAdded">
+        <source>commentAdded</source>
+        <target>Votre commentaire a été ajouté.</target>
+      </trans-unit>
+
+      <!-- Flash Messages: SubTasks -->
+      <trans-unit id="310" resname="subTaskCreated">
+        <source>subTaskCreated</source>
+        <target>La sous-tâche a été créée avec succès.</target>
+      </trans-unit>
+      <trans-unit id="311" resname="subTaskUpdated">
+        <source>subTaskUpdated</source>
+        <target>La sous-tâche a été mise à jour.</target>
+      </trans-unit>
+      <trans-unit id="313" resname="subTaskMarkedAsDone">
+        <source>subTaskMarkedAsDone</source>
+        <target>La sous-tâche a été marquée comme terminée.</target>
+      </trans-unit>
+      <trans-unit id="314" resname="subTaskCancelled">
+        <source>subTaskCancelled</source>
+        <target>La sous-tâche a été annulée.</target>
+      </trans-unit>
+
+      <!-- Flash Messages: Inspection -->
+      <trans-unit id="320" resname="inspectionApproved">
+        <source>inspectionApproved</source>
+        <target>L'inspection a été approuvée.</target>
+      </trans-unit>
+      <trans-unit id="321" resname="inspectionRejected">
+        <source>inspectionRejected</source>
+        <target>L'inspection a été rejetée.</target>
+      </trans-unit>
+      <trans-unit id="322" resname="rejectionReasonRequired">
+        <source>rejectionReasonRequired</source>
+        <target>Veuillez indiquer la raison du rejet.</target>
+      </trans-unit>
+
+      <!-- Flash Messages: Maintenance Plans -->
+      <trans-unit id="330" resname="planCreated">
+        <source>planCreated</source>
+        <target>Le plan de maintenance a été créé avec succès.</target>
+      </trans-unit>
+      <trans-unit id="331" resname="planUpdated">
+        <source>planUpdated</source>
+        <target>Le plan de maintenance a été mis à jour.</target>
+      </trans-unit>
+      <trans-unit id="332" resname="planApplied">
+        <source>planApplied</source>
+        <target>Le plan de maintenance a été appliqué à l'équipement.</target>
+      </trans-unit>
+      <trans-unit id="333" resname="planApplicationCancelled">
+        <source>planApplicationCancelled</source>
+        <target>L'application du plan de maintenance a été annulée.</target>
+      </trans-unit>
+      <trans-unit id="334" resname="noPlansAvailable">
+        <source>noPlansAvailable</source>
+        <target>Aucun plan de maintenance disponible pour ce type d'équipement.</target>
+      </trans-unit>
+      <trans-unit id="335" resname="invalidRequest">
+        <source>invalidRequest</source>
+        <target>Requête invalide.</target>
+      </trans-unit>
+
+      <!-- Labels: Tasks -->
+      <trans-unit id="400" resname="tasks">
+        <source>tasks</source>
+        <target>Tâches</target>
+      </trans-unit>
+      <trans-unit id="401" resname="task">
+        <source>task</source>
+        <target>Tâche</target>
+      </trans-unit>
+      <trans-unit id="402" resname="newTask">
+        <source>newTask</source>
+        <target>Nouvelle tâche</target>
+      </trans-unit>
+      <trans-unit id="403" resname="subTasks">
+        <source>subTasks</source>
+        <target>Sous-tâches</target>
+      </trans-unit>
+      <trans-unit id="404" resname="subTask">
+        <source>subTask</source>
+        <target>Sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="405" resname="newSubTask">
+        <source>newSubTask</source>
+        <target>Nouvelle sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="405a" resname="editSubTask">
+        <source>editSubTask</source>
+        <target>Modifier la sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="406" resname="difficulty">
+        <source>difficulty</source>
+        <target>Difficulté</target>
+      </trans-unit>
+      <trans-unit id="407" resname="difficultyLevel">
+        <source>difficultyLevel</source>
+        <target>Niveau de difficulté</target>
+      </trans-unit>
+      <trans-unit id="408" resname="debutant">
+        <source>debutant</source>
+        <target>Débutant</target>
+      </trans-unit>
+      <trans-unit id="409" resname="facile">
+        <source>facile</source>
+        <target>Facile</target>
+      </trans-unit>
+      <trans-unit id="410" resname="moyen">
+        <source>moyen</source>
+        <target>Moyen</target>
+      </trans-unit>
+      <trans-unit id="411" resname="difficile">
+        <source>difficile</source>
+        <target>Difficile</target>
+      </trans-unit>
+      <trans-unit id="412" resname="expert">
+        <source>expert</source>
+        <target>Expert</target>
+      </trans-unit>
+      <trans-unit id="413" resname="filterByDifficulty">
+        <source>filterByDifficulty</source>
+        <target>Filtrer par difficulté</target>
+      </trans-unit>
+      <trans-unit id="414" resname="requiresInspection">
+        <source>requiresInspection</source>
+        <target>Requiert une inspection</target>
+      </trans-unit>
+      <trans-unit id="415" resname="awaitingInspection">
+        <source>awaitingInspection</source>
+        <target>En attente d'inspection</target>
+      </trans-unit>
+      <trans-unit id="417" resname="dueDate">
+        <source>dueDate</source>
+        <target>Date d'échéance</target>
+      </trans-unit>
+      <trans-unit id="420" resname="markAsDone">
+        <source>markAsDone</source>
+        <target>Marquer comme terminée</target>
+      </trans-unit>
+      <trans-unit id="421" resname="closeTask">
+        <source>closeTask</source>
+        <target>Clôturer la tâche</target>
+      </trans-unit>
+      <trans-unit id="422" resname="cancelTask">
+        <source>cancelTask</source>
+        <target>Annuler la tâche</target>
+      </trans-unit>
+      <trans-unit id="422a" resname="viewTasks">
+        <source>viewTasks</source>
+        <target>Voir les tâches</target>
+      </trans-unit>
+      <trans-unit id="422b" resname="pendingTasks">
+        <source>pendingTasks</source>
+        <target>Tâches en attente</target>
+      </trans-unit>
+      <trans-unit id="422c" resname="viewAllTasks">
+        <source>viewAllTasks</source>
+        <target>Voir toutes les tâches</target>
+      </trans-unit>
+      <trans-unit id="423" resname="approveInspection">
+        <source>approveInspection</source>
+        <target>Approuver l'inspection</target>
+      </trans-unit>
+      <trans-unit id="424" resname="rejectInspection">
+        <source>rejectInspection</source>
+        <target>Rejeter l'inspection</target>
+      </trans-unit>
+      <trans-unit id="425" resname="rejectionReason">
+        <source>rejectionReason</source>
+        <target>Raison du rejet</target>
+      </trans-unit>
+      <trans-unit id="426" resname="cancellationReason">
+        <source>cancellationReason</source>
+        <target>Raison de l'annulation</target>
+      </trans-unit>
+      <trans-unit id="836" resname="approve">
+        <source>approve</source>
+        <target>Approuver</target>
+      </trans-unit>
+      <trans-unit id="427" resname="explainReason">
+        <source>explainReason</source>
+        <target>Expliquez la raison...</target>
+      </trans-unit>
+      <trans-unit id="428" resname="optionalReason">
+        <source>optionalReason</source>
+        <target>Raison (optionnel)...</target>
+      </trans-unit>
+      <trans-unit id="429" resname="addComment">
+        <source>addComment</source>
+        <target>Ajouter un commentaire...</target>
+      </trans-unit>
+      <trans-unit id="430" resname="comment">
+        <source>comment</source>
+        <target>Commentaire</target>
+      </trans-unit>
+      <trans-unit id="431" resname="progress">
+        <source>progress</source>
+        <target>Progression</target>
+      </trans-unit>
+
+      <!-- Labels: Maintenance Plans -->
+      <trans-unit id="450" resname="plans">
+        <source>plans</source>
+        <target>Plans de maintenance</target>
+      </trans-unit>
+      <trans-unit id="451" resname="plan">
+        <source>plan</source>
+        <target>Plan de maintenance</target>
+      </trans-unit>
+      <trans-unit id="452" resname="newPlan">
+        <source>newPlan</source>
+        <target>Nouveau plan</target>
+      </trans-unit>
+      <trans-unit id="4521" resname="noPlans">
+        <source>noPlans</source>
+        <target>Aucun plan de maintenance</target>
+      </trans-unit>
+      <trans-unit id="4522" resname="noPlansDescription">
+        <source>noPlansDescription</source>
+        <target>Créez un plan de maintenance pour automatiser les tâches récurrentes sur vos équipements.</target>
+      </trans-unit>
+      <trans-unit id="453" resname="applications">
+        <source>applications</source>
+        <target>Applications</target>
+      </trans-unit>
+      <trans-unit id="454" resname="apply">
+        <source>apply</source>
+        <target>Appliquer</target>
+      </trans-unit>
+      <trans-unit id="455" resname="applyPlan">
+        <source>applyPlan</source>
+        <target>Appliquer un plan de maintenance</target>
+      </trans-unit>
+      <trans-unit id="456" resname="selectEquipment">
+        <source>selectEquipment</source>
+        <target>Sélectionner un équipement</target>
+      </trans-unit>
+      <trans-unit id="457" resname="dueDateHelp">
+        <source>dueDateHelp</source>
+        <target>Date d'échéance du plan (optionnel)</target>
+      </trans-unit>
+      <trans-unit id="458" resname="relativeDueDays">
+        <source>relativeDueDays</source>
+        <target>Jours relatifs</target>
+      </trans-unit>
+      <trans-unit id="459" resname="relativeDueDaysPlaceholder">
+        <source>relativeDueDaysPlaceholder</source>
+        <target>ex: -7 pour 7 jours avant</target>
+      </trans-unit>
+      <trans-unit id="460" resname="relativeDueDaysHelp">
+        <source>relativeDueDaysHelp</source>
+        <target>Nombre de jours par rapport à la date d'échéance du plan (peut être négatif)</target>
+      </trans-unit>
+      <trans-unit id="461" resname="equipmentType">
+        <source>equipmentType</source>
+        <target>Type d'équipement</target>
+      </trans-unit>
+      <trans-unit id="4611" resname="maintenancePlan">
+        <source>maintenancePlan</source>
+        <target>Plan de maintenance</target>
+      </trans-unit>
+      <trans-unit id="4612" resname="appliedOn">
+        <source>appliedOn</source>
+        <target>Appliqué le</target>
+      </trans-unit>
+      <trans-unit id="4613" resname="planDueDate">
+        <source>planDueDate</source>
+        <target>Date d'échéance du plan</target>
+      </trans-unit>
+      <trans-unit id="4614" resname="taskFromMaintenancePlan">
+        <source>taskFromMaintenancePlan</source>
+        <target>Cette tâche fait partie d'un plan de maintenance.</target>
+      </trans-unit>
+      <trans-unit id="462" resname="equipmentRequired">
+        <source>equipmentRequired</source>
+        <target>L'équipement est obligatoire</target>
+      </trans-unit>
+      <trans-unit id="463" resname="titleRequired">
+        <source>titleRequired</source>
+        <target>Le titre est obligatoire</target>
+      </trans-unit>
+      <trans-unit id="464" resname="difficultyRequired">
+        <source>difficultyRequired</source>
+        <target>La difficulté est obligatoire</target>
+      </trans-unit>
+      <trans-unit id="465" resname="difficultyRange">
+        <source>difficultyRange</source>
+        <target>La difficulté doit être entre 1 et 5</target>
+      </trans-unit>
+      <trans-unit id="466" resname="equipmentTypeRequired">
+        <source>equipmentTypeRequired</source>
+        <target>Le type d'équipement est obligatoire</target>
+      </trans-unit>
+      <trans-unit id="467" resname="messageRequired">
+        <source>messageRequired</source>
+        <target>Le message est obligatoire</target>
+      </trans-unit>
+
+      <!-- Status Labels -->
+      <trans-unit id="480" resname="open">
+        <source>open</source>
+        <target>Ouvert</target>
+      </trans-unit>
+      <trans-unit id="481" resname="closed">
+        <source>closed</source>
+        <target>Clôturé</target>
+      </trans-unit>
+      <trans-unit id="482" resname="cancelled">
+        <source>cancelled</source>
+        <target>Annulé</target>
+      </trans-unit>
+      <trans-unit id="483" resname="done">
+        <source>done</source>
+        <target>Terminé</target>
+      </trans-unit>
+      <trans-unit id="486" resname="inspectionApproved">
+        <source>inspectionApproved</source>
+        <target>Inspection approuvée</target>
+      </trans-unit>
+      <trans-unit id="487" resname="inspectionRejected">
+        <source>inspectionRejected</source>
+        <target>Inspection rejetée</target>
+      </trans-unit>
+      <trans-unit id="488" resname="active">
+        <source>active</source>
+        <target>Actif</target>
+      </trans-unit>
+      <trans-unit id="489" resname="endOfWeek">
+        <source>endOfWeek</source>
+        <target>Fin de semaine</target>
+      </trans-unit>
+      <trans-unit id="490" resname="endOfMonth">
+        <source>endOfMonth</source>
+        <target>Fin du mois</target>
+      </trans-unit>
+
+      <!-- Activity Types -->
+      <trans-unit id="502" resname="undone">
+        <source>undone</source>
+        <target>Marqué comme non terminé</target>
+      </trans-unit>
+      <trans-unit id="503" resname="noTasksFound">
+        <source>noTasksFound</source>
+        <target>Aucune tâche trouvée</target>
+      </trans-unit>
+      <trans-unit id="504" resname="noSubTasksFound">
+        <source>noSubTasksFound</source>
+        <target>Aucune sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="505" resname="noActivityYet">
+        <source>noActivityYet</source>
+        <target>Aucune activité pour le moment</target>
+      </trans-unit>
+      <trans-unit id="506" resname="activity">
+        <source>activity</source>
+        <target>Activité</target>
+      </trans-unit>
+      <trans-unit id="507" resname="information">
+        <source>information</source>
+        <target>Informations</target>
+      </trans-unit>
+
+      <!-- Dashboard -->
+      <trans-unit id="600" resname="dashboard">
+        <source>dashboard</source>
+        <target>Tableau de bord</target>
+      </trans-unit>
+      <trans-unit id="601" resname="pendingPlans">
+        <source>pendingPlans</source>
+        <target>Maintenance à réaliser</target>
+      </trans-unit>
+      <trans-unit id="602" resname="nextTasks">
+        <source>nextTasks</source>
+        <target>Prochaines tâches</target>
+      </trans-unit>
+      <trans-unit id="603" resname="viewDetails">
+        <source>viewDetails</source>
+        <target>Voir les détails</target>
+      </trans-unit>
+      <trans-unit id="6031" resname="seeAll">
+        <source>seeAll</source>
+        <target>Voir tout</target>
+      </trans-unit>
+      <trans-unit id="604" resname="toInspect">
+        <source>toInspect</source>
+        <target>À inspecter</target>
+      </trans-unit>
+      <trans-unit id="606" resname="noPendingTasks">
+        <source>noPendingTasks</source>
+        <target>Aucune tâche en attente</target>
+      </trans-unit>
+      <trans-unit id="607" resname="noPendingTasksDescription">
+        <source>noPendingTasksDescription</source>
+        <target>Vous n'avez aucune tâche en attente pour le moment. Créez-en une nouvelle pour commencer.</target>
+      </trans-unit>
+      <trans-unit id="608" resname="inspect">
+        <source>inspect</source>
+        <target>Inspecter</target>
+      </trans-unit>
+      <trans-unit id="609" resname="viewTask">
+        <source>viewTask</source>
+        <target>Voir la tâche</target>
+      </trans-unit>
+      <trans-unit id="610" resname="endOfWeek">
+        <source>endOfWeek</source>
+        <target>Fin de semaine</target>
+      </trans-unit>
+      <trans-unit id="6101" resname="end_of_week">
+        <source>end_of_week</source>
+        <target>Fin de semaine</target>
+      </trans-unit>
+      <trans-unit id="6102" resname="end_of_month">
+        <source>end_of_month</source>
+        <target>Fin du mois</target>
+      </trans-unit>
+      <trans-unit id="611" resname="endOfMonth">
+        <source>endOfMonth</source>
+        <target>Fin du mois</target>
+      </trans-unit>
+
+      <!-- Task Status -->
+      <trans-unit id="700" resname="taskStatus.open">
+        <source>taskStatus.open</source>
+        <target>Ouvert</target>
+      </trans-unit>
+      <trans-unit id="701" resname="taskStatus.in_progress">
+        <source>taskStatus.in_progress</source>
+        <target>En cours</target>
+      </trans-unit>
+      <trans-unit id="702" resname="taskStatus.done">
+        <source>taskStatus.done</source>
+        <target>Terminé</target>
+      </trans-unit>
+      <trans-unit id="703" resname="taskStatus.closed">
+        <source>taskStatus.closed</source>
+        <target>Clôturé</target>
+      </trans-unit>
+      <trans-unit id="704" resname="taskStatus.cancelled">
+        <source>taskStatus.cancelled</source>
+        <target>Annulé</target>
+      </trans-unit>
+
+      <!-- Maintenance Plans -->
+      <trans-unit id="800" resname="plans">
+        <source>plans</source>
+        <target>Plans de maintenance</target>
+      </trans-unit>
+      <trans-unit id="801" resname="newPlan">
+        <source>newPlan</source>
+        <target>Nouveau plan</target>
+      </trans-unit>
+      <trans-unit id="8011" resname="editPlan">
+        <source>editPlan</source>
+        <target>Modifier le plan</target>
+      </trans-unit>
+      <trans-unit id="802" resname="addTask">
+        <source>addTask</source>
+        <target>Ajouter une tâche</target>
+      </trans-unit>
+      <trans-unit id="803" resname="addSubTask">
+        <source>addSubTask</source>
+        <target>Ajouter une sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="804" resname="relativeDueDays">
+        <source>relativeDueDays</source>
+        <target>Échéance relative (jours)</target>
+      </trans-unit>
+      <trans-unit id="805" resname="noTasksYet">
+        <source>noTasksYet</source>
+        <target>Aucune tâche</target>
+      </trans-unit>
+      <trans-unit id="806" resname="addTasksToPlan">
+        <source>addTasksToPlan</source>
+        <target>Ajoutez des tâches pour définir les étapes de maintenance.</target>
+      </trans-unit>
+      <trans-unit id="807" resname="noSubTasks">
+        <source>noSubTasks</source>
+        <target>Aucune sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="808" resname="addSubTasksToOrganize">
+        <source>addSubTasksToOrganize</source>
+        <target>Ajoutez des sous-tâches pour organiser le travail.</target>
+      </trans-unit>
+      <trans-unit id="809" resname="title">
+        <source>title</source>
+        <target>Titre</target>
+      </trans-unit>
+      <trans-unit id="810" resname="description">
+        <source>description</source>
+        <target>Description</target>
+      </trans-unit>
+      <trans-unit id="811" resname="difficulty">
+        <source>difficulty</source>
+        <target>Difficulté</target>
+      </trans-unit>
+      <trans-unit id="812" resname="requiresInspection">
+        <source>requiresInspection</source>
+        <target>Requiert une inspection</target>
+      </trans-unit>
+      <trans-unit id="813" resname="gliderType">
+        <source>gliderType</source>
+        <target>Planeur</target>
+      </trans-unit>
+      <trans-unit id="814" resname="infrastructureType">
+        <source>infrastructureType</source>
+        <target>Infrastructure</target>
+      </trans-unit>
+      <trans-unit id="815" resname="searchPlans">
+        <source>searchPlans</source>
+        <target>Rechercher un plan...</target>
+      </trans-unit>
+      <trans-unit id="816" resname="allEquipmentTypes">
+        <source>allEquipmentTypes</source>
+        <target>Tous les types d'équipement</target>
+      </trans-unit>
+      <trans-unit id="817" resname="filter">
+        <source>filter</source>
+        <target>Filtrer</target>
+      </trans-unit>
+      <trans-unit id="818" resname="noTasksInPlan">
+        <source>noTasksInPlan</source>
+        <target>Aucune tâche dans ce plan</target>
+      </trans-unit>
+      <trans-unit id="819" resname="noTasksInPlanDescription">
+        <source>noTasksInPlanDescription</source>
+        <target>Ce plan ne contient aucune tâche. Ajoutez des tâches pour définir les étapes de maintenance.</target>
+      </trans-unit>
+      <trans-unit id="820" resname="addTasks">
+        <source>addTasks</source>
+        <target>Ajouter des tâches</target>
+      </trans-unit>
+      <trans-unit id="821" resname="activeApplications">
+        <source>activeApplications</source>
+        <target>Applications actives</target>
+      </trans-unit>
+      <trans-unit id="822" resname="planDeleted">
+        <source>planDeleted</source>
+        <target>Le plan a été supprimé avec succès.</target>
+      </trans-unit>
+      <trans-unit id="823" resname="confirmDelete">
+        <source>confirmDelete</source>
+        <target>Confirmer la suppression</target>
+      </trans-unit>
+      <trans-unit id="824" resname="confirmDeletePlanMessage">
+        <source>confirmDeletePlanMessage</source>
+        <target>Êtes-vous sûr de vouloir supprimer le plan "{planName}" ? Cette action est irréversible.</target>
+      </trans-unit>
+      <trans-unit id="8241" resname="confirmDeleteTask">
+        <source>confirmDeleteTask</source>
+        <target>Êtes-vous sûr de vouloir supprimer cette tâche ?</target>
+      </trans-unit>
+      <trans-unit id="8242" resname="confirmDeleteSubTask">
+        <source>confirmDeleteSubTask</source>
+        <target>Êtes-vous sûr de vouloir supprimer cette sous-tâche ?</target>
+      </trans-unit>
+      <trans-unit id="825" resname="delete">
+        <source>delete</source>
+        <target>Supprimer</target>
+      </trans-unit>
+      <trans-unit id="826" resname="areYouSure">
+        <source>areYouSure</source>
+        <target>Êtes-vous sûr ?</target>
+      </trans-unit>
+      <trans-unit id="827" resname="yes">
+        <source>yes</source>
+        <target>Oui</target>
+      </trans-unit>
+      <trans-unit id="828" resname="applicationDetails">
+        <source>applicationDetails</source>
+        <target>Détails de l'application</target>
+      </trans-unit>
+      <trans-unit id="829" resname="maintenanceTimeline">
+        <source>maintenanceTimeline</source>
+        <target>Calendrier de maintenance</target>
+      </trans-unit>
+      <trans-unit id="830" resname="existingMaintenancePlanned">
+        <source>existingMaintenancePlanned</source>
+        <target>Maintenance existante prévue</target>
+      </trans-unit>
+      <trans-unit id="831" resname="tasksToBeCreated">
+        <source>tasksToBeCreated</source>
+        <target>Tâches à créer</target>
+      </trans-unit>
+      <trans-unit id="832" resname="noDueDate">
+        <source>noDueDate</source>
+        <target>Pas de date d'échéance</target>
+      </trans-unit>
+      <trans-unit id="833" resname="inspection">
+        <source>inspection</source>
+        <target>Inspection</target>
+      </trans-unit>
+      <trans-unit id="834" resname="allSubTasksMustBeDone">
+        <source>allSubTasksMustBeDone</source>
+        <target>Toutes les sous-tâches doivent être terminées</target>
+      </trans-unit>
+      <trans-unit id="837" resname="taskDone">
+        <source>taskDone</source>
+        <target>Tâche marquée comme terminée</target>
+      </trans-unit>
+      <trans-unit id="838" resname="taskUndone">
+        <source>taskUndone</source>
+        <target>Tâche marquée comme non terminée</target>
+      </trans-unit>
+      <trans-unit id="838a" resname="taskEdited">
+        <source>taskEdited</source>
+        <target>Tâche modifiée</target>
+      </trans-unit>
+      <trans-unit id="839" resname="subTaskDone">
+        <source>subTaskDone</source>
+        <target>Sous-tâche marquée comme terminée</target>
+      </trans-unit>
+      <trans-unit id="840" resname="subTaskUndone">
+        <source>subTaskUndone</source>
+        <target>Sous-tâche marquée comme non terminée</target>
+      </trans-unit>
+      <trans-unit id="840a" resname="subTaskEdited">
+        <source>subTaskEdited</source>
+        <target>Sous-tâche modifiée</target>
+      </trans-unit>
+      <trans-unit id="841" resname="applicationCancelled">
+        <source>applicationCancelled</source>
+        <target>Application annulée</target>
       </trans-unit>
     </body>
   </file>
