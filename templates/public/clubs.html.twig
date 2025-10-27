@@ -30,31 +30,76 @@
 	<div class="page-body">
 		<div class="container-xl">
 			{% if clubs|length > 0 %}
-				<div class="row g-3">
+				<div class="row">
 					{% for club in clubs %}
-						<div class="col-12 col-md-6 col-lg-4">
-							<a href="{{ subdomainService.generateClubUrl(club.subdomain, '/') }}" class="card card-link" style="min-height: 100px;">
-								<div class="card-body">
-									<div class="d-flex align-items-center mb-3">
-										<span class="avatar avatar-lg me-3 bg-blue-lt">
-											<i class="ti ti-windsock"></i>
-										</span>
-										<div class="flex-fill">
-											<div class="fw-bold text-dark">{{ club.name }}</div>
-											<div class="text-secondary small">{{ club.subdomain }}.{{ subdomainService.domain }}</div>
+						<div class="col-12 mb-3">
+							<a href="{{ subdomainService.generateClubUrl(club.subdomain, '/') }}" class="text-decoration-none">
+								<div class="card card-link" style="cursor: pointer;">
+									<div class="card-body">
+										<div class="d-flex align-items-start">
+											{# Club Avatar #}
+											<span class="avatar avatar-lg me-3 bg-blue-lt">
+												<i class="ti ti-windsock text-blue" style="font-size: 1.5rem;"></i>
+											</span>
+
+											{# Main content #}
+											<div class="flex-grow-1">
+												{# Club name (main title) #}
+												<h3 class="card-title mb-1">
+													{{ club.name }}
+												</h3>
+
+												{# Subdomain (subtitle) #}
+												<div class="text-secondary mb-2">
+													<i class="ti ti-world me-1"></i>
+													{{ club.subdomain }}.{{ subdomainService.domain }}
+												</div>
+											</div>
+
+											{# Role badges on desktop - right side #}
+											<div class="ms-3 d-none d-md-flex gap-2 align-items-start">
+												{% if app.user.isManagerOfClub(club) %}
+													<span class="badge bg-success text-white">
+														<i class="ti ti-shield-check me-1"></i>
+														Gestionnaire
+													</span>
+												{% endif %}
+												{% if app.user.isInspectorOfClub(club) %}
+													<span class="badge bg-warning text-white">
+														<i class="ti ti-eye-check me-1"></i>
+														Inspecteur
+													</span>
+												{% endif %}
+												{% if not app.user.isManagerOfClub(club) and not app.user.isInspectorOfClub(club) %}
+													<span class="badge bg-blue text-white">
+														<i class="ti ti-user me-1"></i>
+														Membre
+													</span>
+												{% endif %}
+											</div>
 										</div>
-										<i class="ti ti-chevron-right text-muted"></i>
-									</div>
-									<div class="d-flex gap-2">
-										{% if app.user.isManagerOfClub(club) %}
-											<span class="badge bg-green text-white">Gestionnaire</span>
-										{% endif %}
-										{% if app.user.isInspectorOfClub(club) %}
-											<span class="badge bg-yellow text-white">Inspecteur</span>
-										{% endif %}
-										{% if not app.user.isManagerOfClub(club) and not app.user.isInspectorOfClub(club) %}
-											<span class="badge bg-blue-lt">Membre</span>
-										{% endif %}
+
+										{# Role badges on mobile - full width under content #}
+										<div class="d-flex d-md-none gap-2 flex-wrap mt-3">
+											{% if app.user.isManagerOfClub(club) %}
+												<span class="badge bg-success text-white">
+													<i class="ti ti-shield-check me-1"></i>
+													Gestionnaire
+												</span>
+											{% endif %}
+											{% if app.user.isInspectorOfClub(club) %}
+												<span class="badge bg-warning text-white">
+													<i class="ti ti-eye-check me-1"></i>
+													Inspecteur
+												</span>
+											{% endif %}
+											{% if not app.user.isManagerOfClub(club) and not app.user.isInspectorOfClub(club) %}
+												<span class="badge bg-blue text-white">
+													<i class="ti ti-user me-1"></i>
+													Membre
+												</span>
+											{% endif %}
+										</div>
 									</div>
 								</div>
 							</a>
