@@ -80,6 +80,10 @@
         <source>invitationCancelled</source>
         <target>L'invitation a été annulée.</target>
       </trans-unit>
+      <trans-unit id="17a" resname="invitationUpdated">
+        <source>invitationUpdated</source>
+        <target>L'invitation a été mise à jour.</target>
+      </trans-unit>
       <trans-unit id="18" resname="invitationInvalid">
         <source>invitationInvalid</source>
         <target>Cette invitation n'est pas valide ou a expiré.</target>
@@ -96,546 +100,682 @@
         <source>accountCreated</source>
         <target>Votre compte a été créé ! Veuillez vous connecter pour rejoindre {clubName}.</target>
       </trans-unit>
+      <trans-unit id="22" resname="accountCreatedAndInvitationAccepted">
+        <source>accountCreatedAndInvitationAccepted</source>
+        <target>Bienvenue sur {clubName} ! Votre compte a été créé avec succès.</target>
+      </trans-unit>
 
       <!-- Flash Messages: Member -->
-      <trans-unit id="22" resname="memberRemoved">
+      <trans-unit id="23" resname="memberRemoved">
         <source>memberRemoved</source>
         <target>{memberName} a été retiré du club.</target>
       </trans-unit>
-      <trans-unit id="23" resname="cannotLeaveLastManager">
+      <trans-unit id="24" resname="cannotLeaveLastManager">
         <source>cannotLeaveLastManager</source>
         <target>Vous ne pouvez pas vous retirer, vous êtes le dernier manager du club.</target>
       </trans-unit>
-      <trans-unit id="24" resname="cannotRemoveLastManager">
+      <trans-unit id="25" resname="cannotRemoveLastManager">
         <source>cannotRemoveLastManager</source>
         <target>Vous ne pouvez pas retirer vos droits de manager, vous êtes le dernier manager du club.</target>
       </trans-unit>
-      <trans-unit id="25" resname="rolesUpdated">
+      <trans-unit id="26" resname="rolesUpdated">
         <source>rolesUpdated</source>
         <target>Les rôles ont été mis à jour avec succès.</target>
       </trans-unit>
 
       <!-- Flash Messages: Profile -->
-      <trans-unit id="26" resname="profileUpdated">
+      <trans-unit id="27" resname="profileUpdated">
         <source>profileUpdated</source>
         <target>Votre profil a été mis à jour.</target>
       </trans-unit>
-      <trans-unit id="27" resname="passwordIncorrect">
+      <trans-unit id="28" resname="passwordIncorrect">
         <source>passwordIncorrect</source>
         <target>Le mot de passe actuel est incorrect.</target>
       </trans-unit>
-      <trans-unit id="28" resname="passwordChanged">
+      <trans-unit id="29" resname="passwordChanged">
         <source>passwordChanged</source>
         <target>Votre mot de passe a été modifié.</target>
       </trans-unit>
 
       <!-- Flash Messages: Password Reset -->
-      <trans-unit id="29" resname="passwordResetSuccess">
+      <trans-unit id="30" resname="passwordResetSuccess">
         <source>passwordResetSuccess</source>
         <target>Votre mot de passe a été réinitialisé avec succès. Vous êtes maintenant connecté.</target>
       </trans-unit>
-      <trans-unit id="30" resname="passwordResetEmailSent">
+      <trans-unit id="31" resname="passwordResetEmailSent">
         <source>passwordResetEmailSent</source>
         <target>Si cette adresse e-mail existe dans notre base de données, vous recevrez un lien de réinitialisation.</target>
       </trans-unit>
-      <trans-unit id="31" resname="passwordResetAlreadyRequested">
+      <trans-unit id="32" resname="passwordResetAlreadyRequested">
         <source>passwordResetAlreadyRequested</source>
         <target>Un e-mail de réinitialisation vous a déjà été envoyé. Veuillez vérifier votre boîte de réception ou réessayer dans quelques minutes.</target>
       </trans-unit>
 
       <!-- Form Labels: Club -->
-      <trans-unit id="40" resname="clubName">
+      <trans-unit id="33" resname="clubName">
         <source>clubName</source>
         <target>Nom du club</target>
       </trans-unit>
-      <trans-unit id="41" resname="clubNamePlaceholder">
+      <trans-unit id="34" resname="clubNamePlaceholder">
         <source>clubNamePlaceholder</source>
         <target>Ex: Les Planeurs de Bailleau</target>
       </trans-unit>
-      <trans-unit id="42" resname="subdomain">
+      <trans-unit id="35" resname="subdomain">
         <source>subdomain</source>
         <target>Sous-domaine</target>
       </trans-unit>
-      <trans-unit id="43" resname="subdomainPlaceholder">
+      <trans-unit id="36" resname="subdomainPlaceholder">
         <source>subdomainPlaceholder</source>
         <target>Ex: cvve</target>
       </trans-unit>
-      <trans-unit id="44" resname="subdomainHelp">
+      <trans-unit id="37" resname="subdomainHelp">
         <source>subdomainHelp</source>
         <target>Ce sous-domaine sera utilisé pour accéder au club (ex: cvve)</target>
       </trans-unit>
-      <trans-unit id="45" resname="active">
+      <trans-unit id="38" resname="active">
         <source>active</source>
         <target>Actif</target>
       </trans-unit>
-      <trans-unit id="46" resname="activeHelp">
+      <trans-unit id="39" resname="activeHelp">
         <source>activeHelp</source>
         <target>Un club inactif ne sera pas accessible</target>
       </trans-unit>
 
       <!-- Form Labels: Equipment -->
-      <trans-unit id="50" resname="name">
+      <trans-unit id="40" resname="name">
         <source>name</source>
         <target>Nom</target>
       </trans-unit>
-      <trans-unit id="51" resname="equipmentNamePlaceholder">
+      <trans-unit id="41" resname="equipmentNamePlaceholder">
         <source>equipmentNamePlaceholder</source>
         <target>Ex: F-CGCD ou Remorqueur</target>
       </trans-unit>
-      <trans-unit id="52" resname="type">
+      <trans-unit id="42" resname="type">
         <source>type</source>
         <target>Type</target>
       </trans-unit>
-      <trans-unit id="53" resname="owner">
+      <trans-unit id="43" resname="owner">
         <source>owner</source>
         <target>Propriété</target>
       </trans-unit>
-      <trans-unit id="54" resname="owners">
+      <trans-unit id="44" resname="owners">
         <source>owners</source>
         <target>Propriétaires</target>
       </trans-unit>
 
       <!-- Form Labels: User -->
-      <trans-unit id="60" resname="email">
+      <trans-unit id="45" resname="email">
         <source>email</source>
         <target>E-mail</target>
       </trans-unit>
-      <trans-unit id="61" resname="emailPlaceholder">
+      <trans-unit id="46" resname="emailPlaceholder">
         <source>emailPlaceholder</source>
         <target>exemple@domaine.fr</target>
       </trans-unit>
-      <trans-unit id="62" resname="firstname">
+      <trans-unit id="47" resname="firstname">
         <source>firstname</source>
         <target>Prénom</target>
       </trans-unit>
-      <trans-unit id="63" resname="firstnamePlaceholder">
+      <trans-unit id="48" resname="firstnamePlaceholder">
         <source>firstnamePlaceholder</source>
         <target>Jean</target>
       </trans-unit>
-      <trans-unit id="64" resname="lastname">
+      <trans-unit id="49" resname="lastname">
         <source>lastname</source>
         <target>Nom</target>
       </trans-unit>
-      <trans-unit id="65" resname="lastnamePlaceholder">
+      <trans-unit id="50" resname="lastnamePlaceholder">
         <source>lastnamePlaceholder</source>
         <target>Dupont</target>
       </trans-unit>
-      <trans-unit id="66" resname="password">
+      <trans-unit id="51" resname="password">
         <source>password</source>
         <target>Mot de passe</target>
       </trans-unit>
-      <trans-unit id="67" resname="currentPassword">
+      <trans-unit id="52" resname="currentPassword">
         <source>currentPassword</source>
         <target>Mot de passe actuel</target>
       </trans-unit>
-      <trans-unit id="68" resname="newPassword">
+      <trans-unit id="53" resname="newPassword">
         <source>newPassword</source>
         <target>Nouveau mot de passe</target>
       </trans-unit>
-      <trans-unit id="69" resname="confirmPassword">
+      <trans-unit id="54" resname="confirmPassword">
         <source>confirmPassword</source>
         <target>Confirmer le mot de passe</target>
       </trans-unit>
-      <trans-unit id="70" resname="confirmNewPassword">
+      <trans-unit id="55" resname="confirmNewPassword">
         <source>confirmNewPassword</source>
         <target>Confirmer le nouveau mot de passe</target>
       </trans-unit>
 
       <!-- Form Labels: Membership -->
-      <trans-unit id="80" resname="canManageClub">
+      <trans-unit id="56" resname="canManageClub">
         <source>canManageClub</source>
         <target>Peut gérer le club</target>
       </trans-unit>
-      <trans-unit id="81" resname="canInspect">
+      <trans-unit id="57" resname="canInspect">
         <source>canInspect</source>
         <target>Peut inspecter et valider les activités sensibles du club</target>
       </trans-unit>
-      <trans-unit id="82" resname="canManageMembers">
+      <trans-unit id="58" resname="canManageMembers">
         <source>canManageMembers</source>
         <target>Peut gérer les membres du club</target>
       </trans-unit>
 
       <!-- Filter Labels -->
-      <trans-unit id="90" resname="searchByName">
+      <trans-unit id="59" resname="searchByName">
         <source>searchByName</source>
         <target>Rechercher par nom</target>
       </trans-unit>
-      <trans-unit id="91" resname="searchBySubdomain">
+      <trans-unit id="60" resname="searchBySubdomain">
         <source>searchBySubdomain</source>
         <target>Rechercher par sous-domaine</target>
       </trans-unit>
-      <trans-unit id="92" resname="status">
+      <trans-unit id="61" resname="status">
         <source>status</source>
         <target>Statut</target>
       </trans-unit>
-      <trans-unit id="93" resname="all">
+      <trans-unit id="62" resname="all">
         <source>all</source>
         <target>Tous</target>
       </trans-unit>
-      <trans-unit id="94" resname="inactive">
+      <trans-unit id="63" resname="inactive">
         <source>inactive</source>
         <target>Inactif</target>
       </trans-unit>
-      <trans-unit id="95" resname="equipmentName">
+      <trans-unit id="64" resname="equipmentName">
         <source>equipmentName</source>
         <target>Nom de l'équipement</target>
       </trans-unit>
-      <trans-unit id="96" resname="search">
+      <trans-unit id="65" resname="search">
         <source>search</source>
         <target>Rechercher</target>
       </trans-unit>
-      <trans-unit id="97" resname="allTypes">
+      <trans-unit id="66" resname="allTypes">
         <source>allTypes</source>
         <target>Tous les types</target>
       </trans-unit>
-      <trans-unit id="98" resname="allOwners">
+      <trans-unit id="67" resname="allOwners">
         <source>allOwners</source>
         <target>Toutes les propriétés</target>
       </trans-unit>
-      <trans-unit id="99" resname="searchMember">
+      <trans-unit id="68" resname="searchMember">
         <source>searchMember</source>
         <target>Nom, prénom ou e-mail</target>
       </trans-unit>
-      <trans-unit id="100" resname="allRoles">
+      <trans-unit id="69" resname="allRoles">
         <source>allRoles</source>
         <target>Tous les rôles</target>
       </trans-unit>
-      <trans-unit id="101" resname="role">
+      <trans-unit id="70" resname="role">
         <source>role</source>
         <target>Rôle</target>
       </trans-unit>
 
       <!-- Equipment Types -->
-      <trans-unit id="110" resname="glider">
+      <trans-unit id="71" resname="glider">
         <source>glider</source>
         <target>Planeur</target>
       </trans-unit>
-      <trans-unit id="111" resname="infrastructure">
+      <trans-unit id="72" resname="infrastructure">
         <source>infrastructure</source>
         <target>Infrastructure</target>
       </trans-unit>
 
       <!-- Equipment Owners -->
-      <trans-unit id="120" resname="club">
+      <trans-unit id="73" resname="club">
         <source>club</source>
         <target>Club</target>
       </trans-unit>
-      <trans-unit id="121" resname="private">
+      <trans-unit id="74" resname="private">
         <source>private</source>
         <target>Privé</target>
       </trans-unit>
 
       <!-- Roles -->
-      <trans-unit id="130" resname="manager">
+      <trans-unit id="75" resname="manager">
         <source>manager</source>
         <target>Manager</target>
       </trans-unit>
-      <trans-unit id="131" resname="inspector">
+      <trans-unit id="76" resname="inspector">
         <source>inspector</source>
         <target>Inspecteur</target>
       </trans-unit>
-      <trans-unit id="132" resname="member">
+      <trans-unit id="77" resname="member">
         <source>member</source>
         <target>Membre</target>
       </trans-unit>
 
       <!-- Navigation -->
-      <trans-unit id="140" resname="myProfile">
+      <trans-unit id="78" resname="myProfile">
         <source>myProfile</source>
         <target>Mon profil</target>
       </trans-unit>
-      <trans-unit id="141" resname="administration">
+      <trans-unit id="79" resname="administration">
         <source>administration</source>
         <target>Administration</target>
       </trans-unit>
-      <trans-unit id="142" resname="logout">
+      <trans-unit id="80" resname="logout">
         <source>logout</source>
         <target>Déconnexion</target>
       </trans-unit>
-      <trans-unit id="143" resname="backToAdmin">
+      <trans-unit id="81" resname="backToAdmin">
         <source>backToAdmin</source>
         <target>Retour à l'admin</target>
       </trans-unit>
-      <trans-unit id="144" resname="myClubs">
+      <trans-unit id="82" resname="myClubs">
         <source>myClubs</source>
         <target>Mes clubs</target>
       </trans-unit>
 
       <!-- Breadcrumbs -->
-      <trans-unit id="150" resname="home">
+      <trans-unit id="83" resname="home">
         <source>home</source>
         <target>Accueil</target>
       </trans-unit>
-      <trans-unit id="151" resname="clubs">
+      <trans-unit id="84" resname="clubs">
         <source>clubs</source>
         <target>Clubs</target>
       </trans-unit>
-      <trans-unit id="152" resname="users">
+      <trans-unit id="85" resname="users">
         <source>users</source>
         <target>Utilisateurs</target>
       </trans-unit>
-      <trans-unit id="153" resname="equipments">
+      <trans-unit id="86" resname="equipments">
         <source>equipments</source>
         <target>Équipements</target>
       </trans-unit>
-      <trans-unit id="154" resname="members">
+      <trans-unit id="87" resname="members">
         <source>members</source>
         <target>Membres</target>
       </trans-unit>
-      <trans-unit id="155" resname="invitations">
+      <trans-unit id="88" resname="invitations">
         <source>invitations</source>
         <target>Invitations</target>
       </trans-unit>
-      <trans-unit id="156" resname="add">
+      <trans-unit id="89" resname="add">
         <source>add</source>
         <target>Ajouter</target>
       </trans-unit>
-      <trans-unit id="157" resname="edit">
+      <trans-unit id="90" resname="edit">
         <source>edit</source>
         <target>Modifier</target>
       </trans-unit>
-      <trans-unit id="158" resname="invite">
+      <trans-unit id="91" resname="invite">
         <source>invite</source>
         <target>Inviter</target>
       </trans-unit>
-      <trans-unit id="159" resname="equipment">
+      <trans-unit id="158a" resname="pendingInvitations">
+        <source>pendingInvitations</source>
+        <target>Invitations en attente</target>
+      </trans-unit>
+      <trans-unit id="158b" resname="inviteMember">
+        <source>inviteMember</source>
+        <target>Inviter un membre</target>
+      </trans-unit>
+      <trans-unit id="158c" resname="noPendingInvitations">
+        <source>noPendingInvitations</source>
+        <target>Aucune invitation en attente</target>
+      </trans-unit>
+      <trans-unit id="158d" resname="inviteNewMember">
+        <source>inviteNewMember</source>
+        <target>Inviter un nouveau membre</target>
+      </trans-unit>
+      <trans-unit id="158e" resname="sentOn">
+        <source>sentOn</source>
+        <target>Envoyée le</target>
+      </trans-unit>
+      <trans-unit id="158f" resname="expiresOn">
+        <source>expiresOn</source>
+        <target>Expire le</target>
+      </trans-unit>
+      <trans-unit id="158g" resname="existingUser">
+        <source>existingUser</source>
+        <target>Utilisateur existant</target>
+      </trans-unit>
+      <trans-unit id="158h" resname="editRoles">
+        <source>editRoles</source>
+        <target>Modifier les rôles</target>
+      </trans-unit>
+      <trans-unit id="158i" resname="roles">
+        <source>roles</source>
+        <target>Rôles</target>
+      </trans-unit>
+      <trans-unit id="158j" resname="resend">
+        <source>resend</source>
+        <target>Renvoyer</target>
+      </trans-unit>
+      <trans-unit id="158k" resname="confirmCancelInvitation">
+        <source>confirmCancelInvitation</source>
+        <target>Êtes-vous sûr de vouloir annuler cette invitation ?</target>
+      </trans-unit>
+      <trans-unit id="158l" resname="invitationDetails">
+        <source>invitationDetails</source>
+        <target>Détails de l'invitation</target>
+      </trans-unit>
+      <trans-unit id="158m" resname="fullName">
+        <source>fullName</source>
+        <target>Nom complet</target>
+      </trans-unit>
+      <trans-unit id="158n" resname="existingUserInfo">
+        <source>existingUserInfo</source>
+        <target>Cet utilisateur a déjà un compte sur Tarmac. L'invitation sera automatiquement liée à son compte.</target>
+      </trans-unit>
+      <trans-unit id="158o" resname="howItWorks">
+        <source>howItWorks</source>
+        <target>Comment ça marche ?</target>
+      </trans-unit>
+      <trans-unit id="158p" resname="invitationSentByEmail">
+        <source>invitationSentByEmail</source>
+        <target>L'invitation sera envoyée par email</target>
+      </trans-unit>
+      <trans-unit id="158q" resname="invitationExistingUser">
+        <source>invitationExistingUser</source>
+        <target>Si l'utilisateur a déjà un compte, il pourra accepter directement</target>
+      </trans-unit>
+      <trans-unit id="158r" resname="invitationNewUser">
+        <source>invitationNewUser</source>
+        <target>Sinon, il pourra créer son compte en acceptant l'invitation</target>
+      </trans-unit>
+      <trans-unit id="158s" resname="invitationValidDays">
+        <source>invitationValidDays</source>
+        <target>L'invitation est valable 7 jours</target>
+      </trans-unit>
+      <trans-unit id="158t" resname="clubRoles">
+        <source>clubRoles</source>
+        <target>Rôles dans le club</target>
+      </trans-unit>
+      <trans-unit id="158u" resname="sendInvitation">
+        <source>sendInvitation</source>
+        <target>Envoyer l'invitation</target>
+      </trans-unit>
+      <trans-unit id="158v" resname="noMembersFound">
+        <source>noMembersFound</source>
+        <target>Aucun membre trouvé</target>
+      </trans-unit>
+      <trans-unit id="158w" resname="memberSince">
+        <source>memberSince</source>
+        <target>Membre depuis le</target>
+      </trans-unit>
+      <trans-unit id="158x" resname="disabled">
+        <source>disabled</source>
+        <target>Désactivé</target>
+      </trans-unit>
+      <trans-unit id="158y" resname="confirmRemoveFromClub">
+        <source>confirmRemoveFromClub</source>
+        <target>Retirer {memberName} du club ?</target>
+      </trans-unit>
+      <trans-unit id="158z" resname="removeFromClub">
+        <source>removeFromClub</source>
+        <target>Retirer du club</target>
+      </trans-unit>
+      <trans-unit id="158za" resname="remove">
+        <source>remove</source>
+        <target>Retirer</target>
+      </trans-unit>
+      <trans-unit id="158zb" resname="editInvitation">
+        <source>editInvitation</source>
+        <target>Modifier l'invitation</target>
+      </trans-unit>
+      <trans-unit id="158zc" resname="emailCannotBeChanged">
+        <source>emailCannotBeChanged</source>
+        <target>L'adresse e-mail ne peut pas être modifiée</target>
+      </trans-unit>
+      <trans-unit id="158zd" resname="memberInformation">
+        <source>memberInformation</source>
+        <target>Informations du membre</target>
+      </trans-unit>
+      <trans-unit id="158ze" resname="accountDisabled">
+        <source>accountDisabled</source>
+        <target>Compte désactivé</target>
+      </trans-unit>
+      <trans-unit id="158zf" resname="joinedOn">
+        <source>joinedOn</source>
+        <target>Date d'adhésion</target>
+      </trans-unit>
+      <trans-unit id="158zg" resname="createdOn">
+        <source>createdOn</source>
+        <target>Créé le</target>
+      </trans-unit>
+      <trans-unit id="92" resname="equipment">
         <source>equipment</source>
         <target>Équipements</target>
       </trans-unit>
 
       <!-- Buttons -->
-      <trans-unit id="160" resname="close">
+      <trans-unit id="93" resname="close">
         <source>close</source>
         <target>Fermer</target>
       </trans-unit>
-      <trans-unit id="161" resname="save">
+      <trans-unit id="94" resname="save">
         <source>save</source>
         <target>Enregistrer</target>
       </trans-unit>
-      <trans-unit id="162" resname="cancel">
+      <trans-unit id="95" resname="cancel">
         <source>cancel</source>
         <target>Annuler</target>
       </trans-unit>
-      <trans-unit id="163" resname="addEquipment">
+      <trans-unit id="96" resname="addEquipment">
         <source>addEquipment</source>
         <target>Ajouter un équipement</target>
       </trans-unit>
-      <trans-unit id="164" resname="noEquipmentFound">
+      <trans-unit id="97" resname="noEquipmentFound">
         <source>noEquipmentFound</source>
         <target>Aucun équipement trouvé</target>
       </trans-unit>
-      <trans-unit id="165" resname="disable">
+      <trans-unit id="98" resname="disable">
         <source>disable</source>
         <target>Désactiver</target>
       </trans-unit>
-      <trans-unit id="166" resname="reactivate">
+      <trans-unit id="99" resname="reactivate">
         <source>reactivate</source>
         <target>Réactiver</target>
       </trans-unit>
-      <trans-unit id="167" resname="createdAt">
+      <trans-unit id="100" resname="createdAt">
         <source>createdAt</source>
         <target>Date de création</target>
       </trans-unit>
-      <trans-unit id="168" resname="createdBy">
+      <trans-unit id="101" resname="createdBy">
         <source>createdBy</source>
         <target>Créé par</target>
       </trans-unit>
-      <trans-unit id="169" resname="confirmDisableEquipment">
+      <trans-unit id="102" resname="confirmDisableEquipment">
         <source>confirmDisableEquipment</source>
         <target>Voulez-vous vraiment désactiver cet équipement ?</target>
       </trans-unit>
 
       <!-- Form Help Text -->
-      <trans-unit id="170" resname="managerHelp">
+      <trans-unit id="103" resname="managerHelp">
         <source>managerHelp</source>
         <target>Peut gérer le club et ses membres</target>
       </trans-unit>
-      <trans-unit id="171" resname="inspectorHelp">
+      <trans-unit id="104" resname="inspectorHelp">
         <source>inspectorHelp</source>
         <target>Peut inspecter et valider les activités sensibles</target>
       </trans-unit>
 
       <!-- Validation Messages -->
-      <trans-unit id="200" resname="subdomainUnique">
+      <trans-unit id="105" resname="subdomainUnique">
         <source>subdomainUnique</source>
         <target>Un club existe déjà avec ce sous-domaine</target>
       </trans-unit>
-      <trans-unit id="201" resname="nameRequired">
+      <trans-unit id="106" resname="nameRequired">
         <source>nameRequired</source>
         <target>Le nom est obligatoire</target>
       </trans-unit>
-      <trans-unit id="202" resname="typeRequired">
+      <trans-unit id="107" resname="typeRequired">
         <source>typeRequired</source>
         <target>Le type est obligatoire</target>
       </trans-unit>
-      <trans-unit id="203" resname="ownerRequired">
+      <trans-unit id="108" resname="ownerRequired">
         <source>ownerRequired</source>
         <target>Le type de propriété est obligatoire</target>
       </trans-unit>
-      <trans-unit id="204" resname="emailUnique">
+      <trans-unit id="109" resname="emailUnique">
         <source>emailUnique</source>
         <target>Un compte existe déjà avec cet e-mail</target>
       </trans-unit>
-      <trans-unit id="205" resname="emailRequired">
+      <trans-unit id="110" resname="emailRequired">
         <source>emailRequired</source>
         <target>Veuillez saisir votre e-mail</target>
       </trans-unit>
-      <trans-unit id="206" resname="passwordRequired">
+      <trans-unit id="111" resname="passwordRequired">
         <source>passwordRequired</source>
         <target>Veuillez saisir un mot de passe</target>
       </trans-unit>
-      <trans-unit id="207" resname="passwordMinLength">
+      <trans-unit id="112" resname="passwordMinLength">
         <source>passwordMinLength</source>
         <target>Votre mot de passe doit contenir au moins {limit} caractères</target>
       </trans-unit>
-      <trans-unit id="208" resname="passwordMatch">
+      <trans-unit id="113" resname="passwordMatch">
         <source>passwordMatch</source>
         <target>Les mots de passe doivent correspondre.</target>
       </trans-unit>
-      <trans-unit id="209" resname="firstnameRequired">
+      <trans-unit id="114" resname="firstnameRequired">
         <source>firstnameRequired</source>
         <target>Veuillez saisir votre prénom</target>
       </trans-unit>
-      <trans-unit id="210" resname="firstnameMinLength">
+      <trans-unit id="115" resname="firstnameMinLength">
         <source>firstnameMinLength</source>
         <target>Votre prénom doit contenir au moins {limit} caractères</target>
       </trans-unit>
-      <trans-unit id="211" resname="lastnameRequired">
+      <trans-unit id="116" resname="lastnameRequired">
         <source>lastnameRequired</source>
         <target>Veuillez saisir votre nom</target>
       </trans-unit>
-      <trans-unit id="212" resname="lastnameMinLength">
+      <trans-unit id="117" resname="lastnameMinLength">
         <source>lastnameMinLength</source>
         <target>Votre nom doit contenir au moins {limit} caractères</target>
       </trans-unit>
-      <trans-unit id="213" resname="currentPasswordRequired">
+      <trans-unit id="118" resname="currentPasswordRequired">
         <source>currentPasswordRequired</source>
         <target>Veuillez saisir votre mot de passe actuel</target>
       </trans-unit>
-      <trans-unit id="214" resname="firstnameMaxLength">
+      <trans-unit id="119" resname="firstnameMaxLength">
         <source>firstnameMaxLength</source>
         <target>Votre prénom ne peut pas dépasser {limit} caractères</target>
       </trans-unit>
-      <trans-unit id="215" resname="lastnameMaxLength">
+      <trans-unit id="120" resname="lastnameMaxLength">
         <source>lastnameMaxLength</source>
         <target>Votre nom ne peut pas dépasser {limit} caractères</target>
       </trans-unit>
-      <trans-unit id="216" resname="searchByNameOrEmail">
+      <trans-unit id="121" resname="searchByNameOrEmail">
         <source>searchByNameOrEmail</source>
         <target>Rechercher par nom ou e-mail</target>
       </trans-unit>
 
       <!-- Maintenance System -->
       <!-- Flash Messages: Tasks -->
-      <trans-unit id="300" resname="taskCreated">
+      <trans-unit id="122" resname="taskCreated">
         <source>taskCreated</source>
         <target>La tâche a été créée avec succès.</target>
       </trans-unit>
-      <trans-unit id="301" resname="taskUpdated">
+      <trans-unit id="123" resname="taskUpdated">
         <source>taskUpdated</source>
         <target>La tâche a été mise à jour.</target>
       </trans-unit>
-      <trans-unit id="304" resname="taskMarkedAsDone">
+      <trans-unit id="124" resname="taskMarkedAsDone">
         <source>taskMarkedAsDone</source>
         <target>La tâche a été marquée comme terminée.</target>
       </trans-unit>
-      <trans-unit id="305" resname="taskClosed">
+      <trans-unit id="125" resname="taskClosed">
         <source>taskClosed</source>
         <target>La tâche a été clôturée.</target>
       </trans-unit>
-      <trans-unit id="306" resname="taskCancelled">
+      <trans-unit id="126" resname="taskCancelled">
         <source>taskCancelled</source>
         <target>La tâche a été annulée.</target>
       </trans-unit>
-      <trans-unit id="307" resname="taskCannotBeClosed">
+      <trans-unit id="127" resname="taskCannotBeClosed">
         <source>taskCannotBeClosed</source>
         <target>Cette tâche ne peut pas être clôturée (sous-tâches non terminées ou inspection requise).</target>
       </trans-unit>
-      <trans-unit id="308" resname="commentAdded">
+      <trans-unit id="128" resname="commentAdded">
         <source>commentAdded</source>
         <target>Votre commentaire a été ajouté.</target>
       </trans-unit>
 
       <!-- Flash Messages: SubTasks -->
-      <trans-unit id="310" resname="subTaskCreated">
+      <trans-unit id="129" resname="subTaskCreated">
         <source>subTaskCreated</source>
         <target>La sous-tâche a été créée avec succès.</target>
       </trans-unit>
-      <trans-unit id="311" resname="subTaskUpdated">
+      <trans-unit id="130" resname="subTaskUpdated">
         <source>subTaskUpdated</source>
         <target>La sous-tâche a été mise à jour.</target>
       </trans-unit>
-      <trans-unit id="313" resname="subTaskMarkedAsDone">
+      <trans-unit id="131" resname="subTaskMarkedAsDone">
         <source>subTaskMarkedAsDone</source>
         <target>La sous-tâche a été marquée comme terminée.</target>
       </trans-unit>
-      <trans-unit id="314" resname="subTaskCancelled">
+      <trans-unit id="132" resname="subTaskCancelled">
         <source>subTaskCancelled</source>
         <target>La sous-tâche a été annulée.</target>
       </trans-unit>
 
       <!-- Flash Messages: Inspection -->
-      <trans-unit id="320" resname="inspectionApproved">
+      <trans-unit id="133" resname="inspectionApproved">
         <source>inspectionApproved</source>
         <target>L'inspection a été approuvée.</target>
       </trans-unit>
-      <trans-unit id="321" resname="inspectionRejected">
+      <trans-unit id="134" resname="inspectionRejected">
         <source>inspectionRejected</source>
         <target>L'inspection a été rejetée.</target>
       </trans-unit>
-      <trans-unit id="322" resname="rejectionReasonRequired">
+      <trans-unit id="135" resname="rejectionReasonRequired">
         <source>rejectionReasonRequired</source>
         <target>Veuillez indiquer la raison du rejet.</target>
       </trans-unit>
 
       <!-- Flash Messages: Maintenance Plans -->
-      <trans-unit id="330" resname="planCreated">
+      <trans-unit id="136" resname="planCreated">
         <source>planCreated</source>
         <target>Le plan de maintenance a été créé avec succès.</target>
       </trans-unit>
-      <trans-unit id="331" resname="planUpdated">
+      <trans-unit id="137" resname="planUpdated">
         <source>planUpdated</source>
         <target>Le plan de maintenance a été mis à jour.</target>
       </trans-unit>
-      <trans-unit id="332" resname="planApplied">
+      <trans-unit id="138" resname="planApplied">
         <source>planApplied</source>
         <target>Le plan de maintenance a été appliqué à l'équipement.</target>
       </trans-unit>
-      <trans-unit id="333" resname="planApplicationCancelled">
+      <trans-unit id="139" resname="planApplicationCancelled">
         <source>planApplicationCancelled</source>
         <target>L'application du plan de maintenance a été annulée.</target>
       </trans-unit>
-      <trans-unit id="334" resname="noPlansAvailable">
+      <trans-unit id="140" resname="noPlansAvailable">
         <source>noPlansAvailable</source>
         <target>Aucun plan de maintenance disponible pour ce type d'équipement.</target>
       </trans-unit>
-      <trans-unit id="335" resname="invalidRequest">
+      <trans-unit id="141" resname="invalidRequest">
         <source>invalidRequest</source>
         <target>Requête invalide.</target>
       </trans-unit>
 
       <!-- Labels: Tasks -->
-      <trans-unit id="400" resname="tasks">
+      <trans-unit id="142" resname="tasks">
         <source>tasks</source>
         <target>Tâches</target>
       </trans-unit>
-      <trans-unit id="401" resname="task">
+      <trans-unit id="143" resname="task">
         <source>task</source>
         <target>Tâche</target>
       </trans-unit>
-      <trans-unit id="402" resname="newTask">
+      <trans-unit id="144" resname="newTask">
         <source>newTask</source>
         <target>Nouvelle tâche</target>
       </trans-unit>
-      <trans-unit id="403" resname="subTasks">
+      <trans-unit id="145" resname="subTasks">
         <source>subTasks</source>
         <target>Sous-tâches</target>
       </trans-unit>
-      <trans-unit id="404" resname="subTask">
+      <trans-unit id="146" resname="subTask">
         <source>subTask</source>
         <target>Sous-tâche</target>
       </trans-unit>
-      <trans-unit id="405" resname="newSubTask">
+      <trans-unit id="147" resname="newSubTask">
         <source>newSubTask</source>
         <target>Nouvelle sous-tâche</target>
       </trans-unit>
@@ -643,59 +783,59 @@
         <source>editSubTask</source>
         <target>Modifier la sous-tâche</target>
       </trans-unit>
-      <trans-unit id="406" resname="difficulty">
+      <trans-unit id="148" resname="difficulty">
         <source>difficulty</source>
         <target>Difficulté</target>
       </trans-unit>
-      <trans-unit id="407" resname="difficultyLevel">
+      <trans-unit id="149" resname="difficultyLevel">
         <source>difficultyLevel</source>
         <target>Niveau de difficulté</target>
       </trans-unit>
-      <trans-unit id="408" resname="debutant">
+      <trans-unit id="150" resname="debutant">
         <source>debutant</source>
         <target>Débutant</target>
       </trans-unit>
-      <trans-unit id="409" resname="facile">
+      <trans-unit id="151" resname="facile">
         <source>facile</source>
         <target>Facile</target>
       </trans-unit>
-      <trans-unit id="410" resname="moyen">
+      <trans-unit id="152" resname="moyen">
         <source>moyen</source>
         <target>Moyen</target>
       </trans-unit>
-      <trans-unit id="411" resname="difficile">
+      <trans-unit id="153" resname="difficile">
         <source>difficile</source>
         <target>Difficile</target>
       </trans-unit>
-      <trans-unit id="412" resname="expert">
+      <trans-unit id="154" resname="expert">
         <source>expert</source>
         <target>Expert</target>
       </trans-unit>
-      <trans-unit id="413" resname="filterByDifficulty">
+      <trans-unit id="155" resname="filterByDifficulty">
         <source>filterByDifficulty</source>
         <target>Filtrer par difficulté</target>
       </trans-unit>
-      <trans-unit id="414" resname="requiresInspection">
+      <trans-unit id="156" resname="requiresInspection">
         <source>requiresInspection</source>
         <target>Requiert une inspection</target>
       </trans-unit>
-      <trans-unit id="415" resname="awaitingInspection">
+      <trans-unit id="157" resname="awaitingInspection">
         <source>awaitingInspection</source>
         <target>En attente d'inspection</target>
       </trans-unit>
-      <trans-unit id="417" resname="dueDate">
+      <trans-unit id="158" resname="dueDate">
         <source>dueDate</source>
         <target>Date d'échéance</target>
       </trans-unit>
-      <trans-unit id="420" resname="markAsDone">
+      <trans-unit id="159" resname="markAsDone">
         <source>markAsDone</source>
         <target>Marquer comme terminée</target>
       </trans-unit>
-      <trans-unit id="421" resname="closeTask">
+      <trans-unit id="160" resname="closeTask">
         <source>closeTask</source>
         <target>Clôturer la tâche</target>
       </trans-unit>
-      <trans-unit id="422" resname="cancelTask">
+      <trans-unit id="161" resname="cancelTask">
         <source>cancelTask</source>
         <target>Annuler la tâche</target>
       </trans-unit>
@@ -711,451 +851,451 @@
         <source>viewAllTasks</source>
         <target>Voir toutes les tâches</target>
       </trans-unit>
-      <trans-unit id="423" resname="approveInspection">
+      <trans-unit id="162" resname="approveInspection">
         <source>approveInspection</source>
         <target>Approuver l'inspection</target>
       </trans-unit>
-      <trans-unit id="424" resname="rejectInspection">
+      <trans-unit id="163" resname="rejectInspection">
         <source>rejectInspection</source>
         <target>Rejeter l'inspection</target>
       </trans-unit>
-      <trans-unit id="425" resname="rejectionReason">
+      <trans-unit id="164" resname="rejectionReason">
         <source>rejectionReason</source>
         <target>Raison du rejet</target>
       </trans-unit>
-      <trans-unit id="426" resname="cancellationReason">
+      <trans-unit id="165" resname="cancellationReason">
         <source>cancellationReason</source>
         <target>Raison de l'annulation</target>
       </trans-unit>
-      <trans-unit id="836" resname="approve">
+      <trans-unit id="166" resname="approve">
         <source>approve</source>
         <target>Approuver</target>
       </trans-unit>
-      <trans-unit id="427" resname="explainReason">
+      <trans-unit id="167" resname="explainReason">
         <source>explainReason</source>
         <target>Expliquez la raison...</target>
       </trans-unit>
-      <trans-unit id="428" resname="optionalReason">
+      <trans-unit id="168" resname="optionalReason">
         <source>optionalReason</source>
         <target>Raison (optionnel)...</target>
       </trans-unit>
-      <trans-unit id="429" resname="addComment">
+      <trans-unit id="169" resname="addComment">
         <source>addComment</source>
         <target>Ajouter un commentaire...</target>
       </trans-unit>
-      <trans-unit id="430" resname="comment">
+      <trans-unit id="170" resname="comment">
         <source>comment</source>
         <target>Commentaire</target>
       </trans-unit>
-      <trans-unit id="431" resname="progress">
+      <trans-unit id="171" resname="progress">
         <source>progress</source>
         <target>Progression</target>
       </trans-unit>
 
       <!-- Labels: Maintenance Plans -->
-      <trans-unit id="450" resname="plans">
+      <trans-unit id="172" resname="plans">
         <source>plans</source>
         <target>Plans de maintenance</target>
       </trans-unit>
-      <trans-unit id="451" resname="plan">
+      <trans-unit id="173" resname="plan">
         <source>plan</source>
         <target>Plan de maintenance</target>
       </trans-unit>
-      <trans-unit id="452" resname="newPlan">
+      <trans-unit id="174" resname="newPlan">
         <source>newPlan</source>
         <target>Nouveau plan</target>
       </trans-unit>
-      <trans-unit id="4521" resname="noPlans">
+      <trans-unit id="175" resname="noPlans">
         <source>noPlans</source>
         <target>Aucun plan de maintenance</target>
       </trans-unit>
-      <trans-unit id="4522" resname="noPlansDescription">
+      <trans-unit id="176" resname="noPlansDescription">
         <source>noPlansDescription</source>
         <target>Créez un plan de maintenance pour automatiser les tâches récurrentes sur vos équipements.</target>
       </trans-unit>
-      <trans-unit id="453" resname="applications">
+      <trans-unit id="177" resname="applications">
         <source>applications</source>
         <target>Applications</target>
       </trans-unit>
-      <trans-unit id="454" resname="apply">
+      <trans-unit id="178" resname="apply">
         <source>apply</source>
         <target>Appliquer</target>
       </trans-unit>
-      <trans-unit id="455" resname="applyPlan">
+      <trans-unit id="179" resname="applyPlan">
         <source>applyPlan</source>
         <target>Appliquer un plan de maintenance</target>
       </trans-unit>
-      <trans-unit id="456" resname="selectEquipment">
+      <trans-unit id="180" resname="selectEquipment">
         <source>selectEquipment</source>
         <target>Sélectionner un équipement</target>
       </trans-unit>
-      <trans-unit id="457" resname="dueDateHelp">
+      <trans-unit id="181" resname="dueDateHelp">
         <source>dueDateHelp</source>
         <target>Date d'échéance du plan (optionnel)</target>
       </trans-unit>
-      <trans-unit id="458" resname="relativeDueDays">
+      <trans-unit id="182" resname="relativeDueDays">
         <source>relativeDueDays</source>
         <target>Jours relatifs</target>
       </trans-unit>
-      <trans-unit id="459" resname="relativeDueDaysPlaceholder">
+      <trans-unit id="183" resname="relativeDueDaysPlaceholder">
         <source>relativeDueDaysPlaceholder</source>
         <target>ex: -7 pour 7 jours avant</target>
       </trans-unit>
-      <trans-unit id="460" resname="relativeDueDaysHelp">
+      <trans-unit id="184" resname="relativeDueDaysHelp">
         <source>relativeDueDaysHelp</source>
         <target>Nombre de jours par rapport à la date d'échéance du plan (peut être négatif)</target>
       </trans-unit>
-      <trans-unit id="461" resname="equipmentType">
+      <trans-unit id="185" resname="equipmentType">
         <source>equipmentType</source>
         <target>Type d'équipement</target>
       </trans-unit>
-      <trans-unit id="4611" resname="maintenancePlan">
+      <trans-unit id="186" resname="maintenancePlan">
         <source>maintenancePlan</source>
         <target>Plan de maintenance</target>
       </trans-unit>
-      <trans-unit id="4612" resname="appliedOn">
+      <trans-unit id="187" resname="appliedOn">
         <source>appliedOn</source>
         <target>Appliqué le</target>
       </trans-unit>
-      <trans-unit id="4613" resname="planDueDate">
+      <trans-unit id="188" resname="planDueDate">
         <source>planDueDate</source>
         <target>Date d'échéance du plan</target>
       </trans-unit>
-      <trans-unit id="4614" resname="taskFromMaintenancePlan">
+      <trans-unit id="189" resname="taskFromMaintenancePlan">
         <source>taskFromMaintenancePlan</source>
         <target>Cette tâche fait partie d'un plan de maintenance.</target>
       </trans-unit>
-      <trans-unit id="462" resname="equipmentRequired">
+      <trans-unit id="190" resname="equipmentRequired">
         <source>equipmentRequired</source>
         <target>L'équipement est obligatoire</target>
       </trans-unit>
-      <trans-unit id="463" resname="titleRequired">
+      <trans-unit id="191" resname="titleRequired">
         <source>titleRequired</source>
         <target>Le titre est obligatoire</target>
       </trans-unit>
-      <trans-unit id="464" resname="difficultyRequired">
+      <trans-unit id="192" resname="difficultyRequired">
         <source>difficultyRequired</source>
         <target>La difficulté est obligatoire</target>
       </trans-unit>
-      <trans-unit id="465" resname="difficultyRange">
+      <trans-unit id="193" resname="difficultyRange">
         <source>difficultyRange</source>
         <target>La difficulté doit être entre 1 et 5</target>
       </trans-unit>
-      <trans-unit id="466" resname="equipmentTypeRequired">
+      <trans-unit id="194" resname="equipmentTypeRequired">
         <source>equipmentTypeRequired</source>
         <target>Le type d'équipement est obligatoire</target>
       </trans-unit>
-      <trans-unit id="467" resname="messageRequired">
+      <trans-unit id="195" resname="messageRequired">
         <source>messageRequired</source>
         <target>Le message est obligatoire</target>
       </trans-unit>
 
       <!-- Status Labels -->
-      <trans-unit id="480" resname="open">
+      <trans-unit id="196" resname="open">
         <source>open</source>
         <target>Ouvert</target>
       </trans-unit>
-      <trans-unit id="481" resname="closed">
+      <trans-unit id="197" resname="closed">
         <source>closed</source>
         <target>Clôturé</target>
       </trans-unit>
-      <trans-unit id="482" resname="cancelled">
+      <trans-unit id="198" resname="cancelled">
         <source>cancelled</source>
         <target>Annulé</target>
       </trans-unit>
-      <trans-unit id="483" resname="done">
+      <trans-unit id="199" resname="done">
         <source>done</source>
         <target>Terminé</target>
       </trans-unit>
-      <trans-unit id="484" resname="waitingForApproval">
+      <trans-unit id="200" resname="waitingForApproval">
         <source>waitingForApproval</source>
         <target>En attente de validation</target>
       </trans-unit>
-      <trans-unit id="486" resname="inspectionApproved">
+      <trans-unit id="201" resname="inspectionApproved">
         <source>inspectionApproved</source>
         <target>Inspection approuvée</target>
       </trans-unit>
-      <trans-unit id="487" resname="inspectionRejected">
+      <trans-unit id="202" resname="inspectionRejected">
         <source>inspectionRejected</source>
         <target>Inspection rejetée</target>
       </trans-unit>
-      <trans-unit id="488" resname="active">
+      <trans-unit id="203" resname="active">
         <source>active</source>
         <target>Actif</target>
       </trans-unit>
-      <trans-unit id="489" resname="endOfWeek">
+      <trans-unit id="204" resname="endOfWeek">
         <source>endOfWeek</source>
         <target>Fin de semaine</target>
       </trans-unit>
-      <trans-unit id="490" resname="endOfMonth">
+      <trans-unit id="205" resname="endOfMonth">
         <source>endOfMonth</source>
         <target>Fin du mois</target>
       </trans-unit>
 
       <!-- Activity Types -->
-      <trans-unit id="502" resname="undone">
+      <trans-unit id="206" resname="undone">
         <source>undone</source>
         <target>Marqué comme non terminé</target>
       </trans-unit>
-      <trans-unit id="503" resname="noTasksFound">
+      <trans-unit id="207" resname="noTasksFound">
         <source>noTasksFound</source>
         <target>Aucune tâche trouvée</target>
       </trans-unit>
-      <trans-unit id="504" resname="noSubTasksFound">
+      <trans-unit id="208" resname="noSubTasksFound">
         <source>noSubTasksFound</source>
         <target>Aucune sous-tâche</target>
       </trans-unit>
-      <trans-unit id="505" resname="noActivityYet">
+      <trans-unit id="209" resname="noActivityYet">
         <source>noActivityYet</source>
         <target>Aucune activité pour le moment</target>
       </trans-unit>
-      <trans-unit id="506" resname="activity">
+      <trans-unit id="210" resname="activity">
         <source>activity</source>
         <target>Activité</target>
       </trans-unit>
-      <trans-unit id="507" resname="information">
+      <trans-unit id="211" resname="information">
         <source>information</source>
         <target>Informations</target>
       </trans-unit>
 
       <!-- Dashboard -->
-      <trans-unit id="600" resname="dashboard">
+      <trans-unit id="212" resname="dashboard">
         <source>dashboard</source>
         <target>Tableau de bord</target>
       </trans-unit>
-      <trans-unit id="601" resname="pendingPlans">
+      <trans-unit id="213" resname="pendingPlans">
         <source>pendingPlans</source>
         <target>Maintenance à réaliser</target>
       </trans-unit>
-      <trans-unit id="602" resname="nextTasks">
+      <trans-unit id="214" resname="nextTasks">
         <source>nextTasks</source>
         <target>Prochaines tâches</target>
       </trans-unit>
-      <trans-unit id="603" resname="viewDetails">
+      <trans-unit id="215" resname="viewDetails">
         <source>viewDetails</source>
         <target>Voir les détails</target>
       </trans-unit>
-      <trans-unit id="6031" resname="seeAll">
+      <trans-unit id="216" resname="seeAll">
         <source>seeAll</source>
         <target>Voir tout</target>
       </trans-unit>
-      <trans-unit id="604" resname="toInspect">
+      <trans-unit id="217" resname="toInspect">
         <source>toInspect</source>
         <target>À inspecter</target>
       </trans-unit>
-      <trans-unit id="606" resname="noPendingTasks">
+      <trans-unit id="218" resname="noPendingTasks">
         <source>noPendingTasks</source>
         <target>Aucune tâche en attente</target>
       </trans-unit>
-      <trans-unit id="607" resname="noPendingTasksDescription">
+      <trans-unit id="219" resname="noPendingTasksDescription">
         <source>noPendingTasksDescription</source>
         <target>Vous n'avez aucune tâche en attente pour le moment. Créez-en une nouvelle pour commencer.</target>
       </trans-unit>
-      <trans-unit id="608" resname="inspect">
+      <trans-unit id="220" resname="inspect">
         <source>inspect</source>
         <target>Inspecter</target>
       </trans-unit>
-      <trans-unit id="609" resname="viewTask">
+      <trans-unit id="221" resname="viewTask">
         <source>viewTask</source>
         <target>Voir la tâche</target>
       </trans-unit>
-      <trans-unit id="610" resname="endOfWeek">
+      <trans-unit id="222" resname="endOfWeek">
         <source>endOfWeek</source>
         <target>Fin de semaine</target>
       </trans-unit>
-      <trans-unit id="6101" resname="end_of_week">
+      <trans-unit id="223" resname="end_of_week">
         <source>end_of_week</source>
         <target>Fin de semaine</target>
       </trans-unit>
-      <trans-unit id="6102" resname="end_of_month">
+      <trans-unit id="224" resname="end_of_month">
         <source>end_of_month</source>
         <target>Fin du mois</target>
       </trans-unit>
-      <trans-unit id="611" resname="endOfMonth">
+      <trans-unit id="225" resname="endOfMonth">
         <source>endOfMonth</source>
         <target>Fin du mois</target>
       </trans-unit>
 
       <!-- Task Status -->
-      <trans-unit id="700" resname="taskStatus.open">
+      <trans-unit id="226" resname="taskStatus.open">
         <source>taskStatus.open</source>
         <target>Ouvert</target>
       </trans-unit>
-      <trans-unit id="701" resname="taskStatus.in_progress">
+      <trans-unit id="227" resname="taskStatus.in_progress">
         <source>taskStatus.in_progress</source>
         <target>En cours</target>
       </trans-unit>
-      <trans-unit id="702" resname="taskStatus.done">
+      <trans-unit id="228" resname="taskStatus.done">
         <source>taskStatus.done</source>
         <target>Terminé</target>
       </trans-unit>
-      <trans-unit id="703" resname="taskStatus.closed">
+      <trans-unit id="229" resname="taskStatus.closed">
         <source>taskStatus.closed</source>
         <target>Clôturé</target>
       </trans-unit>
-      <trans-unit id="704" resname="taskStatus.cancelled">
+      <trans-unit id="230" resname="taskStatus.cancelled">
         <source>taskStatus.cancelled</source>
         <target>Annulé</target>
       </trans-unit>
 
       <!-- Maintenance Plans -->
-      <trans-unit id="800" resname="plans">
+      <trans-unit id="231" resname="plans">
         <source>plans</source>
         <target>Plans de maintenance</target>
       </trans-unit>
-      <trans-unit id="801" resname="newPlan">
+      <trans-unit id="232" resname="newPlan">
         <source>newPlan</source>
         <target>Nouveau plan</target>
       </trans-unit>
-      <trans-unit id="8011" resname="editPlan">
+      <trans-unit id="233" resname="editPlan">
         <source>editPlan</source>
         <target>Modifier le plan</target>
       </trans-unit>
-      <trans-unit id="802" resname="addTask">
+      <trans-unit id="234" resname="addTask">
         <source>addTask</source>
         <target>Ajouter une tâche</target>
       </trans-unit>
-      <trans-unit id="803" resname="addSubTask">
+      <trans-unit id="235" resname="addSubTask">
         <source>addSubTask</source>
         <target>Ajouter une sous-tâche</target>
       </trans-unit>
-      <trans-unit id="804" resname="relativeDueDays">
+      <trans-unit id="236" resname="relativeDueDays">
         <source>relativeDueDays</source>
         <target>Échéance relative (jours)</target>
       </trans-unit>
-      <trans-unit id="805" resname="noTasksYet">
+      <trans-unit id="237" resname="noTasksYet">
         <source>noTasksYet</source>
         <target>Aucune tâche</target>
       </trans-unit>
-      <trans-unit id="806" resname="addTasksToPlan">
+      <trans-unit id="238" resname="addTasksToPlan">
         <source>addTasksToPlan</source>
         <target>Ajoutez des tâches pour définir les étapes de maintenance.</target>
       </trans-unit>
-      <trans-unit id="807" resname="noSubTasks">
+      <trans-unit id="239" resname="noSubTasks">
         <source>noSubTasks</source>
         <target>Aucune sous-tâche</target>
       </trans-unit>
-      <trans-unit id="808" resname="addSubTasksToOrganize">
+      <trans-unit id="240" resname="addSubTasksToOrganize">
         <source>addSubTasksToOrganize</source>
         <target>Ajoutez des sous-tâches pour organiser le travail.</target>
       </trans-unit>
-      <trans-unit id="809" resname="title">
+      <trans-unit id="241" resname="title">
         <source>title</source>
         <target>Titre</target>
       </trans-unit>
-      <trans-unit id="810" resname="description">
+      <trans-unit id="242" resname="description">
         <source>description</source>
         <target>Description</target>
       </trans-unit>
-      <trans-unit id="811" resname="difficulty">
+      <trans-unit id="243" resname="difficulty">
         <source>difficulty</source>
         <target>Difficulté</target>
       </trans-unit>
-      <trans-unit id="812" resname="requiresInspection">
+      <trans-unit id="244" resname="requiresInspection">
         <source>requiresInspection</source>
         <target>Requiert une inspection</target>
       </trans-unit>
-      <trans-unit id="813" resname="gliderType">
+      <trans-unit id="245" resname="gliderType">
         <source>gliderType</source>
         <target>Planeur</target>
       </trans-unit>
-      <trans-unit id="814" resname="infrastructureType">
+      <trans-unit id="246" resname="infrastructureType">
         <source>infrastructureType</source>
         <target>Infrastructure</target>
       </trans-unit>
-      <trans-unit id="815" resname="searchPlans">
+      <trans-unit id="247" resname="searchPlans">
         <source>searchPlans</source>
         <target>Rechercher un plan...</target>
       </trans-unit>
-      <trans-unit id="816" resname="allEquipmentTypes">
+      <trans-unit id="248" resname="allEquipmentTypes">
         <source>allEquipmentTypes</source>
         <target>Tous les types d'équipement</target>
       </trans-unit>
-      <trans-unit id="817" resname="filter">
+      <trans-unit id="249" resname="filter">
         <source>filter</source>
         <target>Filtrer</target>
       </trans-unit>
-      <trans-unit id="818" resname="noTasksInPlan">
+      <trans-unit id="250" resname="noTasksInPlan">
         <source>noTasksInPlan</source>
         <target>Aucune tâche dans ce plan</target>
       </trans-unit>
-      <trans-unit id="819" resname="noTasksInPlanDescription">
+      <trans-unit id="251" resname="noTasksInPlanDescription">
         <source>noTasksInPlanDescription</source>
         <target>Ce plan ne contient aucune tâche. Ajoutez des tâches pour définir les étapes de maintenance.</target>
       </trans-unit>
-      <trans-unit id="820" resname="addTasks">
+      <trans-unit id="252" resname="addTasks">
         <source>addTasks</source>
         <target>Ajouter des tâches</target>
       </trans-unit>
-      <trans-unit id="821" resname="activeApplications">
+      <trans-unit id="253" resname="activeApplications">
         <source>activeApplications</source>
         <target>Applications actives</target>
       </trans-unit>
-      <trans-unit id="822" resname="planDeleted">
+      <trans-unit id="254" resname="planDeleted">
         <source>planDeleted</source>
         <target>Le plan a été supprimé avec succès.</target>
       </trans-unit>
-      <trans-unit id="823" resname="confirmDelete">
+      <trans-unit id="255" resname="confirmDelete">
         <source>confirmDelete</source>
         <target>Confirmer la suppression</target>
       </trans-unit>
-      <trans-unit id="824" resname="confirmDeletePlanMessage">
+      <trans-unit id="256" resname="confirmDeletePlanMessage">
         <source>confirmDeletePlanMessage</source>
         <target>Êtes-vous sûr de vouloir supprimer le plan "{planName}" ? Cette action est irréversible.</target>
       </trans-unit>
-      <trans-unit id="8241" resname="confirmDeleteTask">
+      <trans-unit id="257" resname="confirmDeleteTask">
         <source>confirmDeleteTask</source>
         <target>Êtes-vous sûr de vouloir supprimer cette tâche ?</target>
       </trans-unit>
-      <trans-unit id="8242" resname="confirmDeleteSubTask">
+      <trans-unit id="258" resname="confirmDeleteSubTask">
         <source>confirmDeleteSubTask</source>
         <target>Êtes-vous sûr de vouloir supprimer cette sous-tâche ?</target>
       </trans-unit>
-      <trans-unit id="825" resname="delete">
+      <trans-unit id="259" resname="delete">
         <source>delete</source>
         <target>Supprimer</target>
       </trans-unit>
-      <trans-unit id="826" resname="areYouSure">
+      <trans-unit id="260" resname="areYouSure">
         <source>areYouSure</source>
         <target>Êtes-vous sûr ?</target>
       </trans-unit>
-      <trans-unit id="827" resname="yes">
+      <trans-unit id="261" resname="yes">
         <source>yes</source>
         <target>Oui</target>
       </trans-unit>
-      <trans-unit id="828" resname="applicationDetails">
+      <trans-unit id="262" resname="applicationDetails">
         <source>applicationDetails</source>
         <target>Détails de l'application</target>
       </trans-unit>
-      <trans-unit id="829" resname="maintenanceTimeline">
+      <trans-unit id="263" resname="maintenanceTimeline">
         <source>maintenanceTimeline</source>
         <target>Calendrier de maintenance</target>
       </trans-unit>
-      <trans-unit id="830" resname="existingMaintenancePlanned">
+      <trans-unit id="264" resname="existingMaintenancePlanned">
         <source>existingMaintenancePlanned</source>
         <target>Maintenance existante prévue</target>
       </trans-unit>
-      <trans-unit id="831" resname="tasksToBeCreated">
+      <trans-unit id="265" resname="tasksToBeCreated">
         <source>tasksToBeCreated</source>
         <target>Tâches à créer</target>
       </trans-unit>
-      <trans-unit id="832" resname="noDueDate">
+      <trans-unit id="266" resname="noDueDate">
         <source>noDueDate</source>
         <target>Pas de date d'échéance</target>
       </trans-unit>
-      <trans-unit id="833" resname="inspection">
+      <trans-unit id="267" resname="inspection">
         <source>inspection</source>
         <target>Inspection</target>
       </trans-unit>
-      <trans-unit id="834" resname="allSubTasksMustBeDone">
+      <trans-unit id="268" resname="allSubTasksMustBeDone">
         <source>allSubTasksMustBeDone</source>
         <target>Toutes les sous-tâches doivent être terminées</target>
       </trans-unit>
-      <trans-unit id="837" resname="taskDone">
+      <trans-unit id="269" resname="taskDone">
         <source>taskDone</source>
         <target>Tâche marquée comme terminée</target>
       </trans-unit>
-      <trans-unit id="838" resname="taskUndone">
+      <trans-unit id="270" resname="taskUndone">
         <source>taskUndone</source>
         <target>Tâche marquée comme non terminée</target>
       </trans-unit>
@@ -1163,11 +1303,11 @@
         <source>taskEdited</source>
         <target>Tâche modifiée</target>
       </trans-unit>
-      <trans-unit id="839" resname="subTaskDone">
+      <trans-unit id="271" resname="subTaskDone">
         <source>subTaskDone</source>
         <target>Sous-tâche marquée comme terminée</target>
       </trans-unit>
-      <trans-unit id="840" resname="subTaskUndone">
+      <trans-unit id="272" resname="subTaskUndone">
         <source>subTaskUndone</source>
         <target>Sous-tâche marquée comme non terminée</target>
       </trans-unit>
@@ -1175,7 +1315,7 @@
         <source>subTaskEdited</source>
         <target>Sous-tâche modifiée</target>
       </trans-unit>
-      <trans-unit id="841" resname="applicationCancelled">
+      <trans-unit id="273" resname="applicationCancelled">
         <source>applicationCancelled</source>
         <target>Application annulée</target>
       </trans-unit>

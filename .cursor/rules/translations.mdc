@@ -4,6 +4,12 @@ globs: ["templates/**/*.twig", "src/Controller/**/*.php", "src/Form/**/*.php"]
 priority: 150
 ---
 
+## Translation Format
+
+**IMPORTANT**: This project uses XLF (XML Localization Interchange File Format) for translations.
+- ✅ **USE**: `translations/messages+intl-icu.fr.xlf`
+- ❌ **DO NOT USE**: YAML files (`.yaml` or `.yml`) for translations
+
 ## Workflow
 
 1) Use camelCase keys in code/Twig: `{{ 'yourTranslationKey'|trans }}`
@@ -14,6 +20,7 @@ symfony console translation:extract --force --format=xlf fr
 ```
 
 3) Update FR catalog: `translations/messages+intl-icu.fr.xlf`
+4) **Never create or modify YAML translation files** - all translations must be in the XLF file
 
 ### Mandatory translation workflow (FR only)
 
@@ -23,14 +30,24 @@ symfony console translation:extract --force --format=xlf fr
 symfony console translation:extract --force --format=xlf fr
 ```
 
-2. Open the catalog and translate new/changed keys immediately:
-- `translations/messages+intl-icu.fr.xlf`
+2. Open the XLF catalog and translate new/changed keys immediately:
+- `translations/messages+intl-icu.fr.xlf` (XLF format ONLY)
 
 3. Do not leave placeholder targets (like `__key`). Ensure proper French translations. Reuse existing keys where meaning matches.
 
 4. If new UI text is added in code/Twig, prefer using translation keys in lowerCamelCase and ICU format. Never hard-code user-facing strings.
 
-5. After translating, clear cache and verify the UI renders the correct strings.
+5. **Add translations directly to the XLF file** using proper XML structure:
+```xml
+<trans-unit id="xxx" resname="yourKey">
+  <source>yourKey</source>
+  <target>Votre traduction</target>
+</trans-unit>
+```
+
+6. After translating, clear cache and verify the UI renders the correct strings.
+
+7. **NEVER create YAML translation files** (`.yaml` or `.yml`) - they will be deleted.
 
 ## Conventions
 

@@ -1,0 +1,214 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ invitation.fullname ? invitation.fullname : invitation.email }}
+{% endblock %}
+
+{% block page_actions %}
+	<div class="d-flex gap-2">
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-edit-roles" style="min-height: 44px;">
+			<i class="ti ti-edit me-2"></i>
+			<span class="d-none d-sm-inline">{{ 'edit'|trans }}</span>
+			<span class="d-inline d-sm-none">{{ 'edit'|trans }}</span>
+		</button>
+		<form method="post" action="{{ path('club_invitation_resend', {id: invitation.id}) }}" class="d-inline">
+			<button type="submit" class="btn btn-outline-primary" style="min-height: 44px;">
+				<i class="ti ti-send me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'resend'|trans }}</span>
+				<span class="d-inline d-sm-none">{{ 'resend'|trans }}</span>
+			</button>
+		</form>
+		<form method="post" action="{{ path('club_invitation_delete', {id: invitation.id}) }}" onsubmit="return confirm('{{ 'confirmCancelInvitation'|trans }}');">
+			<button type="submit" class="btn btn-outline-danger" style="min-height: 44px;">
+				<i class="ti ti-trash me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'cancel'|trans }}</span>
+				<span class="d-inline d-sm-none">{{ 'cancel'|trans }}</span>
+			</button>
+		</form>
+	</div>
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		<div
+			class="col-12">
+			{# Invitation Details Card #}
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">{{ 'invitationDetails'|trans }}</h3>
+				</div>
+				<div class="card-body">
+					<div class="row mb-3">
+						<div class="col-12 col-md-6 mb-3">
+							<div class="text-secondary small mb-1">{{ 'email'|trans }}</div>
+							<div class="font-weight-medium">{{ invitation.email }}</div>
+						</div>
+						{% if invitation.firstname or invitation.lastname %}
+							<div class="col-12 col-md-6 mb-3">
+								<div class="text-secondary small mb-1">{{ 'fullName'|trans }}</div>
+								<div class="font-weight-medium">{{ invitation.fullname }}</div>
+							</div>
+						{% endif %}
+					</div>
+
+					<div class="row mb-3">
+						<div class="col-12 col-md-6 mb-3">
+							<div class="text-secondary small mb-1">{{ 'sentOn'|trans }}</div>
+							<div class="font-weight-medium">
+								<i class="ti ti-calendar me-1"></i>
+								{{ invitation.createdAt|date('d/m/Y H:i') }}
+							</div>
+						</div>
+						<div class="col-12 col-md-6 mb-3">
+							<div class="text-secondary small mb-1">{{ 'expiresOn'|trans }}</div>
+							<div class="font-weight-medium">
+								<i class="ti ti-clock me-1"></i>
+								{{ invitation.expiresAt|date('d/m/Y H:i') }}
+							</div>
+						</div>
+					</div>
+
+					<div class="row mb-3">
+						<div class="col-12">
+							<div class="text-secondary small mb-1">{{ 'roles'|trans }}</div>
+							<div class="d-flex gap-2 flex-wrap">
+								{% if invitation.isManager %}
+									<span class="badge bg-blue text-white">
+										<i class="ti ti-shield me-1"></i>
+										{{ 'manager'|trans }}
+									</span>
+								{% endif %}
+								{% if invitation.isInspector %}
+									<span class="badge bg-green text-white">
+										<i class="ti ti-eye-check me-1"></i>
+										{{ 'inspector'|trans }}
+									</span>
+								{% endif %}
+								{% if not invitation.isManager and not invitation.isInspector %}
+									<span class="badge bg-secondary text-white">
+										<i class="ti ti-user me-1"></i>
+										{{ 'member'|trans }}
+									</span>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+
+					{% if invitation.isLocked %}
+						<div class="alert alert-info mb-0">
+							<i class="ti ti-lock me-2"></i>
+							<div>
+								<strong>{{ 'existingUser'|trans }}</strong>
+								<p class="mb-0 mt-2">{{ 'existingUserInfo'|trans }}</p>
+							</div>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{# Modal for editing invitation #}
+	<div class="modal modal-blur fade" id="modal-edit-roles" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				{{ form_start(form, {'attr': {'id': 'form-edit-invitation'}}) }}
+				<div class="modal-header">
+					<h5 class="modal-title">{{ 'editInvitation'|trans }}</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div
+					class="modal-body">
+					{# Email (disabled) #}
+					<div class="mb-3">
+						{{ form_label(form.email) }}
+						{{ form_widget(form.email, {
+							'attr': {
+								'class': 'form-control'
+							}
+						}) }}
+						<div class="form-text">{{ 'emailCannotBeChanged'|trans }}</div>
+						{{ form_errors(form.email) }}
+					</div>
+
+					{# Name fields #}
+					<div class="row">
+						<div class="col-12 col-md-6 mb-3">
+							{{ form_label(form.firstname) }}
+							{{ form_widget(form.firstname, {
+								'attr': {'class': 'form-control'}
+							}) }}
+							{{ form_errors(form.firstname) }}
+						</div>
+						<div class="col-12 col-md-6 mb-3">
+							{{ form_label(form.lastname) }}
+							{{ form_widget(form.lastname, {
+								'attr': {'class': 'form-control'}
+							}) }}
+							{{ form_errors(form.lastname) }}
+						</div>
+					</div>
+
+					{# Roles #}
+					<div class="card mb-0">
+						<div class="card-header">
+							<h4 class="card-title">{{ 'clubRoles'|trans }}</h4>
+						</div>
+						<div class="card-body">
+							<div class="mb-3">
+								<div class="form-check">
+									<input type="checkbox" id="{{ form.isManager.vars.id }}" name="{{ form.isManager.vars.full_name }}" class="form-check-input" value="1" {% if form.isManager.vars.checked %} checked {% endif %}>
+									<label class="form-check-label" for="{{ form.isManager.vars.id }}">
+										<div>{{ form.isManager.vars.label|trans }}</div>
+										{% if form.isManager.vars.help %}
+											<div class="text-secondary small">{{ form.isManager.vars.help|trans }}</div>
+										{% endif %}
+									</label>
+								</div>
+								{{ form_errors(form.isManager) }}
+							</div>
+
+							<div>
+								<div class="form-check">
+									<input type="checkbox" id="{{ form.isInspector.vars.id }}" name="{{ form.isInspector.vars.full_name }}" class="form-check-input" value="1" {% if form.isInspector.vars.checked %} checked {% endif %}>
+									<label class="form-check-label" for="{{ form.isInspector.vars.id }}">
+										<div>{{ form.isInspector.vars.label|trans }}</div>
+										{% if form.isInspector.vars.help %}
+											<div class="text-secondary small">{{ form.isInspector.vars.help|trans }}</div>
+										{% endif %}
+									</label>
+								</div>
+								{{ form_errors(form.isInspector) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="min-height: 44px;">
+						{{ 'cancel'|trans }}
+					</button>
+					<button type="submit" class="btn btn-primary" style="min-height: 44px;">
+						<i class="ti ti-check me-2"></i>
+						{{ 'save'|trans }}
+					</button>
+				</div>
+				{# Mark fields as rendered so form_end doesn't render them again #}
+				{% do form.email.setRendered %}
+				{% do form.firstname.setRendered %}
+				{% do form.lastname.setRendered %}
+				{% do form.isManager.setRendered %}
+				{% do form.isInspector.setRendered %}
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+
+	{% if openModal %}{# Auto-open modal if form has errors #}
+		 <script>
+							document.addEventListener('DOMContentLoaded', function() {
+								var modal = new bootstrap.Modal(document.getElementById('modal-edit-roles'));
+								modal.show();
+							});
+						</script>
+	{% endif %}
+{% endblock %}

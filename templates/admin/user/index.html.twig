@@ -8,37 +8,78 @@
 {% block page_content %}
 	{% include 'component/filters.html.twig' with { form: filters } %}
 
-	{# User cards - Mobile-first design for all screen sizes #}
+	{# User cards - Mobile-first design #}
 	<div class="row">
 		{% for user in users %}
-			<div class="col-12 col-md-6 col-lg-4 mb-3">
-				<a href="{{ path('admin_user_show', {id: user.id}) }}" class="card h-100 text-decoration-none {% if not user.active %}border-danger{% endif %}" style="transition: all 0.2s ease; cursor: pointer;">
-					<div class="card-body">
-						<div class="d-flex align-items-center mb-3">
-							<span class="avatar me-3">{{ user.firstname[:1] }}{{ user.lastname[:1] }}</span>
-							<div class="flex-fill">
-								<div class="font-weight-medium {% if not user.active %}text-danger{% else %}text-dark{% endif %}">{{ user.fullname }}</div>
-								<div class="{% if not user.active %}text-danger{% else %}text-secondary{% endif %}">{{ user.email }}</div>
-							</div>
-							<i class="ti ti-arrow-right text-muted"></i>
-						</div>
+			<div class="col-12 mb-3">
+				<a href="{{ path('admin_user_show', {id: user.id}) }}" class="text-decoration-none">
+					<div class="card card-link {% if not user.active %}border-danger{% endif %}" style="cursor: pointer;">
+						<div class="card-body">
+							<div class="d-flex align-items-start">
+								{# User Avatar #}
+								<span class="avatar avatar-lg me-3 {% if user.active %}bg-blue-lt{% else %}bg-danger-lt{% endif %}">
+									<span class="{% if user.active %}text-blue{% else %}text-danger{% endif %}">{{ user.firstname[:1] }}{{ user.lastname[:1] }}</span>
+								</span>
 
-						<div class="row">
-							<div class="col-6">
-								<div class="text-muted small">Clubs</div>
-								<div>
-									<span class="badge bg-blue-lt">{{ user.memberships|length }}</span>
+								{# Main content #}
+								<div class="flex-grow-1">
+									{# User name (main title) #}
+									<h3 class="card-title mb-1 {% if not user.active %}text-danger{% endif %}">
+										{{ user.fullname }}
+									</h3>
+
+									{# Email (subtitle) #}
+									<div class="{% if not user.active %}text-danger{% else %}text-secondary{% endif %} mb-2">
+										<i class="ti ti-mail me-1"></i>
+										{{ user.email }}
+									</div>
+
+									{# Clubs count on mobile #}
+									<div class="text-secondary small d-md-none">
+										<i class="ti ti-users me-1"></i>
+										{{ user.memberships|length }}
+										{{ user.memberships|length > 1 ? 'clubs' : 'club' }}
+									</div>
 								</div>
-							</div>
-							<div class="col-6">
-								<div class="text-muted small">Statut</div>
-								<div>
+
+								{# Badges on desktop - right side #}
+								<div class="ms-3 d-none d-md-flex gap-2 align-items-start">
+									{# Clubs badge #}
+									<span class="badge bg-blue text-white">
+										<i class="ti ti-users me-1"></i>
+										{{ user.memberships|length }}
+										{{ user.memberships|length > 1 ? 'clubs' : 'club' }}
+									</span>
+
+									{# Status badge #}
 									{% if user.active %}
-										<span class="badge bg-green-lt">Actif</span>
+										<span class="badge bg-success text-white">
+											<i class="ti ti-circle-check me-1"></i>
+											Actif
+										</span>
 									{% else %}
-										<span class="badge bg-danger">Désactivé</span>
+										<span class="badge bg-danger text-white">
+											<i class="ti ti-ban me-1"></i>
+											Désactivé
+										</span>
 									{% endif %}
 								</div>
+							</div>
+
+							{# Badges on mobile - full width under avatar #}
+							<div class="d-flex d-md-none gap-2 flex-wrap mt-3">
+								{# Status badge #}
+								{% if user.active %}
+									<span class="badge bg-success text-white">
+										<i class="ti ti-circle-check me-1"></i>
+										Actif
+									</span>
+								{% else %}
+									<span class="badge bg-danger text-white">
+										<i class="ti ti-ban me-1"></i>
+										Désactivé
+									</span>
+								{% endif %}
 							</div>
 						</div>
 					</div>

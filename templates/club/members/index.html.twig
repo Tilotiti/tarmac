@@ -1,6 +1,6 @@
 {% extends 'club/base.html.twig' %}
 
-{% block page_title %}Membres
+{% block page_title %}{{ 'members'|trans }}
 {% endblock %}
 
 {% block page_actions %}
@@ -8,13 +8,13 @@
 		<div class="d-flex gap-2">
 			<a href="{{ path('club_invitations') }}" class="btn btn-outline-primary" style="min-height: 44px;">
 				<i class="ti ti-mail me-2"></i>
-				<span class="d-none d-sm-inline">Invitations</span>
-				<span class="d-inline d-sm-none">Invit.</span>
+				<span class="d-none d-sm-inline">{{ 'invitations'|trans }}</span>
+				<span class="d-inline d-sm-none">{{ 'invitations'|trans }}</span>
 			</a>
-			<a href="{{ path('club_member_invite') }}" class="btn btn-primary" style="min-height: 44px;">
+			<a href="{{ path('club_invitation_create') }}" class="btn btn-primary" style="min-height: 44px;">
 				<i class="ti ti-plus me-2"></i>
-				<span class="d-none d-sm-inline">Inviter</span>
-				<span class="d-inline d-sm-none">Inviter</span>
+				<span class="d-none d-sm-inline">{{ 'invite'|trans }}</span>
+				<span class="d-inline d-sm-none">{{ 'invite'|trans }}</span>
 			</a>
 		</div>
 	{% endif %}
@@ -38,33 +38,33 @@
 									</div>
 									<div class="text-secondary small">{{ membership.user.email }}</div>
 
-									{# Roles #}
-									<div class="mt-2">
-										{% if membership.isManager %}
-											<span class="badge bg-blue-lt me-1">Manager</span>
-										{% endif %}
-										{% if membership.isInspector %}
-											<span class="badge bg-green-lt">Inspecteur</span>
-										{% endif %}
-										{% if not membership.isManager and not membership.isInspector %}
-											<span class="text-muted small">Membre</span>
-										{% endif %}
-									</div>
-
-									{# Status #}
-									{% if not membership.user.active %}
-										<div class="mt-2">
-											<span class="badge bg-danger">Désactivé</span>
-										</div>
+								{# Roles #}
+								<div class="mt-2">
+									{% if membership.isManager %}
+										<span class="badge bg-blue-lt me-1">{{ 'manager'|trans }}</span>
 									{% endif %}
+									{% if membership.isInspector %}
+										<span class="badge bg-green-lt">{{ 'inspector'|trans }}</span>
+									{% endif %}
+									{% if not membership.isManager and not membership.isInspector %}
+										<span class="text-muted small">{{ 'member'|trans }}</span>
+									{% endif %}
+								</div>
+
+								{# Status #}
+								{% if not membership.user.active %}
+									<div class="mt-2">
+										<span class="badge bg-danger">{{ 'disabled'|trans }}</span>
+									</div>
+								{% endif %}
 								</div>
 							</div>
 
-							<div class="text-secondary small">
-								<i class="ti ti-calendar me-1"></i>
-								Membre depuis le
-								{{ membership.joinedAt|date('d/m/Y') }}
-							</div>
+						<div class="text-secondary small">
+							<i class="ti ti-calendar me-1"></i>
+							{{ 'memberSince'|trans }}
+							{{ membership.joinedAt|date('d/m/Y') }}
+						</div>
 						</div>
 					</div>
 				</a>
@@ -73,7 +73,7 @@
 			<div class="col-12">
 				<div class="card">
 					<div class="card-body text-center text-secondary">
-						<em>Aucun membre trouvé</em>
+						<em>{{ 'noMembersFound'|trans }}</em>
 					</div>
 				</div>
 			</div>

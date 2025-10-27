@@ -18,19 +18,21 @@
 					{% if invitation is defined %}
 						<div class="alert alert-info mb-4">
 							<i class="ti ti-mail me-2"></i>
-							<strong>Invitation de
-								{{ invitation.club.name }}</strong>
-							<p class="mb-0 mt-2 small">
-								{% if invitation.fullname %}
-									Bonjour
-									<strong>{{ invitation.fullname }}</strong>,<br>
-								{% endif %}
-								Vous avez été invité(e) à rejoindre ce club
-								{% if invitation.rolesText != 'Membre' %}
-									en tant que
-									<strong>{{ invitation.rolesText }}</strong>
-								{% endif %}.
-							</p>
+							<div>
+								<strong>Invitation de
+									{{ invitation.club.name }}</strong>
+								<p class="mb-0 mt-2 small">
+									{% if invitation.fullname %}
+										Bonjour
+										<strong>{{ invitation.fullname }}</strong>,<br>
+									{% endif %}
+									Vous avez été invité(e) à rejoindre ce club
+									{% if invitation.rolesText != 'Membre' %}
+										en tant que
+										<strong>{{ invitation.rolesText }}</strong>
+									{% endif %}.
+								</p>
+							</div>
 						</div>
 					{% endif %}
 
@@ -44,16 +46,6 @@
 					</p>
 
 					{{ form_start(registrationForm) }}
-
-					{% if invitation is defined and not invitation.isLocked %}
-						{% if not invitation.firstname %}
-							{{ form_row(registrationForm.firstname) }}
-						{% endif %}
-						{% if not invitation.lastname %}
-							{{ form_row(registrationForm.lastname) }}
-						{% endif %}
-					{% endif %}
-
 					{{ form_row(registrationForm.plainPassword) }}
 
 					<div class="form-footer">

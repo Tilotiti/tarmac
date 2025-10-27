@@ -1,6 +1,7 @@
 {% extends 'club/base.html.twig' %}
 
-{% block page_title %}Inviter un membre
+{% block page_title %}
+	{{ 'inviteMember'|trans }}
 {% endblock %}
 
 {% block page_content %}
@@ -8,13 +9,15 @@
 		<div class="card-body">
 			<div class="alert alert-info mb-4">
 				<i class="ti ti-info-circle me-2"></i>
-				<strong>Comment ça marche ?</strong>
-				<ul class="mb-0 mt-2">
-					<li>L'invitation sera envoyée par email</li>
-					<li>Si l'utilisateur a déjà un compte, il pourra accepter directement</li>
-					<li>Sinon, il pourra créer son compte en acceptant l'invitation</li>
-					<li>L'invitation est valable 7 jours</li>
-				</ul>
+				<div>
+					<strong>{{ 'howItWorks'|trans }}</strong>
+					<ul class="mb-0 mt-2">
+						<li>{{ 'invitationSentByEmail'|trans }}</li>
+						<li>{{ 'invitationExistingUser'|trans }}</li>
+						<li>{{ 'invitationNewUser'|trans }}</li>
+						<li>{{ 'invitationValidDays'|trans }}</li>
+					</ul>
+				</div>
 			</div>
 
 			{{ form_start(form) }}
@@ -49,7 +52,7 @@
 
 			<div class="card mb-3">
 				<div class="card-header">
-					<h4 class="card-title">Rôles dans le club</h4>
+					<h4 class="card-title">{{ 'clubRoles'|trans }}</h4>
 				</div>
 				<div class="card-body">
 					<div class="mb-3">
@@ -87,7 +90,7 @@
 			<div class="form-footer">
 				<button type="submit" class="btn btn-primary w-100 w-md-auto" style="min-height: 44px;">
 					<i class="ti ti-mail me-2"></i>
-					Envoyer l'invitation
+					{{ 'sendInvitation'|trans }}
 				</button>
 			</div>
 

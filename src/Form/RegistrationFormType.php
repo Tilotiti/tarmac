@@ -10,29 +10,36 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('firstname', TextType::class, [
+        if ($options['include_firstname']) {
+            $builder->add('firstname', TextType::class, [
                 'label' => 'firstname',
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
                     'placeholder' => 'firstnamePlaceholder',
                 ],
-            ])
-            ->add('lastname', TextType::class, [
+            ]);
+        }
+
+        if ($options['include_lastname']) {
+            $builder->add('lastname', TextType::class, [
                 'label' => 'lastname',
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
                     'placeholder' => 'lastnamePlaceholder',
                 ],
-            ])
-            ->add('plainPassword', RepeatedType::class, [
+            ]);
+        }
+
+        $builder->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'options' => [
                     'attr' => [
@@ -49,6 +56,10 @@ class RegistrationFormType extends AbstractType
                             'minMessage' => 'passwordMinLength',
                             'max' => 4096,
                         ]),
+                        new PasswordStrength([
+                            'minScore' => PasswordStrength::STRENGTH_WEAK,
+                        ]),
+                        new NotCompromisedPassword(),
                     ],
                     'label' => 'password',
                 ],
@@ -63,7 +74,10 @@ class RegistrationFormType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([]);
+        $resolver->setDefaults([
+            'include_firstname' => true,
+            'include_lastname' => true,
+        ]);
     }
 }
 

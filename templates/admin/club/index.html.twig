@@ -18,36 +18,75 @@
 	{# Club cards - Mobile-first design #}
 	<div class="row">
 		{% for club in clubs %}
-			<div class="col-12 col-md-6 col-lg-4 mb-3">
-				<a href="{{ path('admin_club_show', {id: club.id}) }}" class="card h-100 text-decoration-none" style="transition: all 0.2s ease; cursor: pointer;">
-					<div class="card-body">
-						<div class="d-flex align-items-center mb-3">
-							<span class="avatar me-3 bg-blue-lt">
-								<i class="ti ti-windsock"></i>
-							</span>
-							<div class="flex-fill">
-								<div class="font-weight-medium text-dark">{{ club.name }}</div>
-								<div class="text-secondary">{{ club.subdomain }}.{{ domain }}</div>
-							</div>
-							<i class="ti ti-arrow-right text-muted"></i>
-						</div>
+			<div class="col-12 mb-3">
+				<a href="{{ path('admin_club_show', {id: club.id}) }}" class="text-decoration-none">
+					<div class="card card-link {% if not club.active %}border-danger{% endif %}" style="cursor: pointer;">
+						<div class="card-body">
+							<div class="d-flex align-items-start">
+								{# Club Avatar #}
+								<span class="avatar avatar-lg me-3 {% if club.active %}bg-blue-lt{% else %}bg-danger-lt{% endif %}">
+									<i class="ti ti-windsock {% if club.active %}text-blue{% else %}text-danger{% endif %}" style="font-size: 1.5rem;"></i>
+								</span>
 
-						<div class="row">
-							<div class="col-6">
-								<div class="text-muted small">Membres</div>
-								<div>
-									<span class="badge bg-blue-lt">{{ club.memberships|length }}</span>
+								{# Main content #}
+								<div class="flex-grow-1">
+									{# Club name (main title) #}
+									<h3 class="card-title mb-1 {% if not club.active %}text-danger{% endif %}">
+										{{ club.name }}
+									</h3>
+
+									{# Subdomain (subtitle) #}
+									<div class="{% if not club.active %}text-danger{% else %}text-secondary{% endif %} mb-2">
+										<i class="ti ti-world me-1"></i>
+										{{ club.subdomain }}.{{ domain }}
+									</div>
+
+									{# Members count on mobile #}
+									<div class="text-secondary small d-md-none">
+										<i class="ti ti-users me-1"></i>
+										{{ club.memberships|length }}
+										{{ club.memberships|length > 1 ? 'membres' : 'membre' }}
+									</div>
 								</div>
-							</div>
-							<div class="col-6">
-								<div class="text-muted small">Statut</div>
-								<div>
+
+								{# Badges on desktop - right side #}
+								<div class="ms-3 d-none d-md-flex gap-2 align-items-start">
+									{# Members badge #}
+									<span class="badge bg-blue text-white">
+										<i class="ti ti-users me-1"></i>
+										{{ club.memberships|length }}
+										{{ club.memberships|length > 1 ? 'membres' : 'membre' }}
+									</span>
+
+									{# Status badge #}
 									{% if club.active %}
-										<span class="badge bg-green-lt">Actif</span>
+										<span class="badge bg-success text-white">
+											<i class="ti ti-circle-check me-1"></i>
+											Actif
+										</span>
 									{% else %}
-										<span class="badge bg-danger-lt">Inactif</span>
+										<span class="badge bg-danger text-white">
+											<i class="ti ti-ban me-1"></i>
+											Inactif
+										</span>
 									{% endif %}
 								</div>
+							</div>
+
+							{# Badges on mobile - full width under avatar #}
+							<div class="d-flex d-md-none gap-2 flex-wrap mt-3">
+								{# Status badge #}
+								{% if club.active %}
+									<span class="badge bg-success text-white">
+										<i class="ti ti-circle-check me-1"></i>
+										Actif
+									</span>
+								{% else %}
+									<span class="badge bg-danger text-white">
+										<i class="ti ti-ban me-1"></i>
+										Inactif
+									</span>
+								{% endif %}
 							</div>
 						</div>
 					</div>

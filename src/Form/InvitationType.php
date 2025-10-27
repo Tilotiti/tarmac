@@ -17,6 +17,7 @@ class InvitationType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'label' => 'email',
+                'disabled' => $options['disable_email'],
                 'attr' => [
                     'placeholder' => 'emailPlaceholder',
                 ],
@@ -52,6 +53,7 @@ class InvitationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Invitation::class,
+            'disable_email' => false,
         ]);
     }
 }

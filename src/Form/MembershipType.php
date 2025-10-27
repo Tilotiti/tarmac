@@ -17,11 +17,13 @@ class MembershipType extends AbstractType
                 'label' => 'manager',
                 'required' => false,
                 'help' => 'managerHelp',
+                'translation_domain' => 'messages',
             ])
             ->add('isInspector', CheckboxType::class, [
                 'label' => 'inspector',
                 'required' => false,
                 'help' => 'inspectorHelp',
+                'translation_domain' => 'messages',
             ])
         ;
     }

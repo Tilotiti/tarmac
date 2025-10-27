@@ -22,8 +22,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
-use Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
@@ -39,6 +39,8 @@ class SecurityController extends AbstractController
         private readonly InvitationRepository $invitationRepository,
         private readonly InvitationService $invitationService,
         private readonly SubdomainService $subdomainService,
+        private readonly TranslatorInterface $translator,
+        private readonly Security $security,
     ) {
     }
 
@@ -110,7 +112,8 @@ class SecurityController extends AbstractController
         if ($this->getUser() instanceof User) {
             try {
                 $this->invitationService->acceptInvitation($this->getUser(), $invitation);
-                $this->addFlash('success', 'invitationAccepted', ['clubName' => $invitation->getClub()->getName()]);
+                $message = $this->translator->trans('invitationAccepted', ['clubName' => $invitation->getClub()->getName()]);
+                $this->addFlash('success', $message);
 
                 // Redirect to club dashboard
                 $clubUrl = $this->subdomainService->generateClubUrl($invitation->getClub()->getSubdomain());
@@ -122,15 +125,18 @@ class SecurityController extends AbstractController
         }
 
         // User not logged in - show registration or login option
-        $form = $this->createForm(RegistrationFormType::class);
+        $form = $this->createForm(RegistrationFormType::class, null, [
+            'include_firstname' => !$invitation->getFirstname(),
+            'include_lastname' => !$invitation->getLastname(),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Create new user
             $user = new User();
             $user->setEmail($invitation->getEmail());
-            $user->setFirstname($invitation->getFirstname() ?? $form->get('firstname')->getData());
-            $user->setLastname($invitation->getLastname() ?? $form->get('lastname')->getData());
+            $user->setFirstname($invitation->getFirstname() ?? ($form->has('firstname') ? $form->get('firstname')->getData() : null));
+            $user->setLastname($invitation->getLastname() ?? ($form->has('lastname') ? $form->get('lastname')->getData() : null));
             $user->setVerified(true); // Email verified through invitation
 
             /** @var string $plainPassword */
@@ -140,10 +146,21 @@ class SecurityController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'accountCreated', ['clubName' => $invitation->getClub()->getName()]);
+            // Accept the invitation
+            try {
+                $this->invitationService->acceptInvitation($user, $invitation);
+                $message = $this->translator->trans('accountCreatedAndInvitationAccepted', ['clubName' => $invitation->getClub()->getName()]);
+                $this->addFlash('success', $message);
+            } catch (\Exception $e) {
+                $this->addFlash('warning', $e->getMessage());
+            }
 
-            // Redirect to login page with invitation token to auto-accept after login
-            return $this->redirectToRoute('public_login', ['invitation' => $token]);
+            // Automatically authenticate the user
+            $this->security->login($user);
+
+            // Redirect to club dashboard
+            $clubUrl = $this->subdomainService->generateClubUrl($invitation->getClub()->getSubdomain());
+            return new RedirectResponse($clubUrl);
         }
 
         return $this->render('public/security/register.html.twig', [

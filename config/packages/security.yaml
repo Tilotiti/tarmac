@@ -21,18 +21,15 @@ security:
             lazy: false
             provider: app_user_provider
             user_checker: App\Security\UserChecker
-            form_login:
-                login_path: public_login
-                check_path: public_login
-                enable_csrf: true
-                default_target_path: public_landing
-                use_referer: true
+            custom_authenticators:
+                - App\Security\FormLoginAuthenticator
             logout:
                 path: public_logout
                 target: public_landing
             remember_me:
                 secret: "%kernel.secret%"
                 lifetime: 604800 # 1 week in seconds
+                always_remember_me: true
             switch_user:
                 role: ROLE_ADMIN
                 parameter: _switch_user
