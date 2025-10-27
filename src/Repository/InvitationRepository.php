@@ -55,6 +55,22 @@ class InvitationRepository extends ServiceEntityRepository
     }
 
     /**
+     * Find a pending invitation by email and club
+     */
+    public function findPendingByEmailAndClub(string $email, Club $club): ?Invitation
+    {
+        return $this->createQueryBuilder('i')
+            ->where('i.email = :email')
+            ->andWhere('i.club = :club')
+            ->andWhere('i.expiresAt > :now')
+            ->setParameter('email', $email)
+            ->setParameter('club', $club)
+            ->setParameter('now', new \DateTimeImmutable())
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
      * Query pending invitations by club with filters
      */
     public function findPendingByClub(Club $club, array $filters = []): QueryBuilder

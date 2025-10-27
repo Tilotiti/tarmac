@@ -4,11 +4,18 @@
 {% endblock %}
 
 {% block page_actions %}
-	<a href="{{ path('club_invitation_create') }}" class="btn btn-primary" style="min-height: 44px;">
-		<i class="ti ti-plus me-2"></i>
-		<span class="d-none d-sm-inline">{{ 'invite'|trans }}</span>
-		<span class="d-inline d-sm-none">{{ 'invite'|trans }}</span>
-	</a>
+	<div class="d-flex gap-2">
+		<a href="{{ path('club_invitation_import') }}" class="btn btn-secondary" style="min-height: 44px;">
+			<i class="ti ti-file-upload me-2"></i>
+			<span class="d-none d-sm-inline">{{ 'import'|trans }}</span>
+			<span class="d-inline d-sm-none">{{ 'import'|trans }}</span>
+		</a>
+		<a href="{{ path('club_invitation_create') }}" class="btn btn-primary" style="min-height: 44px;">
+			<i class="ti ti-plus me-2"></i>
+			<span class="d-none d-sm-inline">{{ 'invite'|trans }}</span>
+			<span class="d-inline d-sm-none">{{ 'invite'|trans }}</span>
+		</a>
+	</div>
 {% endblock %}
 
 {% block page_content %}

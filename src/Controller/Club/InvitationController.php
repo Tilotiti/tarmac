@@ -5,11 +5,13 @@ namespace App\Controller\Club;
 use App\Entity\Club;
 use App\Entity\Invitation;
 use App\Form\InvitationType;
+use App\Form\InvitationImportType;
 use App\Repository\InvitationRepository;
 use App\Repository\Paginator;
 use App\Controller\ExtendedController;
 use App\Service\ClubResolver;
 use App\Service\InvitationService;
+use App\Service\InvitationImportService;
 use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
@@ -28,6 +30,7 @@ class InvitationController extends ExtendedController
         private readonly InvitationRepository $invitationRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly InvitationService $invitationService,
+        private readonly InvitationImportService $invitationImportService,
     ) {
         parent::__construct($subdomainService);
     }
@@ -89,6 +92,41 @@ class InvitationController extends ExtendedController
         return $this->render('club/members/invitations/invite.html.twig', [
             'club' => $club,
             'form' => $form,
+        ]);
+    }
+
+    #[Route('/import', name: 'club_invitation_import')]
+    #[Breadcrumb([
+        ['label' => 'home', 'route' => 'club_dashboard'],
+        ['label' => 'members', 'route' => 'club_members'],
+        ['label' => 'invitations', 'route' => 'club_invitations'],
+        ['label' => 'import'],
+    ])]
+    public function import(Request $request): Response
+    {
+        $club = $this->clubResolver->resolve();
+
+        $form = $this->createForm(InvitationImportType::class);
+        $form->handleRequest($request);
+
+        $result = null;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $file = $form->get('file')->getData();
+
+            if ($file) {
+                $result = $this->invitationImportService->importFromFile($file, $club);
+
+                if (!$result->hasErrors()) {
+                    $this->addFlash('success', 'importProcessed');
+                }
+            }
+        }
+
+        return $this->render('club/members/invitations/import.html.twig', [
+            'club' => $club,
+            'form' => $form,
+            'result' => $result,
         ]);
     }
 

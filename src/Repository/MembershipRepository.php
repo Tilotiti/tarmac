@@ -28,6 +28,21 @@ class MembershipRepository extends ServiceEntityRepository
     }
 
     /**
+     * Find a membership by user email and club
+     */
+    public function findByEmailAndClub(string $email, Club $club): ?Membership
+    {
+        return $this->createQueryBuilder('m')
+            ->innerJoin('m.user', 'u')
+            ->where('LOWER(u.email) = LOWER(:email)')
+            ->andWhere('m.club = :club')
+            ->setParameter('email', $email)
+            ->setParameter('club', $club)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
      * Query memberships by club with filters
      */
     public function queryByClubAndFilters(Club $club, array $filters = []): QueryBuilder

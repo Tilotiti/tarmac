@@ -1319,6 +1319,100 @@
         <source>applicationCancelled</source>
         <target>Application annulée</target>
       </trans-unit>
+
+      <!-- Invitation Import -->
+      <trans-unit id="300" resname="import">
+        <source>import</source>
+        <target>Importer</target>
+      </trans-unit>
+      <trans-unit id="301" resname="uploadFile">
+        <source>uploadFile</source>
+        <target>Envoyer le fichier</target>
+      </trans-unit>
+      <trans-unit id="302" resname="selectGivavFile">
+        <source>selectGivavFile</source>
+        <target>Sélectionner le fichier d'export Givav</target>
+      </trans-unit>
+      <trans-unit id="303" resname="fileFormatHelp">
+        <source>fileFormatHelp</source>
+        <target>Le fichier doit être au format Excel (.xls ou .xlsx) avec les colonnes : Courriel, Prénom, Nom</target>
+      </trans-unit>
+      <trans-unit id="304" resname="givavFileDescription">
+        <source>givavFileDescription</source>
+        <target>Importez une liste de membres depuis le fichier d'export Givav. Seuls les membres actifs avec un email valide seront traités.</target>
+      </trans-unit>
+      <trans-unit id="305" resname="requiredColumns">
+        <source>requiredColumns</source>
+        <target>Colonnes obligatoires</target>
+      </trans-unit>
+      <trans-unit id="306" resname="importResults">
+        <source>importResults</source>
+        <target>Résultats de l'import</target>
+      </trans-unit>
+      <trans-unit id="307" resname="invitationsCreated">
+        <source>invitationsCreated</source>
+        <target>Invitations créées</target>
+      </trans-unit>
+      <trans-unit id="308" resname="invitationsSkipped">
+        <source>invitationsSkipped</source>
+        <target>Invitations ignorées</target>
+      </trans-unit>
+      <trans-unit id="309" resname="skipReasonAlreadyMember">
+        <source>skipReasonAlreadyMember</source>
+        <target>Déjà membre du club</target>
+      </trans-unit>
+      <trans-unit id="310" resname="skipReasonPendingInvitation">
+        <source>skipReasonPendingInvitation</source>
+        <target>Invitation en attente déjà existante</target>
+      </trans-unit>
+      <trans-unit id="311" resname="skipReasonMissingData">
+        <source>skipReasonMissingData</source>
+        <target>Prénom ou nom manquant</target>
+      </trans-unit>
+      <trans-unit id="312" resname="skipReasonInvalidEmail">
+        <source>skipReasonInvalidEmail</source>
+        <target>Adresse email invalide</target>
+      </trans-unit>
+      <trans-unit id="313" resname="skipReasonInactive">
+        <source>skipReasonInactive</source>
+        <target>Membre inactif (Actif ? = FAUX)</target>
+      </trans-unit>
+      <trans-unit id="314" resname="skipReasonMissingEmail">
+        <source>skipReasonMissingEmail</source>
+        <target>Adresse email manquante</target>
+      </trans-unit>
+      <trans-unit id="315" resname="importProcessed">
+        <source>importProcessed</source>
+        <target>Import terminé avec succès</target>
+      </trans-unit>
+      <trans-unit id="316" resname="importErrors">
+        <source>importErrors</source>
+        <target>Erreurs d'import</target>
+      </trans-unit>
+      <trans-unit id="317" resname="skippedDetails">
+        <source>skippedDetails</source>
+        <target>Détails des lignes ignorées</target>
+      </trans-unit>
+      <trans-unit id="318" resname="createdInvitations">
+        <source>createdInvitations</source>
+        <target>Invitations envoyées</target>
+      </trans-unit>
+      <trans-unit id="319" resname="importAnother">
+        <source>importAnother</source>
+        <target>Importer un autre fichier</target>
+      </trans-unit>
+      <trans-unit id="320" resname="backToInvitations">
+        <source>backToInvitations</source>
+        <target>Retour aux invitations</target>
+      </trans-unit>
+      <trans-unit id="321" resname="fileRequired">
+        <source>fileRequired</source>
+        <target>Veuillez sélectionner un fichier</target>
+      </trans-unit>
+      <trans-unit id="322" resname="invalidFileFormat">
+        <source>invalidFileFormat</source>
+        <target>Le fichier doit être au format Excel (.xls ou .xlsx)</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

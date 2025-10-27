@@ -1,0 +1,173 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}{{ 'import'|trans }}{% endblock %}
+
+{% block page_content %}
+	{% if result is null %}
+		{# Upload form #}
+		<div class="row">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">{{ 'selectGivavFile'|trans }}</h3>
+					</div>
+					<div class="card-body">
+						{# Help text about Givav file requirements #}
+						<div class="alert alert-info mb-4">
+							<div class="d-flex">
+								<div>
+									<i class="ti ti-info-circle fs-2 me-3"></i>
+								</div>
+								<div>
+									<h4 class="alert-title">{{ 'fileFormatHelp'|trans }}</h4>
+									<div class="text-secondary">
+										<p class="mb-2">{{ 'givavFileDescription'|trans }}</p>
+										<p class="mb-0">
+											<strong>{{ 'requiredColumns'|trans }} :</strong>
+											Courriel, Prénom, Nom
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						{{ form_start(form, {'attr': {'class': 'form'}}) }}
+							<div class="mb-3">
+								{{ form_row(form.file) }}
+							</div>
+
+							<div class="d-flex gap-2 flex-column flex-sm-row">
+								<button type="submit" class="btn btn-primary" style="min-height: 44px;">
+									<i class="ti ti-upload me-2"></i>
+									{{ 'uploadFile'|trans }}
+								</button>
+								<a href="{{ path('club_invitations') }}" class="btn btn-secondary" style="min-height: 44px;">
+									<i class="ti ti-arrow-left me-2"></i>
+									{{ 'cancel'|trans }}
+								</a>
+							</div>
+						{{ form_end(form) }}
+					</div>
+				</div>
+			</div>
+		</div>
+	{% else %}
+		{# Results display #}
+		<div class="row">
+			<div class="col-12">
+				{# Errors card (if any) #}
+				{% if result.hasErrors %}
+					<div class="card border-danger mb-3">
+						<div class="card-status-top bg-danger"></div>
+						<div class="card-body">
+							<h3 class="card-title text-danger">
+								<i class="ti ti-alert-circle me-2"></i>
+								{{ 'importErrors'|trans }}
+							</h3>
+							<ul class="mb-0">
+								{% for error in result.errors %}
+									<li>{{ error }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+				{% endif %}
+
+				{# Success summary card #}
+				<div class="card mb-3">
+					<div class="card-status-top bg-success"></div>
+					<div class="card-body">
+						<h3 class="card-title text-success">
+							<i class="ti ti-check-circle me-2"></i>
+							{{ 'importResults'|trans }}
+						</h3>
+						<div class="row">
+							<div class="col-12 col-md-6 mb-3 mb-md-0">
+								<div class="text-center p-3 bg-success-lt rounded">
+									<div class="display-6 fw-bold text-success">{{ result.createdCount }}</div>
+									<div class="text-muted">{{ 'invitationsCreated'|trans }}</div>
+								</div>
+							</div>
+							<div class="col-12 col-md-6">
+								<div class="text-center p-3 bg-secondary-lt rounded">
+									<div class="display-6 fw-bold text-secondary">{{ result.skippedCount }}</div>
+									<div class="text-muted">{{ 'invitationsSkipped'|trans }}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{# Skipped entries details (if any) #}
+				{% if result.skippedCount > 0 %}
+					<div class="card mb-3">
+						<div class="card-header">
+							<h3 class="card-title">
+								<i class="ti ti-list-details me-2"></i>
+								{{ 'skippedDetails'|trans }}
+							</h3>
+						</div>
+						<div class="card-body">
+							<div class="list-group list-group-flush">
+								{% for skipped in result.skipped %}
+									<div class="list-group-item px-0">
+										<div class="d-flex align-items-start">
+											<span class="avatar avatar-sm bg-secondary-lt me-3">
+												<i class="ti ti-user"></i>
+											</span>
+											<div class="flex-grow-1">
+												<div class="fw-bold">{{ skipped.identifier }}</div>
+												<div class="text-secondary small">
+													{{ skipped.reason|trans }}
+												</div>
+											</div>
+										</div>
+									</div>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				{% endif %}
+
+				{# Created invitations list (if any) #}
+				{% if result.createdCount > 0 %}
+					<div class="card mb-3">
+						<div class="card-header">
+							<h3 class="card-title">
+								<i class="ti ti-mail-check me-2"></i>
+								{{ 'createdInvitations'|trans }}
+							</h3>
+						</div>
+						<div class="card-body">
+							<div class="list-group list-group-flush">
+								{% for email in result.created %}
+									<div class="list-group-item px-0">
+										<div class="d-flex align-items-center">
+											<span class="avatar avatar-sm bg-success-lt me-3">
+												<i class="ti ti-mail"></i>
+											</span>
+											<div>{{ email }}</div>
+										</div>
+									</div>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				{% endif %}
+
+				{# Action buttons #}
+				<div class="d-flex gap-2 flex-column flex-sm-row">
+					<a href="{{ path('club_invitation_import') }}" class="btn btn-primary" style="min-height: 44px;">
+						<i class="ti ti-upload me-2"></i>
+						{{ 'importAnother'|trans }}
+					</a>
+					<a href="{{ path('club_invitations') }}" class="btn btn-secondary" style="min-height: 44px;">
+						<i class="ti ti-arrow-left me-2"></i>
+						{{ 'backToInvitations'|trans }}
+					</a>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}
+
