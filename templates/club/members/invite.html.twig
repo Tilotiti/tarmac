@@ -56,9 +56,9 @@
 						<div class="form-check">
 							<input type="checkbox" id="{{ form.isManager.vars.id }}" name="{{ form.isManager.vars.full_name }}" class="form-check-input" value="1" {% if form.isManager.vars.checked %} checked {% endif %}>
 							<label class="form-check-label" for="{{ form.isManager.vars.id }}">
-								<div>{{ form.isManager.vars.label }}</div>
+								<div>{{ form.isManager.vars.label|trans }}</div>
 								{% if form.isManager.vars.help %}
-									<div class="text-secondary small">{{ form.isManager.vars.help }}</div>
+									<div class="text-secondary small">{{ form.isManager.vars.help|trans }}</div>
 								{% endif %}
 							</label>
 						</div>
@@ -69,9 +69,9 @@
 						<div class="form-check">
 							<input type="checkbox" id="{{ form.isInspector.vars.id }}" name="{{ form.isInspector.vars.full_name }}" class="form-check-input" value="1" {% if form.isInspector.vars.checked %} checked {% endif %}>
 							<label class="form-check-label" for="{{ form.isInspector.vars.id }}">
-								<div>{{ form.isInspector.vars.label }}</div>
+								<div>{{ form.isInspector.vars.label|trans }}</div>
 								{% if form.isInspector.vars.help %}
-									<div class="text-secondary small">{{ form.isInspector.vars.help }}</div>
+									<div class="text-secondary small">{{ form.isInspector.vars.help|trans }}</div>
 								{% endif %}
 							</label>
 						</div>
