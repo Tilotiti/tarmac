@@ -8,7 +8,7 @@
 
 {% block page_actions %}
 	<div class="btn-list">
-		{% if is_granted('TASK_EDIT', task) and not task.isClosed %}
+		{% if is_granted('TASK_EDIT', task) and not task.isClosed and task.status != 'cancelled' %}
 			<a href="{{ path('club_task_edit', {id: task.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
 				<i class="ti ti-edit me-2"></i>
 				<span class="d-none d-sm-inline">{{ 'edit'|trans }}</span>
@@ -34,7 +34,7 @@
 			</form>
 		{% endif %}
 
-		{% if is_granted('TASK_INSPECT', task) and task.isDone and not task.isClosed and task.requiresInspection %}
+		{% if is_granted('TASK_INSPECT', task) and task.isDone and not task.isClosed and task.requiresInspection and task.status != 'cancelled' %}
 			<form method="post" action="{{ path('club_task_inspect_approve', {id: task.id}) }}" class="d-inline">
 				<button type="submit" class="btn btn-success" style="min-height: 44px;">
 					<i class="ti ti-circle-check me-2"></i>
@@ -341,10 +341,11 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 				</div>
 				<form method="post" action="{{ path('club_task_cancel', {id: task.id}) }}">
+					<input type="hidden" name="activity_form[_token]" value="{{ csrf_token('activity_form') }}">
 					<div class="modal-body">
 						<div class="mb-3">
 							<label class="form-label">{{ 'cancellationReason'|trans }}</label>
-							<textarea name="task_activity[message]" class="form-control" rows="3" placeholder="{{ 'optionalReason'|trans }}"></textarea>
+							<textarea name="activity_form[message]" class="form-control" rows="3" placeholder="{{ 'optionalReason'|trans }}"></textarea>
 						</div>
 					</div>
 					<div class="modal-footer">
@@ -365,11 +366,12 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 				</div>
 				<form method="post" action="{{ path('club_task_inspect_reject', {id: task.id}) }}">
+					<input type="hidden" name="activity_form[_token]" value="{{ csrf_token('activity_form') }}">
 					<div class="modal-body">
 						<div class="mb-3">
 							<label class="form-label">{{ 'rejectionReason'|trans }}
 								*</label>
-							<textarea name="task_activity[message]" class="form-control" rows="3" placeholder="{{ 'explainReason'|trans }}" required></textarea>
+							<textarea name="activity_form[message]" class="form-control" rows="3" placeholder="{{ 'explainReason'|trans }}" required></textarea>
 						</div>
 					</div>
 					<div class="modal-footer">

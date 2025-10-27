@@ -16,6 +16,7 @@ use App\Service\Maintenance\TaskStatusService;
 use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
+use SlopeIt\BreadcrumbBundle\Service\BreadcrumbBuilder;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,16 +38,20 @@ class SubTaskController extends ExtendedController
 
     #[Route('/new', name: 'club_subtask_new', methods: ['GET', 'POST'])]
     #[IsGranted(TaskVoter::CREATE_SUBTASK, 'task')]
-    #[Breadcrumb([
-        ['label' => 'home', 'route' => 'club_dashboard'],
-        ['label' => 'tasks', 'route' => 'club_tasks'],
-        ['label' => '$task.title', 'route' => 'club_task_show'],
-        ['label' => 'newSubTask'],
-    ])]
-    public function new(#[MapEntity(id: 'taskId')] Task $task, Request $request): Response
-    {
+    public function new(
+        #[MapEntity(id: 'taskId')] Task $task,
+        Request $request,
+        BreadcrumbBuilder $breadcrumbBuilder
+    ): Response {
 
         $club = $this->clubResolver->resolve();
+
+        // Configure breadcrumb programmatically
+        $breadcrumbBuilder
+            ->addItem('home', 'club_dashboard')
+            ->addItem('tasks', 'club_tasks')
+            ->addItem($task->getTitle(), 'club_task_show', ['id' => $task->getId()])
+            ->addItem('newSubTask');
 
         $subTask = new SubTask();
         $subTask->setTask($task);
