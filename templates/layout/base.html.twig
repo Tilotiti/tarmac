@@ -100,6 +100,32 @@
 						</div>
 					</div>
 				</main>
+
+				{% block footer %}
+					<footer class="footer footer-transparent d-print-none mt-auto">
+						<div class="container-xl">
+							<div class="row text-center align-items-center">
+								<div class="col-12 col-lg-auto">
+									<ul class="list-inline list-inline-dots mb-0">
+										<li class="list-inline-item">
+											<small class="text-muted">
+												© 2025 Thibault HENRY
+											</small>
+										</li>
+										<li class="list-inline-item">
+											<a href="mailto:contact@tarmac.center" class="link-secondary text-decoration-none">
+												<small>
+													<i class="ti ti-help-circle me-1"></i>
+													{{ 'needHelp'|trans }}
+												</small>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</footer>
+				{% endblock %}
 			</div>
 
 			{% block javascripts %}{% endblock %}

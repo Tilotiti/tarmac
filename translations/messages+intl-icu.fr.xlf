@@ -368,6 +368,10 @@
         <source>myClubs</source>
         <target>Mes clubs</target>
       </trans-unit>
+      <trans-unit id="82a" resname="needHelp">
+        <source>needHelp</source>
+        <target>Besoin d'aide ?</target>
+      </trans-unit>
 
       <!-- Breadcrumbs -->
       <trans-unit id="83" resname="home">
