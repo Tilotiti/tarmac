@@ -867,6 +867,10 @@
         <source>done</source>
         <target>Terminé</target>
       </trans-unit>
+      <trans-unit id="484" resname="waitingForApproval">
+        <source>waitingForApproval</source>
+        <target>En attente de validation</target>
+      </trans-unit>
       <trans-unit id="486" resname="inspectionApproved">
         <source>inspectionApproved</source>
         <target>Inspection approuvée</target>

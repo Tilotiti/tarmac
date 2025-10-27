@@ -285,6 +285,17 @@ class Task
         return $this->doneBy !== null;
     }
 
+    /**
+     * Check if the task is done and waiting for inspection approval
+     */
+    public function isWaitingForApproval(): bool
+    {
+        return $this->isDone()
+            && $this->requiresInspection
+            && !$this->isInspected()
+            && $this->status === 'open';
+    }
+
     public function getInspectedBy(): ?User
     {
         return $this->inspectedBy;

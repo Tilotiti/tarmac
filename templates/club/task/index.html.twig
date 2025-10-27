@@ -55,10 +55,17 @@
 								<div
 									class="ms-3 d-none d-md-flex gap-2 align-items-start">
 									{# Status badge with icon #}
-									<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'cancelled' ? 'danger' : 'info') }} text-white">
-										<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'cancelled' ? 'x' : (task.status == 'done' ? 'check' : (task.status == 'claimed' ? 'hourglass' : 'circle'))) }} me-1"></i>
-										{{ task.status|trans }}
-									</span>
+									{% if task.isWaitingForApproval %}
+										<span class="badge bg-warning text-white">
+											<i class="ti ti-hourglass me-1"></i>
+											{{ 'waitingForApproval'|trans }}
+										</span>
+									{% else %}
+										<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'cancelled' ? 'danger' : 'info') }} text-white">
+											<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'cancelled' ? 'x' : (task.status == 'done' ? 'check' : (task.status == 'claimed' ? 'hourglass' : 'circle'))) }} me-1"></i>
+											{{ task.status|trans }}
+										</span>
+									{% endif %}
 
 									{# Inspection badge with icon #}
 									{% if task.requiresInspection %}
@@ -94,10 +101,17 @@
 							<div
 								class="d-flex d-md-none gap-2 flex-wrap mb-3">
 								{# Status badge with icon #}
-								<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'cancelled' ? 'danger' : 'info') }} text-white">
-									<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'cancelled' ? 'x' : (task.status == 'done' ? 'check' : (task.status == 'claimed' ? 'hourglass' : 'circle'))) }} me-1"></i>
-									{{ task.status|trans }}
-								</span>
+								{% if task.isWaitingForApproval %}
+									<span class="badge bg-warning text-white">
+										<i class="ti ti-hourglass me-1"></i>
+										{{ 'waitingForApproval'|trans }}
+									</span>
+								{% else %}
+									<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'cancelled' ? 'danger' : 'info') }} text-white">
+										<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'cancelled' ? 'x' : (task.status == 'done' ? 'check' : (task.status == 'claimed' ? 'hourglass' : 'circle'))) }} me-1"></i>
+										{{ task.status|trans }}
+									</span>
+								{% endif %}
 
 								{# Inspection badge with icon #}
 								{% if task.requiresInspection %}

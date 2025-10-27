@@ -88,10 +88,17 @@
 				<div class="col-12 col-md-6 mb-3">
 					<div class="text-secondary small mb-1">{{ 'status'|trans }}</div>
 					<div>
-						<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'cancelled' ? 'danger' : 'info') }} text-white">
-							<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'cancelled' ? 'x' : (task.status == 'done' ? 'check' : (task.status == 'claimed' ? 'hourglass' : 'circle'))) }} me-1"></i>
-							{{ task.status|trans }}
-						</span>
+						{% if task.isWaitingForApproval %}
+							<span class="badge bg-warning text-white">
+								<i class="ti ti-hourglass me-1"></i>
+								{{ 'waitingForApproval'|trans }}
+							</span>
+						{% else %}
+							<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'cancelled' ? 'danger' : 'info') }} text-white">
+								<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'cancelled' ? 'x' : (task.status == 'done' ? 'check' : (task.status == 'claimed' ? 'hourglass' : 'circle'))) }} me-1"></i>
+								{{ task.status|trans }}
+							</span>
+						{% endif %}
 					</div>
 				</div>
 

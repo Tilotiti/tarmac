@@ -221,12 +221,19 @@
 											<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}">
 												{{ task.equipment.name }}
 											</a>
-										</div>
 									</div>
+								</div>
+								{% if task.isWaitingForApproval %}
+									<span class="badge bg-warning text-white">
+										<i class="ti ti-hourglass me-1"></i>
+										{{ 'waitingForApproval'|trans }}
+									</span>
+								{% else %}
 									<span class="badge bg-{{ task.status == 'open' ? 'yellow' : (task.status == 'done' ? 'blue' : 'green') }}-lt">
 										{{ ('taskStatus.' ~ task.status)|trans }}
 									</span>
-								</div>
+								{% endif %}
+							</div>
 
 								{# Difficulty #}
 								<div class="mb-2">
