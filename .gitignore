@@ -22,3 +22,7 @@
 ###> macOS ###
 .DS_Store
 ###< macOS ###
+
+###> database dumps ###
+latest.dump
+###< database dumps ###
