@@ -1,52 +1,77 @@
 {% extends 'email/base.html.twig' %}
 
-{% block email_header %}Invitation
+{% block title %}Invitation - Tarmac
+{% endblock %}
+
+{% block preheader %}Vous avez été invité(e) à rejoindre
+	{{ invitation.club.name }}
+	sur Tarmac
+{% endblock %}
+
+{% block email_title %}Invitation
 {% endblock %}
 
 {% block email_body %}
-	<h2 style="margin-top: 0;">Bienvenue !</h2>
+	<h2 style="margin-top: 0; font-size: 20px; color: #111827; font-weight: 600;">Bienvenue !</h2>
 
-	<p>Bonjour
+	<p style="margin: 16px 0; color: #4b5563;">Bonjour
 		{% if invitation.fullname %}
 			<strong>{{ invitation.fullname }}</strong>
 		{% endif %},</p>
 
-	<p>Vous avez été invité(e) à rejoindre le club
-		<strong>{{ invitation.club.name }}</strong>
+	<p style="margin: 16px 0; color: #4b5563;">Vous avez été invité(e) à rejoindre le club
+		<strong style="color: #345B7C;">{{ invitation.club.name }}</strong>
 		sur Tarmac.</p>
 
-	<div class="alert alert-info">
-		<p style="margin: 0;">
-			<strong>Vos rôles :</strong><br>
-			{{ invitation.rolesText }}
-		</p>
-	</div>
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 24px 0;">
+		<tr>
+			<td class="alert alert-info" style="background-color: #e3f2fd; border-left: 4px solid #345B7C; border-radius: 6px; padding: 16px;">
+				<p style="margin: 0; color: #1565c0;">
+					<strong>Vos rôles :</strong><br>
+					{{ invitation.rolesText }}
+				</p>
+			</td>
+		</tr>
+	</table>
 
-	<p>Pour accepter cette invitation et
-		{% if invitation.isLocked %}accéder{% else %}créer votre compte
+	<p style="margin: 16px 0; color: #4b5563;">Pour accepter cette invitation et
+		{% if invitation.isLocked %}accéder à votre compte{% else %}créer votre compte
 		{% endif %}, veuillez cliquer sur le bouton ci-dessous :</p>
 
-	<div style="text-align: center; margin: 30px 0;">
-		<a href="{{ invitationUrl }}" class="btn">
-			{% if invitation.isLocked %}
-				Accepter l'invitation
-			{% else %}
-				Créer mon compte
-			{% endif %}
-		</a>
-	</div>
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 30px 0;">
+		<tr>
+			<td align="center">
+				<a href="{{ invitationUrl }}" class="btn" style="display: inline-block; padding: 14px 32px; background-color: #345B7C; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
+					{% if invitation.isLocked %}
+						Accepter l'invitation
+					{% else %}
+						Créer mon compte
+					{% endif %}
+				</a>
+			</td>
+		</tr>
+	</table>
 
-	<p style="font-size: 14px; color: #6c757d;">
-		Cette invitation est valable jusqu'au
-		<strong>{{ invitation.expiresAt|date('d/m/Y à H:i') }}</strong>.
-	</p>
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 24px 0;">
+		<tr>
+			<td class="alert alert-warning" style="background-color: #fff3cd; border-left: 4px solid #f59f00; border-radius: 6px; padding: 16px;">
+				<p style="margin: 0; color: #856404; font-size: 14px;">
+					<strong>⏱ Attention :</strong>
+					Cette invitation est valable jusqu'au
+					<strong>{{ invitation.expiresAt|date('d/m/Y à H:i') }}</strong>.
+				</p>
+			</td>
+		</tr>
+	</table>
 
-	<p style="font-size: 14px; color: #6c757d;">
+	<p style="font-size: 14px; color: #667382; margin: 16px 0;">
 		Si vous n'avez pas demandé cette invitation, vous pouvez ignorer cet e-mail en toute sécurité.
 	</p>
 
-	<p style="font-size: 14px; color: #6c757d; margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6;">
+	<hr style="border: 0; border-top: 1px solid #e8ebee; margin: 30px 0;">
+
+	<p style="font-size: 13px; color: #667382; margin: 16px 0;">
 		Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :<br>
-		<a href="{{ invitationUrl }}" style="color: #206bc4; word-break: break-all;">{{ invitationUrl }}</a>
+		<a href="{{ invitationUrl }}" style="color: #345B7C; word-break: break-all; text-decoration: none;">{{ invitationUrl }}</a>
 	</p>
 {% endblock %}

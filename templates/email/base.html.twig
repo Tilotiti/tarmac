@@ -1,93 +1,322 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTDXHTML1.0Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" style="color-scheme: light dark; supported-color-schemes: light dark;">
+
 	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>
+			{% block title %}Tarmac
+			{% endblock %}
+		</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<meta content="telephone=no" name="format-detection"/>
+		<meta name="x-apple-disable-message-reformatting"/>
+		<meta name="color-scheme" content="light dark"/>
+		<meta name="supported-color-schemes" content="light dark only"/>
+
 		<style>
+			data-premailer="ignore":root {
+				color-scheme: light dark;
+				supported-color-schemes: light dark;
+			}
+
+			@media screen and(max-width: 600px) {
+				u+.body {
+					width: 100vw !important;
+				}
+			}
+
+			a[x-apple-data-detectors] {
+				color: inherit !important;
+				text-decoration: none !important;
+				font-size: inherit !important;
+				font-family: inherit !important;
+				font-weight: inherit !important;
+				line-height: inherit !important;
+			}
+		</style>
+		<!--[if mso]>
+						      <style type="text/css">
+						        body, table, td {
+						            font-family: Arial, Helvetica, sans-serif !important;
+						        }
+						        img {
+						            -ms-interpolation-mode: bicubic;
+						        }
+						        .box {
+						            border-color: #eee !important;
+						        }
+						      </style>
+						    <![endif]-->
+		<!--[if !mso]><!-->
+		<link href="https://rsms.me/inter/inter.css" rel="stylesheet" type="text/css" data-premailer="ignore"/>
+		<style type="text/css" data-premailer="ignore">
+			@import url('https://rsms.me/inter/inter.css');
+		</style>
+		<!--<![endif]-->
+
+		<style>
+			@font-face {
+				font-family: 'Inter';
+				font-style: normal;
+				font-weight: 400;
+				src: url('https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hjQ.ttf') format('truetype');
+			}
+
 			body {
-				font-family: Arial, sans-serif;
-				line-height: 1.6;
-				color: #333;
 				margin: 0;
 				padding: 0;
-				background-color: #f4f4f4;
+				background-color: #f9fafb;
+				font-size: 15px;
+				line-height: 160%;
+				mso-line-height-rule: exactly;
+				color: #4b5563;
+				width: 100%;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+				-webkit-font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+				font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 			}
-			.email-container {
-				max-width: 600px;
-				margin: 0 auto;
-				background-color: #ffffff;
+
+			body {
+				font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
 			}
-			.email-header {
-				background-color: #206bc4;
-				color: #ffffff;
-				padding: 30px 20px;
-				text-align: center;
+
+			img {
+				display: inline-block;
+				border: 0 none;
+				line-height: 100%;
+				outline: none;
+				text-decoration: none;
+				vertical-align: bottom;
+				font-size: 0;
 			}
-			.email-header h1 {
-				margin: 0;
-				font-size: 28px;
+
+			a:hover {
+				text-decoration: underline !important;
 			}
-			.email-body {
-				padding: 30px 20px;
-			}
-			.email-footer {
-				background-color: #f8f9fa;
-				padding: 20px;
-				text-align: center;
-				font-size: 12px;
-				color: #6c757d;
-			}
+
 			.btn {
 				display: inline-block;
 				padding: 12px 30px;
-				background-color: #206bc4;
+				background-color: #345B7C;
 				color: white !important;
 				text-decoration: none;
-				border-radius: 4px;
-				font-weight: bold;
+				border-radius: 6px;
+				font-weight: 600;
 				margin: 20px 0;
 			}
+
 			.btn:hover {
-				background-color: #1a5ca8;
+				text-decoration: none !important;
+				background-color: #2a4a64 !important;
 			}
+
+			a.bg-primary:hover {
+				background-color: #2a4a64 !important;
+			}
+
 			.alert {
-				padding: 15px;
-				margin: 15px 0;
-				border-radius: 4px;
+				padding: 16px;
+				margin: 16px 0;
+				border-radius: 6px;
 				border-left: 4px solid;
 			}
+
 			.alert-info {
 				background-color: #e3f2fd;
-				border-left-color: #206bc4;
+				border-left-color: #345B7C;
 				color: #1565c0;
 			}
-			@media only screen and(max-width: 600px) {
-				.email-body {
-					padding: 20px 15px;
+
+			.alert-warning {
+				background-color: #fff3cd;
+				border-left-color: #f59f00;
+				color: #856404;
+			}
+
+			.alert-danger {
+				background-color: #fee;
+				border-left-color: #d63939;
+				color: #d63939;
+			}
+
+			@media only screen and(max-width: 560px) {
+				body {
+					font-size: 14px !important;
 				}
-				.email-header h1 {
-					font-size: 24px;
+
+				.content {
+					padding: 24px !important;
+				}
+
+				h1 {
+					font-size: 24px !important;
+				}
+
+				h2 {
+					font-size: 20px !important;
+				}
+
+				.btn {
+					display: block !important;
+					width: 100% !important;
+				}
+			}
+
+			@media(prefers-color-scheme: dark) {
+				.text-muted {
+					color: rgba(255, 255, 255, 0.4) !important;
+				}
+
+				.bg-body {
+					background: #212936 !important;
+				}
+
+				.box {
+					background: #2b3648 !important;
+					border-color: #2b3648 !important;
+					color: rgba(255, 255, 255, 0.7) !important;
+				}
+
+				.box-table {
+					background: #2b3648 !important;
+					border-color: #2b3648 !important;
+					color: rgba(255, 255, 255, 0.7) !important;
+				}
+
+				.text-default {
+					color: rgba(255, 255, 255, 0.9) !important;
+				}
+
+				h1,
+				h2,
+				h3 {
+					color: rgba(255, 255, 255, 0.9) !important;
+				}
+
+				.bg-light {
+					background-color: #354258 !important;
+				}
+
+				.alert-info {
+					background-color: #273c56 !important;
+					border-left-color: #345B7C !important;
+					color: rgba(255, 255, 255, 0.7) !important;
+				}
+
+				.alert-warning {
+					background-color: #3f4141 !important;
+					border-left-color: #f59f00 !important;
+					color: rgba(255, 255, 255, 0.7) !important;
+				}
+
+				.alert-danger {
+					background-color: #3c3647 !important;
+					border-left-color: #d63939 !important;
+					color: rgba(255, 255, 255, 0.7) !important;
 				}
 			}
 		</style>
 	</head>
-	<body>
-		<div class="email-container">
-			<div class="email-header">
-				<h1>
-					{% block email_header %}Tarmac
-					{% endblock %}
-				</h1>
-			</div>
 
-			<div class="email-body"> {% block email_body %}{% endblock %}
-				</div>
+	<body class="bg-body" style="font-size: 15px; line-height: 160%; mso-line-height-rule: exactly; color: #4b5563; width: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; margin: 0; padding: 0;" bgcolor="#f9fafb">
+		<center>
+			<table class="main bg-body" width="100%" cellspacing="0" cellpadding="0" role="presentation" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; border-collapse: collapse; width: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;" bgcolor="#f9fafb">
+				<tr>
+					<td
+						align="center" valign="top" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;">
+						<!--[if (gte mso 9)|(IE)]>
+																		                    <table border="0" cellspacing="0" cellpadding="0">
+																		                        <tr>
+																		                            <td align="center" valign="top" width="640">
+																		                    <![endif]-->
 
-				<div class="email-footer">
-					<p>©
-						{{ 'now'|date('Y') }}
-						Tarmac. Tous droits réservés.</p>
-				</div>
-			</div>
-		</body>
-	</html>
+						<span class="preheader" style="font-size: 0; display: none; max-height: 0; mso-hide: all; line-height: 0; color: transparent; height: 0; max-width: 0; opacity: 0; overflow: hidden; visibility: hidden; width: 0; padding: 0;"> {% block preheader %}{% endblock %}
+							</span>
+
+							<table class="wrap" cellspacing="0" cellpadding="0" role="presentation" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; border-collapse: collapse; width: 100%; max-width: 640px; text-align: left;">
+								<tr>
+									<td
+										class="p-sm" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; padding: 8px;">
+
+										<!-- HEADER -->
+										<table cellspacing="0" cellpadding="0" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; border-collapse: collapse; width: 100%;">
+											<tr>
+												<td class="py-lg" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; padding-top: 24px; padding-bottom: 24px;">
+													<table cellspacing="0" cellpadding="0" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; border-collapse: collapse; width: 100%;">
+														<tr>
+															<td align="center" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;">
+																<img src="{{ absolute_url(asset('logo.svg')) }}" width="200" alt="Tarmac" style="display: inline-block; line-height: 100%; outline: none; text-decoration: none; vertical-align: bottom; font-size: 0; border-style: none; border-width: 0;"/>
+															</td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+										</table>
+										<!-- /HEADER -->
+
+										<div class="main-content">
+											<div class="box" style="background-color: #ffffff; border-radius: 8px; -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); border: 1px solid #e8ebee;">
+												<table class="box-table" cellpadding="0" cellspacing="0" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; border-collapse: collapse; width: 100%; border-radius: 8px;" bgcolor="#ffffff">
+													<tr>
+														<td style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;">
+															<table cellpadding="0" cellspacing="0" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; border-collapse: collapse; width: 100%;">
+																<tr>
+																	<td class="content pb-0" align="center" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; padding: 48px 48px 0;">
+																		<h1 class="text-center m-0 font-strong mt-md" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; font-weight: 600; mso-line-height-rule: exactly; color: #111827; font-size: 30px; line-height: 126%; margin: 16px 0 0;" align="center">
+																			{% block email_title %}Tarmac
+																			{% endblock %}
+																		</h1>
+																	</td>
+																</tr>
+
+																<tr>
+																	<td class="content" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; padding: 48px;"> {% block email_body %}{% endblock %}
+																		</td>
+																	</tr>
+																</table>
+															</td>
+														</tr>
+													</table>
+												</div>
+											</div>
+
+											<!-- FOOTER -->
+											<table cellspacing="0" cellpadding="0" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; border-collapse: collapse; width: 100%;">
+												<tr>
+													<td class="py-xl" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; padding-top: 48px; padding-bottom: 48px;">
+														<table class="text-center text-muted" cellspacing="0" cellpadding="0" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; border-collapse: collapse; width: 100%; color: #667382; text-align: center;">
+															<tr>
+																<td class="pt-md" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; padding-top: 16px; font-size: 13px;">
+																	Pour toute question, contactez-nous à
+																	<a href="mailto:contact@tarmac.aero" style="color: #345B7C; text-decoration: none;">contact@tarmac.aero</a>
+																</td>
+															</tr>
+															<tr>
+																<td class="pt-md" style="font-family: Inter, -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; padding-top: 16px; font-size: 13px;">
+																	©
+																	{{ 'now' | date('Y') }}
+																	Tarmac. Tous droits réservés.
+																</td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+											</table>
+											<!-- /FOOTER -->
+										</td>
+									</tr>
+								</table>
+
+								<!--[if (gte mso 9)|(IE)]>
+																								                            </td>
+																								                        </tr>
+																								                    </table>
+																								                    <![endif]-->
+							</td>
+						</tr>
+					</table>
+				</center>
+			</body>
+
+		</html>
