@@ -67,18 +67,6 @@ class TaskRepository extends ServiceEntityRepository
             $qb = $this->filterByDifficulty($qb, (int) $filters['difficulty']);
         }
 
-        if (!empty($filters['requiresInspection'])) {
-            $qb = $this->filterByRequiresInspection($qb, $filters['requiresInspection'] === '1');
-        }
-
-        if (!empty($filters['awaitingInspection']) && $filters['awaitingInspection'] === '1') {
-            $qb = $this->filterByAwaitingInspection($qb);
-        }
-
-        if (!empty($filters['claimedBy'])) {
-            $qb = $this->filterByClaimedBy($qb, $filters['claimedBy']);
-        }
-
         return $qb;
     }
 
@@ -99,6 +87,11 @@ class TaskRepository extends ServiceEntityRepository
 
     public function filterByStatus(QueryBuilder $qb, string $status): QueryBuilder
     {
+        // Handle "awaitingInspection" as a computed status
+        if ($status === 'awaitingInspection') {
+            return $this->filterByAwaitingInspection($qb);
+        }
+
         return $qb
             ->andWhere('task.status = :status')
             ->setParameter('status', $status);
