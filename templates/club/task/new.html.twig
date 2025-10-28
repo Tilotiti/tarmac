@@ -22,55 +22,73 @@
 				</div>
 			</div>
 
-			{# SubTasks Section #}
-			{% set subtaskPrototype %}
-			<div class="card mb-3" data-collection-type-target="item">
-				<div class="card-header d-flex justify-content-between align-items-center">
-					<h5 class="card-title mb-0">{{ 'subTask'|trans }}
-						__INDEX__</h5>
-					<button type="button" class="btn btn-sm btn-danger" data-action="click->collection-type#removeItem" data-confirm="{{ 'confirmDeleteSubTask'|trans }}" aria-label="{{ 'deleteThisSubTask'|trans }}">
-						<i class="ti ti-trash"></i>
-					</button>
+		{# SubTasks Section #}
+		{% set subtaskPrototype %}
+		<div class="card mb-3" data-collection-type-target="item">
+			<div class="card-header d-flex justify-content-between align-items-center">
+				<h5 class="card-title mb-0">{{ 'subTask'|trans }}
+					__INDEX__</h5>
+				<button type="button" class="btn btn-sm btn-danger" data-action="click->collection-type#removeItem" data-confirm="{{ 'confirmDeleteSubTask'|trans }}" aria-label="{{ 'deleteThisSubTask'|trans }}">
+					<i class="ti ti-trash"></i>
+				</button>
+			</div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-12 col-md-9 mb-2">
+						{{ form_row(form.subTasks.vars.prototype.title) }}
+					</div>
+					<div class="col-12 col-md-3 mb-2">
+						{{ form_row(form.subTasks.vars.prototype.difficulty) }}
+					</div>
 				</div>
-				<div class="card-body">
-					{{ form_widget(form.subTasks.vars.prototype) }}
+				<div class="mb-2">
+					{{ form_row(form.subTasks.vars.prototype.description, {'attr': {'rows': 2}}) }}
+				</div>
+				<div class="form-check form-switch mb-2">
+					{{ form_widget(form.subTasks.vars.prototype.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
+					{{ form_label(form.subTasks.vars.prototype.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
 				</div>
 			</div>
-			{% endset %}
+		</div>
+		{% endset %}
 
-			<div {{ stimulus_controller('collection-type') }} data-collection-type-prototype-name-value="__subtask_name__" data-collection-type-display-index-name-value="__INDEX__" data-prototype="{{ subtaskPrototype|e('html_attr') }}">
-				<div
-					data-collection-type-target="container">
-					{# Empty state placeholder #}
-					<div class="empty text-center py-3 mb-3" data-collection-type-target="placeholder" style="{{ form.subTasks|length > 0 ? 'display: none;' : '' }}">
-						<p class="text-muted small mb-0">{{ 'noSubTasks'|trans }}</p>
-					</div>
+		<div {{ stimulus_controller('collection-type') }} data-collection-type-prototype-name-value="__subtask_name__" data-collection-type-display-index-name-value="__INDEX__" data-prototype="{{ subtaskPrototype|e('html_attr') }}">
+			<div
+				data-collection-type-target="container">
+				{# Empty state placeholder #}
+				<div class="empty text-center py-3 mb-3" data-collection-type-target="placeholder" style="{{ form.subTasks|length > 0 ? 'display: none;' : '' }}">
+					<p class="text-muted small mb-0">{{ 'noSubTasks'|trans }}</p>
+				</div>
 
-					{% for subtask in form.subTasks %}
-						<div class="card mb-3" data-collection-type-target="item">
-							<div class="card-header d-flex justify-content-between align-items-center">
-								<h5 class="card-title mb-0">{{ 'subTask'|trans }}
-									{{ loop.index }}</h5>
-								<button type="button" class="btn btn-sm btn-danger" data-action="click->collection-type#removeItem" data-confirm="{{ 'confirmDeleteSubTask'|trans }}" aria-label="{{ 'deleteThisSubTask'|trans }}">
-									<i class="ti ti-trash"></i>
-								</button>
+				{% for subtask in form.subTasks %}
+					<div class="card mb-3" data-collection-type-target="item">
+						<div class="card-header d-flex justify-content-between align-items-center">
+							<h5 class="card-title mb-0">{{ 'subTask'|trans }}
+								{{ loop.index }}</h5>
+							<button type="button" class="btn btn-sm btn-danger" data-action="click->collection-type#removeItem" data-confirm="{{ 'confirmDeleteSubTask'|trans }}" aria-label="{{ 'deleteThisSubTask'|trans }}">
+								<i class="ti ti-trash"></i>
+							</button>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-12 col-md-9 mb-2">
+									{{ form_row(subtask.title) }}
+								</div>
+								<div class="col-12 col-md-3 mb-2">
+									{{ form_row(subtask.difficulty) }}
+								</div>
 							</div>
-							<div class="card-body">
-								<div class="row">
-									<div class="col-12 col-md-9 mb-2">
-										{{ form_row(subtask.title) }}
-									</div>
-									<div class="col-12 col-md-3 mb-2">
-										{{ form_row(subtask.difficulty) }}
-									</div>
-								</div>
-								<div class="mb-2">
-									{{ form_row(subtask.description, {'attr': {'rows': 2}}) }}
-								</div>
+							<div class="mb-2">
+								{{ form_row(subtask.description, {'attr': {'rows': 2}}) }}
+							</div>
+							<div class="form-check form-switch mb-2">
+								{{ form_widget(subtask.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
+								{{ form_label(subtask.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
 							</div>
 						</div>
-					{% endfor %}
-				</div>
+					</div>
+				{% endfor %}
+			</div>
 
 				<div class="text-center mb-3">
 					<button type="button" class="btn btn-secondary" data-action="click->collection-type#addItem" aria-label="{{ 'addSubTask'|trans }}" style="min-height: 44px;">

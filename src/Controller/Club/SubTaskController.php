@@ -12,6 +12,7 @@ use App\Entity\Membership;
 use App\Form\SubTaskType;
 use App\Form\ActivityFormType;
 use App\Form\SubTaskCompleteFormType;
+use App\Repository\ContributionRepository;
 use App\Repository\MembershipRepository;
 use App\Security\Voter\SubTaskVoter;
 use App\Security\Voter\TaskVoter;
@@ -37,6 +38,7 @@ class SubTaskController extends ExtendedController
         private readonly TaskStatusService $taskStatusService,
         private readonly EntityManagerInterface $entityManager,
         private readonly MembershipRepository $membershipRepository,
+        private readonly ContributionRepository $contributionRepository,
     ) {
         parent::__construct($subdomainService);
     }
@@ -163,7 +165,28 @@ class SubTaskController extends ExtendedController
             ]);
             $isManager = $this->isGranted('MANAGE');
 
-            $completeForm = $this->createForm(SubTaskCompleteFormType::class, null, [
+            // Check for existing contributions (e.g., after rejection)
+            $existingContributions = $this->contributionRepository->findBySubTaskIndexedByMembership($subTask);
+            $formData = null;
+
+            if (!empty($existingContributions)) {
+                // Pre-fill form with existing contribution data
+                $totalTimeSpent = 0;
+                $contributorMemberships = [];
+
+                foreach ($existingContributions as $contribution) {
+                    $totalTimeSpent += $contribution->getTimeSpent();
+                    $contributorMemberships[] = $contribution->getMembership();
+                }
+
+                $formData = [
+                    'doneBy' => $currentMembership,
+                    'timeSpent' => (int) ceil($totalTimeSpent), // Convert back to integer hours
+                    'contributors' => $contributorMemberships,
+                ];
+            }
+
+            $completeForm = $this->createForm(SubTaskCompleteFormType::class, $formData, [
                 'club' => $club,
                 'current_membership' => $currentMembership,
                 'is_manager' => $isManager,
@@ -256,14 +279,32 @@ class SubTaskController extends ExtendedController
             // Calculate time per contributor (divided evenly with decimal precision)
             $timePerContributor = round($timeSpent / count($contributors), 2);
 
-            // Create contributions
-            foreach ($contributors as $contributorMembership) {
-                $contribution = new Contribution();
-                $contribution->setSubTask($subTask);
-                $contribution->setMembership($contributorMembership);
-                $contribution->setTimeSpent($timePerContributor);
+            // Update or create contributions
+            $existingContributions = $this->contributionRepository->findBySubTaskIndexedByMembership($subTask);
 
-                $this->entityManager->persist($contribution);
+            foreach ($contributors as $contributorMembership) {
+                $membershipId = $contributorMembership->getId();
+
+                // Check if contribution already exists (e.g., after rejection)
+                if (isset($existingContributions[$membershipId])) {
+                    // Update existing contribution
+                    $contribution = $existingContributions[$membershipId];
+                    $contribution->setTimeSpent($timePerContributor);
+                    // Remove from array so we can delete unused contributions later
+                    unset($existingContributions[$membershipId]);
+                } else {
+                    // Create new contribution
+                    $contribution = new Contribution();
+                    $contribution->setSubTask($subTask);
+                    $contribution->setMembership($contributorMembership);
+                    $contribution->setTimeSpent($timePerContributor);
+                    $this->entityManager->persist($contribution);
+                }
+            }
+
+            // Remove contributions for members no longer selected
+            foreach ($existingContributions as $unusedContribution) {
+                $this->entityManager->remove($unusedContribution);
             }
 
             $this->entityManager->flush();
@@ -301,7 +342,28 @@ class SubTaskController extends ExtendedController
             ->addItem($subTask->getTitle())
             ->addItem('complete');
 
-        $form = $this->createForm(SubTaskCompleteFormType::class, null, [
+        // Check for existing contributions (e.g., after rejection)
+        $existingContributions = $this->contributionRepository->findBySubTaskIndexedByMembership($subTask);
+        $formData = null;
+
+        if (!empty($existingContributions)) {
+            // Pre-fill form with existing contribution data
+            $totalTimeSpent = 0;
+            $contributorMemberships = [];
+
+            foreach ($existingContributions as $contribution) {
+                $totalTimeSpent += $contribution->getTimeSpent();
+                $contributorMemberships[] = $contribution->getMembership();
+            }
+
+            $formData = [
+                'doneBy' => $currentMembership,
+                'timeSpent' => (int) ceil($totalTimeSpent), // Convert back to integer hours
+                'contributors' => $contributorMemberships,
+            ];
+        }
+
+        $form = $this->createForm(SubTaskCompleteFormType::class, $formData, [
             'club' => $club,
             'current_membership' => $currentMembership,
             'is_manager' => $isManager,
@@ -335,14 +397,32 @@ class SubTaskController extends ExtendedController
             // Calculate time per contributor (divided evenly with decimal precision)
             $timePerContributor = round($timeSpent / count($contributors), 2);
 
-            // Create contributions
-            foreach ($contributors as $contributorMembership) {
-                $contribution = new Contribution();
-                $contribution->setSubTask($subTask);
-                $contribution->setMembership($contributorMembership);
-                $contribution->setTimeSpent($timePerContributor);
+            // Update or create contributions
+            $existingContributions = $this->contributionRepository->findBySubTaskIndexedByMembership($subTask);
 
-                $this->entityManager->persist($contribution);
+            foreach ($contributors as $contributorMembership) {
+                $membershipId = $contributorMembership->getId();
+
+                // Check if contribution already exists (e.g., after rejection)
+                if (isset($existingContributions[$membershipId])) {
+                    // Update existing contribution
+                    $contribution = $existingContributions[$membershipId];
+                    $contribution->setTimeSpent($timePerContributor);
+                    // Remove from array so we can delete unused contributions later
+                    unset($existingContributions[$membershipId]);
+                } else {
+                    // Create new contribution
+                    $contribution = new Contribution();
+                    $contribution->setSubTask($subTask);
+                    $contribution->setMembership($contributorMembership);
+                    $contribution->setTimeSpent($timePerContributor);
+                    $this->entityManager->persist($contribution);
+                }
+            }
+
+            // Remove contributions for members no longer selected
+            foreach ($existingContributions as $unusedContribution) {
+                $this->entityManager->remove($unusedContribution);
             }
 
             $this->entityManager->flush();

@@ -65,5 +65,40 @@ class ContributionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Find a contribution by subtask and membership
+     */
+    public function findOneBySubTaskAndMembership(SubTask $subTask, Membership $membership): ?Contribution
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.subTask = :subTask')
+            ->andWhere('c.membership = :membership')
+            ->setParameter('subTask', $subTask)
+            ->setParameter('membership', $membership)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * Find all contributions for a subtask indexed by membership ID
+     *
+     * @return array<int, Contribution>
+     */
+    public function findBySubTaskIndexedByMembership(SubTask $subTask): array
+    {
+        $contributions = $this->createQueryBuilder('c')
+            ->where('c.subTask = :subTask')
+            ->setParameter('subTask', $subTask)
+            ->getQuery()
+            ->getResult();
+
+        $indexed = [];
+        foreach ($contributions as $contribution) {
+            $indexed[$contribution->getMembership()->getId()] = $contribution;
+        }
+
+        return $indexed;
+    }
 }
 
