@@ -47,7 +47,7 @@ class InvitationController extends ExtendedController
 
         // Get pending invitations with pagination
         $invitations = Paginator::paginate(
-            $this->invitationRepository->findPendingByClub($club),
+            $this->invitationRepository->queryPendingByClub($club),
             $request->query->getInt('page', 1),
             20
         );
@@ -79,6 +79,7 @@ class InvitationController extends ExtendedController
                 'lastname' => $invitation->getLastname(),
                 'isManager' => $invitation->isManager(),
                 'isInspector' => $invitation->isInspector(),
+                'isPilote' => $invitation->isPilote(),
             ]);
 
             // Send invitation email

@@ -85,6 +85,14 @@ class TaskRepository extends ServiceEntityRepository
             ->setParameter('equipmentType', $type);
     }
 
+    public function filterByFacilityEquipment(QueryBuilder $qb): QueryBuilder
+    {
+        return $qb
+            ->join('task.equipment', 'equipment')
+            ->andWhere('equipment.type = :facilityType')
+            ->setParameter('facilityType', EquipmentType::FACILITY);
+    }
+
     public function filterByStatus(QueryBuilder $qb, string $status): QueryBuilder
     {
         // Handle "awaitingInspection" as a computed status
@@ -143,11 +151,13 @@ class TaskRepository extends ServiceEntityRepository
 
     public function filterByAwaitingInspection(QueryBuilder $qb): QueryBuilder
     {
+        // Tasks with subtasks that are done and waiting for inspection
         return $qb
-            ->andWhere('task.requiresInspection = true')
-            ->andWhere('task.doneBy IS NOT NULL')
-            ->andWhere('task.status = :status')
-            ->setParameter('status', 'open');
+            ->join('task.subTasks', 'subtask_inspection')
+            ->andWhere('subtask_inspection.status = :done')
+            ->andWhere('subtask_inspection.requiresInspection = true')
+            ->andWhere('subtask_inspection.inspectedBy IS NULL')
+            ->setParameter('done', 'done');
     }
 
     public function filterByClaimedBy(QueryBuilder $qb, User $user): QueryBuilder
@@ -178,14 +188,14 @@ class TaskRepository extends ServiceEntityRepository
     {
         return $qb
             // First, order by status to group done/closed tasks separately
-            ->addOrderBy('CASE WHEN task.status IN (:doneStatuses) THEN 1 ELSE 0 END', 'ASC')
-            // For non-done tasks: put NULL dueAt last (as farthest in the future)
-            ->addOrderBy('CASE WHEN task.status NOT IN (:doneStatuses) AND task.dueAt IS NULL THEN 1 ELSE 0 END', 'ASC')
-            // For non-done tasks: order by dueAt, for done tasks: order by doneAt
-            ->addOrderBy('CASE WHEN task.status NOT IN (:doneStatuses) THEN task.dueAt ELSE task.doneAt END', $direction)
+            ->addOrderBy('CASE WHEN task.status IN (:closedStatuses) THEN 1 ELSE 0 END', 'ASC')
+            // For open/done tasks: put NULL dueAt last (as farthest in the future)
+            ->addOrderBy('CASE WHEN task.status NOT IN (:closedStatuses) AND task.dueAt IS NULL THEN 1 ELSE 0 END', 'ASC')
+            // For open/done tasks: order by dueAt, for closed tasks: order by createdAt
+            ->addOrderBy('CASE WHEN task.status NOT IN (:closedStatuses) THEN task.dueAt ELSE task.createdAt END', $direction)
             // Final fallback: createdAt
             ->addOrderBy('task.createdAt', $direction)
-            ->setParameter('doneStatuses', ['done', 'closed']);
+            ->setParameter('closedStatuses', ['closed']);
     }
 
     public function orderByStatus(QueryBuilder $qb): QueryBuilder

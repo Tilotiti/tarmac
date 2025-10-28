@@ -30,6 +30,9 @@ class Membership
     #[ORM\Column]
     private bool $isInspector = false;
 
+    #[ORM\Column]
+    private bool $isPilote = false;
+
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $joinedAt = null;
 
@@ -91,6 +94,18 @@ class Membership
     public function setIsInspector(bool $isInspector): static
     {
         $this->isInspector = $isInspector;
+
+        return $this;
+    }
+
+    public function isPilote(): bool
+    {
+        return $this->isPilote;
+    }
+
+    public function setIsPilote(bool $isPilote): static
+    {
+        $this->isPilote = $isPilote;
 
         return $this;
     }

@@ -39,24 +39,24 @@ class ClubRepository extends ServiceEntityRepository
      */
     public function queryByFilters(array $filters = []): \Doctrine\ORM\QueryBuilder
     {
-        $qb = $this->createQueryBuilder('c');
+        $qb = $this->createQueryBuilder('club');
 
         if (!empty($filters['name'])) {
-            $qb->andWhere('c.name LIKE :name')
+            $qb->andWhere('club.name LIKE :name')
                 ->setParameter('name', '%' . $filters['name'] . '%');
         }
 
         if (!empty($filters['subdomain'])) {
-            $qb->andWhere('c.subdomain LIKE :subdomain')
+            $qb->andWhere('club.subdomain LIKE :subdomain')
                 ->setParameter('subdomain', '%' . $filters['subdomain'] . '%');
         }
 
         if (isset($filters['active']) && $filters['active'] !== '') {
-            $qb->andWhere('c.active = :active')
+            $qb->andWhere('club.active = :active')
                 ->setParameter('active', $filters['active']);
         }
 
-        return $qb->orderBy('c.name', 'ASC');
+        return $qb->orderBy('club.name', 'ASC');
     }
 }
 

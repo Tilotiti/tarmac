@@ -28,11 +28,21 @@ class PlanSubTask
     private ?string $description = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Assert\NotNull(message: 'difficultyRequired')]
+    #[Assert\Range(min: 1, max: 5, notInRangeMessage: 'difficultyRange')]
+    private int $difficulty = 3;
+
+    #[ORM\Column]
+    private bool $requiresInspection = false;
+
+    #[ORM\Column(type: Types::SMALLINT)]
     private int $position = 0;
 
     public function __construct()
     {
         $this->position = 0;
+        $this->difficulty = 3;
+        $this->requiresInspection = false;
     }
 
     public function __toString(): string
@@ -77,6 +87,30 @@ class PlanSubTask
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDifficulty(): int
+    {
+        return $this->difficulty;
+    }
+
+    public function setDifficulty(int $difficulty): static
+    {
+        $this->difficulty = $difficulty;
+
+        return $this;
+    }
+
+    public function requiresInspection(): bool
+    {
+        return $this->requiresInspection;
+    }
+
+    public function setRequiresInspection(bool $requiresInspection): static
+    {
+        $this->requiresInspection = $requiresInspection;
 
         return $this;
     }

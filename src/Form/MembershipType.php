@@ -25,6 +25,12 @@ class MembershipType extends AbstractType
                 'help' => 'inspectorHelp',
                 'translation_domain' => 'messages',
             ])
+            ->add('isPilote', CheckboxType::class, [
+                'label' => 'pilot',
+                'required' => false,
+                'help' => 'pilotHelp',
+                'translation_domain' => 'messages',
+            ])
         ;
     }
 

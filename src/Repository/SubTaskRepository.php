@@ -28,7 +28,7 @@ class SubTaskRepository extends ServiceEntityRepository
     public function queryAll(): QueryBuilder
     {
         $club = $this->clubResolver->getClub();
-        
+
         if (!$club) {
             throw new \RuntimeException('Club context is required for queryAll()');
         }
@@ -77,17 +77,11 @@ class SubTaskRepository extends ServiceEntityRepository
 
     public function filterByAwaitingInspection(QueryBuilder $qb): QueryBuilder
     {
-        // Join task if not already joined
-        $aliases = $qb->getAllAliases();
-        if (!in_array('task', $aliases, true)) {
-            $qb->join('subTask.task', 'task');
-        }
-        
         return $qb
-            ->andWhere('task.requiresInspection = true')
+            ->andWhere('subTask.requiresInspection = true')
             ->andWhere('subTask.doneBy IS NOT NULL')
             ->andWhere('subTask.status = :status')
-            ->setParameter('status', 'open');
+            ->setParameter('status', 'done');
     }
 
     public function orderByPosition(QueryBuilder $qb): QueryBuilder

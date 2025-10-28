@@ -46,12 +46,21 @@ class TaskController extends ExtendedController
     {
         $club = $this->clubResolver->resolve();
 
+        $isManager = $this->isGranted('MANAGE');
+        $isInspector = $this->isGranted('INSPECT');
+        $isPilote = $this->isGranted('PILOT');
+
         // Handle filters with default status 'open'
         $filters = $this->createFilter(TaskFilterType::class, ['status' => 'open']);
         $filters->handleRequest($request);
 
         // Build query with filters
         $qb = $this->taskRepository->queryByFilters($filters->getData() ?? []);
+
+        // Apply pilot visibility filter: non-pilotes can only see facility equipment
+        if (!$isPilote && !$isManager && !$isInspector) {
+            $qb = $this->taskRepository->filterByFacilityEquipment($qb);
+        }
 
         // Smart ordering: by dueAt for non-done tasks, by doneAt for done tasks
         $qb = $this->taskRepository->orderByRelevantDate($qb, 'ASC');
@@ -83,12 +92,43 @@ class TaskController extends ExtendedController
         $task->setClub($club);
         $task->setCreatedBy($this->getUser());
 
+        // Add one empty subtask by default for new tasks
+        if ($task->getSubTasks()->count() === 0) {
+            $subTask = new \App\Entity\SubTask();
+            $subTask->setTask($task);
+            $subTask->setPosition(1);
+            $task->addSubTask($subTask);
+        }
+
         $form = $this->createForm(TaskType::class, $task, [
             'include_subtasks' => true,
+            'user' => $this->getUser(),
+            'club' => $club,
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Ensure at least one subtask
+            if ($task->getSubTasks()->count() === 0) {
+                $this->addFlash('error', 'atLeastOneSubTaskRequired');
+                return $this->render('club/task/new.html.twig', [
+                    'club' => $club,
+                    'task' => $task,
+                    'form' => $form,
+                ]);
+            }
+            
+            // Security check: non-pilots cannot create tasks for glider equipment
+            $isPilot = $this->isGranted('PILOT');
+            if (!$isPilot && $task->getEquipment()->getType() === \App\Entity\Enum\EquipmentType::GLIDER) {
+                $this->addFlash('error', 'pilotRequiredForGliderTasks');
+                return $this->render('club/task/new.html.twig', [
+                    'club' => $club,
+                    'task' => $task,
+                    'form' => $form,
+                ]);
+            }
+
             $this->entityManager->persist($task);
             $this->entityManager->flush();
 
@@ -154,10 +194,24 @@ class TaskController extends ExtendedController
 
         $club = $this->clubResolver->resolve();
 
-        $form = $this->createForm(TaskType::class, $task);
+        $form = $this->createForm(TaskType::class, $task, [
+            'user' => $this->getUser(),
+            'club' => $club,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Security check: non-pilots cannot edit tasks to use glider equipment
+            $isPilot = $this->isGranted('PILOT');
+            if (!$isPilot && $task->getEquipment()->getType() === \App\Entity\Enum\EquipmentType::GLIDER) {
+                $this->addFlash('error', 'pilotRequiredForGliderTasks');
+                return $this->render('club/task/edit.html.twig', [
+                    'club' => $club,
+                    'task' => $task,
+                    'form' => $form,
+                ]);
+            }
+            
             $this->entityManager->flush();
 
             // Log task edit activity
@@ -180,24 +234,12 @@ class TaskController extends ExtendedController
         ]);
     }
 
-    #[Route('/{id}/do', name: 'club_task_do', methods: ['POST'], requirements: ['id' => '\d+'])]
-    #[IsGranted(TaskVoter::DO , 'task')]
-    public function do(Task $task): Response
-    {
-
-        $this->taskStatusService->handleTaskDone($task, $this->getUser());
-
-        $this->addFlash('success', 'taskMarkedAsDone');
-
-        return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
-    }
-
     #[Route('/{id}/close', name: 'club_task_close', methods: ['POST'], requirements: ['id' => '\d+'])]
     #[IsGranted(TaskVoter::CLOSE, 'task')]
     public function close(Task $task): Response
     {
         if (!$this->taskStatusService->canCloseTask($task)) {
-            $this->addFlash('error', 'taskCannotBeClosed');
+            $this->addFlash('error', 'allSubTasksMustBeClosed');
             return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
         }
 
@@ -205,43 +247,6 @@ class TaskController extends ExtendedController
 
         $this->addFlash('success', 'taskClosed');
 
-        return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
-    }
-
-    #[Route('/{id}/inspect/approve', name: 'club_task_inspect_approve', methods: ['POST'], requirements: ['id' => '\d+'])]
-    #[IsGranted(TaskVoter::INSPECT, 'task')]
-    public function inspectApprove(Task $task): Response
-    {
-
-        $this->taskStatusService->handleTaskInspectApprove($task, $this->getUser());
-
-        $this->addFlash('success', 'inspectionApproved');
-
-        return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
-    }
-
-    #[Route('/{id}/inspect/reject', name: 'club_task_inspect_reject', methods: ['POST'], requirements: ['id' => '\d+'])]
-    #[IsGranted(TaskVoter::INSPECT, 'task')]
-    public function inspectReject(Task $task, Request $request): Response
-    {
-
-        $form = $this->createForm(ActivityFormType::class, null, [
-            'required' => true,
-            'label' => 'rejectionReason',
-            'placeholder' => 'explainReason',
-        ]);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $this->taskStatusService->handleTaskInspectReject($task, $this->getUser(), $data['message'] ?? null);
-
-            $this->addFlash('success', 'inspectionRejected');
-
-            return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
-        }
-
-        $this->addFlash('error', 'rejectionReasonRequired');
         return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
     }
 

@@ -336,11 +336,11 @@
       <!-- Roles -->
       <trans-unit id="75" resname="manager">
         <source>manager</source>
-        <target>Manager</target>
+        <target>Gestionnaire</target>
       </trans-unit>
       <trans-unit id="76" resname="inspector">
         <source>inspector</source>
-        <target>Inspecteur</target>
+        <target>Qualifié</target>
       </trans-unit>
       <trans-unit id="77" resname="member">
         <source>member</source>
@@ -604,7 +604,23 @@
       </trans-unit>
       <trans-unit id="104" resname="inspectorHelp">
         <source>inspectorHelp</source>
-        <target>Peut inspecter et valider les activités sensibles</target>
+        <target>Dispose de la qualification PART66L</target>
+      </trans-unit>
+      <trans-unit id="1600" resname="pilot">
+        <source>pilot</source>
+        <target>Pilote</target>
+      </trans-unit>
+      <trans-unit id="1601" resname="pilotHelp">
+        <source>pilotHelp</source>
+        <target>Pilote propriétaire habilité à maintenir les planeurs</target>
+      </trans-unit>
+      <trans-unit id="1602" resname="qualifiedTooltip">
+        <source>qualifiedTooltip</source>
+        <target>Dispose de la qualification PART66L</target>
+      </trans-unit>
+      <trans-unit id="1603" resname="pilotTooltip">
+        <source>pilotTooltip</source>
+        <target>Pilote propriétaire habilité à maintenir les planeurs</target>
       </trans-unit>
 
       <!-- Validation Messages -->
@@ -706,6 +722,10 @@
       <trans-unit id="128" resname="commentAdded">
         <source>commentAdded</source>
         <target>Votre commentaire a été ajouté.</target>
+      </trans-unit>
+      <trans-unit id="128a" resname="pilotRequiredForGliderTasks">
+        <source>pilotRequiredForGliderTasks</source>
+        <target>Vous devez être pilote pour créer des tâches sur des planeurs.</target>
       </trans-unit>
 
       <!-- Flash Messages: SubTasks -->
@@ -829,7 +849,11 @@
       </trans-unit>
       <trans-unit id="156" resname="requiresInspection">
         <source>requiresInspection</source>
-        <target>Requiert une inspection</target>
+        <target>Requiert une validation</target>
+      </trans-unit>
+      <trans-unit id="1604" resname="requiresValidationTooltip">
+        <source>requiresValidationTooltip</source>
+        <target>Cette sous-tâche nécessite une validation par un membre qualifié PART66L</target>
       </trans-unit>
       <trans-unit id="157" resname="awaitingInspection">
         <source>awaitingInspection</source>
@@ -838,6 +862,18 @@
       <trans-unit id="157a" resname="tasksToInspect">
         <source>tasksToInspect</source>
         <target>Tâches à inspecter</target>
+      </trans-unit>
+      <trans-unit id="1605" resname="subTasksToValidate">
+        <source>subTasksToValidate</source>
+        <target>Sous-tâches à valider</target>
+      </trans-unit>
+      <trans-unit id="1606" resname="noMemberFound">
+        <source>noMemberFound</source>
+        <target>Aucun membre trouvé</target>
+      </trans-unit>
+      <trans-unit id="1607" resname="selected">
+        <source>selected</source>
+        <target>sélectionné(s)</target>
       </trans-unit>
       <trans-unit id="158" resname="dueDate">
         <source>dueDate</source>
@@ -1209,7 +1245,7 @@
       </trans-unit>
       <trans-unit id="244" resname="requiresInspection">
         <source>requiresInspection</source>
-        <target>Requiert une inspection</target>
+        <target>Requiert une validation</target>
       </trans-unit>
       <trans-unit id="245" resname="gliderType">
         <source>gliderType</source>
@@ -1436,6 +1472,102 @@
       <trans-unit id="322" resname="invalidFileFormat">
         <source>invalidFileFormat</source>
         <target>Le fichier doit être au format Excel (.xls ou .xlsx)</target>
+      </trans-unit>
+      <trans-unit id="323" resname="isPilote">
+        <source>isPilote</source>
+        <target>Pilote</target>
+      </trans-unit>
+      <trans-unit id="324" resname="pilote">
+        <source>pilote</source>
+        <target>Pilote</target>
+      </trans-unit>
+      <trans-unit id="325" resname="nonPilote">
+        <source>nonPilote</source>
+        <target>Non pilote</target>
+      </trans-unit>
+      <trans-unit id="326" resname="whoDidTask">
+        <source>whoDidTask</source>
+        <target>Qui a réalisé la tâche ?</target>
+      </trans-unit>
+      <trans-unit id="327" resname="timeSpent">
+        <source>timeSpent</source>
+        <target>Temps passé (en heures)</target>
+      </trans-unit>
+      <trans-unit id="328" resname="timeSpentPlaceholder">
+        <source>timeSpentPlaceholder</source>
+        <target>Nombre d'heures</target>
+      </trans-unit>
+      <trans-unit id="329" resname="timeSpentHelp">
+        <source>timeSpentHelp</source>
+        <target>Le temps sera divisé entre tous les contributeurs</target>
+      </trans-unit>
+      <trans-unit id="330" resname="contributors">
+        <source>contributors</source>
+        <target>Contributeurs</target>
+      </trans-unit>
+      <trans-unit id="331" resname="contributorsHelp">
+        <source>contributorsHelp</source>
+        <target>Sélectionnez tous les membres qui ont contribué à cette sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="332" resname="hours">
+        <source>hours</source>
+        <target>heures</target>
+      </trans-unit>
+      <trans-unit id="333" resname="markSubTaskDone">
+        <source>markSubTaskDone</source>
+        <target>Marquer comme terminée</target>
+      </trans-unit>
+      <trans-unit id="334" resname="inspectSubTask">
+        <source>inspectSubTask</source>
+        <target>Inspecter la sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="335" resname="allSubTasksMustBeClosed">
+        <source>allSubTasksMustBeClosed</source>
+        <target>Toutes les sous-tâches doivent être clôturées avant de pouvoir fermer la tâche</target>
+      </trans-unit>
+      <trans-unit id="336" resname="atLeastOneSubTaskRequired">
+        <source>atLeastOneSubTaskRequired</source>
+        <target>Au moins une sous-tâche est requise</target>
+      </trans-unit>
+      <trans-unit id="337" resname="contribution">
+        <source>contribution</source>
+        <target>Contribution</target>
+      </trans-unit>
+      <trans-unit id="338" resname="contributions">
+        <source>contributions</source>
+        <target>Contributions</target>
+      </trans-unit>
+      <trans-unit id="339" resname="totalTime">
+        <source>totalTime</source>
+        <target>Temps total</target>
+      </trans-unit>
+      <trans-unit id="339a" resname="totalTimeSpent">
+        <source>totalTimeSpent</source>
+        <target>Temps total passé</target>
+      </trans-unit>
+      <trans-unit id="340" resname="subTaskMarkedAsDone">
+        <source>subTaskMarkedAsDone</source>
+        <target>La sous-tâche a été marquée comme terminée</target>
+      </trans-unit>
+      <trans-unit id="341" resname="complete">
+        <source>complete</source>
+        <target>Compléter</target>
+      </trans-unit>
+      <trans-unit id="342" resname="completeSubTask">
+        <source>completeSubTask</source>
+        <target>Compléter la sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="343" resname="subTaskDetails">
+        <source>subTaskDetails</source>
+        <target>Détails de la sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="344" resname="timeSpentRequired">
+        <source>timeSpentRequired</source>
+        <target>Le temps passé est requis</target>
+      </trans-unit>
+      <trans-unit id="345" resname="timeSpentMustBePositive">
+        <source>timeSpentMustBePositive</source>
+        <target>Le temps passé doit être supérieur à 0</target>
       </trans-unit>
     </body>
   </file>

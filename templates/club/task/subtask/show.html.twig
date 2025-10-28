@@ -1,0 +1,340 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ subTask.title }}
+{% endblock %}
+
+{% block page_actions %}
+	<div class="btn-list">
+		{% if is_granted('SUBTASK_EDIT', subTask) %}
+			<a href="{{ path('club_subtask_edit', {taskId: task.id, id: subTask.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
+				<i class="ti ti-edit me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'edit'|trans }}</span>
+			</a>
+		{% endif %}
+
+		{% if is_granted('SUBTASK_INSPECT', subTask) %}
+			<form method="post" action="{{ path('club_subtask_inspect_approve', {taskId: task.id, id: subTask.id}) }}" class="d-inline">
+				<button type="submit" class="btn btn-success" style="min-height: 44px;">
+					<i class="ti ti-circle-check me-2"></i>
+					<span class="d-none d-sm-inline">{{ 'approveInspection'|trans }}</span>
+				</button>
+			</form>
+			<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal" style="min-height: 44px;">
+				<i class="ti ti-circle-x me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'rejectInspection'|trans }}</span>
+			</button>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block page_content %}
+	{# Task Context Card #}
+	<div class="card mb-3">
+		<div class="card-body">
+			<div class="text-secondary small mb-2">{{ 'task'|trans }}</div>
+			<div class="d-flex align-items-center">
+				<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
+					<span class="avatar avatar-lg me-3 bg-{{ task.equipment.type.value == 'glider' ? 'blue' : (task.equipment.type.value == 'facility' ? 'purple' : 'green') }}-lt">
+						<i class="ti ti-{{ task.equipment.type.value == 'glider' ? 'plane' : (task.equipment.type.value == 'facility' ? 'building' : 'tool') }} text-{{ task.equipment.type.value == 'glider' ? 'blue' : (task.equipment.type.value == 'facility' ? 'purple' : 'green') }}" style="font-size: 1.5rem;"></i>
+					</span>
+				</a>
+				<div>
+					<h3 class="mb-0">
+						<a href="{{ path('club_task_show', {id: task.id}) }}" class="text-reset">
+							{{ task.equipment.name }}
+							-
+							{{ task.title }}
+						</a>
+					</h3>
+					{% if task.planApplication %}
+						<div class="text-secondary small">
+							<a href="{{ path('club_plan_show', {id: task.planApplication.plan.id}) }}">
+								{{ task.planApplication.plan.name }}
+							</a>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{# SubTask Details Card #}
+	<div class="card mb-3">
+		<div class="card-body">
+			<h2 class="mb-4">{{ subTask.title }}</h2>
+
+			<div class="row">
+				<div class="col-12 col-md-6 mb-3">
+					<div class="text-secondary small mb-1">{{ 'status'|trans }}</div>
+					<div>
+						{% if subTask.isWaitingForApproval %}
+							<span class="badge bg-warning-lt text-white">
+								<i class="ti ti-hourglass me-1"></i>
+								{{ 'waitingForApproval'|trans }}
+							</span>
+						{% else %}
+							<span class="badge bg-{{ subTask.status == 'closed' ? 'success' : (subTask.status == 'cancelled' ? 'danger' : 'info') }}-lt text-white">
+								<i class="ti ti-{{ subTask.status == 'closed' ? 'circle-check' : (subTask.status == 'cancelled' ? 'x' : 'circle') }} me-1"></i>
+								{{ subTask.status|trans }}
+							</span>
+						{% endif %}
+					</div>
+				</div>
+
+				<div class="col-12 col-md-6 mb-3">
+					<div class="text-secondary small mb-1">{{ 'difficulty'|trans }}</div>
+					<div>
+						{% include 'component/difficultyBadge.html.twig' with {'difficulty': subTask.difficulty} %}
+					</div>
+				</div>
+
+				{% if subTask.requiresInspection %}
+					<div class="col-12 col-md-6 mb-3">
+						<div class="text-secondary small mb-1">{{ 'inspection'|trans }}</div>
+						<div>
+							<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+								<i class="ti ti-shield-check me-1"></i>
+								{{ 'requiresInspection'|trans }}
+							</span>
+						</div>
+					</div>
+				{% endif %}
+
+				{% if subTask.doneBy %}
+					<div class="col-12 col-md-6 mb-3">
+						<div class="text-secondary small mb-1">{{ 'doneBy'|trans }}</div>
+						<div>{{ subTask.doneBy.fullName }}</div>
+					</div>
+				{% endif %}
+
+				{% if subTask.doneAt %}
+					<div class="col-12 col-md-6 mb-3">
+						<div class="text-secondary small mb-1">{{ 'doneAt'|trans }}</div>
+						<div>{{ subTask.doneAt|date('d/m/Y H:i') }}</div>
+					</div>
+				{% endif %}
+
+				{% if subTask.inspectedBy %}
+					<div class="col-12 col-md-6 mb-3">
+						<div class="text-secondary small mb-1">{{ 'inspectedBy'|trans }}</div>
+						<div>{{ subTask.inspectedBy.fullName }}</div>
+					</div>
+				{% endif %}
+
+				{% if subTask.inspectedAt %}
+					<div class="col-12 col-md-6 mb-3">
+						<div class="text-secondary small mb-1">{{ 'inspectedAt'|trans }}</div>
+						<div>{{ subTask.inspectedAt|date('d/m/Y H:i') }}</div>
+					</div>
+				{% endif %}
+			</div>
+
+			{% if subTask.description %}
+				<hr class="my-4">
+				<div>
+					<div class="text-secondary small mb-2">{{ 'description'|trans }}</div>
+					<div>{{ subTask.description|nl2br }}</div>
+				</div>
+			{% endif %}
+
+			{# Time tracking #}
+			{% if subTask.contributions|length > 0 %}
+				<hr class="my-4">
+				<div>
+					<div class="text-secondary small mb-2">{{ 'timeTracking'|trans }}</div>
+					<div class="mb-2">
+						<strong>{{ 'totalTime'|trans }}:</strong>
+						{{ subTask.totalTimeSpent|format_time_spent }}
+					</div>
+					<div class="list-group">
+						{% for contribution in subTask.contributions %}
+							<div class="list-group-item">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<i class="ti ti-user me-1"></i>
+										{{ contribution.membership.user.fullName }}
+									</div>
+									<div>
+										<span class="badge bg-blue-lt">{{ contribution.timeSpent|format_time_spent }}</span>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+
+	{# Complete Form Card #}
+	{% if completeForm is defined and completeForm is not null %}
+		<div class="card mb-3">
+			<div class="card-header">
+				<h3 class="card-title">{{ 'completeSubTask'|trans }}</h3>
+			</div>
+			<div class="card-body">
+				{{ form_start(completeForm, {'action': path('club_subtask_complete', {taskId: task.id, id: subTask.id})}) }}
+
+				{# Who did the task - only show for managers #}
+				{% if is_granted('MANAGE') %}
+					<fieldset class="form-fieldset mb-3 pt-1" data-controller="user-list-filter" data-user-list-filter-type-value="doneBy">
+						{{ form_label(completeForm.doneBy) }}
+
+						{# Search input #}
+						<div class="mb-3">
+							<input type="text" class="form-control" placeholder="{{ 'searchMember'|trans }}..." data-user-list-filter-target="search" data-action="input->user-list-filter#filter">
+						</div>
+
+						<div class="d-flex flex-column border rounded p-0" style="max-height: 250px; overflow-y: auto; background-color: #fff;">
+							{% for child in completeForm.doneBy %}
+								<label class="d-flex align-items-center m-0 p-2 border-bottom" data-user-list-filter-target="item" style="cursor: pointer;">
+									<input type="radio" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}" class="form-check-input me-2 m-0" {% if child.vars.checked %} checked {% endif %} required>
+									<span class="mb-0">{{ child.vars.label }}</span>
+								</label>
+							{% endfor %}
+							<div class="text-center text-secondary py-3 d-none" data-user-list-filter-target="empty">
+								<em>{{ 'noMemberFound'|trans }}</em>
+							</div>
+						</div>
+						{{ form_errors(completeForm.doneBy) }}
+					</fieldset>
+				{% else %}
+					{# For non-managers, hide the field but keep it in the form #}
+					<div style="display: none;">
+						{{ form_row(completeForm.doneBy) }}
+					</div>
+				{% endif %}
+
+				{# Time spent #}
+				<div class="mb-3">
+					{{ form_row(completeForm.timeSpent) }}
+				</div>
+
+				{# Contributors #}
+				<fieldset class="form-fieldset mb-3 pt-1" data-controller="user-list-filter" data-user-list-filter-type-value="contributors">
+					<div class="d-flex justify-content-between align-items-center">
+						{{ form_label(completeForm.contributors) }}
+						<span class="badge bg-blue-lt px-2 float-end">
+							<span data-user-list-filter-target="count">0</span>
+							{{ 'selected'|trans }}
+						</span>
+					</div>
+
+					{# Search input #}
+					<div class="mb-3">
+						<input type="text" class="form-control" placeholder="{{ 'searchMember'|trans }}..." data-user-list-filter-target="search" data-action="input->user-list-filter#filter">
+					</div>
+
+					<div class="d-flex flex-column border rounded p-0" style="max-height: 250px; overflow-y: auto; background-color: #fff;">
+						{% for child in completeForm.contributors %}
+							<label class="d-flex align-items-center m-0 p-2 border-bottom" data-user-list-filter-target="item" style="cursor: pointer;">
+								<input type="checkbox" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}" class="form-check-input me-2 m-0" {% if child.vars.checked %} checked {% endif %} data-action="change->user-list-filter#updateCount">
+								<span class="mb-0">{{ child.vars.label }}</span>
+							</label>
+						{% endfor %}
+						<div class="text-center text-secondary py-3 d-none" data-user-list-filter-target="empty">
+							<em>{{ 'noMemberFound'|trans }}</em>
+						</div>
+					</div>
+					{{ form_errors(completeForm.contributors) }}
+					{{ form_help(completeForm.contributors) }}
+				</fieldset>
+
+				{# Mark fields as rendered #}
+				{% do completeForm.doneBy.setRendered %}
+				{% do completeForm.timeSpent.setRendered %}
+				{% do completeForm.contributors.setRendered %}
+
+				<div class="form-footer">
+					<button type="submit" class="btn btn-success w-100 w-md-auto" style="min-height: 44px;">
+						<i class="ti ti-check me-2"></i>
+						{{ 'markAsDone'|trans }}
+					</button>
+				</div>
+				{{ form_end(completeForm) }}
+			</div>
+		</div>
+	{% endif %}
+
+	{# Activity Timeline #}
+	<div class="card">
+		<div class="card-header">
+			<h3 class="card-title">{{ 'activity'|trans }}</h3>
+		</div>
+		<div class="card-body">
+			{% if subTask.activities|length > 0 %}
+				<ul class="timeline">
+					{% for activity in subTask.activities %}
+						<li class="timeline-event">
+							<div class="timeline-event-icon bg-{{ activity.typeColor }}-lt">
+								<i class="ti {{ activity.typeIcon }}"></i>
+							</div>
+							<div class="card timeline-event-card">
+								<div class="card-body">
+									<div class="text-secondary float-end">{{ activity.createdAt|date('d/m/Y H:i') }}</div>
+									<h4>
+										{{ activity.user.fullName }}
+										<span class="text-secondary">•</span>
+										<span class="badge bg-{{ activity.typeColor }}-lt">
+											{{ activity.typeLabel|trans }}
+										</span>
+									</h4>
+									{% if activity.message %}
+										<p class="mt-2">{{ activity.message|nl2br }}</p>
+									{% endif %}
+								</div>
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
+			{% else %}
+				<p class="text-secondary text-center">
+					<em>{{ 'noActivityYet'|trans }}</em>
+				</p>
+			{% endif %}
+
+			{# Comment Form #}
+			{% if commentForm is defined and commentForm is not null %}
+				<hr class="my-4">
+				{{ form_start(commentForm) }}
+				<div class="mb-3">
+					{{ form_row(commentForm.message) }}
+				</div>
+				<button type="submit" class="btn btn-primary" style="min-height: 44px;">
+					<i class="ti ti-message me-2"></i>
+					{{ 'addComment'|trans }}
+				</button>
+				{{ form_end(commentForm) }}
+			{% endif %}
+		</div>
+	</div>
+
+	{# Reject Modal #}
+	{% if is_granted('SUBTASK_INSPECT', subTask) %}
+		<div class="modal fade" id="rejectModal" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">{{ 'rejectInspection'|trans }}</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<form method="post" action="{{ path('club_subtask_inspect_reject', {taskId: task.id, id: subTask.id}) }}">
+						<input type="hidden" name="activity_form[_token]" value="{{ csrf_token('activity_form') }}">
+						<div class="modal-body">
+							<div class="mb-3">
+								<label class="form-label">{{ 'rejectionReason'|trans }}
+									*</label>
+								<textarea name="activity_form[message]" class="form-control" rows="3" placeholder="{{ 'explainReason'|trans }}" required></textarea>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="min-height: 44px;">{{ 'cancel'|trans }}</button>
+							<button type="submit" class="btn btn-danger" style="min-height: 44px;">{{ 'rejectInspection'|trans }}</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}

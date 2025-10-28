@@ -18,17 +18,12 @@ class TaskStatusService
 
     /**
      * Get the current state of a subtask based on its flags
-     * Returns: 'open' | 'closed' | 'cancelled'
+     * Returns: 'open' | 'done' | 'closed' | 'cancelled'
      */
     public function getSubTaskState(SubTask $subTask): string
     {
-        // Cancelled takes precedence
-        if ($subTask->isCancelled()) {
-            return 'cancelled';
-        }
-
-        // Subtasks auto-close when done (no inspection at subtask level)
-        return $subTask->isDone() ? 'closed' : 'open';
+        // Use the actual status from the entity
+        return $subTask->getStatus();
     }
 
     /**
@@ -54,25 +49,33 @@ class TaskStatusService
     }
 
     /**
-     * Check if a task can be closed (all subtasks closed, task done and inspected if needed)
+     * Check if a task can be closed (all subtasks must be closed)
      */
     public function canCloseTask(Task $task): bool
     {
-        // Task must be done
-        if (!$task->isDone()) {
+        // All subtasks must be closed
+        foreach ($task->getSubTasks() as $subTask) {
+            if (!$subTask->isClosed() && !$subTask->isCancelled()) {
+                return false;
+            }
+        }
+
+        return $task->getSubTasks()->count() > 0;
+    }
+
+    /**
+     * Check if a subtask can be closed
+     */
+    public function canCloseSubTask(SubTask $subTask): bool
+    {
+        // Must be done
+        if (!$subTask->isDone()) {
             return false;
         }
 
         // If requires inspection, must be inspected
-        if ($task->requiresInspection() && !$task->isInspected()) {
+        if ($subTask->requiresInspection() && !$subTask->isInspected()) {
             return false;
-        }
-
-        // All subtasks must be closed
-        foreach ($task->getSubTasks() as $subTask) {
-            if ($this->getSubTaskState($subTask) !== 'closed') {
-                return false;
-            }
         }
 
         return true;
@@ -81,99 +84,99 @@ class TaskStatusService
     /**
      * Handle marking a subtask as done
      */
-    public function handleSubTaskDone(SubTask $subTask, User $user): void
+    public function handleSubTaskDone(SubTask $subTask, User $doneByUser, bool $isInspector = false, ?User $completedBy = null): void
     {
         $now = new \DateTimeImmutable();
-        $subTask->setDoneBy($user);
+        $subTask->setDoneBy($doneByUser);
         $subTask->setDoneAt($now);
 
-        // Subtasks auto-close when done (no inspection at subtask level)
+        // Set who completed/submitted the form (if different from doneBy)
+        if ($completedBy !== null) {
+            $subTask->setCompletedBy($completedBy);
+        }
+
+        // If no inspection required, auto-close
+        if (!$subTask->requiresInspection()) {
+            $subTask->setStatus('closed');
+        }
+        // If inspection required but user is qualified (inspector), auto-approve and close
+        elseif ($isInspector) {
+            $subTask->setStatus('closed');
+            $subTask->setInspectedBy($doneByUser);
+            $subTask->setInspectedAt($now);
+        }
+        // Otherwise, set to 'done' status and wait for inspection
+        else {
+            $subTask->setStatus('done');
+        }
+
+        // Log activity with info about who completed it
+        $activity = new Activity();
+        $activity->setTask($subTask->getTask());
+        $activity->setSubTask($subTask);
+        $activity->setType(ActivityType::DONE);
+        $activity->setUser($doneByUser);
+
+        // Add message if completed by someone different
+        if ($completedBy !== null && $completedBy->getId() !== $doneByUser->getId()) {
+            $activity->setMessage(sprintf(
+                'Complété par %s',
+                $completedBy->getFullName() ?: $completedBy->getEmail()
+            ));
+        }
+
+        $this->entityManager->persist($activity);
+
+        // If auto-approved by qualified member, log inspection approval too
+        if ($subTask->requiresInspection() && $isInspector && $subTask->isInspected()) {
+            $inspectionActivity = new Activity();
+            $inspectionActivity->setTask($subTask->getTask());
+            $inspectionActivity->setSubTask($subTask);
+            $inspectionActivity->setType(ActivityType::INSPECTED_APPROVED);
+            $inspectionActivity->setUser($doneByUser);
+            $inspectionActivity->setMessage('Auto-validé (membre qualifié)');
+            $this->entityManager->persist($inspectionActivity);
+        }
+
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Handle inspection approval for a subtask
+     */
+    public function handleSubTaskInspectApprove(SubTask $subTask, User $inspector): void
+    {
+        $subTask->setInspectedBy($inspector);
+        $subTask->setInspectedAt(new \DateTimeImmutable());
         $subTask->setStatus('closed');
 
         // Log activity
         $activity = new Activity();
         $activity->setTask($subTask->getTask());
         $activity->setSubTask($subTask);
-        $activity->setType(ActivityType::DONE);
-        $activity->setUser($user);
-        $this->entityManager->persist($activity);
-
-        $this->entityManager->flush();
-    }
-
-    /**
-     * Handle marking a task as done (for tasks without subtasks or manager override)
-     */
-    public function handleTaskDone(Task $task, User $user): void
-    {
-        $now = new \DateTimeImmutable();
-        $task->setDoneBy($user);
-        $task->setDoneAt($now);
-
-        // If no inspection required, auto-close
-        if (!$task->requiresInspection()) {
-            $task->setStatus('closed');
-            $task->setInspectedBy($user);
-            $task->setInspectedAt($now);
-        } else {
-            // Keep status as open until inspected
-            $task->setStatus('open');
-        }
-
-        // Log activity
-        $activity = new Activity();
-        $activity->setTask($task);
-        $activity->setType(ActivityType::DONE);
-        $activity->setUser($user);
-        $this->entityManager->persist($activity);
-
-        $this->entityManager->flush();
-    }
-
-    /**
-     * Handle inspection approval for a task
-     */
-    public function handleTaskInspectApprove(Task $task, User $inspector): void
-    {
-        $task->setInspectedBy($inspector);
-        $task->setInspectedAt(new \DateTimeImmutable());
-
-        // Log activity - this is for TASK inspection, not subtask
-        $activity = new Activity();
-        $activity->setTask($task);
         $activity->setType(ActivityType::INSPECTED_APPROVED);
         $activity->setUser($inspector);
         $this->entityManager->persist($activity);
 
-        // Check if task can now be closed
-        if ($this->canCloseTask($task)) {
-            $task->setStatus('closed');
-
-            $closeActivity = new Activity();
-            $closeActivity->setTask($task);
-            $closeActivity->setType(ActivityType::CLOSED);
-            $closeActivity->setUser($inspector);
-            $this->entityManager->persist($closeActivity);
-        }
-
         $this->entityManager->flush();
     }
 
     /**
-     * Handle inspection rejection for a task
+     * Handle inspection rejection for a subtask
      */
-    public function handleTaskInspectReject(Task $task, User $inspector, ?string $reason = null): void
+    public function handleSubTaskInspectReject(SubTask $subTask, User $inspector, ?string $reason = null): void
     {
         // Revert to open state
-        $task->setStatus('open');
-        $task->setDoneBy(null);
-        $task->setDoneAt(null);
-        $task->setInspectedBy(null);
-        $task->setInspectedAt(null);
+        $subTask->setStatus('open');
+        $subTask->setDoneBy(null);
+        $subTask->setDoneAt(null);
+        $subTask->setInspectedBy(null);
+        $subTask->setInspectedAt(null);
 
-        // Log activity with rejection reason - this is for TASK inspection, not subtask
+        // Log activity with rejection reason
         $activity = new Activity();
-        $activity->setTask($task);
+        $activity->setTask($subTask->getTask());
+        $activity->setSubTask($subTask);
         $activity->setType(ActivityType::INSPECTED_REJECTED);
         $activity->setUser($inspector);
         $activity->setMessage($reason);
@@ -182,11 +185,16 @@ class TaskStatusService
         $this->entityManager->flush();
     }
 
+
     /**
-     * Handle closing a task
+     * Handle closing a task (only if all subtasks are closed)
      */
     public function handleTaskClose(Task $task, User $user): void
     {
+        if (!$this->canCloseTask($task)) {
+            throw new \RuntimeException('Cannot close task: not all subtasks are closed');
+        }
+
         $task->setStatus('closed');
 
         // Log activity
@@ -194,55 +202,6 @@ class TaskStatusService
         $activity->setTask($task);
         $activity->setType(ActivityType::CLOSED);
         $activity->setUser($user);
-        $this->entityManager->persist($activity);
-
-        $this->entityManager->flush();
-    }
-
-    /**
-     * Handle manager marking task as done for another user
-     */
-    public function handleManagerDo(Task $task, User $manager, User $doneBy, \DateTimeImmutable $doneAt): void
-    {
-        $task->setDoneBy($doneBy);
-        $task->setDoneAt($doneAt);
-
-        // If no inspection required, auto-close
-        if (!$task->requiresInspection()) {
-            $task->setStatus('closed');
-            $task->setInspectedBy($manager);
-            $task->setInspectedAt(new \DateTimeImmutable());
-        }
-
-        // Log activity
-        $activity = new Activity();
-        $activity->setTask($task);
-        $activity->setType(ActivityType::DONE);
-        $activity->setUser($manager);
-        $activity->setMessage(sprintf('Marked as done by %s on behalf of %s', $manager->getFullName(), $doneBy->getFullName()));
-        $this->entityManager->persist($activity);
-
-        $this->entityManager->flush();
-    }
-
-    /**
-     * Handle manager marking subtask as done for another user
-     */
-    public function handleManagerSubTaskDo(SubTask $subTask, User $manager, User $doneBy, \DateTimeImmutable $doneAt): void
-    {
-        $subTask->setDoneBy($doneBy);
-        $subTask->setDoneAt($doneAt);
-
-        // Subtasks auto-close when done (no inspection at subtask level)
-        $subTask->setStatus('closed');
-
-        // Log activity
-        $activity = new Activity();
-        $activity->setTask($subTask->getTask());
-        $activity->setSubTask($subTask);
-        $activity->setType(ActivityType::DONE);
-        $activity->setUser($manager);
-        $activity->setMessage(sprintf('Marked as done by %s on behalf of %s', $manager->getFullName(), $doneBy->getFullName()));
         $this->entityManager->persist($activity);
 
         $this->entityManager->flush();

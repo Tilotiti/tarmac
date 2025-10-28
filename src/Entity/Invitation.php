@@ -38,6 +38,9 @@ class Invitation
     #[ORM\Column]
     private bool $isInspector = false;
 
+    #[ORM\Column]
+    private bool $isPilote = false;
+
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $createdAt = null;
 
@@ -152,6 +155,18 @@ class Invitation
         return $this;
     }
 
+    public function isPilote(): bool
+    {
+        return $this->isPilote;
+    }
+
+    public function setIsPilote(bool $isPilote): static
+    {
+        $this->isPilote = $isPilote;
+
+        return $this;
+    }
+
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -211,10 +226,13 @@ class Invitation
     {
         $roles = [];
         if ($this->isManager) {
-            $roles[] = 'Manager';
+            $roles[] = 'Gestionnaire';
         }
         if ($this->isInspector) {
-            $roles[] = 'Inspecteur';
+            $roles[] = 'Qualifié';
+        }
+        if ($this->isPilote) {
+            $roles[] = 'Pilote';
         }
 
         return !empty($roles) ? implode(', ', $roles) : 'Membre';

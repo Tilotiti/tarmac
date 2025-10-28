@@ -80,20 +80,11 @@
 					{% if plan.taskTemplates|length > 0 %}
 						{% for taskTemplate in plan.taskTemplates %}
 							<div class="mb-4 {% if not loop.last %}pb-4 border-bottom{% endif %}">
-								<div class="d-flex justify-content-between align-items-start mb-2">
+								<div class="mb-2">
 									<h4 class="mb-0">
 										<span class="badge badge-outline text-primary me-2">{{ loop.index }}</span>
 										{{ taskTemplate.title }}
 									</h4>
-									<div class="d-flex gap-2">
-										{% if taskTemplate.requiresInspection %}
-											<span class="badge bg-purple text-white">
-												<i class="ti ti-eye-check me-1"></i>
-												{{ 'requiresInspection'|trans }}
-											</span>
-										{% endif %}
-										{% include 'component/difficultyBadge.html.twig' with {'difficulty': taskTemplate.difficulty} %}
-									</div>
 								</div>
 
 								{% if taskTemplate.description %}
@@ -106,13 +97,24 @@
 										<div class="list-group list-group-flush">
 											{% for subTaskTemplate in taskTemplate.subTaskTemplates %}
 												<div class="list-group-item px-0">
-													<div class="d-flex align-items-start">
+													<div class="d-flex align-items-start justify-content-between">
+														<div class="d-flex align-items-start flex-grow-1">
 														<span class="badge badge-outline text-secondary me-2">{{ loop.parent.loop.index }}.{{ loop.index }}</span>
 														<div class="flex-grow-1">
 															<div class="fw-bold">{{ subTaskTemplate.title }}</div>
 															{% if subTaskTemplate.description %}
 																<div class="text-secondary small">{{ subTaskTemplate.description }}</div>
 															{% endif %}
+															</div>
+														</div>
+														<div class="d-flex gap-2 align-items-start ms-3">
+															{% if subTaskTemplate.requiresInspection %}
+																<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+																	<i class="ti ti-shield-check me-1"></i>
+																	{{ 'requiresInspection'|trans }}
+																</span>
+															{% endif %}
+															{% include 'component/difficultyBadge.html.twig' with {'difficulty': subTaskTemplate.difficulty} %}
 														</div>
 													</div>
 												</div>

@@ -20,44 +20,62 @@
 	{# Member cards - Mobile-first design #}
 	<div class="row">
 		{% for membership in memberships %}
-			<div class="col-12 col-md-6 col-lg-4 mb-3">
+			<div class="col-12 mb-3">
 				<a href="{{ path('club_member_show', {id: membership.id}) }}" class="text-decoration-none">
-					<div class="card h-100 card-link {% if not membership.user.active %}border-danger{% endif %}" style="cursor: pointer;">
+					<div class="card card-link {% if not membership.user.active %}border-danger{% endif %}" style="cursor: pointer;">
 						<div class="card-body">
-							<div class="d-flex align-items-start mb-3">
+							<div class="d-flex align-items-center justify-content-between">
+								<div class="d-flex align-items-center flex-fill">
 								<span class="avatar me-3">{{ membership.user.firstname[:1] }}{{ membership.user.lastname[:1] }}</span>
 								<div class="flex-fill">
 									<div class="font-weight-medium {% if not membership.user.active %}text-danger{% else %}text-dark{% endif %}">
 										{{ membership.user.fullname }}
 									</div>
-									<div class="text-secondary small">{{ membership.user.email }}</div>
+										<div class="text-secondary small">
+											<i class="ti ti-mail me-1"></i>
+											{{ membership.user.email }}
+										</div>
+										<div class="text-secondary small mt-1">
+											<i class="ti ti-calendar me-1"></i>
+											{{ 'memberSince'|trans }}
+											{{ membership.joinedAt|date('d/m/Y') }}
+										</div>
+									</div>
+								</div>
 
-									{# Roles #}
-									<div class="mt-2">
+								{# Badges on the right #}
+								<div class="d-flex flex-wrap gap-2 align-items-center ms-3">
 										{% if membership.isManager %}
-											<span class="badge bg-blue-lt me-1">{{ 'manager'|trans }}</span>
+										<span class="badge bg-blue-lt text-white">
+											<i class="ti ti-user-star me-1"></i>
+											{{ 'manager'|trans }}
+										</span>
 										{% endif %}
 										{% if membership.isInspector %}
-											<span class="badge bg-green-lt">{{ 'inspector'|trans }}</span>
+										<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'qualifiedTooltip'|trans }}">
+											<i class="ti ti-shield-check me-1"></i>
+											{{ 'inspector'|trans }}
+										</span>
+									{% endif %}
+									{% if membership.isPilote %}
+										<span class="badge bg-purple-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'pilotTooltip'|trans }}">
+											<i class="ti ti-plane me-1"></i>
+											{{ 'pilot'|trans }}
+										</span>
 										{% endif %}
-										{% if not membership.isManager and not membership.isInspector %}
-											<span class="text-muted small">{{ 'member'|trans }}</span>
+									{% if not membership.isManager and not membership.isInspector and not membership.isPilote %}
+										<span class="badge bg-secondary-lt text-white">
+											<i class="ti ti-user me-1"></i>
+											{{ 'member'|trans }}
+										</span>
 										{% endif %}
-									</div>
-
-									{# Status #}
 									{% if not membership.user.active %}
-										<div class="mt-2">
-											<span class="badge bg-danger">{{ 'disabled'|trans }}</span>
-										</div>
+										<span class="badge bg-danger text-white">
+											<i class="ti ti-ban me-1"></i>
+											{{ 'disabled'|trans }}
+										</span>
 									{% endif %}
 								</div>
-							</div>
-
-							<div class="text-secondary small">
-								<i class="ti ti-calendar me-1"></i>
-								{{ 'memberSince'|trans }}
-								{{ membership.joinedAt|date('d/m/Y') }}
 							</div>
 						</div>
 					</div>

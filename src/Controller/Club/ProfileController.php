@@ -13,7 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/profile', host: '{subdomain}.%domain%')]
+#[Route('/profile', host: '{subdomain}.%domain%', requirements: ['subdomain' => '(?!www|app).*'])]
 #[IsGranted('ROLE_USER')]
 class ProfileController extends AbstractController
 {

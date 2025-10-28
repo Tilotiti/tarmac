@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Enum\EquipmentType;
 use App\Entity\SubTask;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -15,6 +16,7 @@ class SubTaskVoter extends Voter
     public const DELETE = 'SUBTASK_DELETE';
     public const COMMENT = 'SUBTASK_COMMENT';
     public const DO = 'SUBTASK_DO';
+    public const INSPECT = 'SUBTASK_INSPECT';
     public const CANCEL = 'SUBTASK_CANCEL';
 
     public function __construct(
@@ -30,6 +32,7 @@ class SubTaskVoter extends Voter
             self::DELETE,
             self::COMMENT,
             self::DO ,
+            self::INSPECT,
             self::CANCEL,
         ]) && $subject instanceof SubTask;
     }
@@ -57,36 +60,58 @@ class SubTaskVoter extends Voter
             return false;
         }
 
+        $membership = $user->getMembershipForClub($club);
         $isManager = $user->isManagerOfClub($club);
         $isInspector = $user->isInspectorOfClub($club);
+        $isPilote = $membership ? $membership->isPilote() : false;
 
         return match ($attribute) {
-            self::VIEW => $this->canView($subTask, $user, $isManager, $isInspector),
-            self::EDIT => $isManager,
+            self::VIEW => $this->canView($subTask, $user, $isManager, $isInspector, $isPilote),
+            self::EDIT => $this->canEdit($subTask, $isManager),
             self::DELETE => $isManager,
             self::COMMENT => true, // Any club member can comment
-            self::DO => $this->canDo($subTask, $user),
+            self::DO => $this->canDo($subTask, $user, $isManager, $isInspector, $isPilote),
+            self::INSPECT => $this->canInspect($subTask, $isInspector),
             self::CANCEL => $isManager,
             default => false,
         };
     }
 
-    private function canView(SubTask $subTask, User $user, bool $isManager, bool $isInspector): bool
+    private function canEdit(SubTask $subTask, bool $isManager): bool
+    {
+        // Only managers can edit
+        if (!$isManager) {
+            return false;
+        }
+        
+        // Cannot edit closed or cancelled subtasks
+        if ($subTask->getStatus() === 'closed' || $subTask->getStatus() === 'cancelled') {
+            return false;
+        }
+        
+        return true;
+    }
+
+    private function canView(SubTask $subTask, User $user, bool $isManager, bool $isInspector, bool $isPilote): bool
     {
         $task = $subTask->getTask();
         $equipment = $task->getEquipment();
 
-        // Public equipment - anyone can view
+        // Check pilot visibility rules for glider equipment
+        if ($equipment->getType() === EquipmentType::GLIDER) {
+            // Non-pilotes cannot view glider tasks (unless manager or inspector)
+            if (!$isPilote && !$isManager && !$isInspector) {
+                return false;
+            }
+        }
+
+        // Public equipment - anyone can view (with pilot rules above)
         if (!$equipment->isPrivate()) {
             return true;
         }
 
-        // Private equipment - only managers, inspectors (if task requires inspection), and owners
-        if ($isManager) {
-            return true;
-        }
-
-        if ($task->requiresInspection() && $isInspector) {
+        // Private equipment - only managers, inspectors, and owners
+        if ($isManager || $isInspector) {
             return true;
         }
 
@@ -94,15 +119,43 @@ class SubTaskVoter extends Voter
         return $equipment->getOwners()->contains($user);
     }
 
-    private function canDo(SubTask $subTask, User $user): bool
+    private function canDo(SubTask $subTask, User $user, bool $isManager, bool $isInspector, bool $isPilote): bool
     {
-        // Cannot do if cancelled or closed
-        if ($subTask->isCancelled() || $subTask->isClosed()) {
+        // Cannot do if cancelled or closed or done
+        if ($subTask->isCancelled() || $subTask->isClosed() || $subTask->isDone()) {
             return false;
         }
 
-        // Any club member can mark open subtasks as done
+        $task = $subTask->getTask();
+        $equipment = $task->getEquipment();
+
+        // Check pilot rules for glider equipment
+        if ($equipment->getType() === EquipmentType::GLIDER) {
+            // Non-pilotes cannot work on glider tasks (unless manager or inspector)
+            if (!$isPilote && !$isManager && !$isInspector) {
+                return false;
+            }
+        }
+
+        // Any club member can mark open subtasks as done (with pilot rules above)
         return true;
     }
+
+    private function canInspect(SubTask $subTask, bool $isInspector): bool
+    {
+        // Must be an inspector
+        if (!$isInspector) {
+            return false;
+        }
+
+        // SubTask must require inspection
+        if (!$subTask->requiresInspection()) {
+            return false;
+        }
+
+        // SubTask must be done and not yet inspected
+        return $subTask->isDone() && !$subTask->isInspected() && $subTask->getStatus() === 'done';
+    }
 }
+
 

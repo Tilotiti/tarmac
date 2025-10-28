@@ -8,46 +8,24 @@
 
 {% block page_actions %}
 	<div class="btn-list">
-		{% if is_granted('TASK_EDIT', task) and not task.isClosed and task.status != 'cancelled' %}
+		{% if is_granted('TASK_EDIT', task) %}
 			<a href="{{ path('club_task_edit', {id: task.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
 				<i class="ti ti-edit me-2"></i>
 				<span class="d-none d-sm-inline">{{ 'edit'|trans }}</span>
 			</a>
 		{% endif %}
 
-		{# Check if all subtasks are done #}
-		{% set allSubTasksDone = true %}
-		{% if task.subTasks|length > 0 %}
-			{% for subtask in task.subTasks %}
-				{% if subtask.status != 'closed' %}
-					{% set allSubTasksDone = false %}
-				{% endif %}
-			{% endfor %}
-		{% endif %}
-
-		{% if is_granted('TASK_DO', task) and not task.isDone and task.status == 'open' and allSubTasksDone %}
-			<form method="post" action="{{ path('club_task_do', {id: task.id}) }}" class="d-inline">
+		{# Close task button - voter handles all validation (status, subtasks, permissions, etc.) #}
+		{% if is_granted('TASK_CLOSE', task) %}
+			<form method="post" action="{{ path('club_task_close', {id: task.id}) }}" class="d-inline">
 				<button type="submit" class="btn btn-success" style="min-height: 44px;">
 					<i class="ti ti-check me-2"></i>
-					<span class="d-none d-sm-inline">{{ 'markAsDone'|trans }}</span>
+					<span class="d-none d-sm-inline">{{ 'closeTask'|trans }}</span>
 				</button>
 			</form>
 		{% endif %}
 
-		{% if is_granted('TASK_INSPECT', task) and task.isDone and not task.isClosed and task.requiresInspection and task.status != 'cancelled' %}
-			<form method="post" action="{{ path('club_task_inspect_approve', {id: task.id}) }}" class="d-inline">
-				<button type="submit" class="btn btn-success" style="min-height: 44px;">
-					<i class="ti ti-circle-check me-2"></i>
-					<span class="d-none d-sm-inline">{{ 'approveInspection'|trans }}</span>
-				</button>
-			</form>
-			<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal" style="min-height: 44px;">
-				<i class="ti ti-circle-x me-2"></i>
-				<span class="d-none d-sm-inline">{{ 'rejectInspection'|trans }}</span>
-			</button>
-		{% endif %}
-
-		{% if is_granted('TASK_CANCEL', task) and task.status == 'open' %}
+		{% if is_granted('TASK_CANCEL', task) %}
 			<button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal" style="min-height: 44px;">
 				<i class="ti ti-ban me-2"></i>
 				<span class="d-none d-sm-inline">{{ 'cancelTask'|trans }}</span>
@@ -89,12 +67,12 @@
 					<div class="text-secondary small mb-1">{{ 'status'|trans }}</div>
 					<div>
 						{% if task.isWaitingForApproval %}
-							<span class="badge bg-warning text-white">
+							<span class="badge bg-warning-lt text-white">
 								<i class="ti ti-hourglass me-1"></i>
 								{{ 'waitingForApproval'|trans }}
 							</span>
 						{% else %}
-							<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'cancelled' ? 'danger' : 'info') }} text-white">
+							<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'cancelled' ? 'danger' : 'info') }}-lt text-white">
 								<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'cancelled' ? 'x' : (task.status == 'done' ? 'check' : 'circle')) }} me-1"></i>
 								{{ task.status|trans }}
 							</span>
@@ -113,8 +91,8 @@
 					<div class="col-12 col-md-6 mb-3">
 						<div class="text-secondary small mb-1">{{ 'inspection'|trans }}</div>
 						<div>
-							<span class="badge bg-purple text-white">
-								<i class="ti ti-eye-check me-1"></i>
+							<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+								<i class="ti ti-shield-check me-1"></i>
 								{{ 'requiresInspection'|trans }}
 							</span>
 						</div>
@@ -163,6 +141,16 @@
 						</div>
 					</div>
 				{% endif %}
+
+				{% if task.totalTimeSpent > 0 %}
+					<div class="col-12 col-md-6 mb-3">
+						<div class="text-secondary small mb-1">{{ 'totalTimeSpent'|trans }}</div>
+						<div>
+							<i class="ti ti-clock me-1"></i>
+							{{ task.totalTimeSpent|format_time_spent }}
+						</div>
+					</div>
+				{% endif %}
 			</div>
 
 			{% if task.description %}
@@ -207,7 +195,7 @@
 	<div class="card mb-3">
 		<div class="card-header">
 			<h3 class="card-title">{{ 'subTasks'|trans }}</h3>
-			{% if is_granted('TASK_CREATE_SUBTASK', task) and not task.isDone %}
+			{% if is_granted('TASK_CREATE_SUBTASK', task) %}
 				<div class="card-actions">
 					<a href="{{ path('club_subtask_new', {taskId: task.id}) }}" class="btn btn-primary btn-sm" style="min-height: 44px;">
 						<i class="ti ti-plus me-2"></i>
@@ -218,12 +206,12 @@
 		</div>
 		<div class="list-group list-group-flush">
 			{% for subtask in task.subTasks %}
-				<div class="list-group-item">
+				<a href="{{ path('club_subtask_show', {taskId: task.id, id: subtask.id}) }}" class="list-group-item list-group-item-action">
 					<div
-						class="row align-items-center">
+						class="d-flex align-items-start justify-content-between">
 						{# Content Column #}
 						<div
-							class="col-12 col-md-8">
+							class="flex-grow-1">
 							{# Title #}
 							<div class="mb-2">
 								<strong>{{ subtask.title }}</strong>
@@ -231,10 +219,24 @@
 
 							{# Badges #}
 							<div class="mb-2">
-								<span class="badge bg-{{ subtask.status == 'closed' ? 'success' : (subtask.status == 'cancelled' ? 'danger' : 'info') }} text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'status'|trans }}">
-									<i class="ti ti-{{ subtask.status == 'closed' ? 'circle-check' : (subtask.status == 'cancelled' ? 'x' : 'circle') }} me-1"></i>
-									{{ subtask.status|trans }}
-								</span>
+								{% if subtask.isWaitingForApproval %}
+									<span class="badge bg-warning-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'status'|trans }}">
+										<i class="ti ti-hourglass me-1"></i>
+										{{ 'waitingForApproval'|trans }}
+									</span>
+								{% else %}
+									<span class="badge bg-{{ subtask.status == 'closed' ? 'success' : (subtask.status == 'cancelled' ? 'danger' : 'info') }}-lt	 text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'status'|trans }}">
+										<i class="ti ti-{{ subtask.status == 'closed' ? 'circle-check' : (subtask.status == 'cancelled' ? 'x' : 'circle') }} me-1"></i>
+										{{ subtask.status|trans }}
+									</span>
+								{% endif %}
+								{% if subtask.requiresInspection %}
+									<span class="badge bg-warning-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+										<i class="ti ti-shield-check me-1"></i>
+										{{ 'requiresInspection'|trans }}
+									</span>
+								{% endif %}
+								{% include 'component/difficultyBadge.html.twig' with {'difficulty': subtask.difficulty} %}
 							</div>
 
 							{# Description #}
@@ -245,27 +247,12 @@
 							{% endif %}
 						</div>
 
-						{# Actions Column #}
-						<div class="col-12 col-md-4 mt-3 mt-md-0">
-							<div class="d-flex flex-column gap-2">
-								{% if is_granted('SUBTASK_EDIT', subtask) and subtask.status != 'closed' %}
-									<a href="{{ path('club_subtask_edit', {taskId: task.id, id: subtask.id}) }}" class="btn btn-secondary w-100" style="min-height: 44px;">
-										<i class="ti ti-edit me-2"></i>
-										{{ 'edit'|trans }}
-									</a>
-								{% endif %}
-								{% if is_granted('SUBTASK_DO', subtask) and not subtask.isDone and subtask.status == 'open' %}
-									<form method="post" action="{{ path('club_subtask_do', {taskId: task.id, id: subtask.id}) }}">
-										<button type="submit" class="btn btn-success w-100" style="min-height: 44px;">
-											<i class="ti ti-check me-2"></i>
-											{{ 'markAsDone'|trans }}
-										</button>
-									</form>
-								{% endif %}
-							</div>
+						{# Arrow icon #}
+						<div class="ms-3">
+							<i class="ti ti-chevron-right text-secondary"></i>
 						</div>
 					</div>
-				</div>
+				</a>
 			{% else %}
 				<div class="list-group-item text-center text-secondary">
 					<em>{{ 'noSubTasksFound'|trans }}</em>
@@ -280,9 +267,9 @@
 			<h3 class="card-title">{{ 'activity'|trans }}</h3>
 		</div>
 		<div class="card-body">
-			{% if task.activities|length > 0 %}
+			{% if task.mainActivities|length > 0 %}
 				<ul class="timeline">
-					{% for activity in task.activities %}
+					{% for activity in task.mainActivities %}
 						<li class="timeline-event">
 							<div class="timeline-event-icon bg-{{ activity.typeColor }}-lt">
 								<i class="ti {{ activity.typeIcon }}"></i>
@@ -351,32 +338,6 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="min-height: 44px;">{{ 'cancel'|trans }}</button>
 						<button type="submit" class="btn btn-danger" style="min-height: 44px;">{{ 'cancelTask'|trans }}</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-
-	{# Reject Modal #}
-	<div class="modal fade" id="rejectModal" tabindex="-1">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">{{ 'rejectInspection'|trans }}</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-				</div>
-				<form method="post" action="{{ path('club_task_inspect_reject', {id: task.id}) }}">
-					<input type="hidden" name="activity_form[_token]" value="{{ csrf_token('activity_form') }}">
-					<div class="modal-body">
-						<div class="mb-3">
-							<label class="form-label">{{ 'rejectionReason'|trans }}
-								*</label>
-							<textarea name="activity_form[message]" class="form-control" rows="3" placeholder="{{ 'explainReason'|trans }}" required></textarea>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="min-height: 44px;">{{ 'cancel'|trans }}</button>
-						<button type="submit" class="btn btn-danger" style="min-height: 44px;">{{ 'rejectInspection'|trans }}</button>
 					</div>
 				</form>
 			</div>

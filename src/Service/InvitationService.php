@@ -37,6 +37,7 @@ class InvitationService
         $invitation->setLastname($data['lastname'] ?? null);
         $invitation->setIsManager($data['isManager'] ?? false);
         $invitation->setIsInspector($data['isInspector'] ?? false);
+        $invitation->setIsPilote($data['isPilote'] ?? false);
 
         // Generate secure token
         $token = bin2hex(random_bytes(32));
@@ -131,6 +132,7 @@ class InvitationService
         $membership->setClub($invitation->getClub());
         $membership->setIsManager($invitation->isManager());
         $membership->setIsInspector($invitation->isInspector());
+        $membership->setIsPilote($invitation->isPilote());
 
         $this->entityManager->persist($membership);
 

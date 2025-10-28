@@ -46,6 +46,11 @@ class InvitationType extends AbstractType
                 'required' => false,
                 'help' => 'inspectorHelp',
             ])
+            ->add('isPilote', CheckboxType::class, [
+                'label' => 'pilot',
+                'required' => false,
+                'help' => 'pilotHelp',
+            ])
         ;
     }
 

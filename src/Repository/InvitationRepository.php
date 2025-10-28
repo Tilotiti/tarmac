@@ -31,9 +31,9 @@ class InvitationRepository extends ServiceEntityRepository
      */
     public function findValidByToken(string $token): ?Invitation
     {
-        return $this->createQueryBuilder('i')
-            ->where('i.token = :token')
-            ->andWhere('i.expiresAt > :now')
+        return $this->createQueryBuilder('invitation')
+            ->where('invitation.token = :token')
+            ->andWhere('invitation.expiresAt > :now')
             ->setParameter('token', $token)
             ->setParameter('now', new \DateTimeImmutable())
             ->getQuery()
@@ -45,9 +45,9 @@ class InvitationRepository extends ServiceEntityRepository
      */
     public function findPendingByEmail(string $email): array
     {
-        return $this->createQueryBuilder('i')
-            ->where('i.email = :email')
-            ->andWhere('i.expiresAt > :now')
+        return $this->createQueryBuilder('invitation')
+            ->where('invitation.email = :email')
+            ->andWhere('invitation.expiresAt > :now')
             ->setParameter('email', $email)
             ->setParameter('now', new \DateTimeImmutable())
             ->getQuery()
@@ -59,10 +59,10 @@ class InvitationRepository extends ServiceEntityRepository
      */
     public function findPendingByEmailAndClub(string $email, Club $club): ?Invitation
     {
-        return $this->createQueryBuilder('i')
-            ->where('i.email = :email')
-            ->andWhere('i.club = :club')
-            ->andWhere('i.expiresAt > :now')
+        return $this->createQueryBuilder('invitation')
+            ->where('invitation.email = :email')
+            ->andWhere('invitation.club = :club')
+            ->andWhere('invitation.expiresAt > :now')
             ->setParameter('email', $email)
             ->setParameter('club', $club)
             ->setParameter('now', new \DateTimeImmutable())
@@ -73,18 +73,18 @@ class InvitationRepository extends ServiceEntityRepository
     /**
      * Query pending invitations by club with filters
      */
-    public function findPendingByClub(Club $club, array $filters = []): QueryBuilder
+    public function queryPendingByClub(Club $club, array $filters = []): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('i')
-            ->where('i.club = :club')
-            ->andWhere('i.expiresAt > :now')
+        $qb = $this->createQueryBuilder('invitation')
+            ->where('invitation.club = :club')
+            ->andWhere('invitation.expiresAt > :now')
             ->setParameter('club', $club)
             ->setParameter('now', new \DateTimeImmutable())
-            ->orderBy('i.createdAt', 'DESC');
+            ->orderBy('invitation.createdAt', 'DESC');
 
         // Search filter (email or name)
         if (!empty($filters['search'])) {
-            $qb->andWhere('LOWER(i.email) LIKE :search OR LOWER(i.firstname) LIKE :search OR LOWER(i.lastname) LIKE :search')
+            $qb->andWhere('LOWER(invitation.email) LIKE :search OR LOWER(invitation.firstname) LIKE :search OR LOWER(invitation.lastname) LIKE :search')
                 ->setParameter('search', '%' . strtolower($filters['search']) . '%');
         }
 
@@ -92,13 +92,13 @@ class InvitationRepository extends ServiceEntityRepository
         if (!empty($filters['role'])) {
             switch ($filters['role']) {
                 case 'manager':
-                    $qb->andWhere('i.isManager = true');
+                    $qb->andWhere('invitation.isManager = true');
                     break;
                 case 'inspector':
-                    $qb->andWhere('i.isInspector = true');
+                    $qb->andWhere('invitation.isInspector = true');
                     break;
                 case 'member':
-                    $qb->andWhere('i.isManager = false AND i.isInspector = false');
+                    $qb->andWhere('invitation.isManager = false AND invitation.isInspector = false');
                     break;
             }
         }

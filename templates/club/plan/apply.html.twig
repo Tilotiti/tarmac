@@ -20,7 +20,8 @@
 				</span>
 				<span class="badge bg-primary text-white me-2">
 					<i class="ti ti-checkbox me-1"></i>
-					{{ plan.taskTemplates|length }} {{ 'tasks'|trans|lower }}
+					{{ plan.taskTemplates|length }}
+					{{ 'tasks'|trans|lower }}
 				</span>
 				{% set totalSubTasks = 0 %}
 				{% for task in plan.taskTemplates %}
@@ -29,7 +30,8 @@
 				{% if totalSubTasks > 0 %}
 					<span class="badge bg-secondary text-white">
 						<i class="ti ti-list-check me-1"></i>
-						{{ totalSubTasks }} {{ 'subTasks'|trans|lower }}
+						{{ totalSubTasks }}
+						{{ 'subTasks'|trans|lower }}
 					</span>
 				{% endif %}
 			</div>
@@ -72,7 +74,8 @@
 								<div>
 									<div class="fw-bold">{{ app.plan.name }}</div>
 									<div class="text-secondary small">
-										{{ 'dueDate'|trans }}: {{ app.dueAt|date('d/m/Y') }}
+										{{ 'dueDate'|trans }}:
+										{{ app.dueAt|date('d/m/Y') }}
 									</div>
 								</div>
 								<span class="badge bg-{{ app.isOverdue ? 'danger' : (app.isDueSoon ? 'warning' : 'info') }} text-white">
@@ -104,19 +107,20 @@
 								</div>
 								<div class="d-flex gap-2">
 									{% if taskTemplate.requiresInspection %}
-										<span class="badge bg-purple text-white">
-											<i class="ti ti-eye-check me-1"></i>
+										<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+											<i class="ti ti-shield-check me-1"></i>
 										</span>
 									{% endif %}
 									{% include 'component/difficultyBadge.html.twig' with {'difficulty': taskTemplate.difficulty, 'size': 'sm'} %}
 								</div>
 							</div>
-							
+
 							{# Subtasks count #}
 							{% if taskTemplate.subTaskTemplates|length > 0 %}
 								<div class="text-secondary small ms-4">
 									<i class="ti ti-list-check me-1"></i>
-									{{ taskTemplate.subTaskTemplates|length }} {{ 'subTasks'|trans|lower }}
+									{{ taskTemplate.subTaskTemplates|length }}
+									{{ 'subTasks'|trans|lower }}
 								</div>
 							{% endif %}
 						</div>
@@ -138,4 +142,3 @@
 
 	{{ form_end(form) }}
 {% endblock %}
-

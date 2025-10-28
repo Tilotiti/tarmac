@@ -1,0 +1,134 @@
+# Repository Query Builder Aliases
+
+When working with Doctrine repositories and QueryBuilder, always use **explicit, descriptive alias names**.
+
+## Rules
+
+### 1. Main Entity Alias
+Use the full entity name in lowercase for the main entity being queried.
+
+**Good:**
+```php
+$this->createQueryBuilder('contribution')
+$this->createQueryBuilder('task')
+$this->createQueryBuilder('membership')
+```
+
+**Bad:**
+```php
+$this->createQueryBuilder('c')
+$this->createQueryBuilder('t')
+$this->createQueryBuilder('m')
+```
+
+### 2. Joined Entities
+Use descriptive aliases that indicate the relationship or purpose.
+
+**Good:**
+```php
+->join('contribution.subTask', 'subtask')
+->join('contribution.membership', 'membership')
+->join('task.equipment', 'equipment')
+->leftJoin('equipment.owners', 'owners')
+```
+
+**Bad:**
+```php
+->join('contribution.subTask', 'st')
+->join('contribution.membership', 'm')
+->join('task.equipment', 'e')
+->leftJoin('equipment.owners', 'o')
+```
+
+### 3. Context-Specific Aliases
+When you need multiple joins to the same entity type, use context-specific prefixes.
+
+**Good:**
+```php
+->join('task.equipment', 'equipment_standalone')
+->join('task.equipment', 'equipment_inspection')
+->join('membership.user', 'user_creator')
+->join('membership.user', 'user_contributor')
+```
+
+**Bad:**
+```php
+->join('task.equipment', 'eq1')
+->join('task.equipment', 'eq2')
+->join('membership.user', 'u1')
+->join('membership.user', 'u2')
+```
+
+### 4. Filter-Specific Aliases
+When creating aliases for specific filtering purposes, describe the filter.
+
+**Good:**
+```php
+->join('task.equipment', 'equipment_glider')
+->join('task.subTasks', 'subtask_awaiting_inspection')
+->join('membership.club', 'club_demo')
+```
+
+**Bad:**
+```php
+->join('task.equipment', 'eq_g')
+->join('task.subTasks', 'st_ai')
+->join('membership.club', 'c_d')
+```
+
+## Examples
+
+### ContributionRepository
+
+```php
+public function findBySubTask(SubTask $subTask): array
+{
+    return $this->createQueryBuilder('contribution')
+        ->where('contribution.subTask = :subTask')
+        ->setParameter('subTask', $subTask)
+        ->orderBy('contribution.timeSpent', 'DESC')
+        ->getQuery()
+        ->getResult();
+}
+
+public function getContributionsByTask(Task $task): array
+{
+    return $this->createQueryBuilder('contribution')
+        ->join('contribution.subTask', 'subtask')
+        ->where('subtask.task = :task')
+        ->setParameter('task', $task)
+        ->orderBy('subtask.position', 'ASC')
+        ->addOrderBy('contribution.timeSpent', 'DESC')
+        ->getQuery()
+        ->getResult();
+}
+```
+
+### TaskRepository
+
+```php
+public function filterByEquipmentType(QueryBuilder $qb, EquipmentType $type): QueryBuilder
+{
+    return $qb
+        ->join('task.equipment', 'equipment')
+        ->andWhere('equipment.type = :equipmentType')
+        ->setParameter('equipmentType', $type);
+}
+
+public function filterByAwaitingInspection(QueryBuilder $qb): QueryBuilder
+{
+    return $qb
+        ->join('task.subTasks', 'subtask_inspection')
+        ->andWhere('subtask_inspection.requiresInspection = true')
+        ->andWhere('subtask_inspection.status = :done')
+        ->setParameter('done', 'done');
+}
+```
+
+## Benefits
+
+1. **Readability**: Code is self-documenting and easier to understand
+2. **Maintainability**: Future developers can quickly understand the query purpose
+3. **Debugging**: Clear aliases make SQL output easier to read and debug
+4. **Collaboration**: Team members don't need to guess what abbreviations mean
+5. **IDE Support**: Better autocomplete and navigation with descriptive names

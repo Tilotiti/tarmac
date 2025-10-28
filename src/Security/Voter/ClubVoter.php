@@ -13,6 +13,7 @@ class ClubVoter extends Voter
     public const VIEW = 'VIEW';
     public const MANAGE = 'MANAGE';
     public const INSPECT = 'INSPECT';
+    public const PILOT = 'PILOT';
 
     public function __construct(
         private readonly ClubResolver $clubResolver
@@ -22,7 +23,7 @@ class ClubVoter extends Voter
     protected function supports(string $attribute, mixed $subject): bool
     {
         // Vote on these attributes regardless of subject (will resolve club internally)
-        return in_array($attribute, [self::VIEW, self::MANAGE, self::INSPECT]);
+        return in_array($attribute, [self::VIEW, self::MANAGE, self::INSPECT, self::PILOT]);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -56,6 +57,7 @@ class ClubVoter extends Voter
             self::VIEW => true, // User has membership, so they can view
             self::MANAGE => $membership->isManager(),
             self::INSPECT => $membership->isInspector(),
+            self::PILOT => $membership->isPilote(),
             default => false,
         };
     }

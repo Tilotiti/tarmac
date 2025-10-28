@@ -14,7 +14,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 #[ORM\Index(columns: ['status'], name: 'idx_task_status')]
 #[ORM\Index(columns: ['due_at'], name: 'idx_task_due_at')]
-#[ORM\Index(columns: ['difficulty'], name: 'idx_task_difficulty')]
 #[ORM\Index(columns: ['created_at'], name: 'idx_task_created_at')]
 class Task
 {
@@ -43,31 +42,9 @@ class Task
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dueAt = null;
 
-    #[ORM\Column(type: Types::SMALLINT)]
-    #[Assert\NotNull(message: 'difficultyRequired')]
-    #[Assert\Range(min: 1, max: 5, notInRangeMessage: 'difficultyRange')]
-    private int $difficulty = 3;
-
-    #[ORM\Column]
-    private bool $requiresInspection = false;
-
     #[ORM\Column(length: 20)]
-    #[Assert\Choice(choices: ['open', 'closed', 'cancelled'])]
+    #[Assert\Choice(choices: ['open', 'done', 'closed', 'cancelled'])]
     private string $status = 'open';
-
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?User $doneBy = null;
-
-    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $doneAt = null;
-
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?User $inspectedBy = null;
-
-    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $inspectedAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
@@ -92,6 +69,7 @@ class Task
      */
     #[ORM\OneToMany(targetEntity: SubTask::class, mappedBy: 'task', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['position' => 'ASC'])]
+    #[Assert\Count(min: 1, minMessage: 'atLeastOneSubTaskRequired')]
     private Collection $subTasks;
 
     /**
@@ -105,8 +83,6 @@ class Task
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->status = 'open';
-        $this->difficulty = 3;
-        $this->requiresInspection = false;
         $this->subTasks = new ArrayCollection();
         $this->activities = new ArrayCollection();
     }
@@ -181,21 +157,28 @@ class Task
         return $this;
     }
 
+    /**
+     * Get computed difficulty as rounded average of all subtasks
+     */
     public function getDifficulty(): int
     {
-        return $this->difficulty;
-    }
+        $subTasks = $this->subTasks;
+        if ($subTasks->count() === 0) {
+            return 3; // Default difficulty if no subtasks
+        }
 
-    public function setDifficulty(int $difficulty): static
-    {
-        $this->difficulty = $difficulty;
+        $total = 0;
+        foreach ($subTasks as $subTask) {
+            $total += $subTask->getDifficulty();
+        }
 
-        return $this;
+        return (int) round($total / $subTasks->count());
     }
 
     public function getDifficultyLabel(): string
     {
-        return match ($this->difficulty) {
+        $difficulty = $this->getDifficulty();
+        return match ($difficulty) {
             1 => 'debutant',
             2 => 'facile',
             3 => 'moyen',
@@ -207,7 +190,8 @@ class Task
 
     public function getDifficultyColor(): string
     {
-        return match ($this->difficulty) {
+        $difficulty = $this->getDifficulty();
+        return match ($difficulty) {
             1 => 'success',
             2 => 'success-lt',
             3 => 'warning',
@@ -215,18 +199,6 @@ class Task
             5 => 'danger',
             default => 'warning',
         };
-    }
-
-    public function requiresInspection(): bool
-    {
-        return $this->requiresInspection;
-    }
-
-    public function setRequiresInspection(bool $requiresInspection): static
-    {
-        $this->requiresInspection = $requiresInspection;
-
-        return $this;
     }
 
     public function getStatus(): string
@@ -256,73 +228,49 @@ class Task
         return $this->status === 'cancelled';
     }
 
-    public function getDoneBy(): ?User
-    {
-        return $this->doneBy;
-    }
-
-    public function setDoneBy(?User $doneBy): static
-    {
-        $this->doneBy = $doneBy;
-
-        return $this;
-    }
-
-    public function getDoneAt(): ?\DateTimeImmutable
-    {
-        return $this->doneAt;
-    }
-
-    public function setDoneAt(?\DateTimeImmutable $doneAt): static
-    {
-        $this->doneAt = $doneAt;
-
-        return $this;
-    }
-
     public function isDone(): bool
     {
-        return $this->doneBy !== null;
+        return $this->status === 'done';
     }
 
     /**
-     * Check if the task is done and waiting for inspection approval
+     * Check if all subtasks are closed (completed or cancelled)
+     */
+    public function allSubTasksClosed(): bool
+    {
+        foreach ($this->subTasks as $subTask) {
+            if (!$subTask->isClosed() && !$subTask->isCancelled()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check if the task requires inspection (at least one subtask requires inspection)
+     */
+    public function requiresInspection(): bool
+    {
+        foreach ($this->subTasks as $subTask) {
+            if ($subTask->requiresInspection()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if the task is waiting for subtask inspections
      */
     public function isWaitingForApproval(): bool
     {
-        return $this->isDone()
-            && $this->requiresInspection
-            && !$this->isInspected()
-            && $this->status === 'open';
-    }
-
-    public function getInspectedBy(): ?User
-    {
-        return $this->inspectedBy;
-    }
-
-    public function setInspectedBy(?User $inspectedBy): static
-    {
-        $this->inspectedBy = $inspectedBy;
-
-        return $this;
-    }
-
-    public function getInspectedAt(): ?\DateTimeImmutable
-    {
-        return $this->inspectedAt;
-    }
-
-    public function setInspectedAt(?\DateTimeImmutable $inspectedAt): static
-    {
-        $this->inspectedAt = $inspectedAt;
-
-        return $this;
-    }
-
-    public function isInspected(): bool
-    {
-        return $this->inspectedBy !== null;
+        // Task is waiting if any subtask is done and waiting for inspection
+        foreach ($this->subTasks as $subTask) {
+            if ($subTask->isWaitingForApproval()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function getCancelledBy(): ?User
@@ -462,11 +410,15 @@ class Task
     }
 
     /**
-     * Check if the task requires inspection AND the equipment is a glider
+     * Get total time spent on this task (sum of all subtask contributions)
      */
-    public function canRequireInspection(): bool
+    public function getTotalTimeSpent(): float
     {
-        return $this->equipment && $this->equipment->getType() === EquipmentType::GLIDER;
+        $total = 0.0;
+        foreach ($this->subTasks as $subTask) {
+            $total += $subTask->getTotalTimeSpent();
+        }
+        return $total;
     }
 }
 

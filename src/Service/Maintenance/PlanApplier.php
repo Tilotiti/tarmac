@@ -56,8 +56,6 @@ class PlanApplier
             $task->setEquipment($equipment);
             $task->setTitle($taskTemplate->getTitle());
             $task->setDescription($taskTemplate->getDescription());
-            $task->setDifficulty($taskTemplate->getDifficulty());
-            $task->setRequiresInspection($taskTemplate->requiresInspection());
             $task->setCreatedBy($appliedBy);
             $task->setPlanApplication($application);
 
@@ -76,13 +74,23 @@ class PlanApplier
                 $subTask->setTask($task);
                 $subTask->setTitle($subTaskTemplate->getTitle());
                 $subTask->setDescription($subTaskTemplate->getDescription());
+                $subTask->setDifficulty($subTaskTemplate->getDifficulty());
+                $subTask->setRequiresInspection($subTaskTemplate->requiresInspection());
                 $subTask->setPosition($subTaskPosition++);
 
                 $this->entityManager->persist($subTask);
                 $task->addSubTask($subTask);
+
+                // Log subtask creation activity
+                $subTaskActivity = new Activity();
+                $subTaskActivity->setTask($task);
+                $subTaskActivity->setSubTask($subTask);
+                $subTaskActivity->setType(ActivityType::CREATED);
+                $subTaskActivity->setUser($appliedBy);
+                $this->entityManager->persist($subTaskActivity);
             }
 
-            // Log task creation activity (only ONE per task, not per subtask)
+            // Log task creation activity
             $activity = new Activity();
             $activity->setTask($task);
             $activity->setType(ActivityType::CREATED);
@@ -106,14 +114,14 @@ class PlanApplier
         \DateTimeImmutable $endDate
     ): array {
         return $this->entityManager->getRepository(PlanApplication::class)
-            ->createQueryBuilder('application')
-            ->where('application.equipment = :equipment')
-            ->andWhere('application.dueAt BETWEEN :start AND :end')
-            ->andWhere('application.cancelledBy IS NULL')
+            ->createQueryBuilder('plan_application')
+            ->where('plan_application.equipment = :equipment')
+            ->andWhere('plan_application.dueAt BETWEEN :start AND :end')
+            ->andWhere('plan_application.cancelledBy IS NULL')
             ->setParameter('equipment', $equipment)
             ->setParameter('start', $startDate)
             ->setParameter('end', $endDate)
-            ->orderBy('application.dueAt', 'ASC')
+            ->orderBy('plan_application.dueAt', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -124,11 +132,11 @@ class PlanApplier
     public function getEquipmentApplications(Equipment $equipment): array
     {
         return $this->entityManager->getRepository(PlanApplication::class)
-            ->createQueryBuilder('application')
-            ->where('application.equipment = :equipment')
-            ->andWhere('application.cancelledBy IS NULL')
+            ->createQueryBuilder('plan_application')
+            ->where('plan_application.equipment = :equipment')
+            ->andWhere('plan_application.cancelledBy IS NULL')
             ->setParameter('equipment', $equipment)
-            ->orderBy('application.dueAt', 'ASC')
+            ->orderBy('plan_application.dueAt', 'ASC')
             ->getQuery()
             ->getResult();
     }

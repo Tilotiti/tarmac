@@ -1,0 +1,102 @@
+{#
+    SubTask Card Component
+    
+    Parameters:
+    - subTask: The SubTask entity to display
+#}
+{% set task = subTask.task %}
+<div class="col-12 mb-3">
+	<a href="{{ path('club_subtask_show', {taskId: task.id, id: subTask.id}) }}" class="text-decoration-none">
+		<div class="card card-link" style="cursor: pointer;">
+			<div class="card-body">
+				<div
+					class="d-flex align-items-start mb-3">
+					{# Equipment Avatar #}
+					<span class="avatar avatar-lg me-3 bg-{{ task.equipment.type.value == 'glider' ? 'blue' : (task.equipment.type.value == 'facility' ? 'purple' : 'green') }}-lt">
+						<i class="ti ti-{{ task.equipment.type.value == 'glider' ? 'plane' : (task.equipment.type.value == 'facility' ? 'building' : 'tool') }} text-{{ task.equipment.type.value == 'glider' ? 'blue' : (task.equipment.type.value == 'facility' ? 'purple' : 'green') }}" style="font-size: 1.5rem;"></i>
+					</span>
+
+					{# Main content #}
+					<div
+						class="flex-grow-1">
+						{# Equipment + Task name (main title) #}
+						<h3 class="card-title mb-1">
+							{{ task.equipment.name }}
+							-
+							{{ task.title }}
+						</h3>
+
+						{# SubTask name (subtitle) #}
+						<div class="text-secondary mb-2">
+							{{ subTask.title }}
+						</div>
+
+						{# Due date #}
+						<div class="text-secondary small">
+							{% if task.dueAt %}
+								<i class="ti ti-calendar me-1"></i>
+								{{ task.dueAt|date('d/m/Y') }}
+							{% endif %}
+						</div>
+					</div>
+
+					{# Badges on desktop - right side #}
+					<div
+						class="ms-3 d-none d-md-flex gap-2 align-items-start">
+						{# Status badge #}
+						{% if subTask.isWaitingForApproval %}
+							<span class="badge bg-warning-lt text-white">
+								<i class="ti ti-hourglass me-1"></i>
+								{{ 'waitingForApproval'|trans }}
+							</span>
+						{% else %}
+							<span class="badge bg-{{ subTask.status == 'closed' ? 'success' : (subTask.status == 'cancelled' ? 'danger' : 'info') }}-lt text-white">
+								<i class="ti ti-{{ subTask.status == 'closed' ? 'circle-check' : (subTask.status == 'cancelled' ? 'x' : (subTask.status == 'done' ? 'check' : 'circle')) }} me-1"></i>
+								{{ subTask.status|trans }}
+							</span>
+						{% endif %}
+
+						{# Difficulty badge #}
+						{% include 'component/difficultyBadge.html.twig' with {'difficulty': subTask.difficulty} %}
+
+						{# Validation badge #}
+						{% if subTask.requiresInspection %}
+							<span class="badge bg-warning-lt text-white">
+								<i class="ti ti-shield-check me-1"></i>
+								{{ 'requiresInspection'|trans }}
+							</span>
+						{% endif %}
+					</div>
+				</div>
+
+				{# Badges on mobile - full width under avatar #}
+				<div
+					class="d-flex d-md-none gap-2 flex-wrap mb-3">
+					{# Status badge #}
+					{% if subTask.isWaitingForApproval %}
+						<span class="badge bg-warning text-white">
+							<i class="ti ti-hourglass me-1"></i>
+							{{ 'waitingForApproval'|trans }}
+						</span>
+					{% else %}
+						<span class="badge bg-{{ subTask.status == 'closed' ? 'success' : (subTask.status == 'cancelled' ? 'danger' : 'info') }} text-white">
+							<i class="ti ti-{{ subTask.status == 'closed' ? 'circle-check' : (subTask.status == 'cancelled' ? 'x' : (subTask.status == 'done' ? 'check' : 'circle')) }} me-1"></i>
+							{{ subTask.status|trans }}
+						</span>
+					{% endif %}
+
+					{# Difficulty badge #}
+					{% include 'component/difficultyBadge.html.twig' with {'difficulty': subTask.difficulty} %}
+
+					{# Validation badge #}
+					{% if subTask.requiresInspection %}
+						<span class="badge bg-warning-lt text-white">
+							<i class="ti ti-shield-check me-1"></i>
+							{{ 'requiresInspection'|trans }}
+						</span>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</a>
+</div>

@@ -25,7 +25,7 @@
   5: 'danger'
 } %}
 
-<span class="badge bg-{{ difficultyColorMap[difficulty] }} text-white{% if size is defined %} badge-{{ size }}{% endif %}">
-  {{ difficultyMap[difficulty]|trans }}
+<span class="badge bg-{{ difficultyColorMap[difficulty] }}-lt text-white{% if size is defined %} badge-{{ size }}{% endif %}">
+	<i class="ti ti-gauge me-1"></i>
+	{{ difficultyMap[difficulty]|trans }}
 </span>
-

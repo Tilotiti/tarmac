@@ -58,9 +58,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findOneByInvitationToken(string $token): ?User
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.invitationToken = :token')
-            ->andWhere('u.password IS NULL')
+        return $this->createQueryBuilder('user')
+            ->andWhere('user.invitationToken = :token')
+            ->andWhere('user.password IS NULL')
             ->setParameter('token', $token)
             ->getQuery()
             ->getOneOrNullResult();

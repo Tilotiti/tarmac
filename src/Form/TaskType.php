@@ -2,12 +2,14 @@
 
 namespace App\Form;
 
+use App\Entity\Club;
 use App\Entity\Equipment;
+use App\Entity\Enum\EquipmentType;
 use App\Entity\Task;
+use App\Entity\User;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -24,12 +26,38 @@ class TaskType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $user = $options['user'];
+        $club = $options['club'];
+        
+        // Determine if user is a pilot
+        $isPilot = false;
+        if ($user instanceof User && $club instanceof Club) {
+            $membership = $user->getMembershipForClub($club);
+            $isPilot = $membership?->isPilote() ?? false;
+        }
+        
         $builder
             ->add('equipment', EntityType::class, [
                 'class' => Equipment::class,
                 'choice_label' => 'name',
                 'group_by' => function (Equipment $equipment) {
                     return $this->translator->trans($equipment->getType()->value . 'Type');
+                },
+                'query_builder' => function (EntityRepository $er) use ($club, $isPilot) {
+                    $qb = $er->createQueryBuilder('e')
+                        ->where('e.club = :club')
+                        ->andWhere('e.active = :active')
+                        ->setParameter('club', $club)
+                        ->setParameter('active', true)
+                        ->orderBy('e.name', 'ASC');
+                    
+                    // Non-pilots can only select facility equipment
+                    if (!$isPilot) {
+                        $qb->andWhere('e.type = :facilityType')
+                           ->setParameter('facilityType', EquipmentType::FACILITY);
+                    }
+                    
+                    return $qb;
                 },
                 'label' => 'equipment',
                 'required' => true,
@@ -50,24 +78,6 @@ class TaskType extends AbstractType
                 'required' => false,
                 'widget' => 'single_text',
                 'attr' => ['class' => 'form-control'],
-            ])
-            ->add('difficulty', ChoiceType::class, [
-                'label' => 'difficulty',
-                'choices' => [
-                    'debutant' => 1,
-                    'facile' => 2,
-                    'moyen' => 3,
-                    'difficile' => 4,
-                    'expert' => 5,
-                ],
-                'required' => true,
-                'data' => 3,
-                'attr' => ['class' => 'form-select'],
-            ])
-            ->add('requiresInspection', CheckboxType::class, [
-                'label' => 'requiresInspection',
-                'required' => false,
-                'attr' => ['class' => 'form-check-input'],
             ])
         ;
 
@@ -95,7 +105,12 @@ class TaskType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Task::class,
             'include_subtasks' => false,
+            'user' => null,
+            'club' => null,
         ]);
+        
+        $resolver->setAllowedTypes('user', ['null', User::class]);
+        $resolver->setAllowedTypes('club', ['null', Club::class]);
     }
 }
 

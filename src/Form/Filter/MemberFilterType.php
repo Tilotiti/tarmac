@@ -25,6 +25,7 @@ class MemberFilterType extends AbstractFilterType
                 'choices' => [
                     'manager' => 'manager',
                     'inspector' => 'inspector',
+                    'pilot' => 'pilot',
                     'member' => 'member',
                 ],
             ])

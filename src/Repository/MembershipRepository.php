@@ -32,10 +32,10 @@ class MembershipRepository extends ServiceEntityRepository
      */
     public function findByEmailAndClub(string $email, Club $club): ?Membership
     {
-        return $this->createQueryBuilder('m')
-            ->innerJoin('m.user', 'u')
-            ->where('LOWER(u.email) = LOWER(:email)')
-            ->andWhere('m.club = :club')
+        return $this->createQueryBuilder('membership')
+            ->innerJoin('membership.user', 'user')
+            ->where('LOWER(user.email) = LOWER(:email)')
+            ->andWhere('membership.club = :club')
             ->setParameter('email', $email)
             ->setParameter('club', $club)
             ->getQuery()
@@ -47,16 +47,16 @@ class MembershipRepository extends ServiceEntityRepository
      */
     public function queryByClubAndFilters(Club $club, array $filters = []): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('m')
-            ->leftJoin('m.user', 'u')
-            ->where('m.club = :club')
+        $qb = $this->createQueryBuilder('membership')
+            ->leftJoin('membership.user', 'user')
+            ->where('membership.club = :club')
             ->setParameter('club', $club)
-            ->orderBy('u.lastname', 'ASC')
-            ->addOrderBy('u.firstname', 'ASC');
+            ->orderBy('user.lastname', 'ASC')
+            ->addOrderBy('user.firstname', 'ASC');
 
         // Search filter (name or email)
         if (!empty($filters['search'])) {
-            $qb->andWhere('LOWER(u.firstname) LIKE :search OR LOWER(u.lastname) LIKE :search OR LOWER(u.email) LIKE :search')
+            $qb->andWhere('LOWER(user.firstname) LIKE :search OR LOWER(user.lastname) LIKE :search OR LOWER(user.email) LIKE :search')
                 ->setParameter('search', '%' . strtolower($filters['search']) . '%');
         }
 
@@ -64,13 +64,16 @@ class MembershipRepository extends ServiceEntityRepository
         if (!empty($filters['role'])) {
             switch ($filters['role']) {
                 case 'manager':
-                    $qb->andWhere('m.isManager = true');
+                    $qb->andWhere('membership.isManager = true');
                     break;
                 case 'inspector':
-                    $qb->andWhere('m.isInspector = true');
+                    $qb->andWhere('membership.isInspector = true');
+                    break;
+                case 'pilot':
+                    $qb->andWhere('membership.isPilote = true');
                     break;
                 case 'member':
-                    $qb->andWhere('m.isManager = false AND m.isInspector = false');
+                    $qb->andWhere('membership.isManager = false AND membership.isInspector = false AND membership.isPilote = false');
                     break;
             }
         }

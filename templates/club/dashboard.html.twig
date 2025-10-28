@@ -5,25 +5,25 @@
 {% endblock %}
 
 {% block page_content %}
-	{# Tasks Awaiting Inspection (Inspector View) #}
-	{% if is_granted('INSPECT') and awaitingInspection is not empty %}
+	{# SubTasks Awaiting Inspection (Inspector View) #}
+	{% if is_granted('INSPECT') and awaitingInspectionSubTasks is not empty %}
 		<div class="mb-4">
 			<div class="d-flex align-items-center justify-content-between mb-3">
 				<h3 class="mb-0">
-					<i class="ti ti-eye-check"></i>
-					{{ 'tasksToInspect'|trans }}
+					<i class="ti ti-shield-check"></i>
+					{{ 'subTasksToValidate'|trans }}
 					<span class="badge bg-secondary-lt ms-2">{{ awaitingInspectionCount }}</span>
 				</h3>
 				{% if awaitingInspectionCount > 5 %}
-					<a href="{{ path('club_tasks', {'awaitingInspection': '1'}) }}" class="btn btn-sm btn-outline-purple">
+					<a href="{{ path('club_tasks', {'awaitingInspection': '1'}) }}" class="btn btn-sm btn-outline-warning">
 						{{ 'seeAll'|trans }}
 						<i class="ti ti-arrow-right ms-1"></i>
 					</a>
 				{% endif %}
 			</div>
 			<div class="row">
-				{% for task in awaitingInspection %}
-					{% include 'component/taskCard.html.twig' with {'task': task} %}
+				{% for subTask in awaitingInspectionSubTasks %}
+					{% include 'component/subTaskCard.html.twig' with {'subTask': subTask} %}
 				{% endfor %}
 			</div>
 		</div>
@@ -166,7 +166,7 @@
 	{% endif %}
 
 	{# Empty state #}
-	{% if pendingApplications is empty and standaloneTasks is empty and (not is_granted('INSPECT') or awaitingInspection is empty) %}
+	{% if pendingApplications is empty and standaloneTasks is empty and (not is_granted('INSPECT') or awaitingInspectionSubTasks is empty) %}
 		<div class="empty">
 			<div class="empty-icon">
 				<i class="ti ti-clipboard-check"></i>

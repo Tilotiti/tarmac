@@ -32,8 +32,16 @@ class SubTask
     private ?string $description = null;
 
     #[ORM\Column(length: 20)]
-    #[Assert\Choice(choices: ['open', 'closed', 'cancelled'])]
+    #[Assert\Choice(choices: ['open', 'done', 'closed', 'cancelled'])]
     private string $status = 'open';
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    #[Assert\NotNull(message: 'difficultyRequired')]
+    #[Assert\Range(min: 1, max: 5, notInRangeMessage: 'difficultyRange')]
+    private int $difficulty = 3;
+
+    #[ORM\Column]
+    private bool $requiresInspection = false;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
@@ -41,6 +49,17 @@ class SubTask
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $doneAt = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $completedBy = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $inspectedBy = null;
+
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $inspectedAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
@@ -53,6 +72,13 @@ class SubTask
     private int $position = 0;
 
     /**
+     * @var Collection<int, Contribution>
+     */
+    #[ORM\OneToMany(targetEntity: Contribution::class, mappedBy: 'subTask', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['createdAt' => 'DESC'])]
+    private Collection $contributions;
+
+    /**
      * @var Collection<int, Activity>
      */
     #[ORM\OneToMany(targetEntity: Activity::class, mappedBy: 'subTask', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -63,7 +89,10 @@ class SubTask
     {
         $this->status = 'open';
         $this->position = 0;
+        $this->difficulty = 3;
+        $this->requiresInspection = false;
         $this->activities = new ArrayCollection();
+        $this->contributions = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -163,9 +192,109 @@ class SubTask
         return $this;
     }
 
+    public function getCompletedBy(): ?User
+    {
+        return $this->completedBy;
+    }
+
+    public function setCompletedBy(?User $completedBy): static
+    {
+        $this->completedBy = $completedBy;
+
+        return $this;
+    }
+
     public function isDone(): bool
     {
         return $this->doneBy !== null;
+    }
+
+    public function getDifficulty(): int
+    {
+        return $this->difficulty;
+    }
+
+    public function setDifficulty(int $difficulty): static
+    {
+        $this->difficulty = $difficulty;
+
+        return $this;
+    }
+
+    public function getDifficultyLabel(): string
+    {
+        return match ($this->difficulty) {
+            1 => 'debutant',
+            2 => 'facile',
+            3 => 'moyen',
+            4 => 'difficile',
+            5 => 'expert',
+            default => 'moyen',
+        };
+    }
+
+    public function getDifficultyColor(): string
+    {
+        return match ($this->difficulty) {
+            1 => 'success',
+            2 => 'success-lt',
+            3 => 'warning',
+            4 => 'orange',
+            5 => 'danger',
+            default => 'warning',
+        };
+    }
+
+    public function requiresInspection(): bool
+    {
+        return $this->requiresInspection;
+    }
+
+    public function setRequiresInspection(bool $requiresInspection): static
+    {
+        $this->requiresInspection = $requiresInspection;
+
+        return $this;
+    }
+
+    public function getInspectedBy(): ?User
+    {
+        return $this->inspectedBy;
+    }
+
+    public function setInspectedBy(?User $inspectedBy): static
+    {
+        $this->inspectedBy = $inspectedBy;
+
+        return $this;
+    }
+
+    public function getInspectedAt(): ?\DateTimeImmutable
+    {
+        return $this->inspectedAt;
+    }
+
+    public function setInspectedAt(?\DateTimeImmutable $inspectedAt): static
+    {
+        $this->inspectedAt = $inspectedAt;
+
+        return $this;
+    }
+
+    public function isInspected(): bool
+    {
+        return $this->inspectedBy !== null;
+    }
+
+    /**
+     * Check if the subtask is done and waiting for inspection approval
+     */
+    public function isWaitingForApproval(): bool
+    {
+        return $this->isDone()
+            && $this->requiresInspection
+            && !$this->isInspected()
+            && $this->status === 'done';
     }
 
     public function getCancelledBy(): ?User
@@ -231,6 +360,47 @@ class SubTask
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Contribution>
+     */
+    public function getContributions(): Collection
+    {
+        return $this->contributions;
+    }
+
+    public function addContribution(Contribution $contribution): static
+    {
+        if (!$this->contributions->contains($contribution)) {
+            $this->contributions->add($contribution);
+            $contribution->setSubTask($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContribution(Contribution $contribution): static
+    {
+        if ($this->contributions->removeElement($contribution)) {
+            if ($contribution->getSubTask() === $this) {
+                $contribution->setSubTask(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get total time spent on this subtask (sum of all contributions)
+     */
+    public function getTotalTimeSpent(): float
+    {
+        $total = 0.0;
+        foreach ($this->contributions as $contribution) {
+            $total += $contribution->getTimeSpent();
+        }
+        return $total;
     }
 }
 

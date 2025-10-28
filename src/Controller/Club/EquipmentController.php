@@ -120,6 +120,7 @@ class EquipmentController extends ExtendedController
     public function show(Equipment $equipment): Response
     {
         $club = $this->clubResolver->resolve();
+        $user = $this->getUser();
 
         // Ensure equipment belongs to this club
         if ($equipment->getClub() !== $club) {
@@ -133,6 +134,16 @@ class EquipmentController extends ExtendedController
         $qb = $this->taskRepository->queryAll();
         $qb = $this->taskRepository->filterByEquipment($qb, $equipment);
         $qb = $this->taskRepository->filterByStatus($qb, 'open');
+        
+        // Apply pilot visibility filter: non-pilotes cannot see glider tasks
+        $isManager = $this->isGranted('MANAGE');
+        $isInspector = $this->isGranted('INSPECT');
+        $isPilote = $this->isGranted('PILOT');
+        
+        if (!$isPilote && !$isManager && !$isInspector) {
+            $qb = $this->taskRepository->filterByFacilityEquipment($qb);
+        }
+        
         $qb = $this->taskRepository->orderByRelevantDate($qb, 'ASC');
         $pendingTasks = $qb->setMaxResults(10)->getQuery()->getResult();
 

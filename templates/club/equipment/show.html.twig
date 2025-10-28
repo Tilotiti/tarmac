@@ -179,12 +179,13 @@
 								{# Difficulty badge #}
 								{% include 'component/difficultyBadge.html.twig' with {difficulty: task.difficulty} %}
 
-								{# Inspection badge #}
-								{% if task.requiresInspection %}
-									<span class="badge bg-purple text-white">
-										<i class="ti ti-eye-check"></i>
-									</span>
-								{% endif %}
+							{# Inspection badge #}
+							{% if task.requiresInspection %}
+								<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+									<i class="ti ti-shield-check me-1"></i>
+									{{ 'requiresInspection'|trans }}
+								</span>
+							{% endif %}
 							</div>
 						</div>
 

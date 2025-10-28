@@ -276,17 +276,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
+     * Get user's membership for a specific club
+     * 
+     * This method is EFFICIENT - it iterates the already-loaded memberships collection.
+     * Doctrine lazy-loads the collection once, then subsequent calls use the in-memory data.
+     * No additional database queries are made after the first load.
+     */
+    public function getMembershipForClub(Club $club): ?Membership
+    {
+        foreach ($this->memberships as $membership) {
+            if ($membership->getClub() === $club) {
+                return $membership;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Check if user has access to a specific club
      */
     public function hasAccessToClub(Club $club): bool
     {
-        foreach ($this->memberships as $membership) {
-            if ($membership->getClub() === $club) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->getMembershipForClub($club) !== null;
     }
 
     /**
@@ -294,13 +306,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function isManagerOfClub(Club $club): bool
     {
-        foreach ($this->memberships as $membership) {
-            if ($membership->getClub() === $club) {
-                return $membership->isManager();
-            }
-        }
-
-        return false;
+        $membership = $this->getMembershipForClub($club);
+        return $membership ? $membership->isManager() : false;
     }
 
     /**
@@ -308,13 +315,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function isInspectorOfClub(Club $club): bool
     {
-        foreach ($this->memberships as $membership) {
-            if ($membership->getClub() === $club) {
-                return $membership->isInspector();
-            }
-        }
+        $membership = $this->getMembershipForClub($club);
+        return $membership ? $membership->isInspector() : false;
+    }
 
-        return false;
+    /**
+     * Check if user is a pilot of a specific club
+     */
+    public function isPiloteOfClub(Club $club): bool
+    {
+        $membership = $this->getMembershipForClub($club);
+        return $membership ? $membership->isPilote() : false;
     }
 
     /**

@@ -30,14 +30,6 @@ class PlanTask
     private ?string $description = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
-    #[Assert\NotNull(message: 'difficultyRequired')]
-    #[Assert\Range(min: 1, max: 5, notInRangeMessage: 'difficultyRange')]
-    private int $difficulty = 3;
-
-    #[ORM\Column]
-    private bool $requiresInspection = false;
-
-    #[ORM\Column(type: Types::SMALLINT)]
     private int $position = 0;
 
     /**
@@ -49,8 +41,6 @@ class PlanTask
 
     public function __construct()
     {
-        $this->difficulty = 3;
-        $this->requiresInspection = false;
         $this->position = 0;
         $this->subTaskTemplates = new ArrayCollection();
     }
@@ -101,30 +91,6 @@ class PlanTask
         return $this;
     }
 
-    public function getDifficulty(): int
-    {
-        return $this->difficulty;
-    }
-
-    public function setDifficulty(int $difficulty): static
-    {
-        $this->difficulty = $difficulty;
-
-        return $this;
-    }
-
-    public function requiresInspection(): bool
-    {
-        return $this->requiresInspection;
-    }
-
-    public function setRequiresInspection(bool $requiresInspection): static
-    {
-        $this->requiresInspection = $requiresInspection;
-
-        return $this;
-    }
-
     public function getPosition(): int
     {
         return $this->position;
@@ -164,6 +130,37 @@ class PlanTask
         }
 
         return $this;
+    }
+
+    /**
+     * Check if the plan task requires inspection (at least one subtask requires inspection)
+     */
+    public function requiresInspection(): bool
+    {
+        foreach ($this->subTaskTemplates as $subTaskTemplate) {
+            if ($subTaskTemplate->requiresInspection()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get computed difficulty as rounded average of all subtasks
+     */
+    public function getDifficulty(): int
+    {
+        $subTaskTemplates = $this->subTaskTemplates;
+        if ($subTaskTemplates->count() === 0) {
+            return 3; // Default difficulty if no subtasks
+        }
+
+        $total = 0;
+        foreach ($subTaskTemplates as $subTaskTemplate) {
+            $total += $subTaskTemplate->getDifficulty();
+        }
+
+        return (int) round($total / $subTaskTemplates->count());
     }
 }
 

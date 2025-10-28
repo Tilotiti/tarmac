@@ -59,7 +59,10 @@
 						<div class="form-check">
 							<input type="checkbox" id="{{ form.isManager.vars.id }}" name="{{ form.isManager.vars.full_name }}" class="form-check-input" value="1" {% if form.isManager.vars.checked %} checked {% endif %}>
 							<label class="form-check-label" for="{{ form.isManager.vars.id }}">
-								<div>{{ form.isManager.vars.label|trans }}</div>
+								<div>
+									<i class="ti ti-user-star me-1"></i>
+									{{ form.isManager.vars.label|trans }}
+								</div>
 								{% if form.isManager.vars.help %}
 									<div class="text-secondary small">{{ form.isManager.vars.help|trans }}</div>
 								{% endif %}
@@ -68,11 +71,14 @@
 						{{ form_errors(form.isManager) }}
 					</div>
 
-					<div>
+					<div class="mb-3">
 						<div class="form-check">
 							<input type="checkbox" id="{{ form.isInspector.vars.id }}" name="{{ form.isInspector.vars.full_name }}" class="form-check-input" value="1" {% if form.isInspector.vars.checked %} checked {% endif %}>
 							<label class="form-check-label" for="{{ form.isInspector.vars.id }}">
-								<div>{{ form.isInspector.vars.label|trans }}</div>
+								<div>
+									<i class="ti ti-shield-check me-1"></i>
+									{{ form.isInspector.vars.label|trans }}
+								</div>
 								{% if form.isInspector.vars.help %}
 									<div class="text-secondary small">{{ form.isInspector.vars.help|trans }}</div>
 								{% endif %}
@@ -80,12 +86,29 @@
 						</div>
 						{{ form_errors(form.isInspector) }}
 					</div>
+
+					<div>
+						<div class="form-check">
+							<input type="checkbox" id="{{ form.isPilote.vars.id }}" name="{{ form.isPilote.vars.full_name }}" class="form-check-input" value="1" {% if form.isPilote.vars.checked %} checked {% endif %}>
+							<label class="form-check-label" for="{{ form.isPilote.vars.id }}">
+								<div>
+									<i class="ti ti-plane me-1"></i>
+									{{ form.isPilote.vars.label|trans }}
+								</div>
+								{% if form.isPilote.vars.help %}
+									<div class="text-secondary small">{{ form.isPilote.vars.help|trans }}</div>
+								{% endif %}
+							</label>
+						</div>
+						{{ form_errors(form.isPilote) }}
+					</div>
 				</div>
 			</div>
 
 			{# Mark fields as rendered so form_end doesn't render them again #}
 			{% do form.isManager.setRendered %}
 			{% do form.isInspector.setRendered %}
+			{% do form.isPilote.setRendered %}
 
 			<div class="form-footer">
 				<button type="submit" class="btn btn-primary w-100 w-md-auto" style="min-height: 44px;">
