@@ -1367,7 +1367,7 @@
       </trans-unit>
       <trans-unit id="304" resname="givavFileDescription">
         <source>givavFileDescription</source>
-        <target>Importez une liste de membres depuis le fichier d'export Givav. Seuls les membres actifs avec un email valide seront traités.</target>
+        <target>Importez une liste de membres depuis le fichier d'export Givav. Seuls les membres avec un email valide seront traités.</target>
       </trans-unit>
       <trans-unit id="305" resname="requiredColumns">
         <source>requiredColumns</source>
@@ -1400,10 +1400,6 @@
       <trans-unit id="312" resname="skipReasonInvalidEmail">
         <source>skipReasonInvalidEmail</source>
         <target>Adresse email invalide</target>
-      </trans-unit>
-      <trans-unit id="313" resname="skipReasonInactive">
-        <source>skipReasonInactive</source>
-        <target>Membre inactif (Actif ? = FAUX)</target>
       </trans-unit>
       <trans-unit id="314" resname="skipReasonMissingEmail">
         <source>skipReasonMissingEmail</source>

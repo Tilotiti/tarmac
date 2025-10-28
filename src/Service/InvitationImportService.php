@@ -80,9 +80,6 @@ class InvitationImportService
                 case 'nom':
                     $map['lastname'] = $index;
                     break;
-                case 'actif ?':
-                    $map['active'] = $index;
-                    break;
             }
         }
 
@@ -98,16 +95,9 @@ class InvitationImportService
         $email = isset($columnMap['email']) ? trim($row[$columnMap['email']] ?? '') : '';
         $firstname = isset($columnMap['firstname']) ? trim($row[$columnMap['firstname']] ?? '') : '';
         $lastname = isset($columnMap['lastname']) ? trim($row[$columnMap['lastname']] ?? '') : '';
-        $active = isset($columnMap['active']) ? trim($row[$columnMap['active']] ?? '') : '';
 
         // Skip empty rows
         if (empty($email) && empty($firstname) && empty($lastname)) {
-            return;
-        }
-
-        // Skip inactive members (if Actif ? column is present and value is FAUX)
-        if (isset($columnMap['active']) && strtoupper($active) === 'FAUX') {
-            $result->addSkipped($email ?: "Ligne $rowNumber", 'skipReasonInactive');
             return;
         }
 
