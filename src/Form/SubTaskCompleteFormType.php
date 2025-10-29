@@ -30,7 +30,7 @@ class SubTaskCompleteFormType extends AbstractType
         $requiresPilot = false;
         if ($subTask) {
             $equipment = $subTask->getTask()->getEquipment();
-            $requiresPilot = $equipment->getType() === EquipmentType::GLIDER;
+            $requiresPilot = $equipment->getType()->isAircraft();
         }
 
         $builder
@@ -44,7 +44,7 @@ class SubTaskCompleteFormType extends AbstractType
                         ->orderBy('u.firstname', 'ASC')
                         ->addOrderBy('u.lastname', 'ASC');
 
-                    // Only filter by pilot status for glider equipment
+                    // Only filter by pilot status for aircraft equipment
                     if ($requiresPilot) {
                         $qb->andWhere('m.isPilote = :true')
                             ->setParameter('true', true);

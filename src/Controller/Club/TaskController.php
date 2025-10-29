@@ -118,10 +118,10 @@ class TaskController extends ExtendedController
                 ]);
             }
             
-            // Security check: non-pilots cannot create tasks for glider equipment
+            // Security check: non-pilots cannot create tasks for aircraft equipment
             $isPilot = $this->isGranted('PILOT');
-            if (!$isPilot && $task->getEquipment()->getType() === \App\Entity\Enum\EquipmentType::GLIDER) {
-                $this->addFlash('error', 'pilotRequiredForGliderTasks');
+            if (!$isPilot && $task->getEquipment()->getType()->isAircraft()) {
+                $this->addFlash('error', 'pilotRequiredForAircraftTasks');
                 return $this->render('club/task/new.html.twig', [
                     'club' => $club,
                     'task' => $task,
@@ -201,10 +201,10 @@ class TaskController extends ExtendedController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Security check: non-pilots cannot edit tasks to use glider equipment
+            // Security check: non-pilots cannot edit tasks to use aircraft equipment
             $isPilot = $this->isGranted('PILOT');
-            if (!$isPilot && $task->getEquipment()->getType() === \App\Entity\Enum\EquipmentType::GLIDER) {
-                $this->addFlash('error', 'pilotRequiredForGliderTasks');
+            if (!$isPilot && $task->getEquipment()->getType()->isAircraft()) {
+                $this->addFlash('error', 'pilotRequiredForAircraftTasks');
                 return $this->render('club/task/edit.html.twig', [
                     'club' => $club,
                     'task' => $task,

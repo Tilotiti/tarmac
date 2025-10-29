@@ -119,8 +119,8 @@ class TaskVoter extends Voter
             return true;
         }
 
-        // For glider equipment: only pilots, managers, or inspectors can create subtasks
-        if ($equipment->getType() === EquipmentType::GLIDER) {
+        // For aircraft equipment: only pilots, managers, or inspectors can create subtasks
+        if ($equipment->getType()->isAircraft()) {
             return $isPilote || $isManager || $isInspector;
         }
 
@@ -154,8 +154,8 @@ class TaskVoter extends Voter
             return true;
         }
 
-        // For glider equipment: only pilots, managers, or inspectors can close
-        if ($equipment->getType() === EquipmentType::GLIDER) {
+        // For aircraft equipment: only pilots, managers, or inspectors can close
+        if ($equipment->getType()->isAircraft()) {
             return $isPilote || $isManager || $isInspector;
         }
 
@@ -167,9 +167,9 @@ class TaskVoter extends Voter
     {
         $equipment = $task->getEquipment();
 
-        // Check pilot visibility rules for glider equipment
-        if ($equipment->getType() === EquipmentType::GLIDER) {
-            // Non-pilotes cannot view glider tasks (unless manager or inspector)
+        // Check pilot visibility rules for aircraft equipment
+        if ($equipment->getType()->isAircraft()) {
+            // Non-pilotes cannot view aircraft tasks (unless manager or inspector)
             if (!$isPilote && !$isManager && !$isInspector) {
                 return false;
             }

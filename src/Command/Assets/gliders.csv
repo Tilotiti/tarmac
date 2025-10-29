@@ -1,0 +1,56 @@
+type;concours;immat;model;owner
+glider;H;28 AVH;Taurus;private
+glider;;28 AVQ;Taurus 503;private
+glider;55;D-3255;LS8-18;club
+glider;16;D-4016;H 101 Salto;private
+glider;BM;D-KCMC;Ventus 2;private
+aircraft;FN;D-KDFN;SF 25 E;club
+glider;LD;D-KDLD;ASH 31 Mi;private
+glider;GV;D-KIVX;ASH 31 Mi;private
+glider;VG;D-KJGS;ASW 27-18 E;private
+glider;;D-KJMH;ASH 31 Mi;private
+glider;PJ;D-KNPJ;AS33 es;private
+glider;DB;D-KRAT;ASW 27-18 E;private
+glider;;D-KXCZ;Stemme S 10;private
+glider;XI;F-CBDO;ASW 20;private
+glider;BYO;F-CBYO;JS1;club
+glider;PB;F-CDPB;Cirrus;private
+glider;V10;F-CEII;LS 4;club
+glider;PH;F-CEPH;Janus;private
+glider;X29;F-CFFV;ASW 20 F;club
+glider;RE;F-CFRE;101 A;private
+glider;V38;F-CFZJ;LS 4;club
+glider;CX;F-CGCX;ASK 23 B;club
+glider;24;F-CGGY;Discus CS;club
+glider;1L;F-CGLT;Ventus-2a;private
+glider;4AS;F-CGPJ;ARCUS M;private
+glider;19;F-CGPS;Standard Cirrus;private
+glider;V57;F-CGYI;LS 4-b;club
+glider;ZZ;F-CGZZ;LS8-18;club
+glider;OK;F-CHOK;K 8 B;club
+glider;UC;F-CHUC;101 A;club
+glider;GM;F-CIIJ;JS1;private
+glider;74;F-CIJD;Ventus 2c;private
+glider;RK;F-CIRK;K 8 B;club
+glider;TY;F-CITY;ASK 21;club
+glider;7;F-CJET;JS1 - C;private
+glider;2K;F-CKDE;ASK 13;club
+glider;C12;F-CKIF;Standard Cirrus;private
+glider;BL;F-CLBL;Asg 29 E;club
+glider;28;F-CLDB;Arcus T;club
+glider;DM;F-CLDM;LAK 17 B;private
+glider;1V;F-CNGF;JS3;private
+glider;PI;F-COPI;ASK 13;club
+glider;SY;F-COSY;ka 6e;private
+glider;1K;F-CUNK;ASK 13;club
+glider;AE;F-CVAE;Janus C;club
+aircraft;IT;F-GEIT;DR 400;club
+aircraft;UY;F-JCUY;WT9;club
+glider;NQ;F28 XN;Sinus;private
+glider;1K;;ASK 13;club
+glider;28;;Arcus T;club
+glider;2K;;ASK 13;club
+glider;AE;;Janus C;club
+glider;PI;;ASK 13;club
+glider;TY;;ASK 21;club
+aircraft;DM;D-OEDM;DR 300;club

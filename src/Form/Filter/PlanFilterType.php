@@ -25,6 +25,7 @@ class PlanFilterType extends AbstractFilterType
                 'placeholder' => 'allEquipmentTypes',
                 'choices' => [
                     'gliderType' => EquipmentType::GLIDER->value,
+                    'airplaneType' => EquipmentType::AIRPLANE->value,
                     'infrastructureType' => EquipmentType::FACILITY->value,
                 ],
                 'choice_translation_domain' => 'messages',

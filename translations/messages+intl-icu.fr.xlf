@@ -318,6 +318,10 @@
         <source>glider</source>
         <target>Planeur</target>
       </trans-unit>
+      <trans-unit id="71a" resname="airplane">
+        <source>airplane</source>
+        <target>Avion</target>
+      </trans-unit>
       <trans-unit id="72" resname="infrastructure">
         <source>infrastructure</source>
         <target>Infrastructure</target>
@@ -727,6 +731,10 @@
         <source>pilotRequiredForGliderTasks</source>
         <target>Vous devez être pilote pour créer des tâches sur des planeurs.</target>
       </trans-unit>
+      <trans-unit id="128b" resname="pilotRequiredForAircraftTasks">
+        <source>pilotRequiredForAircraftTasks</source>
+        <target>Vous devez être pilote pour créer des tâches sur des aéronefs.</target>
+      </trans-unit>
 
       <!-- Flash Messages: SubTasks -->
       <trans-unit id="129" resname="subTaskCreated">
@@ -898,6 +906,10 @@
       <trans-unit id="422b" resname="pendingTasks">
         <source>pendingTasks</source>
         <target>Tâches en attente</target>
+      </trans-unit>
+      <trans-unit id="422b1" resname="pendingSubTasks">
+        <source>pendingSubTasks</source>
+        <target>Sous-tâches en attente</target>
       </trans-unit>
       <trans-unit id="422c" resname="viewAllTasks">
         <source>viewAllTasks</source>
@@ -1249,7 +1261,11 @@
       </trans-unit>
       <trans-unit id="245" resname="gliderType">
         <source>gliderType</source>
-        <target>Planeur</target>
+        <target>Planeurs</target>
+      </trans-unit>
+      <trans-unit id="245a" resname="airplaneType">
+        <source>airplaneType</source>
+        <target>Avions</target>
       </trans-unit>
       <trans-unit id="246" resname="infrastructureType">
         <source>infrastructureType</source>

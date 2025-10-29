@@ -97,9 +97,9 @@ class SubTaskVoter extends Voter
         $task = $subTask->getTask();
         $equipment = $task->getEquipment();
 
-        // Check pilot visibility rules for glider equipment
-        if ($equipment->getType() === EquipmentType::GLIDER) {
-            // Non-pilotes cannot view glider tasks (unless manager or inspector)
+        // Check pilot visibility rules for aircraft equipment
+        if ($equipment->getType()->isAircraft()) {
+            // Non-pilotes cannot view aircraft tasks (unless manager or inspector)
             if (!$isPilote && !$isManager && !$isInspector) {
                 return false;
             }
@@ -129,9 +129,9 @@ class SubTaskVoter extends Voter
         $task = $subTask->getTask();
         $equipment = $task->getEquipment();
 
-        // Check pilot rules for glider equipment
-        if ($equipment->getType() === EquipmentType::GLIDER) {
-            // Non-pilotes cannot work on glider tasks (unless manager or inspector)
+        // Check pilot rules for aircraft equipment
+        if ($equipment->getType()->isAircraft()) {
+            // Non-pilotes cannot work on aircraft tasks (unless manager or inspector)
             if (!$isPilote && !$isManager && !$isInspector) {
                 return false;
             }

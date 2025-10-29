@@ -69,10 +69,45 @@ class EquipmentController extends ExtendedController
             20
         );
 
+        // Calculate pending tasks and subtasks count for each equipment
+        $pendingCounts = [];
+        foreach ($equipments as $equipment) {
+            $qb = $this->taskRepository->queryAll();
+            $qb = $this->taskRepository->filterByEquipment($qb, $equipment);
+            $qb = $this->taskRepository->filterByStatus($qb, 'open');
+            
+            // Apply pilot visibility filter: non-pilotes cannot see glider tasks
+            $isManager = $this->isGranted('MANAGE');
+            $isInspector = $this->isGranted('INSPECT');
+            $isPilote = $this->isGranted('PILOT');
+            
+            if (!$isPilote && !$isManager && !$isInspector) {
+                $qb = $this->taskRepository->filterByFacilityEquipment($qb);
+            }
+            
+            $tasks = $qb->getQuery()->getResult();
+            
+            // Count total pending subtasks
+            $subtasksCount = 0;
+            foreach ($tasks as $task) {
+                foreach ($task->getSubTasks() as $subtask) {
+                    if ($subtask->isOpen()) {
+                        $subtasksCount++;
+                    }
+                }
+            }
+            
+            $pendingCounts[$equipment->getId()] = [
+                'tasks' => count($tasks),
+                'subtasks' => $subtasksCount,
+            ];
+        }
+
         return $this->render('club/equipment/index.html.twig', [
             'club' => $club,
             'equipments' => $equipments,
             'filters' => $filters->createView(),
+            'pendingCounts' => $pendingCounts,
         ]);
     }
 
