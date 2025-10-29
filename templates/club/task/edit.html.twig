@@ -61,12 +61,12 @@
 					{{ form_row(form.difficulty) }}
 					{{ form_row(form.dueAt) }}
 
-					{% if task.equipment and task.equipment.type.value == 'glider' %}
-						<div class="form-check form-switch mt-3">
-							{{ form_widget(form.requiresInspection) }}
-							{{ form_label(form.requiresInspection) }}
-						</div>
-					{% endif %}
+				{% if task.equipment and task.equipment.type.isAircraft %}
+					<div class="form-check form-switch mt-3">
+						{{ form_widget(form.requiresInspection) }}
+						{{ form_label(form.requiresInspection) }}
+					</div>
+				{% endif %}
 
 					<div class="form-footer">
 						<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">

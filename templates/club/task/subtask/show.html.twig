@@ -34,11 +34,11 @@
 		<div class="card-body">
 			<div class="text-secondary small mb-2">{{ 'task'|trans }}</div>
 			<div class="d-flex align-items-center">
-				<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
-					<span class="avatar avatar-lg me-3 bg-{{ task.equipment.type.value == 'glider' ? 'blue' : (task.equipment.type.value == 'facility' ? 'purple' : 'green') }}-lt">
-						<i class="ti ti-{{ task.equipment.type.value == 'glider' ? 'plane' : (task.equipment.type.value == 'facility' ? 'building' : 'tool') }} text-{{ task.equipment.type.value == 'glider' ? 'blue' : (task.equipment.type.value == 'facility' ? 'purple' : 'green') }}" style="font-size: 1.5rem;"></i>
-					</span>
-				</a>
+			<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
+				<span class="avatar avatar-lg me-3 bg-{{ task.equipment.type.color }}-lt">
+					<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 1.5rem;"></i>
+				</span>
+			</a>
 				<div>
 					<h3 class="mb-0">
 						<a href="{{ path('club_task_show', {id: task.id}) }}" class="text-reset">

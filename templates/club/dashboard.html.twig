@@ -67,10 +67,10 @@
 									{# Header with equipment avatar and plan name #}
 									<div
 										class="d-flex align-items-start mb-3">
-										{# Avatar with icon based on type #}
-										<span class="avatar avatar-lg me-3 bg-{{ application.equipment.type.value == 'glider' ? 'blue' : (application.equipment.type.value == 'facility' ? 'purple' : 'green') }}-lt">
-											<i class="ti ti-{{ application.equipment.type.value == 'glider' ? 'plane' : (application.equipment.type.value == 'facility' ? 'building' : 'tool') }} text-{{ application.equipment.type.value == 'glider' ? 'blue' : (application.equipment.type.value == 'facility' ? 'purple' : 'green') }}" style="font-size: 1.5rem;"></i>
-										</span>
+									{# Avatar with icon based on type #}
+									<span class="avatar avatar-lg me-3 bg-{{ application.equipment.type.color }}-lt">
+										<i class="ti {{ application.equipment.type.icon }} text-{{ application.equipment.type.color }}" style="font-size: 1.5rem;"></i>
+									</span>
 										<div
 											class="flex-fill">
 											{# Title: Equipment name #}
@@ -98,22 +98,10 @@
 													{{ 'club'|trans }}
 												</span>
 											{% endif %}
-											{% if application.equipment.type.value == 'glider' %}
-												<span class="badge bg-blue-lt">
-													<i class="ti ti-plane me-1"></i>
-													{{ 'glider'|trans }}
-												</span>
-											{% elseif application.equipment.type.value == 'facility' %}
-												<span class="badge bg-purple-lt">
-													<i class="ti ti-building me-1"></i>
-													{{ 'infrastructure'|trans }}
-												</span>
-											{% else %}
-												<span class="badge bg-green-lt">
-													<i class="ti ti-tool me-1"></i>
-													{{ 'other'|trans }}
-												</span>
-											{% endif %}
+										<span class="badge bg-{{ application.equipment.type.color }}-lt">
+											<i class="ti {{ application.equipment.type.icon }} me-1"></i>
+											{{ application.equipment.type.label|trans }}
+										</span>
 										</div>
 									</div>
 

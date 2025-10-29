@@ -17,6 +17,24 @@ enum EquipmentType: string
         };
     }
 
+    public function getIcon(): string
+    {
+        return match ($this) {
+            self::GLIDER => 'ti-plane-tilt',
+            self::AIRPLANE => 'ti-send',
+            self::FACILITY => 'ti-building',
+        };
+    }
+
+    public function getColor(): string
+    {
+        return match ($this) {
+            self::GLIDER => 'blue',
+            self::AIRPLANE => 'green',
+            self::FACILITY => 'purple',
+        };
+    }
+
     public function isAircraft(): bool
     {
         return match ($this) {

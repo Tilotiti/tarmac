@@ -42,10 +42,10 @@
 						<div class="card-body">
 							<div
 								class="d-flex align-items-center">
-								{# Avatar with icon based on type #}
-								<span class="avatar avatar-lg me-3 bg-{{ equipment.type.value == 'glider' ? 'blue' : (equipment.type.value == 'facility' ? 'purple' : 'green') }}-lt">
-									<i class="ti ti-{{ equipment.type.value == 'glider' ? 'plane' : (equipment.type.value == 'facility' ? 'building' : 'tool') }} text-{{ equipment.type.value == 'glider' ? 'blue' : (equipment.type.value == 'facility' ? 'purple' : 'green') }}" style="font-size: 1.5rem;"></i>
-								</span>
+							{# Avatar with icon based on type #}
+							<span class="avatar avatar-lg me-3 bg-{{ equipment.type.color }}-lt">
+								<i class="ti {{ equipment.type.icon }} text-{{ equipment.type.color }}" style="font-size: 1.5rem;"></i>
+							</span>
 								<div
 									class="flex-fill">
 									{# Title: Equipment name #}
