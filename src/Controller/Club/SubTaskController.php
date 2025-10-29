@@ -62,6 +62,7 @@ class SubTaskController extends ExtendedController
 
         $subTask = new SubTask();
         $subTask->setTask($task);
+        $subTask->setCreatedBy($this->getUser());
 
         // Auto-set position
         $maxPosition = 0;

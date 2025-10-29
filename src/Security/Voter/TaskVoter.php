@@ -13,7 +13,6 @@ class TaskVoter extends Voter
 {
     public const VIEW = 'TASK_VIEW';
     public const EDIT = 'TASK_EDIT';
-    public const DELETE = 'TASK_DELETE';
     public const COMMENT = 'TASK_COMMENT';
     public const CREATE_SUBTASK = 'TASK_CREATE_SUBTASK';
     public const CLOSE = 'TASK_CLOSE';
@@ -29,7 +28,6 @@ class TaskVoter extends Voter
         return in_array($attribute, [
             self::VIEW,
             self::EDIT,
-            self::DELETE,
             self::COMMENT,
             self::CREATE_SUBTASK,
             self::CLOSE,
@@ -69,40 +67,53 @@ class TaskVoter extends Voter
 
         return match ($attribute) {
             self::VIEW => $this->canView($task, $user, $isManager, $isInspector, $isPilote),
-            self::EDIT => $this->canEdit($task, $isManager),
-            self::DELETE => $isManager,
+            self::EDIT => $this->canEdit($task, $user, $isManager),
             self::COMMENT => true, // Any club member can comment
             self::CREATE_SUBTASK => $this->canCreateSubTask($task, $isManager, $isInspector, $isPilote),
             self::CLOSE => $this->canClose($task, $isManager, $isInspector, $isPilote),
-            self::CANCEL => $this->canCancel($task, $isManager),
+            self::CANCEL => $this->canCancel($task, $user, $isManager),
             default => false,
         };
     }
 
-    private function canEdit(Task $task, bool $isManager): bool
+    private function canEdit(Task $task, User $user, bool $isManager): bool
     {
-        // Only managers can edit
-        if (!$isManager) {
-            return false;
-        }
-        
         // Cannot edit closed or cancelled tasks
         if ($task->isClosed() || $task->getStatus() === 'cancelled') {
             return false;
         }
         
-        return true;
+        // Managers can edit any non-closed task
+        if ($isManager) {
+            return true;
+        }
+        
+        // Members can edit their own tasks that are not closed
+        if ($task->getCreatedBy() && $task->getCreatedBy()->getId() === $user->getId()) {
+            return true;
+        }
+        
+        return false;
     }
 
-    private function canCancel(Task $task, bool $isManager): bool
+    private function canCancel(Task $task, User $user, bool $isManager): bool
     {
-        // Only managers can cancel
-        if (!$isManager) {
+        // Can only cancel open tasks
+        if ($task->getStatus() !== 'open') {
             return false;
         }
         
-        // Can only cancel open tasks
-        return $task->getStatus() === 'open';
+        // Managers can cancel any open task
+        if ($isManager) {
+            return true;
+        }
+        
+        // Members can cancel their own open tasks
+        if ($task->getCreatedBy() && $task->getCreatedBy()->getId() === $user->getId()) {
+            return true;
+        }
+        
+        return false;
     }
 
     private function canCreateSubTask(Task $task, bool $isManager, bool $isInspector, bool $isPilote): bool
@@ -189,4 +200,5 @@ class TaskVoter extends Voter
         return $equipment->getOwners()->contains($user);
     }
 }
+
 

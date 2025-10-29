@@ -13,7 +13,6 @@ class SubTaskVoter extends Voter
 {
     public const VIEW = 'SUBTASK_VIEW';
     public const EDIT = 'SUBTASK_EDIT';
-    public const DELETE = 'SUBTASK_DELETE';
     public const COMMENT = 'SUBTASK_COMMENT';
     public const DO = 'SUBTASK_DO';
     public const INSPECT = 'SUBTASK_INSPECT';
@@ -29,9 +28,8 @@ class SubTaskVoter extends Voter
         return in_array($attribute, [
             self::VIEW,
             self::EDIT,
-            self::DELETE,
             self::COMMENT,
-            self::DO ,
+            self::DO,
             self::INSPECT,
             self::CANCEL,
         ]) && $subject instanceof SubTask;
@@ -67,29 +65,53 @@ class SubTaskVoter extends Voter
 
         return match ($attribute) {
             self::VIEW => $this->canView($subTask, $user, $isManager, $isInspector, $isPilote),
-            self::EDIT => $this->canEdit($subTask, $isManager),
-            self::DELETE => $isManager,
+            self::EDIT => $this->canEdit($subTask, $user, $isManager),
             self::COMMENT => true, // Any club member can comment
             self::DO => $this->canDo($subTask, $user, $isManager, $isInspector, $isPilote),
             self::INSPECT => $this->canInspect($subTask, $isInspector),
-            self::CANCEL => $isManager,
+            self::CANCEL => $this->canCancel($subTask, $user, $isManager),
             default => false,
         };
     }
 
-    private function canEdit(SubTask $subTask, bool $isManager): bool
+    private function canEdit(SubTask $subTask, User $user, bool $isManager): bool
     {
-        // Only managers can edit
-        if (!$isManager) {
+        // Can only edit open subtasks
+        if ($subTask->getStatus() !== 'open') {
             return false;
         }
         
-        // Cannot edit closed or cancelled subtasks
-        if ($subTask->getStatus() === 'closed' || $subTask->getStatus() === 'cancelled') {
+        // Managers can edit any open subtask
+        if ($isManager) {
+            return true;
+        }
+        
+        // Members can edit their own open subtasks
+        if ($subTask->getCreatedBy() && $subTask->getCreatedBy()->getId() === $user->getId()) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    private function canCancel(SubTask $subTask, User $user, bool $isManager): bool
+    {
+        // Can only cancel open subtasks
+        if ($subTask->getStatus() !== 'open') {
             return false;
         }
         
-        return true;
+        // Managers can cancel any open subtask
+        if ($isManager) {
+            return true;
+        }
+        
+        // Members can cancel their own open subtasks
+        if ($subTask->getCreatedBy() && $subTask->getCreatedBy()->getId() === $user->getId()) {
+            return true;
+        }
+        
+        return false;
     }
 
     private function canView(SubTask $subTask, User $user, bool $isManager, bool $isInspector, bool $isPilote): bool
