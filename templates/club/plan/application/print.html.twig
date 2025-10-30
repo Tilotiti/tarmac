@@ -10,6 +10,7 @@
 			@page {
 				size: A4 landscape;
 				margin: 80px 15mm;
+				counter-increment: page;
 			}
 
 			body {
@@ -18,6 +19,11 @@
 				line-height: 1.2;
 				margin: 0;
 				padding: 0;
+				counter-reset: page;
+			}
+
+			.page-number:before {
+				content: "Page " counter(page);
 			}
 
 			#header {
@@ -55,10 +61,6 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-			}
-
-			.page-number:before {
-				content: "Page " counter(page) " sur " counter(pages);
 			}
 
 
@@ -192,7 +194,7 @@
 			<div>
 				<strong>{{ application.plan.name }}</strong>
 			</div>
-			<div class="page-number"></div>
+			<div></div>
 			<div>
 				Date de mise à jour:
 				{{ "now"|date('d/m/Y à H:i') }}
@@ -281,6 +283,18 @@
 			</table>
 		</div>
 
+		 <script type="text/php">
+									if (isset($pdf)) {
+										$pdf->page_script('
+											$font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+											$size = 8;
+											$pageText = "Page " . $PAGE_NUM . " sur " . $PAGE_COUNT;
+											$y = $pdf->get_height() - 50;
+											$x = $pdf->get_width() - 100;
+											$pdf->text($x, $y, $pageText, $font, $size);
+										');
+									}
+								</script>
 
 	</body>
 </html>
