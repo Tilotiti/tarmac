@@ -1,0 +1,110 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'planApplications'|trans }}
+{% endblock %}
+
+{% block page_content %}
+	{% include 'component/filters.html.twig' with { form: filterForm } %}
+
+	{# Application cards - Mobile-first design #}
+	<div class="row">
+		{% for application in applications %}
+			<div class="col-12 mb-3">
+				<a href="{{ path('club_plan_application_show', {id: application.id}) }}" class="text-decoration-none">
+					<div class="card card-link" style="cursor: pointer;">
+						<div class="card-body">
+							<div class="d-flex align-items-start mb-3">
+								{# Equipment Avatar #}
+								<span class="avatar avatar-lg me-3 bg-{{ application.equipment.type.color }}-lt">
+									<i class="ti {{ application.equipment.type.icon }} text-{{ application.equipment.type.color }}" style="font-size: 1.5rem;"></i>
+								</span>
+
+								{# Main content #}
+								<div class="flex-grow-1">
+									{# Equipment name (main title) #}
+									<h3 class="card-title mb-1">
+										{{ application.equipment.name }}
+									</h3>
+
+									{# Plan name (subtitle) #}
+									<div class="text-secondary mb-2">
+										{{ application.plan.name }}
+									</div>
+
+									{# Applied date #}
+									<div class="text-secondary small">
+										<i class="ti ti-calendar me-1"></i>
+										{{ 'appliedAt'|trans }}: {{ application.appliedAt|date('d/m/Y à H:i') }}
+									</div>
+
+									{# Due date if exists #}
+									{% if application.dueAt %}
+										<div class="text-secondary small">
+											<i class="ti ti-calendar-due me-1"></i>
+											{{ 'dueDate'|trans }}: {{ application.dueAt|date('d/m/Y') }}
+										</div>
+									{% endif %}
+								</div>
+
+								{# Badges on desktop - right side #}
+								<div class="ms-3 d-none d-md-flex gap-2 align-items-start">
+									{# Status badge #}
+									{% if application.isCancelled %}
+										<span class="badge bg-danger text-white">
+											<i class="ti ti-x me-1"></i>
+											{{ 'cancelled'|trans }}
+										</span>
+									{% else %}
+										<span class="badge bg-primary text-white">
+											<i class="ti ti-clock me-1"></i>
+											{{ 'active'|trans }}
+										</span>
+									{% endif %}
+								</div>
+							</div>
+
+							{# Badges on mobile - full width under avatar #}
+							<div class="d-flex d-md-none gap-2 flex-wrap mb-3">
+								{# Status badge #}
+								{% if application.isCancelled %}
+									<span class="badge bg-danger text-white">
+										<i class="ti ti-x me-1"></i>
+										{{ 'cancelled'|trans }}
+									</span>
+								{% else %}
+									<span class="badge bg-primary text-white">
+										<i class="ti ti-clock me-1"></i>
+										{{ 'active'|trans }}
+									</span>
+								{% endif %}
+							</div>
+
+							{# Applied by info #}
+							<div class="text-secondary small">
+								<i class="ti ti-user me-1"></i>
+								{{ 'appliedBy'|trans }}: {{ application.appliedBy.fullname }}
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+		{% else %}
+			<div class="col-12">
+				<div class="card">
+					<div class="card-body text-center text-secondary">
+						<i class="ti ti-clipboard-check" style="font-size: 3rem; opacity: 0.5;"></i>
+						<p class="mt-3 mb-0">
+							<em>{{ 'noPlanApplicationsFound'|trans }}</em>
+						</p>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+
+	{# Pagination #}
+	<div class="d-flex justify-content-center mt-4">
+		{{ pagination(applications) }}
+	</div>
+{% endblock %}

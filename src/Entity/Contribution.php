@@ -29,7 +29,7 @@ class Contribution
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotNull(message: 'timeSpentRequired')]
     #[Assert\Positive(message: 'timeSpentMustBePositive')]
-    private ?float $timeSpent = null;
+    private ?string $timeSpent = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $createdAt = null;
@@ -68,12 +68,12 @@ class Contribution
         return $this;
     }
 
-    public function getTimeSpent(): ?float
+    public function getTimeSpent(): ?string
     {
         return $this->timeSpent;
     }
 
-    public function setTimeSpent(float $timeSpent): static
+    public function setTimeSpent(string $timeSpent): static
     {
         $this->timeSpent = $timeSpent;
 

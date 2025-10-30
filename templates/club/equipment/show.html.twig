@@ -15,6 +15,11 @@
 		</a>
 
 		{% if is_granted('MANAGE', club) %}
+			<a href="{{ path('club_equipment_apply_plan', {id: equipment.id}) }}" class="btn btn-outline-secondary" style="min-height: 44px;">
+				<i class="ti ti-clipboard-plus me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'applyNewPlan'|trans }}</span>
+				<span class="d-inline d-sm-none">{{ 'applyPlan'|trans }}</span>
+			</a>
 			<a href="{{ path('club_equipment_edit', {id: equipment.id}) }}" class="btn btn-primary" style="min-height: 44px;">
 				<i class="ti ti-edit me-2"></i>
 				<span class="d-none d-sm-inline">{{ 'edit'|trans }}</span>
@@ -47,10 +52,10 @@
 		<div class="card-body">
 			<div
 				class="d-flex align-items-center mb-4">
-			{# Avatar with icon based on type #}
-			<span class="avatar avatar-xl me-3 bg-{{ equipment.type.color }}-lt">
-				<i class="ti {{ equipment.type.icon }} text-{{ equipment.type.color }}" style="font-size: 2.5rem;"></i>
-			</span>
+				{# Avatar with icon based on type #}
+				<span class="avatar avatar-xl me-3 bg-{{ equipment.type.color }}-lt">
+					<i class="ti {{ equipment.type.icon }} text-{{ equipment.type.color }}" style="font-size: 2.5rem;"></i>
+				</span>
 				<div class="flex-fill">
 					<h2 class="mb-1">{{ equipment.name }}</h2>
 					<div class="text-secondary h4 mb-0">
@@ -67,9 +72,9 @@
 				<div class="col-12 col-md-6 mb-3">
 					<div class="text-secondary small mb-1">{{ 'type'|trans }}</div>
 					<div>
-					<span class="badge bg-{{ equipment.type.color }}-lt">
-						{{ equipment.type.label|trans }}
-					</span>
+						<span class="badge bg-{{ equipment.type.color }}-lt">
+							{{ equipment.type.label|trans }}
+						</span>
 					</div>
 				</div>
 
@@ -170,18 +175,21 @@
 								<div class="fw-bold">{{ application.plan.name }}</div>
 								<div class="text-secondary small">
 									<i class="ti ti-calendar me-1"></i>
-									{{ 'appliedAt'|trans }}: {{ application.appliedAt|date('d/m/Y') }}
+									{{ 'appliedAt'|trans }}:
+									{{ application.appliedAt|date('d/m/Y') }}
 								</div>
 								{% if application.dueAt %}
 									<div class="text-secondary small">
 										<i class="ti ti-calendar-due me-1"></i>
-										{{ 'dueDate'|trans }}: {{ application.dueAt|date('d/m/Y') }}
+										{{ 'dueDate'|trans }}:
+										{{ application.dueAt|date('d/m/Y') }}
 									</div>
 								{% endif %}
 							</div>
 							<div class="d-flex gap-2 align-items-center">
 								<span class="badge bg-primary text-white">
-									{{ application.tasks|length }} {{ 'tasks'|trans|lower }}
+									{{ application.tasks|length }}
+									{{ 'tasks'|trans|lower }}
 								</span>
 								{% if application.isCancelled %}
 									<span class="badge bg-warning-lt text-white">
@@ -194,34 +202,27 @@
 
 						{# Progress bar for tasks #}
 						{% if application.tasks|length > 0 %}
-							{% set progress = 0 %}
-							{% set closed = 0 %}
-							{% for task in application.tasks %}
-								{% if task.status == 'closed' %}
-									{% set closed = closed + 1 %}
-								{% endif %}
-							{% endfor %}
-							{% set progress = (closed / application.tasks|length * 100)|round %}
+							{% set closedTasks = application.closedTasks %}
+							{% set totalTasks = application.tasks.count() %}
+							{% set closedCount = closedTasks.count() %}
+							{% set progress = totalTasks > 0 ? (closedCount / totalTasks * 100)|round : 0 %}
+
 							<div class="progress progress-sm mb-1">
 								<div class="progress-bar bg-{{ progress == 100 ? 'success' : 'primary' }}" style="width: {{ progress }}%">
 									<span class="visually-hidden">{{ progress }}%</span>
 								</div>
 							</div>
 							<div class="text-secondary small">
-								{{ closed }} / {{ application.tasks|length }} {{ 'tasks'|trans|lower }} {{ 'completed'|trans|lower }}
+								{{ closedCount }}
+								/
+								{{ totalTasks }}
+								{{ 'tasks'|trans|lower }}
+								{{ 'completed'|trans|lower }}
 							</div>
 						{% endif %}
 					</a>
 				{% endfor %}
 			</div>
-			{% if is_granted('MANAGE', club) %}
-				<div class="card-footer">
-					<a href="{{ path('club_equipment_apply_plan', {id: equipment.id}) }}" class="btn btn-primary w-100" style="min-height: 44px;">
-						<i class="ti ti-clipboard-plus me-2"></i>
-						{{ 'applyNewPlan'|trans }}
-					</a>
-				</div>
-			{% endif %}
 		</div>
 	{% elseif is_granted('MANAGE', club) %}
 		<div class="card mb-3">
@@ -234,12 +235,6 @@
 					<p class="empty-subtitle text-secondary">
 						{{ 'noMaintenancePlansDescription'|trans }}
 					</p>
-					<div class="empty-action">
-						<a href="{{ path('club_equipment_apply_plan', {id: equipment.id}) }}" class="btn btn-primary">
-							<i class="ti ti-clipboard-plus me-2"></i>
-							{{ 'applyNewPlan'|trans }}
-						</a>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -272,13 +267,13 @@
 								{# Difficulty badge #}
 								{% include 'component/difficultyBadge.html.twig' with {difficulty: task.difficulty} %}
 
-							{# Inspection badge #}
-							{% if task.requiresInspection %}
-								<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
-									<i class="ti ti-shield-check me-1"></i>
-									{{ 'requiresInspection'|trans }}
-								</span>
-							{% endif %}
+								{# Inspection badge #}
+								{% if task.requiresInspection %}
+									<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+										<i class="ti ti-shield-check me-1"></i>
+										{{ 'requiresInspection'|trans }}
+									</span>
+								{% endif %}
 							</div>
 						</div>
 

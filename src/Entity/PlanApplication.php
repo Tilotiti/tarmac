@@ -186,5 +186,25 @@ class PlanApplication
 
         return $this;
     }
+
+    /**
+     * Get only closed tasks
+     */
+    public function getClosedTasks(): Collection
+    {
+        return $this->tasks->filter(function(Task $task) {
+            return $task->isClosed();
+        });
+    }
+
+    /**
+     * Get only open tasks
+     */
+    public function getOpenTasks(): Collection
+    {
+        return $this->tasks->filter(function(Task $task) {
+            return $task->isOpen();
+        });
+    }
 }
 

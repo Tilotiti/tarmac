@@ -106,102 +106,33 @@
 	</div>
 
 	{# Tasks Section #}
-	<div class="card">
-		<div class="card-header">
-			<h3 class="card-title">
+	<div class="mb-3">
+		<div class="d-flex align-items-center mb-3">
+			<h3 class="mb-0">
 				<i class="ti ti-checklist me-2"></i>
 				{{ 'tasks'|trans }}
 			</h3>
 			<span class="badge bg-primary text-white ms-2">{{ tasks|length }}</span>
 		</div>
-		<div class="card-body">
-			{% if tasks|length > 0 %}
-				<div class="list-group list-group-flush">
-					{% for task in tasks %}
-						<a href="{{ path('club_task_show', {id: task.id}) }}" class="list-group-item list-group-item-action">
-							<div class="row align-items-center">
-								<div class="col">
-									<div class="fw-bold mb-1">{{ task.title }}</div>
-									{% if task.description %}
-										<div class="text-secondary small mb-2">{{ task.description }}</div>
-									{% endif %}
-									
-									{# Progress bar for subtasks #}
-									{% if task.subTasks|length > 0 %}
-										{% set progress = 0 %}
-										{% set closed = 0 %}
-										{% for subtask in task.subTasks %}
-											{% if subtask.status == 'closed' %}
-												{% set closed = closed + 1 %}
-											{% endif %}
-										{% endfor %}
-										{% set progress = (closed / task.subTasks|length * 100)|round %}
-										<div class="progress progress-sm mb-1">
-											<div class="progress-bar bg-{{ progress == 100 ? 'success' : 'primary' }}" style="width: {{ progress }}%">
-												<span class="visually-hidden">{{ progress }}%</span>
-											</div>
-										</div>
-										<div class="text-secondary small">
-											{{ closed }} / {{ task.subTasks|length }} {{ 'subTasks'|trans|lower }}
-										</div>
-									{% endif %}
-								</div>
-								<div class="col-auto">
-									<div class="d-flex gap-2 align-items-center flex-wrap">
-										{# Status badge #}
-										{% if task.status == 'closed' %}
-											<span class="badge bg-success-lt">
-												<i class="ti ti-check me-1"></i>
-												{{ 'done'|trans }}
-											</span>
-										{% elseif task.status == 'in_progress' %}
-											<span class="badge bg-blue-lt">
-												<i class="ti ti-loader me-1"></i>
-												{{ 'inProgress'|trans }}
-											</span>
-										{% else %}
-											<span class="badge bg-secondary-lt">
-												<i class="ti ti-circle-dotted me-1"></i>
-												{{ 'pending'|trans }}
-											</span>
-										{% endif %}
-
-										{# Difficulty badge #}
-										{% include 'component/difficultyBadge.html.twig' with {difficulty: task.difficulty} %}
-
-										{# Inspection badge #}
-										{% if task.requiresInspection %}
-											<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
-												<i class="ti ti-shield-check me-1"></i>
-												{{ 'requiresInspection'|trans }}
-											</span>
-										{% endif %}
-
-										{# Due date #}
-										{% if task.dueAt %}
-											<span class="text-secondary small">
-												<i class="ti ti-calendar me-1"></i>
-												{{ task.dueAt|date('d/m/Y') }}
-											</span>
-										{% endif %}
-									</div>
-								</div>
-							</div>
-						</a>
-					{% endfor %}
+		
+		{% if tasks|length > 0 %}
+			{# Task cards - Mobile-first design #}
+			<div class="row">
+				{% for task in tasks %}
+					{% include 'component/taskCard.html.twig' with {'task': task} %}
+				{% endfor %}
+			</div>
+		{% else %}
+			<div class="empty">
+				<div class="empty-icon">
+					<i class="ti ti-checklist icon-lg"></i>
 				</div>
-			{% else %}
-				<div class="empty">
-					<div class="empty-icon">
-						<i class="ti ti-checklist icon-lg"></i>
-					</div>
-					<p class="empty-title">{{ 'noTasks'|trans }}</p>
-					<p class="empty-subtitle text-secondary">
-						{{ 'noTasksForApplication'|trans }}
-					</p>
-				</div>
-			{% endif %}
-		</div>
+				<p class="empty-title">{{ 'noTasks'|trans }}</p>
+				<p class="empty-subtitle text-secondary">
+					{{ 'noTasksForApplication'|trans }}
+				</p>
+			</div>
+		{% endif %}
 	</div>
 {% endblock %}
 

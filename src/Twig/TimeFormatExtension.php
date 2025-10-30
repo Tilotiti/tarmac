@@ -18,14 +18,15 @@ class TimeFormatExtension extends AbstractExtension
      * Format time spent in hours to a human-readable format (days, hours, minutes)
      * Consider that 1 day = 7 hours
      */
-    public function formatTimeSpent(?float $hours): string
+    public function formatTimeSpent(?string $hours): string
     {
-        if ($hours === null || $hours <= 0) {
+        if ($hours === null || $hours === '' || (float) $hours <= 0) {
             return '0 minute';
         }
 
-        // Convert to total minutes
-        $totalMinutes = (int) round($hours * 60);
+        // Convert string to float, then to total minutes
+        $hoursFloat = (float) $hours;
+        $totalMinutes = (int) round($hoursFloat * 60);
 
         // Calculate days (1 day = 7 hours = 420 minutes)
         $days = (int) floor($totalMinutes / 420);
