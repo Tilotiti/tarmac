@@ -40,12 +40,12 @@
 		<div class="card-body">
 			<div
 				class="d-flex align-items-center mb-4">
-			{# Equipment Avatar #}
-			<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
-				<span class="avatar avatar-xl me-3 bg-{{ task.equipment.type.color }}-lt">
-					<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 2.5rem;"></i>
-				</span>
-			</a>
+				{# Equipment Avatar #}
+				<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
+					<span class="avatar avatar-xl me-3 bg-{{ task.equipment.type.color }}-lt">
+						<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 2.5rem;"></i>
+					</span>
+				</a>
 				<div class="flex-fill">
 					<h2 class="mb-1">
 						<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-reset">
@@ -135,10 +135,24 @@
 					<div class="col-12 col-md-6 mb-3">
 						<div class="text-secondary small mb-1">{{ 'plan'|trans }}</div>
 						<div>
-							<a href="{{ path('club_plan_show', {id: task.planApplication.plan.id}) }}">
+							<a href="{{ path('club_plan_application_show', {id: task.planApplication.id}) }}">
 								{{ task.planApplication.plan.name }}
 							</a>
 						</div>
+						{% if task.planApplication.dueAt %}
+							<div class="text-secondary small mt-1">
+								<i class="ti ti-calendar me-1"></i>
+								{{ 'dueAt'|trans }}:
+								{{ task.planApplication.dueAt|date('d/m/Y') }}
+							</div>
+						{% endif %}
+						{% if task.planApplication.appliedBy %}
+							<div class="text-secondary small">
+								<i class="ti ti-user me-1"></i>
+								{{ 'appliedBy'|trans }}:
+								{{ task.planApplication.appliedBy.fullName }}
+							</div>
+						{% endif %}
 					</div>
 				{% endif %}
 

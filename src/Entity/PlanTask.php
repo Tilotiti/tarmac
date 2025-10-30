@@ -152,7 +152,7 @@ class PlanTask
     {
         $subTaskTemplates = $this->subTaskTemplates;
         if ($subTaskTemplates->count() === 0) {
-            return 3; // Default difficulty if no subtasks
+            return 2; // Default difficulty if no subtasks
         }
 
         $total = 0;

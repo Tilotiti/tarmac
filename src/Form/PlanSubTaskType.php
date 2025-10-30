@@ -30,13 +30,11 @@ class PlanSubTaskType extends AbstractType
                 'label' => 'difficulty',
                 'choices' => [
                     'debutant' => 1,
-                    'facile' => 2,
-                    'moyen' => 3,
-                    'difficile' => 4,
-                    'expert' => 5,
+                    'experimente' => 2,
+                    'expert' => 3,
                 ],
                 'required' => true,
-                'data' => 3,
+                'data' => 2,
                 'attr' => ['class' => 'form-select'],
             ])
             ->add('requiresInspection', CheckboxType::class, [

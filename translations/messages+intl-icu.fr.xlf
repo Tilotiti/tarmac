@@ -736,6 +736,28 @@
         <target>Vous devez être pilote pour créer des tâches sur des aéronefs.</target>
       </trans-unit>
 
+      <!-- Task/SubTask Labels -->
+      <trans-unit id="128c" resname="doneBy">
+        <source>doneBy</source>
+        <target>Réalisé par</target>
+      </trans-unit>
+      <trans-unit id="128d" resname="doneAt">
+        <source>doneAt</source>
+        <target>Réalisé le</target>
+      </trans-unit>
+      <trans-unit id="128e" resname="inspectedBy">
+        <source>inspectedBy</source>
+        <target>Inspecté par</target>
+      </trans-unit>
+      <trans-unit id="128f" resname="inspectedAt">
+        <source>inspectedAt</source>
+        <target>Inspecté le</target>
+      </trans-unit>
+      <trans-unit id="128g" resname="dueAt">
+        <source>dueAt</source>
+        <target>Échéance</target>
+      </trans-unit>
+
       <!-- Flash Messages: SubTasks -->
       <trans-unit id="129" resname="subTaskCreated">
         <source>subTaskCreated</source>
@@ -835,17 +857,9 @@
         <source>debutant</source>
         <target>Débutant</target>
       </trans-unit>
-      <trans-unit id="151" resname="facile">
-        <source>facile</source>
-        <target>Facile</target>
-      </trans-unit>
-      <trans-unit id="152" resname="moyen">
-        <source>moyen</source>
-        <target>Moyen</target>
-      </trans-unit>
-      <trans-unit id="153" resname="difficile">
-        <source>difficile</source>
-        <target>Difficile</target>
+      <trans-unit id="151a" resname="experimente">
+        <source>experimente</source>
+        <target>Expérimenté</target>
       </trans-unit>
       <trans-unit id="154" resname="expert">
         <source>expert</source>
@@ -1043,7 +1057,7 @@
       </trans-unit>
       <trans-unit id="193" resname="difficultyRange">
         <source>difficultyRange</source>
-        <target>La difficulté doit être entre 1 et 5</target>
+        <target>La difficulté doit être entre 1 et 3</target>
       </trans-unit>
       <trans-unit id="194" resname="equipmentTypeRequired">
         <source>equipmentTypeRequired</source>

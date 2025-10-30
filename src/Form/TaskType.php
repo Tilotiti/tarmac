@@ -29,14 +29,14 @@ class TaskType extends AbstractType
         $user = $options['user'];
         $club = $options['club'];
         $isEditMode = $options['is_edit'];
-        
+
         // Determine if user is a pilot
         $isPilot = false;
         if ($user instanceof User && $club instanceof Club) {
             $membership = $user->getMembershipForClub($club);
             $isPilot = $membership?->isPilote() ?? false;
         }
-        
+
         // Only show equipment field when creating a new task, not when editing
         if (!$isEditMode) {
             $builder
@@ -53,13 +53,13 @@ class TaskType extends AbstractType
                             ->setParameter('club', $club)
                             ->setParameter('active', true)
                             ->orderBy('e.name', 'ASC');
-                        
+
                         // Non-pilots can only select facility equipment
                         if (!$isPilot) {
                             $qb->andWhere('e.type = :facilityType')
-                               ->setParameter('facilityType', EquipmentType::FACILITY);
+                                ->setParameter('facilityType', EquipmentType::FACILITY);
                         }
-                        
+
                         return $qb;
                     },
                     'label' => 'equipment',
@@ -67,7 +67,7 @@ class TaskType extends AbstractType
                     'attr' => ['class' => 'form-select'],
                 ]);
         }
-        
+
         $builder
             ->add('title', TextType::class, [
                 'label' => 'title',
@@ -115,7 +115,7 @@ class TaskType extends AbstractType
             'user' => null,
             'club' => null,
         ]);
-        
+
         $resolver->setAllowedTypes('user', ['null', User::class]);
         $resolver->setAllowedTypes('club', ['null', Club::class]);
         $resolver->setAllowedTypes('is_edit', 'bool');

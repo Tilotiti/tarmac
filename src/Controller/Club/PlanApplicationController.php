@@ -148,12 +148,12 @@ class PlanApplicationController extends ExtendedController
             throw $this->createNotFoundException();
         }
 
-        // Get tasks for this application ordered by plan task template position
+        // Get tasks for this application ordered by ID ASC
         $qb = $this->taskRepository->queryAll();
         $qb = $this->taskRepository->filterByPlanApplication($qb, $application);
         
-        // Order by task creation order (tasks are created in plan template order)
-        $qb = $qb->addOrderBy('task.createdAt', 'ASC');
+        // Order by task ID ASC
+        $qb = $qb->addOrderBy('task.id', 'ASC');
         
         $tasks = $qb->getQuery()->getResult();
 

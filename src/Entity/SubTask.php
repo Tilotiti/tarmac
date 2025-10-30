@@ -37,8 +37,8 @@ class SubTask
 
     #[ORM\Column(type: Types::SMALLINT)]
     #[Assert\NotNull(message: 'difficultyRequired')]
-    #[Assert\Range(min: 1, max: 5, notInRangeMessage: 'difficultyRange')]
-    private int $difficulty = 3;
+    #[Assert\Range(min: 1, max: 3, notInRangeMessage: 'difficultyRange')]
+    private int $difficulty = 2;
 
     #[ORM\Column]
     private bool $requiresInspection = false;
@@ -96,7 +96,7 @@ class SubTask
     {
         $this->status = 'open';
         $this->position = 0;
-        $this->difficulty = 3;
+        $this->difficulty = 2;
         $this->requiresInspection = false;
         $this->createdAt = new \DateTimeImmutable();
         $this->activities = new ArrayCollection();
@@ -233,11 +233,9 @@ class SubTask
     {
         return match ($this->difficulty) {
             1 => 'debutant',
-            2 => 'facile',
-            3 => 'moyen',
-            4 => 'difficile',
-            5 => 'expert',
-            default => 'moyen',
+            2 => 'experimente',
+            3 => 'expert',
+            default => 'experimente',
         };
     }
 
@@ -245,10 +243,8 @@ class SubTask
     {
         return match ($this->difficulty) {
             1 => 'success',
-            2 => 'success-lt',
-            3 => 'warning',
-            4 => 'orange',
-            5 => 'danger',
+            2 => 'warning',
+            3 => 'danger',
             default => 'warning',
         };
     }

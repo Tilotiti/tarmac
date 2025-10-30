@@ -3,26 +3,22 @@
   
   Usage:
     {% include 'component/difficultyBadge.html.twig' with {'difficulty': task.difficulty} %}
-    {% include 'component/difficultyBadge.html.twig' with {'difficulty': 3, 'size': 'sm'} %}
+    {% include 'component/difficultyBadge.html.twig' with {'difficulty': 2, 'size': 'sm'} %}
   
   Parameters:
-  - difficulty: integer (1-5) representing the difficulty level
+  - difficulty: integer (1-3) representing the difficulty level
   - size: string (optional) - 'sm' for small badge
 #}
 {% set difficultyMap = {
   1: 'debutant',
-  2: 'facile',
-  3: 'moyen',
-  4: 'difficile',
-  5: 'expert'
+  2: 'experimente',
+  3: 'expert'
 } %}
 
 {% set difficultyColorMap = {
   1: 'success',
-  2: 'info',
-  3: 'warning',
-  4: 'orange',
-  5: 'danger'
+  2: 'warning',
+  3: 'danger'
 } %}
 
 <span class="badge bg-{{ difficultyColorMap[difficulty] }}-lt text-white{% if size is defined %} badge-{{ size }}{% endif %}">

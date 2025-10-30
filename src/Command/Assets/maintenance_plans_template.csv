@@ -1,10 +1,10 @@
 plan_name,plan_description,plan_equipment_type,task_title,task_description,task_position,subtask_title,subtask_description,subtask_difficulty,subtask_requires_inspection,subtask_position
 "Visite 100h","Inspection complète du planeur toutes les 100h de vol","glider","Inspection fuselage","Vérification complète du fuselage",1,"Vérifier l'état de la peinture","Inspecter visuellement l'état de la peinture, noter tout dommage",1,0,1
-"Visite 100h","Inspection complète du planeur toutes les 100h de vol","glider","Inspection fuselage","Vérification complète du fuselage",1,"Contrôler les fixations","Vérifier le serrage de toutes les fixations structurelles",3,1,2
-"Visite 100h","Inspection complète du planeur toutes les 100h de vol","glider","Inspection fuselage","Vérification complète du fuselage",1,"Vérifier l'absence de fissures","Inspecter minutieusement pour détecter toute fissure",4,1,3
-"Visite 100h","Inspection complète du planeur toutes les 100h de vol","glider","Contrôle voilure","Inspection complète de la voilure",2,"Vérifier l'état des ailes","Contrôle visuel de l'état général des ailes",2,0,1
-"Visite 100h","Inspection complète du planeur toutes les 100h de vol","glider","Contrôle voilure","Inspection complète de la voilure",2,"Contrôler les commandes de vol","Test et vérification des ailerons et volets",4,1,2
+"Visite 100h","Inspection complète du planeur toutes les 100h de vol","glider","Inspection fuselage","Vérification complète du fuselage",1,"Contrôler les fixations","Vérifier le serrage de toutes les fixations structurelles",2,1,2
+"Visite 100h","Inspection complète du planeur toutes les 100h de vol","glider","Inspection fuselage","Vérification complète du fuselage",1,"Vérifier l'absence de fissures","Inspecter minutieusement pour détecter toute fissure",3,1,3
+"Visite 100h","Inspection complète du planeur toutes les 100h de vol","glider","Contrôle voilure","Inspection complète de la voilure",2,"Vérifier l'état des ailes","Contrôle visuel de l'état général des ailes",1,0,1
+"Visite 100h","Inspection complète du planeur toutes les 100h de vol","glider","Contrôle voilure","Inspection complète de la voilure",2,"Contrôler les commandes de vol","Test et vérification des ailerons et volets",3,1,2
 "Visite annuelle avion","Visite annuelle réglementaire de l'avion","airplane","Motorisation","Contrôle du moteur et de ses équipements",1,"Vérifier le niveau d'huile","Contrôler et compléter si nécessaire",1,0,1
-"Visite annuelle avion","Visite annuelle réglementaire de l'avion","airplane","Motorisation","Contrôle du moteur et de ses équipements",1,"Contrôler les bougies","Inspecter et nettoyer les bougies d'allumage",3,1,2
-"Visite annuelle avion","Visite annuelle réglementaire de l'avion","airplane","Motorisation","Contrôle du moteur et de ses équipements",1,"Tester la compression","Test de compression des cylindres",5,1,3
+"Visite annuelle avion","Visite annuelle réglementaire de l'avion","airplane","Motorisation","Contrôle du moteur et de ses équipements",1,"Contrôler les bougies","Inspecter et nettoyer les bougies d'allumage",2,1,2
+"Visite annuelle avion","Visite annuelle réglementaire de l'avion","airplane","Motorisation","Contrôle du moteur et de ses équipements",1,"Tester la compression","Test de compression des cylindres",3,1,3
 

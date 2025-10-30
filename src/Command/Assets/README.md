@@ -20,7 +20,7 @@ Each row in the CSV represents a **subtask**. Plans and tasks are automatically 
 | `task_position` | Position/order of the task within the plan | Yes | Integer (1, 2, 3, ...) |
 | `subtask_title` | Title of the subtask | Yes | Any string (max 180 chars) |
 | `subtask_description` | Description of the subtask | No | Any text |
-| `subtask_difficulty` | Difficulty level of the subtask | Yes | Integer between 1 (easy) and 5 (hard) |
+| `subtask_difficulty` | Difficulty level of the subtask | Yes | Integer between 1 (Débutant) and 3 (Expert) |
 | `subtask_requires_inspection` | Whether the subtask requires inspection | Yes | `0` or `1` (or `true`/`false`) |
 | `subtask_position` | Position/order of the subtask within the task | Yes | Integer (1, 2, 3, ...) |
 
@@ -84,7 +84,7 @@ The command will display:
 1. **Use the template**: Start with `maintenance_plans_template.csv` and modify it according to your needs
 2. **Test first**: Always run with `--dry-run` first to validate your CSV
 3. **Check equipment types**: Make sure to use valid equipment types: `glider`, `airplane`, or `facility`
-4. **Validate difficulty**: Difficulty must be between 1 and 5
+4. **Validate difficulty**: Difficulty must be between 1 and 3 (1=Débutant, 2=Expérimenté, 3=Expert)
 5. **Group properly**: Rows with the same `plan_name` and `plan_equipment_type` will be grouped into the same plan
 6. **Order matters**: Use `task_position` and `subtask_position` to control the display order
 

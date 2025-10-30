@@ -29,8 +29,8 @@ class PlanSubTask
 
     #[ORM\Column(type: Types::SMALLINT)]
     #[Assert\NotNull(message: 'difficultyRequired')]
-    #[Assert\Range(min: 1, max: 5, notInRangeMessage: 'difficultyRange')]
-    private int $difficulty = 3;
+    #[Assert\Range(min: 1, max: 3, notInRangeMessage: 'difficultyRange')]
+    private int $difficulty = 2;
 
     #[ORM\Column]
     private bool $requiresInspection = false;
@@ -41,7 +41,7 @@ class PlanSubTask
     public function __construct()
     {
         $this->position = 0;
-        $this->difficulty = 3;
+        $this->difficulty = 2;
         $this->requiresInspection = false;
     }
 

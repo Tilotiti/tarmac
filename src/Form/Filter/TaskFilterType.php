@@ -64,10 +64,8 @@ class TaskFilterType extends AbstractFilterType
                 'choices' => [
                     'all' => '',
                     'debutant' => 1,
-                    'facile' => 2,
-                    'moyen' => 3,
-                    'difficile' => 4,
-                    'expert' => 5,
+                    'experimente' => 2,
+                    'expert' => 3,
                 ],
                 'required' => false,
             ])

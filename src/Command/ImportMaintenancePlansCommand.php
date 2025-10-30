@@ -148,8 +148,8 @@ class ImportMaintenancePlansCommand extends Command
 
                 // Validate difficulty
                 $difficulty = (int) $data['subtask_difficulty'];
-                if ($difficulty < 1 || $difficulty > 5) {
-                    throw new \InvalidArgumentException(sprintf('Invalid difficulty: %d (must be between 1 and 5)', $difficulty));
+                if ($difficulty < 1 || $difficulty > 3) {
+                    throw new \InvalidArgumentException(sprintf('Invalid difficulty: %d (must be between 1 and 3)', $difficulty));
                 }
 
                 // Validate requires_inspection

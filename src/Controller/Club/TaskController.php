@@ -119,7 +119,7 @@ class TaskController extends ExtendedController
                     'form' => $form,
                 ]);
             }
-            
+
             // Security check: non-pilots cannot create tasks for aircraft equipment
             $isPilot = $this->isGranted('PILOT');
             if (!$isPilot && $task->getEquipment()->getType()->isAircraft()) {
@@ -214,7 +214,7 @@ class TaskController extends ExtendedController
                     'form' => $form,
                 ]);
             }
-            
+
             $this->entityManager->flush();
 
             // Log task edit activity
@@ -249,6 +249,11 @@ class TaskController extends ExtendedController
         $this->taskStatusService->handleTaskClose($task, $this->getUser());
 
         $this->addFlash('success', 'taskClosed');
+
+        // If task belongs to a plan application, redirect to the plan application show page
+        if ($task->getPlanApplication() !== null) {
+            return $this->redirectToRoute('club_plan_application_show', ['id' => $task->getPlanApplication()->getId()]);
+        }
 
         return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
     }

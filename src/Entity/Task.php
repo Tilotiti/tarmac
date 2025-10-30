@@ -164,7 +164,7 @@ class Task
     {
         $subTasks = $this->subTasks;
         if ($subTasks->count() === 0) {
-            return 3; // Default difficulty if no subtasks
+            return 2; // Default difficulty if no subtasks
         }
 
         $total = 0;
@@ -180,11 +180,9 @@ class Task
         $difficulty = $this->getDifficulty();
         return match ($difficulty) {
             1 => 'debutant',
-            2 => 'facile',
-            3 => 'moyen',
-            4 => 'difficile',
-            5 => 'expert',
-            default => 'moyen',
+            2 => 'experimente',
+            3 => 'expert',
+            default => 'experimente',
         };
     }
 
@@ -193,10 +191,8 @@ class Task
         $difficulty = $this->getDifficulty();
         return match ($difficulty) {
             1 => 'success',
-            2 => 'success-lt',
-            3 => 'warning',
-            4 => 'orange',
-            5 => 'danger',
+            2 => 'warning',
+            3 => 'danger',
             default => 'warning',
         };
     }
