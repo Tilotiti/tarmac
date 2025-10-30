@@ -24,8 +24,27 @@
 				<a href="{{ path('club_equipment_show', {id: equipment.id}) }}" class="text-decoration-none">
 					<div
 						class="card h-100 card-link {% if not equipment.active %}opacity-75{% endif %}" style="cursor: pointer; position: relative;">
-						{# Owner badge - top right corner #}
-						<div class="equipment-owner-badge">
+						{# Badges - top right corner #}
+						<div
+							class="equipment-owner-badge">
+							{# Task and subtask count badges #}
+							{% set counts = pendingCounts[equipment.id] %}
+							{% if counts.tasks > 0 %}
+								<span class="badge bg-light text-dark me-1" title="{{ 'pendingTasks'|trans }}">
+									<i class="ti ti-checklist me-1" style="font-size: 0.75rem;"></i>
+									{{ counts.tasks }}
+									<span class="d-none d-sm-inline ms-1">{{ 'task'|trans|plural('fr') }}</span>
+								</span>
+							{% endif %}
+							{% if counts.subtasks > 0 %}
+								<span class="badge bg-light text-dark me-1" title="{{ 'pendingSubTasks'|trans }}">
+									<i class="ti ti-checkbox me-1" style="font-size: 0.75rem;"></i>
+									{{ counts.subtasks }}
+									<span class="d-none d-sm-inline ms-1">{{ 'subTask'|trans|plural('fr') }}</span>
+								</span>
+							{% endif %}
+
+							{# Owner badge #}
 							{% if equipment.isPrivate %}
 								<span class="badge bg-orange-lt" title="{{ 'private'|trans }}">
 									<i class="ti ti-user" style="font-size: 0.75rem;"></i>
@@ -42,10 +61,10 @@
 						<div class="card-body">
 							<div
 								class="d-flex align-items-center">
-							{# Avatar with icon based on type #}
-							<span class="avatar avatar-lg me-3 bg-{{ equipment.type.color }}-lt">
-								<i class="ti {{ equipment.type.icon }} text-{{ equipment.type.color }}" style="font-size: 1.5rem;"></i>
-							</span>
+								{# Avatar with icon based on type #}
+								<span class="avatar avatar-lg me-3 bg-{{ equipment.type.color }}-lt">
+									<i class="ti {{ equipment.type.icon }} text-{{ equipment.type.color }}" style="font-size: 1.5rem;"></i>
+								</span>
 								<div
 									class="flex-fill">
 									{# Title: Equipment name #}
@@ -57,26 +76,6 @@
 										{{ equipment.type.label|trans }}
 									</div>
 								</div>
-								{# Pending tasks and subtasks count #}
-								{% set counts = pendingCounts[equipment.id] %}
-								{% if counts.tasks > 0 %}
-									<div class="ms-3 text-end">
-										<div class="d-flex flex-column gap-1">
-											<span class="badge bg-warning" title="{{ 'pendingTasks'|trans }}">
-												<i class="ti ti-checklist me-1"></i>
-												{{ counts.tasks }}
-												<span class="d-none d-sm-inline ms-1">{{ counts.tasks > 1 ? 'tasks' : 'task' }}</span>
-											</span>
-											{% if counts.subtasks > 0 %}
-												<span class="badge bg-info" title="{{ 'pendingSubTasks'|trans }}">
-													<i class="ti ti-checkbox me-1"></i>
-													{{ counts.subtasks }}
-													<span class="d-none d-sm-inline ms-1">{{ counts.subtasks > 1 ? 'subTasks' : 'subTask' }}</span>
-												</span>
-											{% endif %}
-										</div>
-									</div>
-								{% endif %}
 							</div>
 						</div>
 					</div>

@@ -119,18 +119,23 @@
     color: white;
 }
 
-/* Equipment owner badge - top right corner */
+/* Equipment badges - top right corner */
 .equipment-owner-badge {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
     z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    justify-content: flex-end;
 }
 
 .equipment-owner-badge .badge {
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
     opacity: 0.9;
+    white-space: nowrap;
 }
 
 /* Hide text on very small screens, show only icon */
