@@ -294,6 +294,8 @@ class EquipmentController extends ExtendedController
 
         $form = $this->createForm(PlanApplyType::class, [
             'equipment' => $equipment,
+        ], [
+            'club' => $club,
         ]);
 
         // Add plan selection

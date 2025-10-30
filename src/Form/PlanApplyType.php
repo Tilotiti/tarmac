@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Club;
 use App\Entity\Enum\EquipmentType;
 use App\Entity\Equipment;
 use Doctrine\ORM\QueryBuilder;
@@ -16,6 +17,7 @@ class PlanApplyType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $equipmentType = $options['equipment_type'] ?? null;
+        $club = $options['club'];
 
         $builder
             ->add('equipment', EntityType::class, [
@@ -25,9 +27,11 @@ class PlanApplyType extends AbstractType
                 'required' => true,
                 'placeholder' => 'selectEquipment',
                 'attr' => ['class' => 'form-select'],
-                'query_builder' => function ($er) use ($equipmentType) {
+                'query_builder' => function ($er) use ($equipmentType, $club) {
                     /** @var QueryBuilder $qb */
                     $qb = $er->createQueryBuilder('e')
+                        ->where('e.club = :club')
+                        ->setParameter('club', $club)
                         ->orderBy('e.name', 'ASC');
 
                     if ($equipmentType) {
@@ -53,9 +57,12 @@ class PlanApplyType extends AbstractType
         $resolver->setDefaults([
             // No data_class as this is a DTO form
             'equipment_type' => null,
+            'club' => null,
         ]);
 
+        $resolver->setRequired('club');
         $resolver->setAllowedTypes('equipment_type', ['null', EquipmentType::class]);
+        $resolver->setAllowedTypes('club', [Club::class, 'null']);
     }
 }
 

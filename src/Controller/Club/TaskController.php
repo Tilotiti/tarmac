@@ -51,7 +51,9 @@ class TaskController extends ExtendedController
         $isPilote = $this->isGranted('PILOT');
 
         // Handle filters with default status 'open'
-        $filters = $this->createFilter(TaskFilterType::class, ['status' => 'open']);
+        $filters = $this->createFilter(TaskFilterType::class, ['status' => 'open'], [
+            'club' => $club,
+        ]);
         $filters->handleRequest($request);
 
         // Build query with filters

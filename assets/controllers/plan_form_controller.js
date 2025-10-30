@@ -52,14 +52,18 @@ export default class extends Controller {
 
         // Hide placeholder if exists
         this.updatePlaceholder();
+
+        // Automatically create the first subtask for this new task
+        this.addSubTaskToTask(taskIndex);
     }
 
-    addSubTask(event) {
-        event.preventDefault();
-
-        const button = event.currentTarget;
-        const taskCard = button.closest('[data-task-index]');
-        const taskIndex = parseInt(taskCard.dataset.taskIndex);
+    addSubTaskToTask(taskIndex) {
+        // Find the task card by index
+        const taskCard = this.tasksContainerTarget.querySelector(`[data-task-index="${taskIndex}"]`);
+        if (!taskCard) {
+            console.error(`Task with index ${taskIndex} not found`);
+            return;
+        }
 
         // Get subtask container and template from this specific task
         const subtaskContainer = taskCard.querySelector('[data-subtask-container]');
@@ -112,6 +116,17 @@ export default class extends Controller {
         if (placeholder) {
             placeholder.style.display = 'none';
         }
+    }
+
+    addSubTask(event) {
+        event.preventDefault();
+
+        const button = event.currentTarget;
+        const taskCard = button.closest('[data-task-index]');
+        const taskIndex = parseInt(taskCard.dataset.taskIndex);
+
+        // Use the shared method to add a subtask
+        this.addSubTaskToTask(taskIndex);
     }
 
     removeTask(event) {

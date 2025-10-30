@@ -2,6 +2,7 @@
 
 namespace App\Form\Filter;
 
+use App\Entity\Club;
 use App\Entity\Equipment;
 use App\Entity\Enum\EquipmentType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -14,6 +15,8 @@ class TaskFilterType extends AbstractFilterType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $club = $options['club'];
+
         $builder
             ->add('equipment', EntityType::class, [
                 'class' => Equipment::class,
@@ -21,6 +24,12 @@ class TaskFilterType extends AbstractFilterType
                 'label' => 'equipment',
                 'required' => false,
                 'placeholder' => 'all',
+                'query_builder' => function ($er) use ($club) {
+                    return $er->createQueryBuilder('e')
+                        ->where('e.club = :club')
+                        ->setParameter('club', $club)
+                        ->orderBy('e.name', 'ASC');
+                },
             ])
             ->add('equipmentType', EnumType::class, [
                 'class' => EquipmentType::class,
@@ -63,6 +72,18 @@ class TaskFilterType extends AbstractFilterType
                 'required' => false,
             ])
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        parent::configureOptions($resolver);
+        
+        $resolver->setDefaults([
+            'club' => null,
+        ]);
+
+        $resolver->setRequired('club');
+        $resolver->setAllowedTypes('club', [Club::class, 'null']);
     }
 }
 

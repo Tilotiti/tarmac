@@ -1585,6 +1585,66 @@
         <source>timeSpentMustBePositive</source>
         <target>Le temps passé doit être supérieur à 0</target>
       </trans-unit>
+      <trans-unit id="346" resname="planApplication">
+        <source>planApplication</source>
+        <target>Application de plan</target>
+      </trans-unit>
+      <trans-unit id="347" resname="maintenancePlans">
+        <source>maintenancePlans</source>
+        <target>Plans de maintenance</target>
+      </trans-unit>
+      <trans-unit id="348" resname="applyNewPlan">
+        <source>applyNewPlan</source>
+        <target>Appliquer un nouveau plan</target>
+      </trans-unit>
+      <trans-unit id="349" resname="noMaintenancePlans">
+        <source>noMaintenancePlans</source>
+        <target>Aucun plan de maintenance</target>
+      </trans-unit>
+      <trans-unit id="350" resname="noMaintenancePlansDescription">
+        <source>noMaintenancePlansDescription</source>
+        <target>Aucun plan de maintenance n'a été appliqué à cet équipement. Commencez par en appliquer un pour organiser la maintenance.</target>
+      </trans-unit>
+      <trans-unit id="351" resname="confirmCancelApplication">
+        <source>confirmCancelApplication</source>
+        <target>Êtes-vous sûr de vouloir annuler cette application de plan ? Toutes les tâches associées seront également annulées.</target>
+      </trans-unit>
+      <trans-unit id="352" resname="cancelApplication">
+        <source>cancelApplication</source>
+        <target>Annuler l'application</target>
+      </trans-unit>
+      <trans-unit id="353" resname="viewEquipment">
+        <source>viewEquipment</source>
+        <target>Voir l'équipement</target>
+      </trans-unit>
+      <trans-unit id="354" resname="noTasksForApplication">
+        <source>noTasksForApplication</source>
+        <target>Aucune tâche n'a été créée pour cette application de plan.</target>
+      </trans-unit>
+      <trans-unit id="355" resname="appliedAt">
+        <source>appliedAt</source>
+        <target>Appliqué le</target>
+      </trans-unit>
+      <trans-unit id="356" resname="appliedBy">
+        <source>appliedBy</source>
+        <target>Appliqué par</target>
+      </trans-unit>
+      <trans-unit id="357" resname="cancelledAt">
+        <source>cancelledAt</source>
+        <target>Annulé le</target>
+      </trans-unit>
+      <trans-unit id="358" resname="completed">
+        <source>completed</source>
+        <target>Terminé</target>
+      </trans-unit>
+      <trans-unit id="359" resname="confirmCancel">
+        <source>confirmCancel</source>
+        <target>Confirmer l'annulation</target>
+      </trans-unit>
+      <trans-unit id="360" resname="by">
+        <source>by</source>
+        <target>par</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -3,6 +3,8 @@
 namespace App\Controller\Club;
 
 use App\Entity\Plan;
+use App\Entity\PlanTask;
+use App\Entity\PlanSubTask;
 use App\Form\PlanType;
 use App\Entity\Equipment;
 use App\Form\PlanApplyType;
@@ -84,6 +86,23 @@ class PlanController extends ExtendedController
         $plan = new Plan();
         $plan->setClub($club);
         $plan->setCreatedBy($this->getUser());
+
+        // Force creation of first task and its first subtask
+        if ($plan->getTaskTemplates()->count() === 0) {
+            $firstTask = new PlanTask();
+            $firstTask->setTitle('');
+            $firstTask->setDescription('');
+            $firstTask->setPosition(0);
+            $plan->addTaskTemplate($firstTask);
+
+            $firstSubTask = new PlanSubTask();
+            $firstSubTask->setTitle('');
+            $firstSubTask->setDescription('');
+            $firstSubTask->setDifficulty(3);
+            $firstSubTask->setRequiresInspection(false);
+            $firstSubTask->setPosition(0);
+            $firstTask->addSubTaskTemplate($firstSubTask);
+        }
 
         $form = $this->createForm(PlanType::class, $plan);
         $form->handleRequest($request);
@@ -210,6 +229,7 @@ class PlanController extends ExtendedController
 
         $form = $this->createForm(PlanApplyType::class, null, [
             'equipment_type' => $plan->getEquipmentType(),
+            'club' => $club,
         ]);
         $form->handleRequest($request);
 
@@ -279,7 +299,9 @@ class PlanController extends ExtendedController
         $qb = $this->applicationRepository->queryAll();
 
         // Handle filters
-        $filterForm = $this->createFilter(PlanApplicationFilterType::class);
+        $filterForm = $this->createFilter(PlanApplicationFilterType::class, null, [
+            'club' => $club,
+        ]);
         $filterForm->handleRequest($request);
 
         if ($filterForm->isSubmitted() && $filterForm->isValid()) {
@@ -319,6 +341,39 @@ class PlanController extends ExtendedController
             'club' => $club,
             'applications' => $applications,
             'filterForm' => $filterForm,
+        ]);
+    }
+
+    #[Route('/applications/{id}', name: 'club_plan_application_show', requirements: ['id' => '\d+'])]
+    #[Breadcrumb([
+        ['label' => 'home', 'route' => 'club_dashboard'],
+        ['label' => 'plans', 'route' => 'club_plans'],
+        ['label' => 'applications', 'route' => 'club_plan_applications'],
+        ['label' => '$application.plan.name'],
+    ])]
+    public function showApplication(PlanApplication $application): Response
+    {
+        $club = $this->clubResolver->resolve();
+
+        // Ensure application belongs to this club
+        if ($application->getEquipment()->getClub() !== $club) {
+            throw $this->createNotFoundException();
+        }
+
+        // Get tasks for this application
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('t')
+            ->from(\App\Entity\Task::class, 't')
+            ->where('t.planApplication = :application')
+            ->setParameter('application', $application)
+            ->orderBy('t.position', 'ASC');
+        
+        $tasks = $qb->getQuery()->getResult();
+
+        return $this->render('club/plan/application_show.html.twig', [
+            'club' => $club,
+            'application' => $application,
+            'tasks' => $tasks,
         ]);
     }
 

@@ -160,29 +160,60 @@
 					<div class="card-body">
 						<div class="list-group list-group-flush">
 							{% for application in applications %}
-								<div class="list-group-item px-0">
+								<a href="{{ path('club_plan_application_show', {id: application.id}) }}" class="list-group-item list-group-item-action px-0">
 									<div class="row align-items-center">
 										<div class="col">
-											<a href="{{ path('club_equipment_show', {id: application.equipment.id}) }}" class="text-reset text-decoration-none">
-												<div class="fw-bold">{{ application.equipment.name }}</div>
-												<div class="text-secondary small">
-													{% if application.dueAt %}
-														{{ 'dueDate'|trans }}:
-														{{ application.dueAt|date('d/m/Y') }}
-													{% else %}
-														{{ 'noDueDate'|trans }}
-													{% endif %}
-												</div>
-											</a>
+											<div class="fw-bold mb-1">{{ application.equipment.name }}</div>
+											<div class="text-secondary small mb-1">
+												<i class="ti ti-calendar me-1"></i>
+												{{ 'appliedAt'|trans }}: {{ application.appliedAt|date('d/m/Y') }}
+											</div>
+											<div class="text-secondary small">
+												{% if application.dueAt %}
+													<i class="ti ti-calendar-due me-1"></i>
+													{{ 'dueDate'|trans }}: {{ application.dueAt|date('d/m/Y') }}
+												{% else %}
+													<i class="ti ti-calendar-x me-1"></i>
+													{{ 'noDueDate'|trans }}
+												{% endif %}
+											</div>
 										</div>
 										<div class="col-auto">
-											<span class="badge bg-primary text-white">
-												{{ application.tasks|length }}
-												{{ 'tasks'|trans|lower }}
-											</span>
+											<div class="d-flex gap-2 align-items-center">
+												<span class="badge bg-primary text-white">
+													{{ application.tasks|length }}
+													{{ 'tasks'|trans|lower }}
+												</span>
+												{% if application.isCancelled %}
+													<span class="badge bg-warning-lt text-white">
+														<i class="ti ti-x me-1"></i>
+														{{ 'cancelled'|trans }}
+													</span>
+												{% endif %}
+											</div>
 										</div>
 									</div>
-								</div>
+									
+									{# Progress bar for tasks #}
+									{% if application.tasks|length > 0 %}
+										{% set progress = 0 %}
+										{% set closed = 0 %}
+										{% for task in application.tasks %}
+											{% if task.status == 'closed' %}
+												{% set closed = closed + 1 %}
+											{% endif %}
+										{% endfor %}
+										{% set progress = (closed / application.tasks|length * 100)|round %}
+										<div class="progress progress-sm mb-1 mt-2">
+											<div class="progress-bar bg-{{ progress == 100 ? 'success' : 'primary' }}" style="width: {{ progress }}%">
+												<span class="visually-hidden">{{ progress }}%</span>
+											</div>
+										</div>
+										<div class="text-secondary small">
+											{{ closed }} / {{ application.tasks|length }} {{ 'tasks'|trans|lower }} {{ 'completed'|trans|lower }}
+										</div>
+									{% endif %}
+								</a>
 							{% endfor %}
 						</div>
 					</div>

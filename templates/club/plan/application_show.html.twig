@@ -1,0 +1,209 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'planApplication'|trans }}
+{% endblock %}
+
+{% block page_actions %}
+	{% if is_granted('MANAGE', club) and not application.isCancelled %}
+		<div class="btn-list">
+			<a href="{{ path('club_equipment_show', {id: application.equipment.id}) }}" class="btn">
+				<i class="ti ti-device-analytics me-2"></i>
+				{{ 'viewEquipment'|trans }}
+			</a>
+			<form method="post" action="{{ path('club_plan_application_cancel', {id: application.id}) }}" style="display: inline;" data-controller="confirm" data-confirm-title-value="{{ 'confirmCancel'|trans }}" data-confirm-yes-value="{{ 'confirm'|trans }}" data-confirm-cancel-value="{{ 'cancel'|trans }}">
+				<button type="submit" class="btn btn-danger" data-confirm="{{ 'confirmCancelApplication'|trans }}">
+					<i class="ti ti-x me-2"></i>
+					{{ 'cancelApplication'|trans }}
+				</button>
+			</form>
+		</div>
+	{% elseif not is_granted('MANAGE', club) %}
+		<a href="{{ path('club_equipment_show', {id: application.equipment.id}) }}" class="btn btn-primary">
+			<i class="ti ti-device-analytics me-2"></i>
+			{{ 'viewEquipment'|trans }}
+		</a>
+	{% endif %}
+{% endblock %}
+
+{% block page_content %}
+	{# Application Information Card #}
+	<div class="card mb-3">
+		<div class="card-body">
+			<div class="row mb-4">
+				<div class="col">
+					<h2 class="mb-3">{{ application.plan.name }}</h2>
+					
+					<div class="row">
+						<div class="col-12 col-md-6 mb-3">
+							<div class="text-secondary small mb-1">{{ 'equipment'|trans }}</div>
+							<div>
+								<a href="{{ path('club_equipment_show', {id: application.equipment.id}) }}" class="text-reset">
+									<i class="ti {{ application.equipment.type.icon }} me-1"></i>
+									{{ application.equipment.name }}
+								</a>
+							</div>
+						</div>
+
+						<div class="col-12 col-md-6 mb-3">
+							<div class="text-secondary small mb-1">{{ 'plan'|trans }}</div>
+							<div>
+								<a href="{{ path('club_plan_show', {id: application.plan.id}) }}" class="text-reset">
+									<i class="ti ti-clipboard-check me-1"></i>
+									{{ application.plan.name }}
+								</a>
+							</div>
+						</div>
+
+						<div class="col-12 col-md-6 mb-3">
+							<div class="text-secondary small mb-1">{{ 'appliedAt'|trans }}</div>
+							<div>
+								<i class="ti ti-calendar me-1"></i>
+								{{ application.appliedAt|date('d/m/Y à H:i') }}
+							</div>
+						</div>
+
+						<div class="col-12 col-md-6 mb-3">
+							<div class="text-secondary small mb-1">{{ 'appliedBy'|trans }}</div>
+							<div>
+								<i class="ti ti-user me-1"></i>
+								{{ application.appliedBy.fullname }}
+							</div>
+						</div>
+
+						{% if application.dueAt %}
+							<div class="col-12 col-md-6 mb-3">
+								<div class="text-secondary small mb-1">{{ 'dueDate'|trans }}</div>
+								<div>
+									<i class="ti ti-calendar-due me-1"></i>
+									{{ application.dueAt|date('d/m/Y') }}
+								</div>
+							</div>
+						{% endif %}
+
+						{% if application.isCancelled %}
+							<div class="col-12 mb-3">
+								<div class="alert alert-warning mb-0">
+									<div class="d-flex align-items-center">
+										<i class="ti ti-alert-triangle me-2"></i>
+										<div>
+											<strong>{{ 'cancelled'|trans }}</strong>
+											<div class="small">
+												{{ 'cancelledAt'|trans }}: {{ application.cancelledAt|date('d/m/Y à H:i') }}
+												{% if application.cancelledBy %}
+													- {{ 'by'|trans }}: {{ application.cancelledBy.fullname }}
+												{% endif %}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{# Tasks Section #}
+	<div class="card">
+		<div class="card-header">
+			<h3 class="card-title">
+				<i class="ti ti-checklist me-2"></i>
+				{{ 'tasks'|trans }}
+			</h3>
+			<span class="badge bg-primary text-white ms-2">{{ tasks|length }}</span>
+		</div>
+		<div class="card-body">
+			{% if tasks|length > 0 %}
+				<div class="list-group list-group-flush">
+					{% for task in tasks %}
+						<a href="{{ path('club_task_show', {id: task.id}) }}" class="list-group-item list-group-item-action">
+							<div class="row align-items-center">
+								<div class="col">
+									<div class="fw-bold mb-1">{{ task.title }}</div>
+									{% if task.description %}
+										<div class="text-secondary small mb-2">{{ task.description }}</div>
+									{% endif %}
+									
+									{# Progress bar for subtasks #}
+									{% if task.subTasks|length > 0 %}
+										{% set progress = 0 %}
+										{% set closed = 0 %}
+										{% for subtask in task.subTasks %}
+											{% if subtask.status == 'closed' %}
+												{% set closed = closed + 1 %}
+											{% endif %}
+										{% endfor %}
+										{% set progress = (closed / task.subTasks|length * 100)|round %}
+										<div class="progress progress-sm mb-1">
+											<div class="progress-bar bg-{{ progress == 100 ? 'success' : 'primary' }}" style="width: {{ progress }}%">
+												<span class="visually-hidden">{{ progress }}%</span>
+											</div>
+										</div>
+										<div class="text-secondary small">
+											{{ closed }} / {{ task.subTasks|length }} {{ 'subTasks'|trans|lower }}
+										</div>
+									{% endif %}
+								</div>
+								<div class="col-auto">
+									<div class="d-flex gap-2 align-items-center flex-wrap">
+										{# Status badge #}
+										{% if task.status == 'closed' %}
+											<span class="badge bg-success-lt">
+												<i class="ti ti-check me-1"></i>
+												{{ 'done'|trans }}
+											</span>
+										{% elseif task.status == 'in_progress' %}
+											<span class="badge bg-blue-lt">
+												<i class="ti ti-loader me-1"></i>
+												{{ 'inProgress'|trans }}
+											</span>
+										{% else %}
+											<span class="badge bg-secondary-lt">
+												<i class="ti ti-circle-dotted me-1"></i>
+												{{ 'pending'|trans }}
+											</span>
+										{% endif %}
+
+										{# Difficulty badge #}
+										{% include 'component/difficultyBadge.html.twig' with {difficulty: task.difficulty} %}
+
+										{# Inspection badge #}
+										{% if task.requiresInspection %}
+											<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+												<i class="ti ti-shield-check me-1"></i>
+												{{ 'requiresInspection'|trans }}
+											</span>
+										{% endif %}
+
+										{# Due date #}
+										{% if task.dueAt %}
+											<span class="text-secondary small">
+												<i class="ti ti-calendar me-1"></i>
+												{{ task.dueAt|date('d/m/Y') }}
+											</span>
+										{% endif %}
+									</div>
+								</div>
+							</div>
+						</a>
+					{% endfor %}
+				</div>
+			{% else %}
+				<div class="empty">
+					<div class="empty-icon">
+						<i class="ti ti-checklist icon-lg"></i>
+					</div>
+					<p class="empty-title">{{ 'noTasks'|trans }}</p>
+					<p class="empty-subtitle text-secondary">
+						{{ 'noTasksForApplication'|trans }}
+					</p>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
+
+
+

@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\PlanSubTask;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,6 +25,24 @@ class PlanSubTaskType extends AbstractType
                 'label' => 'description',
                 'required' => false,
                 'attr' => ['class' => 'form-control', 'rows' => 2],
+            ])
+            ->add('difficulty', ChoiceType::class, [
+                'label' => 'difficulty',
+                'choices' => [
+                    'debutant' => 1,
+                    'facile' => 2,
+                    'moyen' => 3,
+                    'difficile' => 4,
+                    'expert' => 5,
+                ],
+                'required' => true,
+                'data' => 3,
+                'attr' => ['class' => 'form-select'],
+            ])
+            ->add('requiresInspection', CheckboxType::class, [
+                'label' => 'requiresInspection',
+                'required' => false,
+                'attr' => ['class' => 'form-check-input'],
             ])
         ;
     }
