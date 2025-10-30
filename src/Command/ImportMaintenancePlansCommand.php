@@ -74,8 +74,21 @@ class ImportMaintenancePlansCommand extends Command
             return Command::FAILURE;
         }
 
+        // Detect delimiter by reading first line
+        $firstLine = fgets($handle);
+        rewind($handle);
+        
+        $delimiter = ',';
+        if (strpos($firstLine, ';') !== false) {
+            $delimiter = ';';
+        } elseif (strpos($firstLine, '\t') !== false) {
+            $delimiter = '\t';
+        }
+        
+        $io->text(sprintf('Detected delimiter: %s', $delimiter === '\t' ? 'tab' : $delimiter));
+
         // Read header
-        $header = fgetcsv($handle);
+        $header = fgetcsv($handle, 0, $delimiter);
         if ($header === false) {
             $io->error('Failed to read CSV header');
             fclose($handle);
@@ -108,8 +121,12 @@ class ImportMaintenancePlansCommand extends Command
         $tasks = [];
         $rowNumber = 1;
         $errorCount = 0;
+        
+        // Track positions for automatic calculation
+        $taskPositions = [];
+        $subtaskPositions = [];
 
-        while (($row = fgetcsv($handle)) !== false) {
+        while (($row = fgetcsv($handle, 0, $delimiter)) !== false) {
             $rowNumber++;
             
             // Skip empty rows
@@ -159,17 +176,22 @@ class ImportMaintenancePlansCommand extends Command
                 $plan = $plans[$planKey];
 
                 // Get or create task
-                $taskKey = $planKey . '|' . $data['task_title'] . '|' . $data['task_position'];
+                $taskKey = $planKey . '|' . $data['task_title'];
                 if (!isset($tasks[$taskKey])) {
                     $task = new PlanTask();
                     $task->setTitle($data['task_title']);
                     $task->setDescription($data['task_description'] ?: null);
-                    $task->setPosition((int) $data['task_position']);
+                    
+                    // Calculate position automatically
+                    if (!isset($taskPositions[$planKey])) {
+                        $taskPositions[$planKey] = 1;
+                    }
+                    $task->setPosition($taskPositions[$planKey]++);
                     $task->setPlan($plan);
                     $plan->addTaskTemplate($task);
 
                     $tasks[$taskKey] = $task;
-                    $io->text(sprintf('  └─ Creating task: %s (position %d)', $data['task_title'], (int) $data['task_position']));
+                    $io->text(sprintf('  └─ Creating task: %s (position %d)', $data['task_title'], $task->getPosition()));
                 }
                 $task = $tasks[$taskKey];
 
@@ -179,7 +201,12 @@ class ImportMaintenancePlansCommand extends Command
                 $subtask->setDescription($data['subtask_description'] ?: null);
                 $subtask->setDifficulty($difficulty);
                 $subtask->setRequiresInspection($requiresInspection);
-                $subtask->setPosition((int) $data['subtask_position']);
+                
+                // Calculate position automatically for subtasks within each task
+                if (!isset($subtaskPositions[$taskKey])) {
+                    $subtaskPositions[$taskKey] = 1;
+                }
+                $subtask->setPosition($subtaskPositions[$taskKey]++);
                 $subtask->setTaskTemplate($task);
                 $task->addSubTaskTemplate($subtask);
 
@@ -187,7 +214,7 @@ class ImportMaintenancePlansCommand extends Command
                 $io->text(sprintf('     └─ Creating subtask: %s (difficulty %d, position %d)%s', 
                     $data['subtask_title'], 
                     $difficulty, 
-                    (int) $data['subtask_position'],
+                    $subtask->getPosition(),
                     $inspectionBadge
                 ));
 
