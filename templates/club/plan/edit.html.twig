@@ -47,20 +47,11 @@
 							</button>
 						</div>
 						<div class="card-body">
-							<div class="row">
-								<div class="col-12 col-md-8 mb-3">
-									{{ form_row(taskTemplate.title) }}
-								</div>
-								<div class="col-12 col-md-4 mb-3">
-									{{ form_row(taskTemplate.difficulty) }}
-								</div>
+							<div class="mb-3">
+								{{ form_row(taskTemplate.title) }}
 							</div>
 							<div class="mb-3">
 								{{ form_row(taskTemplate.description) }}
-							</div>
-							<div class="form-check form-switch mb-3">
-								{{ form_widget(taskTemplate.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
-								{{ form_label(taskTemplate.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
 							</div>
 
 							{# Subtasks section #}
@@ -70,7 +61,7 @@
 								<div
 									data-subtask-container>
 									{# Empty state placeholder #}
-									<div class="text-center py-2" data-subtask-placeholder style="{% if taskTemplate.subTaskTemplates|length > 0 %}display: none;{% else %}display: block;{% endif %}">
+									<div class="text-center py-2 d-none" data-subtask-placeholder>
 										<p class="text-muted small mb-0">{{ 'noSubTasks'|trans }}</p>
 									</div>
 
@@ -83,11 +74,22 @@
 													<i class="ti ti-trash"></i>
 												</button>
 											</legend>
-											<div class="mb-2">
-												{{ form_row(subTaskTemplate.title) }}
+											<div class="row mb-2">
+												<div class="col-12 col-md-9">
+													{{ form_row(subTaskTemplate.title) }}
+												</div>
+												<div class="col-12 col-md-3">
+													{{ form_row(subTaskTemplate.difficulty) }}
+												</div>
 											</div>
 											<div class="mb-2">
 												{{ form_row(subTaskTemplate.description) }}
+											</div>
+											<div class="mb-2">
+												<div class="form-check form-switch">
+													{{ form_widget(subTaskTemplate.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
+													{{ form_label(subTaskTemplate.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
+												</div>
 											</div>
 										</fieldset>
 									{% endfor %}
@@ -111,16 +113,22 @@
 												<i class="ti ti-trash"></i>
 											</button>
 										</legend>
-										<div class="row">
-											<div class="col-12 col-md-9 mb-2">
+										<div class="row mb-2">
+											<div class="col-12 col-md-9">
 												{{ form_row(taskTemplate.subTaskTemplates.vars.prototype.title) }}
 											</div>
-											<div class="col-12 col-md-3 mb-2">
+											<div class="col-12 col-md-3">
 												{{ form_row(taskTemplate.subTaskTemplates.vars.prototype.difficulty) }}
 											</div>
 										</div>
 										<div class="mb-2">
 											{{ form_row(taskTemplate.subTaskTemplates.vars.prototype.description) }}
+										</div>
+										<div class="mb-2">
+											<div class="form-check form-switch">
+												{{ form_widget(taskTemplate.subTaskTemplates.vars.prototype.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
+												{{ form_label(taskTemplate.subTaskTemplates.vars.prototype.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
+											</div>
 										</div>
 									</fieldset>
 								</template>
@@ -150,20 +158,11 @@
 					</button>
 				</div>
 				<div class="card-body">
-					<div class="row">
-						<div class="col-12 col-md-8 mb-3">
-							{{ form_row(form.taskTemplates.vars.prototype.title) }}
-						</div>
-						<div class="col-12 col-md-4 mb-3">
-							{{ form_row(form.taskTemplates.vars.prototype.difficulty) }}
-						</div>
+					<div class="mb-3">
+						{{ form_row(form.taskTemplates.vars.prototype.title) }}
 					</div>
 					<div class="mb-3">
 						{{ form_row(form.taskTemplates.vars.prototype.description) }}
-					</div>
-					<div class="form-check form-switch mb-3">
-						{{ form_widget(form.taskTemplates.vars.prototype.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
-						{{ form_label(form.taskTemplates.vars.prototype.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
 					</div>
 
 					{# Subtasks section #}
@@ -173,7 +172,7 @@
 						<div
 							data-subtask-container>
 							{# Empty state placeholder #}
-							<div class="text-center py-2" data-subtask-placeholder>
+							<div class="text-center py-2 d-none" data-subtask-placeholder>
 								<p class="text-muted small mb-0">{{ 'noSubTasks'|trans }}</p>
 							</div>
 
@@ -196,16 +195,22 @@
 										<i class="ti ti-trash"></i>
 									</button>
 								</legend>
-								<div class="row">
-									<div class="col-12 col-md-9 mb-2">
+								<div class="row mb-2">
+									<div class="col-12 col-md-9">
 										{{ form_row(form.taskTemplates.vars.prototype.subTaskTemplates.vars.prototype.title) }}
 									</div>
-									<div class="col-12 col-md-3 mb-2">
+									<div class="col-12 col-md-3">
 										{{ form_row(form.taskTemplates.vars.prototype.subTaskTemplates.vars.prototype.difficulty) }}
 									</div>
 								</div>
 								<div class="mb-2">
 									{{ form_row(form.taskTemplates.vars.prototype.subTaskTemplates.vars.prototype.description) }}
+								</div>
+								<div class="mb-2">
+									<div class="form-check form-switch">
+										{{ form_widget(form.taskTemplates.vars.prototype.subTaskTemplates.vars.prototype.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
+										{{ form_label(form.taskTemplates.vars.prototype.subTaskTemplates.vars.prototype.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
+									</div>
 								</div>
 							</fieldset>
 						</template>

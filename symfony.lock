@@ -44,6 +44,15 @@
             "migrations/.gitignore"
         ]
     },
+    "nucleos/dompdf-bundle": {
+        "version": "4.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "3.1",
+            "ref": "0a89461aec4873f9205f1fc04c96c607116abb2e"
+        }
+    },
     "php-translation/symfony-bundle": {
         "version": "0.16",
         "recipe": {

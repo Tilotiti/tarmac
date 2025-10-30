@@ -59,8 +59,21 @@
 		</div>
 		<div class="card-body">
 			{{ form_start(form) }}
-			{{ form_row(form.title) }}
-			{{ form_row(form.description) }}
+			<div class="row">
+				<div class="col-12 col-md-9 mb-3">
+					{{ form_row(form.title) }}
+				</div>
+				<div class="col-12 col-md-3 mb-3">
+					{{ form_row(form.difficulty) }}
+				</div>
+			</div>
+			<div class="mb-3">
+				{{ form_row(form.description, {'attr': {'rows': 3}}) }}
+			</div>
+			<div class="form-check form-switch mb-3">
+				{{ form_widget(form.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
+				{{ form_label(form.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
+			</div>
 
 			<div class="form-footer">
 				<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">

@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/tasks/{taskId}/subtasks', host: '{subdomain}.%domain%', requirements: ['subdomain' => '(?!www|app).*', 'taskId' => '\d+'])]
 #[IsGranted('ROLE_USER')]
@@ -39,6 +40,7 @@ class SubTaskController extends ExtendedController
         private readonly EntityManagerInterface $entityManager,
         private readonly MembershipRepository $membershipRepository,
         private readonly ContributionRepository $contributionRepository,
+        private readonly TranslatorInterface $translator,
     ) {
         parent::__construct($subdomainService);
     }
@@ -200,7 +202,7 @@ class SubTaskController extends ExtendedController
         if ($this->isGranted(SubTaskVoter::COMMENT, $subTask)) {
             $commentForm = $this->createForm(ActivityFormType::class, null, [
                 'label' => 'comment',
-                'placeholder' => 'addComment',
+                'placeholder' => $this->translator->trans('addComment'),
             ]);
             $commentForm->handleRequest($request);
 
@@ -312,6 +314,12 @@ class SubTaskController extends ExtendedController
 
             $this->addFlash('success', 'subTaskMarkedAsDone');
 
+            // Check if user can inspect the subtask after completion
+            // If not, redirect to task page instead of subtask page
+            if (!$this->isGranted(SubTaskVoter::INSPECT, $subTask)) {
+                return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
+            }
+
             return $this->redirectToRoute('club_subtask_show', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
         }
 
@@ -319,127 +327,6 @@ class SubTaskController extends ExtendedController
         return $this->redirectToRoute('club_subtask_show', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
     }
 
-    #[Route('/{id}/do', name: 'club_subtask_do', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
-    #[IsGranted(SubTaskVoter::DO , 'subTask')]
-    public function do(SubTask $subTask, Request $request, BreadcrumbBuilder $breadcrumbBuilder): Response
-    {
-        $club = $this->clubResolver->resolve();
-        $task = $subTask->getTask();
-        $user = $this->getUser();
-
-        // Get current user's membership
-        $currentMembership = $this->membershipRepository->findOneBy([
-            'user' => $user,
-            'club' => $club,
-        ]);
-
-        $isManager = $this->isGranted('MANAGE');
-
-        // Configure breadcrumb
-        $breadcrumbBuilder
-            ->addItem('home', 'club_dashboard')
-            ->addItem('tasks', 'club_tasks')
-            ->addItem($task->getTitle(), 'club_task_show', ['id' => $task->getId()])
-            ->addItem($subTask->getTitle())
-            ->addItem('complete');
-
-        // Check for existing contributions (e.g., after rejection)
-        $existingContributions = $this->contributionRepository->findBySubTaskIndexedByMembership($subTask);
-        $formData = null;
-
-        if (!empty($existingContributions)) {
-            // Pre-fill form with existing contribution data
-            $totalTimeSpent = 0;
-            $contributorMemberships = [];
-
-            foreach ($existingContributions as $contribution) {
-                $totalTimeSpent += $contribution->getTimeSpent();
-                $contributorMemberships[] = $contribution->getMembership();
-            }
-
-            $formData = [
-                'doneBy' => $currentMembership,
-                'timeSpent' => (int) ceil($totalTimeSpent), // Convert back to integer hours
-                'contributors' => $contributorMemberships,
-            ];
-        }
-
-        $form = $this->createForm(SubTaskCompleteFormType::class, $formData, [
-            'club' => $club,
-            'current_membership' => $currentMembership,
-            'is_manager' => $isManager,
-            'subtask' => $subTask,
-        ]);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-
-            /** @var Membership $doneByMembership */
-            $doneByMembership = $data['doneBy'];
-            $timeSpent = $data['timeSpent'];
-            /** @var array<Membership> $contributors */
-            $contributors = $data['contributors'] ?? [];
-
-            // Mark subtask as done (auto-validate if user is qualified)
-            $isInspector = $doneByMembership->isInspector();
-            $this->taskStatusService->handleSubTaskDone(
-                $subTask,
-                $doneByMembership->getUser(),
-                $isInspector,
-                $user // completedBy - the logged-in user who submitted the form
-            );
-
-            // Always include doneBy as a contributor
-            if (!in_array($doneByMembership, $contributors, true)) {
-                $contributors[] = $doneByMembership;
-            }
-
-            // Calculate time per contributor (divided evenly with decimal precision)
-            $timePerContributor = round($timeSpent / count($contributors), 2);
-
-            // Update or create contributions
-            $existingContributions = $this->contributionRepository->findBySubTaskIndexedByMembership($subTask);
-
-            foreach ($contributors as $contributorMembership) {
-                $membershipId = $contributorMembership->getId();
-
-                // Check if contribution already exists (e.g., after rejection)
-                if (isset($existingContributions[$membershipId])) {
-                    // Update existing contribution
-                    $contribution = $existingContributions[$membershipId];
-                    $contribution->setTimeSpent($timePerContributor);
-                    // Remove from array so we can delete unused contributions later
-                    unset($existingContributions[$membershipId]);
-                } else {
-                    // Create new contribution
-                    $contribution = new Contribution();
-                    $contribution->setSubTask($subTask);
-                    $contribution->setMembership($contributorMembership);
-                    $contribution->setTimeSpent($timePerContributor);
-                    $this->entityManager->persist($contribution);
-                }
-            }
-
-            // Remove contributions for members no longer selected
-            foreach ($existingContributions as $unusedContribution) {
-                $this->entityManager->remove($unusedContribution);
-            }
-
-            $this->entityManager->flush();
-
-            $this->addFlash('success', 'subTaskMarkedAsDone');
-
-            return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
-        }
-
-        return $this->render('club/task/subtask/complete.html.twig', [
-            'club' => $club,
-            'task' => $task,
-            'subTask' => $subTask,
-            'form' => $form,
-        ]);
-    }
 
     #[Route('/{id}/inspect/approve', name: 'club_subtask_inspect_approve', methods: ['POST'], requirements: ['id' => '\d+'])]
     #[IsGranted(SubTaskVoter::INSPECT, 'subTask')]

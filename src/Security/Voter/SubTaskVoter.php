@@ -43,8 +43,8 @@ class SubTaskVoter extends Voter
             return false;
         }
 
-        // Admins have access to everything
-        if ($user->isAdmin()) {
+        // Admins have access to everything except inspection and edit (which have business logic)
+        if ($user->isAdmin() && $attribute !== self::INSPECT && $attribute !== self::EDIT) {
             return true;
         }
 

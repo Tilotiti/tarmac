@@ -54,19 +54,17 @@
 						{{ 'task'|trans|lower }}</h3>
 				</div>
 				<div class="card-body">
+					{# Display equipment info (read-only) #}
+					<div class="mb-3">
+						<label class="form-label">{{ 'equipment'|trans }}</label>
+						<div class="form-control-plaintext">{{ task.equipment.name }}</div>
+						<small class="text-muted">{{ (task.equipment.type.value ~ 'Type')|trans }}</small>
+					</div>
+
 					{{ form_start(form) }}
-					{{ form_row(form.equipment) }}
 					{{ form_row(form.title) }}
 					{{ form_row(form.description) }}
-					{{ form_row(form.difficulty) }}
 					{{ form_row(form.dueAt) }}
-
-				{% if task.equipment and task.equipment.type.isAircraft %}
-					<div class="form-check form-switch mt-3">
-						{{ form_widget(form.requiresInspection) }}
-						{{ form_label(form.requiresInspection) }}
-					</div>
-				{% endif %}
 
 					<div class="form-footer">
 						<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">

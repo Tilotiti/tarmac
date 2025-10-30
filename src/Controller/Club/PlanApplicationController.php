@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 
 #[Route('/plans/applications', host: '{subdomain}.%domain%', requirements: ['subdomain' => '(?!www|app).*'])]
 #[IsGranted('ROLE_USER')]
@@ -30,6 +31,7 @@ class PlanApplicationController extends ExtendedController
         private readonly TaskRepository $taskRepository,
         private readonly TaskStatusService $taskStatusService,
         private readonly EntityManagerInterface $entityManager,
+        private readonly DompdfWrapperInterface $dompdf,
     ) {
         parent::__construct($subdomainService);
     }
@@ -134,5 +136,51 @@ class PlanApplicationController extends ExtendedController
         }
 
         return $this->redirectToRoute('club_plan_applications');
+    }
+
+    #[Route('/{id}/print', name: 'club_plan_application_print', requirements: ['id' => '\d+'])]
+    public function print(PlanApplication $application): Response
+    {
+        $club = $this->clubResolver->resolve();
+
+        // Ensure application belongs to this club
+        if ($application->getEquipment()->getClub() !== $club) {
+            throw $this->createNotFoundException();
+        }
+
+        // Get tasks for this application ordered by plan task template position
+        $qb = $this->taskRepository->queryAll();
+        $qb = $this->taskRepository->filterByPlanApplication($qb, $application);
+        
+        // Order by task creation order (tasks are created in plan template order)
+        $qb = $qb->addOrderBy('task.createdAt', 'ASC');
+        
+        $tasks = $qb->getQuery()->getResult();
+
+        $html = $this->renderView('club/plan/application/print.html.twig', [
+            'club' => $club,
+            'application' => $application,
+            'tasks' => $tasks,
+        ]);
+
+        $filename = sprintf(
+            'carte-travail-%s-%s.pdf',
+            $application->getPlan()->getName(),
+            $application->getEquipment()->getName()
+        );
+
+        $response = $this->dompdf->getStreamResponse($html, $filename, [
+            'format' => 'A4',
+            'orientation' => 'landscape',
+            'margin-top' => '20mm',
+            'margin-right' => '15mm',
+            'margin-bottom' => '20mm',
+            'margin-left' => '15mm',
+        ]);
+
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'inline; filename="' . $filename . '"');
+
+        return $response;
     }
 }

@@ -17,4 +17,5 @@ return [
     Tiloweb\PaginationBundle\TilowebPaginationBundle::class => ['all' => true],
     SlopeIt\BreadcrumbBundle\SlopeItBreadcrumbBundle::class => ['all' => true],
     Translation\Bundle\TranslationBundle::class => ['dev' => true],
+    Nucleos\DompdfBundle\NucleosDompdfBundle::class => ['all' => true],
 ];

@@ -1557,6 +1557,10 @@
         <source>totalTime</source>
         <target>Temps total</target>
       </trans-unit>
+      <trans-unit id="339b" resname="timeTracking">
+        <source>timeTracking</source>
+        <target>Suivi du temps</target>
+      </trans-unit>
       <trans-unit id="339a" resname="totalTimeSpent">
         <source>totalTimeSpent</source>
         <target>Temps total passé</target>
@@ -1644,6 +1648,10 @@
       <trans-unit id="360" resname="by">
         <source>by</source>
         <target>par</target>
+      </trans-unit>
+      <trans-unit id="361" resname="printWorkCard">
+        <source>printWorkCard</source>
+        <target>Imprimer la carte de travail</target>
       </trans-unit>
     </body>
   </file>

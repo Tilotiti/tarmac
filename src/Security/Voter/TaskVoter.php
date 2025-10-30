@@ -46,8 +46,8 @@ class TaskVoter extends Voter
             return false;
         }
 
-        // Admins have access to everything
-        if ($user->isAdmin()) {
+        // Admins have access to everything except task closing, canceling, editing, and creating subtasks (which have business logic)
+        if ($user->isAdmin() && $attribute !== self::CLOSE && $attribute !== self::CANCEL && $attribute !== self::EDIT && $attribute !== self::CREATE_SUBTASK) {
             return true;
         }
 
@@ -103,12 +103,17 @@ class TaskVoter extends Voter
             return false;
         }
         
-        // Managers can cancel any open task
+        // Cannot cancel if any subtask has been done
+        if ($task->hasAnySubTaskDone()) {
+            return false;
+        }
+        
+        // Managers can cancel any open task (without done subtasks)
         if ($isManager) {
             return true;
         }
         
-        // Members can cancel their own open tasks
+        // Members can cancel their own open tasks (without done subtasks)
         if ($task->getCreatedBy() && $task->getCreatedBy()->getId() === $user->getId()) {
             return true;
         }

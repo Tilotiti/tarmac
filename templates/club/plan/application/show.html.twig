@@ -7,6 +7,10 @@
 {% block page_actions %}
 	{% if is_granted('MANAGE', club) and not application.isCancelled %}
 		<div class="btn-list">
+			<a href="{{ path('club_plan_application_print', {id: application.id}) }}" class="btn btn-outline-primary" target="_blank">
+				<i class="ti ti-printer me-2"></i>
+				{{ 'printWorkCard'|trans }}
+			</a>
 			<a href="{{ path('club_equipment_show', {id: application.equipment.id}) }}" class="btn">
 				<i class="ti ti-device-analytics me-2"></i>
 				{{ 'viewEquipment'|trans }}
@@ -19,10 +23,16 @@
 			</form>
 		</div>
 	{% elseif not is_granted('MANAGE', club) %}
-		<a href="{{ path('club_equipment_show', {id: application.equipment.id}) }}" class="btn btn-primary">
-			<i class="ti ti-device-analytics me-2"></i>
-			{{ 'viewEquipment'|trans }}
-		</a>
+		<div class="btn-list">
+			<a href="{{ path('club_plan_application_print', {id: application.id}) }}" class="btn btn-outline-primary" target="_blank">
+				<i class="ti ti-printer me-2"></i>
+				{{ 'printWorkCard'|trans }}
+			</a>
+			<a href="{{ path('club_equipment_show', {id: application.equipment.id}) }}" class="btn btn-primary">
+				<i class="ti ti-device-analytics me-2"></i>
+				{{ 'viewEquipment'|trans }}
+			</a>
+		</div>
 	{% endif %}
 {% endblock %}
 

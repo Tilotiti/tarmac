@@ -247,6 +247,19 @@ class Task
     }
 
     /**
+     * Check if any subtask has been done (marked as done by someone)
+     */
+    public function hasAnySubTaskDone(): bool
+    {
+        foreach ($this->subTasks as $subTask) {
+            if ($subTask->isDone()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Check if the task requires inspection (at least one subtask requires inspection)
      */
     public function requiresInspection(): bool

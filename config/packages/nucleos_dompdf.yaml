@@ -1,0 +1,18 @@
+nucleos_dompdf:
+    defaults:
+        font_cache: '%kernel.cache_dir%/dompdf'
+        font_dir: '%kernel.project_dir%/vendor/dompdf/dompdf/lib/fonts'
+        is_remote_enabled: true
+        is_html5_parser_enabled: true
+        is_php_enabled: false
+        is_javascript_enabled: false
+        log_output_file: '%kernel.logs_dir%/dompdf.html'
+        default_media_type: 'print'
+        default_paper_size: 'a4'
+        default_font: 'serif'
+        dpi: 96
+        enable_php: false
+        enable_javascript: false
+        enable_remote: true
+        enable_css_float: false
+        enable_html5_parser: true

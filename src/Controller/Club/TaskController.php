@@ -199,6 +199,7 @@ class TaskController extends ExtendedController
         $form = $this->createForm(TaskType::class, $task, [
             'user' => $this->getUser(),
             'club' => $club,
+            'is_edit' => true,
         ]);
         $form->handleRequest($request);
 

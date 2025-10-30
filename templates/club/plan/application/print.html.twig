@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Carte de travail -
+			{{ application.plan.name }}</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"/>
+		<style>
+			@page {
+				size: A4 landscape;
+				margin: 80px 15mm;
+			}
+
+			body {
+				font-family: Arial, sans-serif;
+				font-size: 10px;
+				line-height: 1.2;
+				margin: 0;
+				padding: 0;
+			}
+
+			#header {
+				position: fixed;
+				top: -60px;
+				left: 0;
+				right: 0;
+				height: 50px;
+				text-align: center;
+				border-bottom: 2px solid #000;
+				padding-bottom: 5px;
+			}
+
+			#header h1 {
+				font-size: 16px;
+				font-weight: bold;
+				margin: 0 0 5px;
+			}
+
+			#header-info {
+				display: flex;
+				justify-content: space-between;
+				font-size: 9px;
+			}
+
+			#footer {
+				position: fixed;
+				bottom: -60px;
+				left: 0;
+				right: 0;
+				height: 50px;
+				border-top: 1px solid #000;
+				padding-top: 5px;
+				font-size: 8px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+
+			.page-number:before {
+				content: "Page " counter(page) " sur " counter(pages);
+			}
+
+
+			.content {
+				margin-bottom: 40px;
+			}
+
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-bottom: 10px;
+			}
+
+			th,
+			td {
+				border: 1px solid #000;
+				padding: 4px;
+				vertical-align: top;
+			}
+
+			th {
+				background-color: #f0f0f0;
+				font-weight: bold;
+				text-align: center;
+			}
+
+			.task-header {
+				background-color: #e0e0e0;
+				font-weight: bold;
+				text-align: center;
+			}
+
+			.task-title {
+				font-weight: bold;
+				margin-bottom: 2px;
+			}
+
+			.task-description {
+				font-size: 8px;
+				color: #888;
+				font-style: italic;
+				text-align: center;
+				padding: 2px 4px;
+				background-color: #f8f8f8;
+			}
+
+			.subtask-title {
+				font-weight: bold;
+				margin-bottom: 1px;
+			}
+
+			.subtask-description {
+				font-size: 8px;
+				color: #666;
+				margin-bottom: 2px;
+			}
+
+			.icon {
+				font-size: 12px;
+				font-weight: bold;
+				background-color: #f0f0f0;
+				padding: 2px 4px;
+				border-radius: 2px;
+			}
+
+			.icon-tabler {
+				font-size: 18px;
+				vertical-align: middle;
+			}
+
+			.icon-warning {
+				color: #f59e0b;
+			}
+
+			.icon-check {
+				color: #10b981;
+			}
+
+			.icon-square {
+				color: #6b7280;
+			}
+
+			.tc-column {
+				text-align: center;
+				width: 8%;
+				vertical-align: middle;
+			}
+
+			.va-column {
+				text-align: center;
+				width: 8%;
+				vertical-align: middle;
+			}
+
+			.visa-column {
+				width: 15%;
+			}
+
+			.completion-info {
+				font-size: 8px;
+				margin-bottom: 1px;
+			}
+
+			.inspection-info {
+				font-size: 8px;
+				color: #666;
+			}
+
+			.page-break {
+				page-break-before: always;
+			}
+		</style>
+	</head>
+	<body data-plan-name="{{ application.plan.name }}" data-equipment-name="{{ application.equipment.name }}" data-creation-date="{{ application.appliedAt|date('d/m/Y à H:i') }}" data-print-date="{{ "now"|date('d/m/Y à H:i') }}">
+		<div id="header">
+			<h1>Carte de travail :
+				{{ application.plan.name }}</h1>
+			<div id="header-info">
+				<div>
+					<strong>Équipement:</strong>
+					{{ application.equipment.name }}
+				</div>
+				<div>
+					<strong>Date de création:</strong>
+					{{ application.appliedAt|date('d/m/Y à H:i') }}
+				</div>
+			</div>
+		</div>
+
+		<div id="footer">
+			<div>
+				<strong>{{ application.plan.name }}</strong>
+			</div>
+			<div class="page-number"></div>
+			<div>
+				Date de mise à jour:
+				{{ "now"|date('d/m/Y à H:i') }}
+			</div>
+		</div>
+
+		<div class="content">
+			<table>
+				<thead>
+					<tr>
+						<th class="tc-column">TC</th>
+						<th class="task-column">Tâche d'entretien</th>
+						<th class="va-column">VA</th>
+						<th class="visa-column">VISA</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for task in tasks %}
+						{# Task title row #}
+						<tr class="task-header">
+							<td colspan="4">
+								<div class="task-title">{{ task.title }}</div>
+							</td>
+						</tr>
+
+						{# Task description row (if exists) #}
+						{% if task.description %}
+							<tr>
+								<td colspan="4" class="task-description">
+									{{ task.description|nl2br }}
+								</td>
+							</tr>
+						{% endif %}
+
+						{# Subtasks #}
+						{% for subtask in task.subTasks %}
+							<tr>
+								<td class="tc-column">
+									{% if subtask.requiresInspection %}
+										<i class="ti ti-alert-triangle icon-tabler icon-warning"></i>
+									{% endif %}
+								</td>
+								<td class="task-column">
+									<div class="subtask-title">{{ subtask.title }}</div>
+									{% if subtask.description %}
+										<div class="subtask-description">{{ subtask.description|nl2br }}</div>
+									{% endif %}
+								</td>
+								<td class="va-column">
+									{% if subtask.isDone %}
+										<i class="ti ti-checkbox icon-tabler icon-check"></i>
+									{% else %}
+										<i class="ti ti-square icon-tabler icon-square"></i>
+									{% endif %}
+								</td>
+								<td class="visa-column">
+									{% if subtask.isDone %}
+										<div class="completion-info">
+											<strong>Réalisé par:</strong>
+											{{ subtask.doneBy.fullname }}<br>
+											<strong>Le:</strong>
+											{{ subtask.doneAt|date('d/m/Y à H:i') }}
+										</div>
+										{% if subtask.requiresInspection and subtask.isInspected %}
+											<div class="inspection-info">
+												<strong>Contrôlé par:</strong>
+												{{ subtask.inspectedBy.fullname }}<br>
+												<strong>Le:</strong>
+												{{ subtask.inspectedAt|date('d/m/Y à H:i') }}
+											</div>
+										{% elseif subtask.requiresInspection %}
+											<div class="inspection-info">
+												<em>En attente de contrôle</em>
+											</div>
+										{% endif %}
+									{% else %}
+										<div class="completion-info">
+											<em>Non réalisé</em>
+										</div>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+
+	</body>
+</html>
