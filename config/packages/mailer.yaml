@@ -1,6 +1,6 @@
 framework:
     mailer:
-        dsn: "ses://%env(AWS_S3_ACCESS_ID)%:%env(AWS_S3_ACCESS_SECRET)%@default?region=%env(AWS_S3_REGION)%"
+        dsn: "ses://%env(AWS_S3_ACCESS_ID)%:%env(urlencode:AWS_S3_ACCESS_SECRET)%@default?region=%env(AWS_S3_REGION)%"
         envelope:
             sender: "contact@tarmac.center"
         headers:
