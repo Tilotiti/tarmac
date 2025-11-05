@@ -1,0 +1,29 @@
+{% block tag_filter_row %}
+	<div class="mb-3" data-controller="tag-filter">
+		{{ form_label(form) }}
+
+		{# Tag UI - clickable badges #}
+		<div class="d-flex flex-wrap gap-2 mb-2">
+			{% for choice in form %}
+				{% set choiceValue = choice.vars.value %}
+				{% set choiceLabel = choice.vars.label %}
+				{% set isChecked = choice.vars.checked %}
+
+				<span class="badge bg-secondary-lt text-white {% if isChecked %}active border border-2 border-secondary{% endif %}" data-tag-filter-target="tag" data-value="{{ choiceValue }}" data-action="click->tag-filter#toggle" style="cursor: pointer; transition: all 0.2s; user-select: none;">
+					{{ choiceLabel|trans }}
+					{% if isChecked %}
+						<i class="ti ti-check ms-1"></i>
+					{% endif %}
+				</span>
+			{% endfor %}
+		</div>
+
+		{# Hidden checkboxes - keep them for form submission #}
+		<div style="display: none;">
+			{% for choice in form %}
+				<input type="checkbox" name="{{ choice.vars.full_name }}" value="{{ choice.vars.value }}" id="{{ choice.vars.id }}" {% if choice.vars.checked %} checked="checked" {% endif %} data-tag-filter-target="checkbox"/>
+			{% endfor %}
+		</div>
+		{{ form_errors(form) }}
+	</div>
+{% endblock %}

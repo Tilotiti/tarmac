@@ -66,7 +66,15 @@ abstract class ExtendedController extends AbstractController
                     // Check if user explicitly cleared this filter
                     // Use all() to safely get array values without throwing exceptions
                     $queryParams = $request->query->all();
-                    $cleared = array_key_exists($key, $queryParams) && $queryParams[$key] === '';
+                    
+                    // Check if filter is cleared (empty string or empty array)
+                    $cleared = false;
+                    if (array_key_exists($key, $queryParams)) {
+                        $paramValue = $queryParams[$key];
+                        if ($paramValue === '' || (is_array($paramValue) && empty($paramValue))) {
+                            $cleared = true;
+                        }
+                    }
 
                     // Only apply default if user hasn't explicitly cleared it
                     if (!$cleared) {
@@ -85,7 +93,16 @@ abstract class ExtendedController extends AbstractController
     protected function getFilterData(FormInterface $form): array
     {
         $filters = $form->getData();
-        return array_filter($filters, fn($value) => $value !== null && $value !== '');
+        return array_filter($filters, function($value) {
+            if ($value === null || $value === '') {
+                return false;
+            }
+            // Don't filter out empty arrays - they might be intentional
+            if (is_array($value)) {
+                return !empty(array_filter($value, fn($v) => $v !== null && $v !== ''));
+            }
+            return true;
+        });
     }
 
     protected function back(): RedirectResponse

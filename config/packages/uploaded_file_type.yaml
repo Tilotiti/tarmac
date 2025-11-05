@@ -1,0 +1,15 @@
+# config/package/uploaded_file_type.yml
+uploaded_file_type:
+  configurations:
+    default:
+      filesystem: "oneup_flysystem.s3_filesystem"
+      base_uri: "%env(AWS_S3_URL)%"
+      path: "/upload"
+    purchase:
+      filesystem: "oneup_flysystem.s3_filesystem"
+      base_uri: "%env(AWS_S3_URL)%"
+      path: "/purchases"
+    bill:
+      filesystem: "oneup_flysystem.s3_filesystem"
+      base_uri: "%env(AWS_S3_URL)%"
+      path: "/purchases/bills"

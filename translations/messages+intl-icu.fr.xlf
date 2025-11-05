@@ -1667,6 +1667,232 @@
         <source>printWorkCard</source>
         <target>Imprimer la carte de travail</target>
       </trans-unit>
+
+      <!-- Purchase Feature -->
+      <trans-unit id="362" resname="purchase">
+        <source>purchase</source>
+        <target>Achat</target>
+      </trans-unit>
+      <trans-unit id="363" resname="purchases">
+        <source>purchases</source>
+        <target>Achats</target>
+      </trans-unit>
+      <trans-unit id="364" resname="purchaseName">
+        <source>purchaseName</source>
+        <target>Nom de l'achat</target>
+      </trans-unit>
+      <trans-unit id="365" resname="purchaseQuantity">
+        <source>purchaseQuantity</source>
+        <target>Quantité</target>
+      </trans-unit>
+      <trans-unit id="366" resname="purchaseDescription">
+        <source>purchaseDescription</source>
+        <target>Description</target>
+      </trans-unit>
+      <trans-unit id="367" resname="purchaseStatus">
+        <source>purchaseStatus</source>
+        <target>Statut</target>
+      </trans-unit>
+      <trans-unit id="368" resname="purchaseRequested">
+        <source>purchaseRequested</source>
+        <target>Demandé</target>
+      </trans-unit>
+      <trans-unit id="369" resname="purchasePendingApproval">
+        <source>purchasePendingApproval</source>
+        <target>En attente d'approbation</target>
+      </trans-unit>
+      <trans-unit id="370" resname="purchaseApproved">
+        <source>purchaseApproved</source>
+        <target>Approuvé</target>
+      </trans-unit>
+      <trans-unit id="371" resname="purchasePurchased">
+        <source>purchasePurchased</source>
+        <target>Acheté</target>
+      </trans-unit>
+      <trans-unit id="372" resname="purchaseDelivered">
+        <source>purchaseDelivered</source>
+        <target>Livré</target>
+      </trans-unit>
+      <trans-unit id="373" resname="purchaseComplete">
+        <source>purchaseComplete</source>
+        <target>Terminé</target>
+      </trans-unit>
+      <trans-unit id="374" resname="purchaseReimbursed">
+        <source>purchaseReimbursed</source>
+        <target>Remboursé</target>
+      </trans-unit>
+      <trans-unit id="375" resname="purchaseCancelled">
+        <source>purchaseCancelled</source>
+        <target>Annulé</target>
+      </trans-unit>
+      <trans-unit id="376" resname="purchaseRequestImage">
+        <source>purchaseRequestImage</source>
+        <target>Image de la demande</target>
+      </trans-unit>
+      <trans-unit id="377" resname="purchaseBillImage">
+        <source>purchaseBillImage</source>
+        <target>Image de la facture</target>
+      </trans-unit>
+      <trans-unit id="377a" resname="viewFile">
+        <source>viewFile</source>
+        <target>Voir le fichier</target>
+      </trans-unit>
+      <trans-unit id="377b" resname="viewBill">
+        <source>viewBill</source>
+        <target>Voir la facture</target>
+      </trans-unit>
+      <trans-unit id="378" resname="purchaseExpectedDeliveryDate">
+        <source>purchaseExpectedDeliveryDate</source>
+        <target>Date de livraison prévue</target>
+      </trans-unit>
+      <trans-unit id="379" resname="createPurchase">
+        <source>createPurchase</source>
+        <target>Créer un achat</target>
+      </trans-unit>
+      <trans-unit id="380" resname="editPurchase">
+        <source>editPurchase</source>
+        <target>Modifier l'achat</target>
+      </trans-unit>
+      <trans-unit id="381" resname="cancelPurchase">
+        <source>cancelPurchase</source>
+        <target>Annuler l'achat</target>
+      </trans-unit>
+      <trans-unit id="382" resname="approvePurchase">
+        <source>approvePurchase</source>
+        <target>Approuver l'achat</target>
+      </trans-unit>
+      <trans-unit id="383" resname="markAsPurchased">
+        <source>markAsPurchased</source>
+        <target>Marquer comme acheté</target>
+      </trans-unit>
+      <trans-unit id="384" resname="markAsDelivered">
+        <source>markAsDelivered</source>
+        <target>Marquer comme livré</target>
+      </trans-unit>
+      <trans-unit id="385" resname="markAsReimbursed">
+        <source>markAsReimbursed</source>
+        <target>Marquer comme remboursé</target>
+      </trans-unit>
+      <trans-unit id="386" resname="purchasesWaitingDelivery">
+        <source>purchasesWaitingDelivery</source>
+        <target>Achats en attente de livraison</target>
+      </trans-unit>
+      <trans-unit id="387" resname="myRequests">
+        <source>myRequests</source>
+        <target>Mes demandes</target>
+      </trans-unit>
+      <trans-unit id="388" resname="myPurchases">
+        <source>myPurchases</source>
+        <target>Mes achats</target>
+      </trans-unit>
+      <trans-unit id="389" resname="purchasedBy">
+        <source>purchasedBy</source>
+        <target>Acheté par</target>
+      </trans-unit>
+      <trans-unit id="390" resname="deliveredBy">
+        <source>deliveredBy</source>
+        <target>Livré par</target>
+      </trans-unit>
+      <trans-unit id="391" resname="reimbursedBy">
+        <source>reimbursedBy</source>
+        <target>Remboursé par</target>
+      </trans-unit>
+      <trans-unit id="392" resname="approvedBy">
+        <source>approvedBy</source>
+        <target>Approuvé par</target>
+      </trans-unit>
+      <trans-unit id="393" resname="purchaseCreated">
+        <source>purchaseCreated</source>
+        <target>L'achat a été créé.</target>
+      </trans-unit>
+      <trans-unit id="394" resname="purchaseEdited">
+        <source>purchaseEdited</source>
+        <target>Achat modifié</target>
+      </trans-unit>
+      <trans-unit id="395" resname="purchaseApproved">
+        <source>purchaseApproved</source>
+        <target>Achat approuvé</target>
+      </trans-unit>
+      <trans-unit id="396" resname="purchaseCancelled">
+        <source>purchaseCancelled</source>
+        <target>Achat annulé</target>
+      </trans-unit>
+      <trans-unit id="397" resname="noPurchasesFound">
+        <source>noPurchasesFound</source>
+        <target>Aucun achat trouvé</target>
+      </trans-unit>
+      <trans-unit id="398" resname="purchaseUpdated">
+        <source>purchaseUpdated</source>
+        <target>L'achat a été mis à jour.</target>
+      </trans-unit>
+      <trans-unit id="399" resname="purchaseMarkedAsPurchased">
+        <source>purchaseMarkedAsPurchased</source>
+        <target>L'achat a été marqué comme acheté.</target>
+      </trans-unit>
+      <trans-unit id="400" resname="purchaseMarkedAsDelivered">
+        <source>purchaseMarkedAsDelivered</source>
+        <target>L'achat a été marqué comme livré.</target>
+      </trans-unit>
+      <trans-unit id="401" resname="purchaseMarkedAsReimbursed">
+        <source>purchaseMarkedAsReimbursed</source>
+        <target>L'achat a été marqué comme remboursé.</target>
+      </trans-unit>
+      <trans-unit id="402" resname="confirmCancelPurchase">
+        <source>confirmCancelPurchase</source>
+        <target>Êtes-vous sûr de vouloir annuler cet achat ?</target>
+      </trans-unit>
+      <trans-unit id="403" resname="currentImage">
+        <source>currentImage</source>
+        <target>Image actuelle</target>
+      </trans-unit>
+      <trans-unit id="404" resname="currentBillImage">
+        <source>currentBillImage</source>
+        <target>Facture actuelle</target>
+      </trans-unit>
+      <trans-unit id="405" resname="ownership">
+        <source>ownership</source>
+        <target>Propriétaire</target>
+      </trans-unit>
+      <trans-unit id="406" resname="requested">
+        <source>requested</source>
+        <target>Demandé</target>
+      </trans-unit>
+      <trans-unit id="407" resname="pending_approval">
+        <source>pending_approval</source>
+        <target>En attente d'approbation</target>
+      </trans-unit>
+      <trans-unit id="408" resname="approved">
+        <source>approved</source>
+        <target>Approuvé</target>
+      </trans-unit>
+      <trans-unit id="409" resname="purchased">
+        <source>purchased</source>
+        <target>Acheté</target>
+      </trans-unit>
+      <trans-unit id="410" resname="delivered">
+        <source>delivered</source>
+        <target>Livré</target>
+      </trans-unit>
+      <trans-unit id="411" resname="complete">
+        <source>complete</source>
+        <target>Terminé</target>
+      </trans-unit>
+      <trans-unit id="412" resname="reimbursed">
+        <source>reimbursed</source>
+        <target>Remboursé</target>
+      </trans-unit>
+      <trans-unit id="413" resname="cancelled">
+        <source>cancelled</source>
+        <target>Annulé</target>
+      </trans-unit>
+      <trans-unit id="414" resname="hasImages">
+        <source>hasImages</source>
+        <target>Contient des images</target>
+      </trans-unit>
+      <trans-unit id="415" resname="hasInvoice">
+        <source>hasInvoice</source>
+        <target>Contient une facture</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

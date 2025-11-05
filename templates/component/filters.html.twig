@@ -1,3 +1,5 @@
+{% form_theme form 'form/tag_filter.html.twig' %}
+
 {% set style = style ?? 'default' %}
 {% set defaults = form.vars.defaults ?? {} %}
 
@@ -15,15 +17,30 @@
 			{% set value = value.value %}
 			{# Handle nested arrays (like date ranges) - convert DateTime objects #}
 		{% elseif value is iterable and not (value.id is defined) %}
-			{% set convertedValue = {} %}
-			{% for key, val in value %}
-				{% if val is instanceof('DateTime') %}
-					{% set convertedValue = convertedValue | merge({(key): val | date('Y-m-d\\TH:i:sP')}) %}
-				{% elseif val is not empty %}
-					{% set convertedValue = convertedValue | merge({(key): val}) %}
-				{% endif %}
-			{% endfor %}
-			{% set value = convertedValue %}
+			{# Check if it's a simple array (like status[]) or associative array (like date range) #}
+			{% if value is iterable and value|keys|first == 0 %}
+				{# Simple array - keep as array for URL parameters #}
+				{% set convertedValue = [] %}
+				{% for val in value %}
+					{% if val is instanceof('DateTime') %}
+						{% set convertedValue = convertedValue|merge([val | date('Y-m-d\\TH:i:sP')]) %}
+					{% elseif val is not empty %}
+						{% set convertedValue = convertedValue|merge([val]) %}
+					{% endif %}
+				{% endfor %}
+				{% set value = convertedValue %}
+			{% else %}
+				{# Associative array (like date range) #}
+				{% set convertedValue = {} %}
+				{% for key, val in value %}
+					{% if val is instanceof('DateTime') %}
+						{% set convertedValue = convertedValue | merge({(key): val | date('Y-m-d\\TH:i:sP')}) %}
+					{% elseif val is not empty %}
+						{% set convertedValue = convertedValue | merge({(key): val}) %}
+					{% endif %}
+				{% endfor %}
+				{% set value = convertedValue %}
+			{% endif %}
 			{# Convert entity objects to their IDs (must be after iterable check to avoid treating entities as iterables) #}
 		{% elseif value.id is defined and value.id is not empty %}
 			{% set value = value.id %}
@@ -79,17 +96,39 @@
 						:
 						{% if filter.vars.data is instanceof('DateTime') %}
 							{{ filter.vars.data | date('d/m/Y') }}
-						{% elseif filter.vars.data is iterable and filter.vars.data.startAt is instanceof('DateTime') and filter.vars.data.endAt is instanceof('DateTime') %}
-							Du
-							{{ filter.vars.data.startAt | date('d/m/Y') }}
-							au
-							{{ filter.vars.data.endAt | date('d/m/Y') }}
-						{% elseif filter.vars.data is iterable and filter.vars.data.endAt is instanceof('DateTime') %}
-							Jusqu'au
-							{{ filter.vars.data.endAt | date('d/m/Y') }}
-						{% elseif filter.vars.data is iterable and filter.vars.data.startAt is instanceof('DateTime') %}
-							À partir du
-							{{ filter.vars.data.startAt | date('d/m/Y') }}
+						{% elseif filter.vars.data is iterable %}
+							{# Check if it's a simple indexed array (like status[]) #}
+							{% if filter.vars.data|keys|first == 0 %}
+								{# Simple array - display as comma-separated values #}
+								{% set items = [] %}
+								{% for value in filter.vars.data %}
+									{% if value is not empty %}
+										{% set items = items|merge([value|trans]) %}
+									{% endif %}
+								{% endfor %}
+								{{ items|join(', ') }}
+								{# Check if it's a date range (associative array with startAt/endAt) #}
+							{% elseif filter.vars.data.startAt is defined and filter.vars.data.startAt is instanceof('DateTime') and filter.vars.data.endAt is defined and filter.vars.data.endAt is instanceof('DateTime') %}
+								Du
+								{{ filter.vars.data.startAt | date('d/m/Y') }}
+								au
+								{{ filter.vars.data.endAt | date('d/m/Y') }}
+							{% elseif filter.vars.data.endAt is defined and filter.vars.data.endAt is instanceof('DateTime') %}
+								Jusqu'au
+								{{ filter.vars.data.endAt | date('d/m/Y') }}
+							{% elseif filter.vars.data.startAt is defined and filter.vars.data.startAt is instanceof('DateTime') %}
+								À partir du
+								{{ filter.vars.data.startAt | date('d/m/Y') }}
+							{% else %}
+								{# Fallback for other iterable types #}
+								{% set items = [] %}
+								{% for value in filter.vars.data %}
+									{% if value is not empty %}
+										{% set items = items|merge([value|trans]) %}
+									{% endif %}
+								{% endfor %}
+								{{ items|join(', ') }}
+							{% endif %}
 							{# Handle Enum objects (e.g., EquipmentType) #}
 						{% elseif filter.vars.data is instanceof('\\UnitEnum') %}
 							{{ filter.vars.data.getLabel() | trans }}
@@ -104,29 +143,53 @@
 							Non
 						{% elseif filter.vars.data is instanceof('string') %}
 							{{ filter.vars.data | trans }}
-						{% elseif filter.vars.data is iterable %}
-							{% set items = [] %}
-							{% for value in filter.vars.data %}
-								{% if value is not empty %}
-									{% set items = items|merge([value|trans]) %}
-								{% endif %}
-							{% endfor %}
-							{{ items|join(', ') }}
 						{% else %}
 							{{ filter.vars.data }}
 						{% endif %}
 
-						{% set clearFilterParams = app.request.attributes.get('_route_params') | merge(app.request.query.all) | merge({(filter.vars.name): ''}) %}
-						{# Convert any enum values to strings for URL generation #}
-						{% set cleanedParams = {} %}
-						{% for key, value in clearFilterParams %}
+					{# Separate route params from query params #}
+					{% set routeParams = app.request.attributes.get('_route_params') %}
+					{% set queryParams = app.request.query.all %}
+					{% set isArrayFilter = filter.vars.data is iterable and filter.vars.data|keys|first == 0 %}
+					
+					{# Build cleaned route params (convert enums to values) #}
+					{% set cleanedRouteParams = {} %}
+					{% for key, value in routeParams %}
+						{% if value is instanceof('\\UnitEnum') %}
+							{% set cleanedRouteParams = cleanedRouteParams | merge({(key): value.value}) %}
+						{% else %}
+							{% set cleanedRouteParams = cleanedRouteParams | merge({(key): value}) %}
+						{% endif %}
+					{% endfor %}
+					
+					{# Build cleaned query params (remove the filter we're clearing) #}
+					{% set cleanedQueryParams = {} %}
+					{% for key, value in queryParams %}
+						{% if key != filter.vars.name %}
 							{% if value is instanceof('\\UnitEnum') %}
-								{% set cleanedParams = cleanedParams | merge({(key): value.value}) %}
+								{% set cleanedQueryParams = cleanedQueryParams | merge({(key): value.value}) %}
+							{% elseif value is iterable and not (value.id is defined) %}
+								{# Handle arrays - keep them as arrays #}
+								{% set cleanedQueryParams = cleanedQueryParams | merge({(key): value}) %}
 							{% else %}
-								{% set cleanedParams = cleanedParams | merge({(key): value}) %}
+								{% set cleanedQueryParams = cleanedQueryParams | merge({(key): value}) %}
 							{% endif %}
-						{% endfor %}
-						<a href="{{ path(app.request.attributes.get('_route'), cleanedParams) }}" class="btn-close"></a>
+						{% endif %}
+					{% endfor %}
+					
+					{# Build base URL with route params and existing query params #}
+					{% set baseUrl = path(app.request.attributes.get('_route'), cleanedRouteParams|merge(cleanedQueryParams)) %}
+					
+					{# Add the empty filter parameter to the query string #}
+					{% if isArrayFilter %}
+						{# For array filters, add empty array parameter: filterName[]= #}
+						{% set separator = '?' in baseUrl ? '&' : '?' %}
+						<a href="{{ baseUrl }}{{ separator }}{{ filter.vars.name }}[]=" class="btn-close"></a>
+					{% else %}
+						{# For single value filters, add empty string parameter: filterName= #}
+						{% set separator = '?' in baseUrl ? '&' : '?' %}
+						<a href="{{ baseUrl }}{{ separator }}{{ filter.vars.name }}=" class="btn-close"></a>
+					{% endif %}
 					</span>
 				{% endif %}
 			{% endfor %}
@@ -152,6 +215,7 @@
 		<div class="offcanvas-body">
 			{{ form_start(form) }}
 			{{ form_rest(form) }}
+
 			<div class="mb-3">
 				<div class="row">
 					<div class="col-12 col-md-6">

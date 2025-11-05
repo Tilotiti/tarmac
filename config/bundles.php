@@ -18,4 +18,6 @@ return [
     SlopeIt\BreadcrumbBundle\SlopeItBreadcrumbBundle::class => ['all' => true],
     Translation\Bundle\TranslationBundle::class => ['dev' => true],
     Nucleos\DompdfBundle\NucleosDompdfBundle::class => ['all' => true],
+    Oneup\FlysystemBundle\OneupFlysystemBundle::class => ['all' => true],
+    Tiloweb\UploadedFileTypeBundle\UploadedFileTypeBundle::class => ['all' => true],
 ];

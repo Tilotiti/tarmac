@@ -7,7 +7,9 @@ use App\Entity\Enum\TaskStatus;
 use App\Service\SubdomainService;
 use App\Repository\TaskRepository;
 use App\Repository\SubTaskRepository;
+use App\Repository\PurchaseRepository;
 use App\Entity\Enum\EquipmentOwner;
+use App\Entity\Enum\PurchaseStatus;
 use App\Controller\ExtendedController;
 use App\Repository\PlanApplicationRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +28,7 @@ class DashboardController extends ExtendedController
         private readonly TaskRepository $taskRepository,
         private readonly SubTaskRepository $subTaskRepository,
         private readonly PlanApplicationRepository $applicationRepository,
+        private readonly PurchaseRepository $purchaseRepository,
     ) {
         parent::__construct($subdomainService);
     }
@@ -160,6 +163,16 @@ class DashboardController extends ExtendedController
             ->setMaxResults(5);
         $standaloneTasks = $standaloneQb->getQuery()->getResult();
 
+        // === 4. PURCHASES WAITING FOR DELIVERY ===
+        $purchasesWaitingDeliveryQb = $this->purchaseRepository->queryAll();
+        $purchasesWaitingDeliveryQb->andWhere('purchase.status = :purchasedStatus')
+            ->setParameter('purchasedStatus', PurchaseStatus::PURCHASED)
+            ->orderBy('purchase.purchasedAt', 'ASC')
+            ->setMaxResults(5);
+
+        $purchasesWaitingDelivery = $purchasesWaitingDeliveryQb->getQuery()->getResult();
+        $purchasesWaitingDeliveryCount = $this->purchaseRepository->countPurchasesWaitingDelivery($club);
+
         return $this->render('club/dashboard.html.twig', [
             'club' => $club,
             'pendingApplications' => $pendingApplications,
@@ -168,6 +181,8 @@ class DashboardController extends ExtendedController
             'standaloneTasksCount' => $standaloneTasksCount,
             'awaitingInspectionSubTasks' => $awaitingInspectionSubTasks,
             'awaitingInspectionCount' => $awaitingInspectionCount,
+            'purchasesWaitingDelivery' => $purchasesWaitingDelivery,
+            'purchasesWaitingDeliveryCount' => $purchasesWaitingDeliveryCount,
         ]);
     }
 }

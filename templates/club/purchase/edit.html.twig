@@ -1,0 +1,38 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'editPurchase'|trans }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="card">
+		<div class="card-body">
+			{{ form_start(form) }}
+			{{ form_row(form.name) }}
+			{{ form_row(form.quantity) }}
+			{{ form_row(form.description) }}
+			{{ form_row(form.requestImage) }}
+
+			{% if purchase.requestImage %}
+				<div class="mb-3">
+					<label class="form-label">{{ 'currentImage'|trans }}</label>
+					<div>
+						<img src="{{ purchase.requestImage }}" alt="{{ purchase.name }}" class="img-thumbnail" style="max-width: 200px;">
+					</div>
+				</div>
+			{% endif %}
+
+			<div class="form-footer">
+				<button type="submit" class="btn btn-primary" style="min-height: 44px;">
+					<i class="ti ti-check me-2"></i>
+					{{ 'save'|trans }}
+				</button>
+				<a href="{{ path('club_purchase_show', {id: purchase.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
+					{{ 'cancel'|trans }}
+				</a>
+			</div>
+			{{ form_end(form) }}
+		</div>
+	</div>
+{% endblock %}
+

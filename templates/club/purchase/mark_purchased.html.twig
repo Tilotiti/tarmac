@@ -1,0 +1,78 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'markAsPurchased'|trans }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="card">
+		<div class="card-body">
+			<div class="mb-4">
+				<h3>{{ purchase.name }}</h3>
+				<div class="text-secondary">{{ 'purchaseQuantity'|trans }}:
+					{{ purchase.quantity }}</div>
+			</div>
+
+			{{ form_start(form) }}
+
+			{# Who purchased it - only show for managers #}
+			{% if isManager and form.purchasedByMembership is defined %}
+				<fieldset class="form-fieldset mb-3 pt-1" data-controller="user-list-filter" data-user-list-filter-type-value="purchasedByMembership">
+					{{ form_label(form.purchasedByMembership) }}
+
+					{# Search input #}
+					<div class="mb-3">
+						<input type="text" class="form-control" placeholder="{{ 'searchMember'|trans }}..." data-user-list-filter-target="search" data-action="input->user-list-filter#filter">
+					</div>
+
+					<div class="d-flex flex-column border rounded p-0" style="max-height: 250px; overflow-y: auto; background-color: #fff;">
+						{% for child in form.purchasedByMembership %}
+							<label class="d-flex align-items-center m-0 p-2 border-bottom" data-user-list-filter-target="item" style="cursor: pointer;">
+								<input type="radio" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}" class="form-check-input me-2 m-0" {% if child.vars.checked %} checked {% endif %} required>
+								<span class="mb-0">{{ child.vars.label }}</span>
+							</label>
+						{% endfor %}
+						<div class="text-center text-secondary py-3 d-none" data-user-list-filter-target="empty">
+							<em>{{ 'noMemberFound'|trans }}</em>
+						</div>
+					</div>
+					{{ form_errors(form.purchasedByMembership) }}
+				</fieldset>
+			{% else %}
+				{# For non-managers, hide the field but keep it in the form #}
+				<div style="display: none;">
+					{% if form.purchasedByMembership is defined %}
+						{{ form_row(form.purchasedByMembership) }}
+					{% endif %}
+				</div>
+			{% endif %}
+
+			{# Mark field as rendered if we rendered it manually #}
+			{% if isManager and form.purchasedByMembership is defined %}
+				{% do form.purchasedByMembership.setRendered %}
+			{% endif %}
+
+			{{ form_row(form.billImage) }}
+
+			{% if purchase.billImage %}
+				<div class="mb-3">
+					<label class="form-label">{{ 'currentBillImage'|trans }}</label>
+					<div>
+						<img src="{{ purchase.billImage }}" alt="Bill" class="img-thumbnail" style="max-width: 200px;">
+					</div>
+				</div>
+			{% endif %}
+
+			<div class="form-footer">
+				<button type="submit" class="btn btn-primary" style="min-height: 44px;">
+					<i class="ti ti-check me-2"></i>
+					{{ 'markAsPurchased'|trans }}
+				</button>
+				<a href="{{ path('club_purchase_show', {id: purchase.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
+					{{ 'cancel'|trans }}
+				</a>
+			</div>
+			{{ form_end(form) }}
+		</div>
+	</div>
+{% endblock %}

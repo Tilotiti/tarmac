@@ -19,12 +19,16 @@ class Activity
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Task::class, inversedBy: 'activities')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Task $task = null;
 
     #[ORM\ManyToOne(targetEntity: SubTask::class, inversedBy: 'activities')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?SubTask $subTask = null;
+
+    #[ORM\ManyToOne(targetEntity: Purchase::class, inversedBy: 'activities')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?Purchase $purchase = null;
 
     #[ORM\Column(length: 30, enumType: ActivityType::class)]
     private ?ActivityType $type = null;
@@ -69,6 +73,18 @@ class Activity
     public function setSubTask(?SubTask $subTask): static
     {
         $this->subTask = $subTask;
+
+        return $this;
+    }
+
+    public function getPurchase(): ?Purchase
+    {
+        return $this->purchase;
+    }
+
+    public function setPurchase(?Purchase $purchase): static
+    {
+        $this->purchase = $purchase;
 
         return $this;
     }
@@ -126,10 +142,45 @@ class Activity
         return $this->type === ActivityType::COMMENT;
     }
 
+    /**
+     * Check if this activity represents a reimbursement action
+     * We determine this by checking if the purchase was reimbursed and if this activity
+     * was created around the same time as the reimbursement (within 5 seconds)
+     */
+    private function isReimbursedActivity(): bool
+    {
+        if (!$this->purchase || $this->type !== ActivityType::DONE) {
+            return false;
+        }
+
+        // If purchase has reimbursedAt timestamp, check if this activity was created around the same time
+        if ($this->purchase->getReimbursedAt() && $this->createdAt) {
+            $timeDiff = abs($this->createdAt->getTimestamp() - $this->purchase->getReimbursedAt()->getTimestamp());
+            // If the activity was created within 5 seconds of the reimbursement, it's a reimbursement activity
+            return $timeDiff <= 5;
+        }
+
+        return false;
+    }
+
     public function getTypeLabel(): string
     {
-        // For context-sensitive labels, we check if it's a subtask activity
+        // For context-sensitive labels, we check if it's a subtask or purchase activity
         $isSubTask = $this->subTask !== null;
+        $isPurchase = $this->purchase !== null;
+
+        if ($isPurchase) {
+            return match ($this->type) {
+                ActivityType::COMMENT => 'comment',
+                ActivityType::CREATED => 'purchaseCreated',
+                ActivityType::EDITED => 'purchaseEdited',
+                ActivityType::DONE => $this->isReimbursedActivity() ? 'purchaseReimbursed' : 'purchasePurchased',
+                ActivityType::INSPECTED_APPROVED => 'purchaseApproved',
+                ActivityType::CLOSED => 'purchaseDelivered',
+                ActivityType::CANCELLED => 'purchaseCancelled',
+                default => $this->type?->value ?? 'unknown',
+            };
+        }
 
         return match ($this->type) {
             ActivityType::COMMENT => 'comment',

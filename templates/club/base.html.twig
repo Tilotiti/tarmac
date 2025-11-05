@@ -38,6 +38,16 @@
 				</span>
 			</a>
 		</div>
+		<div class="nav-item {{ app.request.get('_route') starts with 'club_purchase' ? 'active' : '' }}">
+			<a href="{{ path('club_purchases') }}" class="nav-link">
+				<span class="nav-link-icon d-md-none d-lg-inline-block">
+					<i class="ti ti-shopping-cart"></i>
+				</span>
+				<span class="nav-link-title">
+					{{ 'purchases'|trans }}
+				</span>
+			</a>
+		</div>
 		{% if is_granted('MANAGE', club) %}
 			<div class="nav-item {{ app.request.get('_route') starts with 'club_plan' ? 'active' : '' }}">
 				<a href="{{ path('club_plans') }}" class="nav-link">

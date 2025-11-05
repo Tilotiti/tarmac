@@ -1,0 +1,204 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ purchase.name }}
+{% endblock %}
+
+{% block page_actions %}
+	<div
+		class="btn-list">
+		{# Show only the next primary action #}
+		{% if nextPrimaryAction == 'approve' and is_granted('PURCHASE_APPROVE', purchase) %}
+			<form method="post" action="{{ path('club_purchase_approve', {id: purchase.id}) }}" class="d-inline">
+				<button type="submit" class="btn btn-success" style="min-height: 44px;">
+					<i class="ti ti-check me-2"></i>
+					<span class="d-none d-sm-inline">{{ 'approvePurchase'|trans }}</span>
+				</button>
+			</form>
+		{% elseif nextPrimaryAction == 'mark_purchased' and is_granted('PURCHASE_MARK_PURCHASED', purchase) %}
+			<a href="{{ path('club_purchase_mark_purchased', {id: purchase.id}) }}" class="btn btn-primary" style="min-height: 44px;">
+				<i class="ti ti-shopping-cart me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'markAsPurchased'|trans }}</span>
+			</a>
+		{% elseif nextPrimaryAction == 'mark_delivered' and is_granted('PURCHASE_MARK_DELIVERED', purchase) %}
+			<form method="post" action="{{ path('club_purchase_mark_delivered', {id: purchase.id}) }}" class="d-inline">
+				<button type="submit" class="btn btn-info" style="min-height: 44px;">
+					<i class="ti ti-truck me-2"></i>
+					<span class="d-none d-sm-inline">{{ 'markAsDelivered'|trans }}</span>
+				</button>
+			</form>
+		{% elseif nextPrimaryAction == 'mark_reimbursed' and is_granted('PURCHASE_MARK_REIMBURSED', purchase) %}
+			<form method="post" action="{{ path('club_purchase_mark_reimbursed', {id: purchase.id}) }}" class="d-inline">
+				<button type="submit" class="btn btn-success" style="min-height: 44px;">
+					<i class="ti ti-currency-dollar me-2"></i>
+					<span class="d-none d-sm-inline">{{ 'markAsReimbursed'|trans }}</span>
+				</button>
+			</form>
+		{% endif %}
+
+		{# Secondary actions: Edit and Cancel (only if not completed) #}
+		{% if not purchase.isCompleted %}
+			{% if is_granted('PURCHASE_EDIT', purchase) %}
+				<a href="{{ path('club_purchase_edit', {id: purchase.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
+					<i class="ti ti-edit me-2"></i>
+					<span class="d-none d-sm-inline">{{ 'editPurchase'|trans }}</span>
+				</a>
+			{% endif %}
+
+			{% if is_granted('PURCHASE_CANCEL', purchase) %}
+				<button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal" style="min-height: 44px;">
+					<i class="ti ti-ban me-2"></i>
+					<span class="d-none d-sm-inline">{{ 'cancelPurchase'|trans }}</span>
+				</button>
+			{% endif %}
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block page_content %}
+	{# Purchase header card #}
+	<div class="card mb-3">
+		<div class="card-body">
+			<div class="d-flex align-items-center mb-4">
+				<span class="avatar avatar-xl me-3 bg-primary-lt">
+					<i class="ti ti-shopping-cart text-primary" style="font-size: 2.5rem;"></i>
+				</span>
+				<div class="flex-fill">
+					<h2 class="mb-1">{{ purchase.name }}</h2>
+					<div class="text-secondary">
+						<span class="badge bg-{{ purchase.status.value == 'complete' or purchase.status.value == 'reimbursed' ? 'success' : (purchase.status.value == 'cancelled' ? 'danger' : (purchase.status.value == 'pending_approval' ? 'warning' : 'info')) }}-lt text-white">
+							{{ purchase.status.value|trans }}
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<hr
+			class="my-4">
+
+			{# Purchase details in grid #}
+			<div class="row">
+				<div class="col-12 col-md-6 mb-3">
+					<div class="text-secondary small mb-1">{{ 'purchaseQuantity'|trans }}</div>
+					<div>{{ purchase.quantity }}</div>
+				</div>
+
+			{% if purchase.description %}
+				<div class="col-12 mb-3">
+					<div class="text-secondary small mb-1">{{ 'purchaseDescription'|trans }}</div>
+					<div>{{ purchase.description|nl2br }}</div>
+				</div>
+			{% endif %}
+
+			{% if purchase.expectedDeliveryDate %}
+				<div class="col-12 col-md-6 mb-3">
+					<div class="text-secondary small mb-1">{{ 'purchaseExpectedDeliveryDate'|trans }}</div>
+					<div>{{ purchase.expectedDeliveryDate|date('d/m/Y') }}</div>
+				</div>
+			{% endif %}
+			</div>
+
+			{# Files (Request Image and Bill) #}
+			{% if purchase.requestImage or purchase.billImage %}
+				<hr class="my-4">
+				<div class="row">
+					{% if purchase.requestImage %}
+						<div class="col-12 col-md-6 mb-3">
+							<div class="text-secondary small mb-2">{{ 'purchaseRequestImage'|trans }}</div>
+							<a href="{{ purchase.requestImage }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
+								<i class="ti ti-file me-2"></i>
+								{{ 'viewFile'|trans }}
+							</a>
+						</div>
+					{% endif %}
+
+					{% if purchase.billImage %}
+						<div class="col-12 col-md-6 mb-3">
+							<div class="text-secondary small mb-2">{{ 'purchaseBillImage'|trans }}</div>
+							<a href="{{ purchase.billImage }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
+								<i class="ti ti-file me-2"></i>
+								{{ 'viewBill'|trans }}
+							</a>
+						</div>
+					{% endif %}
+				</div>
+			{% endif %}
+		</div>
+	</div>
+
+	{# Activity Timeline #}
+	<div class="card">
+		<div class="card-header">
+			<h3 class="card-title">{{ 'activity'|trans }}</h3>
+		</div>
+		<div class="card-body">
+			{% if purchase.mainActivities|length > 0 %}
+				<ul class="timeline">
+					{% for activity in purchase.mainActivities %}
+						<li class="timeline-event">
+							<div class="timeline-event-icon bg-{{ activity.typeColor }}-lt">
+								<i class="ti {{ activity.typeIcon }}"></i>
+							</div>
+							<div class="card timeline-event-card">
+								<div class="card-body">
+									<div class="text-secondary float-end">{{ activity.createdAt|date('d/m/Y H:i') }}</div>
+									<h4>
+										{{ activity.user.fullName ?? activity.user.email }}
+										<span class="text-secondary">•</span>
+										<span class="badge bg-{{ activity.typeColor }}-lt">
+											{{ activity.typeLabel|trans }}
+										</span>
+									</h4>
+									{% if activity.message %}
+										<p class="mt-2">{{ activity.message|nl2br }}</p>
+									{% endif %}
+								</div>
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
+			{% else %}
+				<p class="text-secondary text-center">
+					<em>{{ 'noActivityYet'|trans }}</em>
+				</p>
+			{% endif %}
+
+			{# Comment Form #}
+			{% if commentForm is defined %}
+				<hr class="my-4">
+				{{ form_start(commentForm, {action: path('club_purchase_comment', {id: purchase.id})}) }}
+				<div class="mb-3">
+					{{ form_row(commentForm.message) }}
+				</div>
+				<button type="submit" class="btn btn-primary" style="min-height: 44px;">
+					<i class="ti ti-message me-2"></i>
+					{{ 'addComment'|trans }}
+				</button>
+				{{ form_end(commentForm) }}
+			{% endif %}
+		</div>
+	</div>
+
+	{# Cancel modal #}
+	{% if is_granted('PURCHASE_CANCEL', purchase) %}
+		<div class="modal modal-blur fade" id="cancelModal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">{{ 'cancelPurchase'|trans }}</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p>{{ 'confirmCancelPurchase'|trans }}</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'cancel'|trans }}</button>
+						<form method="post" action="{{ path('club_purchase_cancel', {id: purchase.id}) }}" class="d-inline">
+							<button type="submit" class="btn btn-danger">{{ 'confirm'|trans }}</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}

@@ -67,10 +67,10 @@
 									{# Header with equipment avatar and plan name #}
 									<div
 										class="d-flex align-items-start mb-3">
-									{# Avatar with icon based on type #}
-									<span class="avatar avatar-lg me-3 bg-{{ application.equipment.type.color }}-lt">
-										<i class="ti {{ application.equipment.type.icon }} text-{{ application.equipment.type.color }}" style="font-size: 1.5rem;"></i>
-									</span>
+										{# Avatar with icon based on type #}
+										<span class="avatar avatar-lg me-3 bg-{{ application.equipment.type.color }}-lt">
+											<i class="ti {{ application.equipment.type.icon }} text-{{ application.equipment.type.color }}" style="font-size: 1.5rem;"></i>
+										</span>
 										<div
 											class="flex-fill">
 											{# Title: Equipment name #}
@@ -98,10 +98,10 @@
 													{{ 'club'|trans }}
 												</span>
 											{% endif %}
-										<span class="badge bg-{{ application.equipment.type.color }}-lt">
-											<i class="ti {{ application.equipment.type.icon }} me-1"></i>
-											{{ application.equipment.type.label|trans }}
-										</span>
+											<span class="badge bg-{{ application.equipment.type.color }}-lt">
+												<i class="ti {{ application.equipment.type.icon }} me-1"></i>
+												{{ application.equipment.type.label|trans }}
+											</span>
 										</div>
 									</div>
 
@@ -153,8 +153,54 @@
 		</div>
 	{% endif %}
 
+	{# Purchases Waiting for Delivery #}
+	{% if purchasesWaitingDelivery is not empty %}
+		<div class="mb-4">
+			<div class="d-flex align-items-center justify-content-between mb-3">
+				<h3 class="mb-0">
+					<i class="ti ti-truck"></i>
+					{{ 'purchasesWaitingDelivery'|trans }}
+					<span class="badge bg-secondary-lt ms-2">{{ purchasesWaitingDeliveryCount }}</span>
+				</h3>
+				{% if purchasesWaitingDeliveryCount > 5 %}
+					<a href="{{ path('club_purchases', {'status': 'purchased'}) }}" class="btn btn-sm btn-outline-info">
+						{{ 'seeAll'|trans }}
+						<i class="ti ti-arrow-right ms-1"></i>
+					</a>
+				{% endif %}
+			</div>
+			<div class="row">
+				{% for purchase in purchasesWaitingDelivery %}
+					<div class="col-12 col-md-6 col-lg-4 mb-3">
+						<div class="card">
+							<div class="card-body">
+								<h4 class="card-title mb-2">
+									<a href="{{ path('club_purchase_show', {id: purchase.id}) }}" class="text-reset">
+										{{ purchase.name }}
+									</a>
+								</h4>
+								<div class="text-secondary small">
+									{{ 'purchaseQuantity'|trans }}:
+									{{ purchase.quantity }}
+								</div>
+								{% if purchase.purchasedBy %}
+									<div class="text-secondary small mt-1">
+										{{ 'purchasedBy'|trans }}:
+										{{ purchase.purchasedBy.fullName ?? purchase.purchasedBy.email }}
+										<br>
+										{{ purchase.purchasedAt|date('d/m/Y') }}
+									</div>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+
 	{# Empty state #}
-	{% if pendingApplications is empty and standaloneTasks is empty and (not is_granted('INSPECT') or awaitingInspectionSubTasks is empty) %}
+	{% if pendingApplications is empty and standaloneTasks is empty and purchasesWaitingDelivery is empty and (not is_granted('INSPECT') or awaitingInspectionSubTasks is empty) %}
 		<div class="empty">
 			<div class="empty-icon">
 				<i class="ti ti-clipboard-check"></i>

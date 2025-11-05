@@ -12,6 +12,7 @@
         "doctrine/doctrine-bundle": "^2.18",
         "doctrine/doctrine-migrations-bundle": "^3.5",
         "doctrine/orm": "^3.5.2",
+        "league/flysystem-aws-s3-v3": "^3.30",
         "nucleos/dompdf-bundle": "^4.4",
         "phpdocumentor/reflection-docblock": "^5.6.3",
         "phpoffice/phpspreadsheet": "^5.2",
@@ -49,6 +50,7 @@
         "symfony/yaml": "7.3.*",
         "symfonycasts/reset-password-bundle": "^1.23.2",
         "tiloweb/pagination-bundle": "^1.6.4",
+        "tiloweb/uploaded-file-type-bundle": "^1.0",
         "twig/extra-bundle": "^2.12|^3.21",
         "twig/string-extra": "^3.21",
         "twig/twig": "^2.12|^3.21.1"
