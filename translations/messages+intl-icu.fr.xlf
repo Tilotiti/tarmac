@@ -1769,6 +1769,10 @@
         <source>createPurchase</source>
         <target>Créer une demande d'achat</target>
       </trans-unit>
+      <trans-unit id="381a" resname="createAnotherPurchase">
+        <source>createAnotherPurchase</source>
+        <target>Créer une autre demande d'achat après celle-ci</target>
+      </trans-unit>
       <trans-unit id="380" resname="editPurchase">
         <source>editPurchase</source>
         <target>Modifier la demande d'achat</target>

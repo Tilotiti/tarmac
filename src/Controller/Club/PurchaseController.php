@@ -130,6 +130,12 @@ class PurchaseController extends ExtendedController
 
             $this->addFlash('success', 'purchaseCreated');
 
+            // Check if user wants to create another purchase
+            $createAnother = $form->get('createAnother')->getData();
+            if ($createAnother === true) {
+                return $this->redirectToRoute('club_purchase_new');
+            }
+
             return $this->redirectToRoute('club_purchase_show', ['id' => $purchase->getId()]);
         }
 

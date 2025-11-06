@@ -6,24 +6,34 @@
 
 {% block page_content %}
 	<div class="card">
+		{{ form_start(form) }}
 		<div class="card-body">
-			{{ form_start(form) }}
 			{{ form_row(form.name) }}
 			{{ form_row(form.quantity) }}
 			{{ form_row(form.description) }}
 			{{ form_row(form.requestImage) }}
 			{{ form_row(form.billImage) }}
-
-			<div class="form-footer">
-				<button type="submit" class="btn btn-primary">
-					<i class="ti ti-check me-2"></i>
-					{{ 'create'|trans }}
-				</button>
-				<a href="{{ path('club_purchases') }}" class="btn btn-secondary">
-					{{ 'cancel'|trans }}
-				</a>
-			</div>
-			{{ form_end(form) }}
+			{% do form.createAnother.setRendered %}
 		</div>
+		<div class="card-footer">
+			<div class="row">
+				<div class="col">
+					<div class="form-check">
+						<input type="checkbox" id="{{ form.createAnother.vars.id }}" name="{{ form.createAnother.vars.full_name }}" class="form-check-input" value="1" {% if form.createAnother.vars.checked %} checked {% endif %}>
+						<label class="form-check-label" for="{{ form.createAnother.vars.id }}">
+							{{ form.createAnother.vars.label|trans }}
+						</label>
+					</div>
+					{{ form_errors(form.createAnother) }}
+				</div>
+				<div class="col text-end">
+					<button type="submit" class="btn btn-primary">
+						<i class="ti ti-check me-2"></i>
+						{{ 'create'|trans }}
+					</button>
+				</div>
+			</div>
+		</div>
+		{{ form_end(form) }}
 	</div>
 {% endblock %}

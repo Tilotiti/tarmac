@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Purchase;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -80,6 +81,11 @@ class PurchaseType extends AbstractType
                         'mimeTypesMessage' => 'invalidFileFormat',
                     ]),
                 ],
+            ])
+            ->add('createAnother', CheckboxType::class, [
+                'label' => 'createAnotherPurchase',
+                'required' => false,
+                'mapped' => false,
             ])
         ;
     }
