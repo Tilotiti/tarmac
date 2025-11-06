@@ -6,8 +6,8 @@
 
 {% block page_content %}
 	<div class="card">
+		{{ form_start(form) }}
 		<div class="card-body">
-			{{ form_start(form) }}
 			{{ form_row(form.name) }}
 			{{ form_row(form.quantity) }}
 			{{ form_row(form.description) }}
@@ -141,23 +141,25 @@
 			{# Mark requestImage and billImage fields as rendered since we rendered them manually #}
 			{% do form.requestImage.setRendered %}
 			{% do form.billImage.setRendered %}
-
-			<div class="form-footer">
-				<button type="submit" class="btn btn-primary" style="min-height: 44px;">
-					<i class="ti ti-check me-2"></i>
-					{{ 'save'|trans }}
-				</button>
-				<a href="{{ path('club_purchase_show', {id: purchase.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
-					{{ 'cancel'|trans }}
-				</a>
-				{% if is_granted('PURCHASE_REVERT_STATUS', purchase) and purchase.canRevertStatus %}
-					<a href="{{ path('club_purchase_revert_status', {id: purchase.id, _token: csrf_token('revert_status_purchase' ~ purchase.id)}) }}" class="btn btn-outline-warning" style="min-height: 44px;" data-controller="confirm" data-confirm="{{ 'confirmRevertStatus'|trans }}">
-						<i class="ti ti-arrow-back me-2"></i>
-						{{ 'revertStatus'|trans }}
-					</a>
-				{% endif %}
-			</div>
-			{{ form_end(form) }}
 		</div>
+		<div class="card-footer">
+			<div class="row">
+				<div class="col">
+					{% if is_granted('PURCHASE_REVERT_STATUS', purchase) and purchase.canRevertStatus %}
+						<a href="{{ path('club_purchase_revert_status', {id: purchase.id, _token: csrf_token('revert_status_purchase' ~ purchase.id)}) }}" class="btn btn-outline-warning" style="min-height: 44px;" data-controller="confirm" data-confirm="{{ 'confirmRevertStatus'|trans }}">
+							<i class="ti ti-arrow-back me-2"></i>
+							{{ 'revertStatus'|trans }}
+						</a>
+					{% endif %}
+				</div>
+				<div class="col text-end">
+					<button type="submit" class="btn btn-primary" style="min-height: 44px;">
+						<i class="ti ti-device-floppy me-2"></i>
+						{{ 'save'|trans }}
+					</button>
+				</div>
+			</div>
+		</div>
+		{{ form_end(form) }}
 	</div>
 {% endblock %}

@@ -113,7 +113,9 @@ class PurchaseController extends ExtendedController
             $purchase->setStatus(PurchaseStatus::PENDING_APPROVAL);
         }
 
-        $form = $this->createForm(PurchaseType::class, $purchase);
+        $form = $this->createForm(PurchaseType::class, $purchase, [
+            'show_create_another' => true,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -130,10 +132,12 @@ class PurchaseController extends ExtendedController
 
             $this->addFlash('success', 'purchaseCreated');
 
-            // Check if user wants to create another purchase
-            $createAnother = $form->get('createAnother')->getData();
-            if ($createAnother === true) {
-                return $this->redirectToRoute('club_purchase_new');
+            // Check if user wants to create another purchase (only available in new form)
+            if ($form->has('createAnother')) {
+                $createAnother = $form->get('createAnother')->getData();
+                if ($createAnother === true) {
+                    return $this->redirectToRoute('club_purchase_new');
+                }
             }
 
             return $this->redirectToRoute('club_purchase_show', ['id' => $purchase->getId()]);

@@ -82,18 +82,23 @@ class PurchaseType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('createAnother', CheckboxType::class, [
+        ;
+
+        // Only add createAnother field when creating a new purchase
+        if ($options['show_create_another'] ?? false) {
+            $builder->add('createAnother', CheckboxType::class, [
                 'label' => 'createAnotherPurchase',
                 'required' => false,
                 'mapped' => false,
-            ])
-        ;
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Purchase::class,
+            'show_create_another' => false,
         ]);
     }
 }
