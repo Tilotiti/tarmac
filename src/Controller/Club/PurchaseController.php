@@ -18,6 +18,7 @@ use App\Security\Voter\PurchaseVoter;
 use App\Service\ClubResolver;
 use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\Filesystem;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,6 +36,7 @@ class PurchaseController extends ExtendedController
         private readonly PurchaseRepository $purchaseRepository,
         private readonly MembershipRepository $membershipRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly Filesystem $s3Filesystem,
     ) {
         parent::__construct($subdomainService);
     }
@@ -403,6 +405,118 @@ class PurchaseController extends ExtendedController
         }
 
         return $this->redirectToRoute('club_purchase_show', ['id' => $purchase->getId()]);
+    }
+
+    #[Route('/{id}/delete-request-image', name: 'club_purchase_delete_request_image', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[IsGranted(PurchaseVoter::EDIT, 'purchase')]
+    public function deleteRequestImage(Purchase $purchase, Request $request): Response
+    {
+        $token = $request->query->get('_token');
+
+        if (!$token || !$this->isCsrfTokenValid('del_req_img' . $purchase->getId(), $token)) {
+            $this->addFlash('danger', 'invalidToken');
+            return $this->redirectToRoute('club_purchase_edit', ['id' => $purchase->getId()]);
+        }
+
+        if (!$purchase->getRequestImage()) {
+            $this->addFlash('warning', 'noImageToDelete');
+            return $this->redirectToRoute('club_purchase_edit', ['id' => $purchase->getId()]);
+        }
+
+        $imageUrl = $purchase->getRequestImage();
+
+        // Extract the path from the full URL
+        // URL format: {AWS_S3_URL}/purchases/{filename}
+        // We need to extract: /purchases/{filename}
+        $parsedUrl = parse_url($imageUrl);
+        $filePath = $parsedUrl['path'] ?? null;
+
+        if ($filePath) {
+            try {
+                // Remove leading slash if present (Flysystem paths should not start with /)
+                $filePath = ltrim($filePath, '/');
+
+                // Delete the file from S3
+                if ($this->s3Filesystem->fileExists($filePath)) {
+                    $this->s3Filesystem->delete($filePath);
+                }
+            } catch (\Exception $e) {
+                // Log error but continue - we'll still remove the reference from the database
+                // The file might already be deleted or not exist
+            }
+        }
+
+        // Remove the image reference from the purchase
+        $purchase->setRequestImage(null);
+        $this->entityManager->flush();
+
+        // Log deletion activity
+        $activity = new Activity();
+        $activity->setPurchase($purchase);
+        $activity->setType(ActivityType::EDITED);
+        $activity->setUser($this->getUser());
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'requestImageDeleted');
+
+        return $this->redirectToRoute('club_purchase_edit', ['id' => $purchase->getId()]);
+    }
+
+    #[Route('/{id}/delete-bill-image', name: 'club_purchase_delete_bill_image', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[IsGranted(PurchaseVoter::EDIT, 'purchase')]
+    public function deleteBillImage(Purchase $purchase, Request $request): Response
+    {
+        $token = $request->query->get('_token');
+
+        if (!$token || !$this->isCsrfTokenValid('del_bill_img' . $purchase->getId(), $token)) {
+            $this->addFlash('danger', 'invalidToken');
+            return $this->redirectToRoute('club_purchase_edit', ['id' => $purchase->getId()]);
+        }
+
+        if (!$purchase->getBillImage()) {
+            $this->addFlash('warning', 'noImageToDelete');
+            return $this->redirectToRoute('club_purchase_edit', ['id' => $purchase->getId()]);
+        }
+
+        $imageUrl = $purchase->getBillImage();
+
+        // Extract the path from the full URL
+        // URL format: {AWS_S3_URL}/bills/{filename}
+        // We need to extract: /bills/{filename}
+        $parsedUrl = parse_url($imageUrl);
+        $filePath = $parsedUrl['path'] ?? null;
+
+        if ($filePath) {
+            try {
+                // Remove leading slash if present (Flysystem paths should not start with /)
+                $filePath = ltrim($filePath, '/');
+
+                // Delete the file from S3
+                if ($this->s3Filesystem->fileExists($filePath)) {
+                    $this->s3Filesystem->delete($filePath);
+                }
+            } catch (\Exception $e) {
+                // Log error but continue - we'll still remove the reference from the database
+                // The file might already be deleted or not exist
+            }
+        }
+
+        // Remove the image reference from the purchase
+        $purchase->setBillImage(null);
+        $this->entityManager->flush();
+
+        // Log deletion activity
+        $activity = new Activity();
+        $activity->setPurchase($purchase);
+        $activity->setType(ActivityType::EDITED);
+        $activity->setUser($this->getUser());
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'billImageDeleted');
+
+        return $this->redirectToRoute('club_purchase_edit', ['id' => $purchase->getId()]);
     }
 }
 

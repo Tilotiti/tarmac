@@ -30,7 +30,6 @@ class PurchaseType extends AbstractType
             ->add('quantity', IntegerType::class, [
                 'label' => 'purchaseQuantity',
                 'required' => true,
-                'data' => 1,
                 'attr' => ['class' => 'form-control', 'min' => 1],
                 'constraints' => [
                     new Assert\NotNull(),
@@ -48,6 +47,13 @@ class PurchaseType extends AbstractType
                 'mapped' => false,
                 'upload' => 'purchase',
                 'attr' => ['class' => 'form-control', 'accept' => 'image/*'],
+            ])
+            ->add('billImage', FileType::class, [
+                'label' => 'purchaseBillImage',
+                'required' => false,
+                'mapped' => false,
+                'upload' => 'bill',
+                'attr' => ['class' => 'form-control', 'accept' => 'image/*,.pdf,application/pdf'],
             ])
         ;
     }

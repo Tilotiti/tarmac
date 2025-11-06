@@ -263,3 +263,178 @@
         gap: 0.5rem !important;
     }
 }
+
+/* Uploaded file type image thumbnail styling */
+.uploadedFileTypeImage {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.25rem;
+    border: 1px solid var(--tblr-border-color);
+    border-radius: var(--tblr-border-radius);
+    background-color: var(--tblr-bg-surface);
+}
+
+.uploadedFileTypeImage img {
+    display: block;
+    max-width: 200px;
+    max-height: 200px;
+    width: auto;
+    height: auto;
+    border-radius: calc(var(--tblr-border-radius) - 0.125rem);
+}
+
+/* Mobile: smaller thumbnail */
+@media (max-width: 575.98px) {
+    .uploadedFileTypeImage img {
+        max-width: 150px;
+        max-height: 150px;
+    }
+}
+
+/* Uploaded file cell styling - cohesive design for form file uploads */
+.uploaded-file-cell {
+    border: 1px solid var(--tblr-border-color);
+    border-radius: var(--tblr-border-radius);
+    background-color: var(--tblr-bg-surface);
+    padding: 1rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.uploaded-file-cell:hover {
+    border-color: var(--tblr-border-color-translucent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.uploaded-file-header {
+    margin-bottom: 0.5rem;
+}
+
+.uploaded-file-header .form-label {
+    font-weight: 500;
+    color: var(--tblr-body-color);
+    margin-bottom: 0;
+}
+
+.uploaded-file-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.uploaded-file-content .form-control {
+    margin-bottom: 0;
+}
+
+/* Hide the automatically generated uploadedFileTypeImage from the form widget */
+.uploaded-file-content .uploadedFileTypeImage {
+    display: none !important;
+}
+
+/* Custom grid layout for uploaded files */
+.uploaded-file-grid {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure button matches input height */
+.uploaded-file-grid .row.align-items-end .col-auto .btn {
+    height: 100%;
+    min-height: 40px;
+}
+
+/* Custom thumbnail for manually rendered images */
+.uploaded-file-thumbnail {
+    display: inline-block;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+    margin-top: 0;
+    padding: 0.25rem;
+    border: 1px solid var(--tblr-border-color);
+    border-radius: var(--tblr-border-radius);
+    background-color: var(--tblr-bg-surface);
+}
+
+.uploaded-file-thumbnail img {
+    display: block;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+    border-radius: calc(var(--tblr-border-radius) - 0.125rem);
+}
+
+.uploaded-file-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 0.75rem;
+}
+
+.uploaded-file-preview .uploadedFileTypeImage {
+    margin-top: 0;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+}
+
+.uploaded-file-preview .uploadedFileTypeImage img {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+}
+
+.uploaded-file-document {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    text-align: center;
+    min-height: 150px;
+}
+
+.uploaded-file-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    text-align: center;
+    min-height: 150px;
+    opacity: 0.6;
+}
+
+.uploaded-file-actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* Mobile: adjust cell padding and spacing */
+@media (max-width: 767.98px) {
+    .uploaded-file-cell {
+        padding: 0.75rem;
+    }
+
+    .uploaded-file-document,
+    .uploaded-file-empty {
+        min-height: 120px;
+        padding: 1.5rem 1rem;
+    }
+
+    .uploaded-file-preview .uploadedFileTypeImage img {
+        max-width: 100%;
+    }
+}
+
+/* Tablet and up: ensure equal height columns */
+@media (min-width: 768px) {
+    .uploaded-file-cell {
+        min-height: 280px;
+    }
+}

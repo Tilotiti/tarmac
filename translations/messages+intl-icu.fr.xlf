@@ -1751,19 +1751,19 @@
       </trans-unit>
       <trans-unit id="379" resname="createPurchase">
         <source>createPurchase</source>
-        <target>Créer un achat</target>
+        <target>Créer une demande d'achat</target>
       </trans-unit>
       <trans-unit id="380" resname="editPurchase">
         <source>editPurchase</source>
-        <target>Modifier l'achat</target>
+        <target>Modifier la demande d'achat</target>
       </trans-unit>
       <trans-unit id="381" resname="cancelPurchase">
         <source>cancelPurchase</source>
-        <target>Annuler l'achat</target>
+        <target>Annuler la demande d'achat</target>
       </trans-unit>
       <trans-unit id="382" resname="approvePurchase">
         <source>approvePurchase</source>
-        <target>Approuver l'achat</target>
+        <target>Approuver la demande d'achat</target>
       </trans-unit>
       <trans-unit id="383" resname="markAsPurchased">
         <source>markAsPurchased</source>
@@ -1787,7 +1787,7 @@
       </trans-unit>
       <trans-unit id="388" resname="myPurchases">
         <source>myPurchases</source>
-        <target>Mes achats</target>
+        <target>Mes demandes d'achat</target>
       </trans-unit>
       <trans-unit id="389" resname="purchasedBy">
         <source>purchasedBy</source>
@@ -1807,31 +1807,31 @@
       </trans-unit>
       <trans-unit id="393" resname="purchaseCreated">
         <source>purchaseCreated</source>
-        <target>L'achat a été créé.</target>
+        <target>La demande d'achat a été créée.</target>
       </trans-unit>
       <trans-unit id="394" resname="purchaseEdited">
         <source>purchaseEdited</source>
-        <target>Achat modifié</target>
+        <target>Demande d'achat modifiée</target>
       </trans-unit>
       <trans-unit id="395" resname="purchaseApproved">
         <source>purchaseApproved</source>
-        <target>Achat approuvé</target>
+        <target>Demande d'achat approuvée</target>
       </trans-unit>
       <trans-unit id="396" resname="purchaseCancelled">
         <source>purchaseCancelled</source>
-        <target>Achat annulé</target>
+        <target>Demande d'achat annulée</target>
       </trans-unit>
       <trans-unit id="397" resname="noPurchasesFound">
         <source>noPurchasesFound</source>
-        <target>Aucun achat trouvé</target>
+        <target>Aucune demande d'achat trouvée</target>
       </trans-unit>
       <trans-unit id="398" resname="purchaseUpdated">
         <source>purchaseUpdated</source>
-        <target>L'achat a été mis à jour.</target>
+        <target>La demande d'achat a été mis à jour.</target>
       </trans-unit>
       <trans-unit id="399" resname="purchaseMarkedAsPurchased">
         <source>purchaseMarkedAsPurchased</source>
-        <target>L'achat a été marqué comme acheté.</target>
+        <target>La demande d'achat a été marquée comme achetée.</target>
       </trans-unit>
       <trans-unit id="400" resname="purchaseMarkedAsDelivered">
         <source>purchaseMarkedAsDelivered</source>
@@ -1843,15 +1843,15 @@
       </trans-unit>
       <trans-unit id="402" resname="confirmCancelPurchase">
         <source>confirmCancelPurchase</source>
-        <target>Êtes-vous sûr de vouloir annuler cet achat ?</target>
+        <target>Êtes-vous sûr de vouloir annuler cette demande d'achat ?</target>
       </trans-unit>
       <trans-unit id="403" resname="currentImage">
         <source>currentImage</source>
-        <target>Image actuelle</target>
+        <target>Image</target>
       </trans-unit>
       <trans-unit id="404" resname="currentBillImage">
         <source>currentBillImage</source>
-        <target>Facture actuelle</target>
+        <target>Facture</target>
       </trans-unit>
       <trans-unit id="405" resname="ownership">
         <source>ownership</source>
@@ -1867,11 +1867,11 @@
       </trans-unit>
       <trans-unit id="408" resname="approved">
         <source>approved</source>
-        <target>Approuvé</target>
+        <target>Approuvée</target>
       </trans-unit>
       <trans-unit id="409" resname="purchased">
         <source>purchased</source>
-        <target>Acheté</target>
+        <target>Achetée</target>
       </trans-unit>
       <trans-unit id="410" resname="delivered">
         <source>delivered</source>
@@ -1891,11 +1891,43 @@
       </trans-unit>
       <trans-unit id="414" resname="hasImages">
         <source>hasImages</source>
-        <target>Contient des images</target>
+        <target>Contient une image</target>
       </trans-unit>
       <trans-unit id="415" resname="hasInvoice">
         <source>hasInvoice</source>
         <target>Contient une facture</target>
+      </trans-unit>
+      <trans-unit id="416" resname="requestImageDeleted">
+        <source>requestImageDeleted</source>
+        <target>L'image de la demande a été supprimée.</target>
+      </trans-unit>
+      <trans-unit id="417" resname="deleteImage">
+        <source>deleteImage</source>
+        <target>Supprimer l'image</target>
+      </trans-unit>
+      <trans-unit id="418" resname="confirmDeleteRequestImage">
+        <source>confirmDeleteRequestImage</source>
+        <target>Êtes-vous sûr de vouloir supprimer cette image ?</target>
+      </trans-unit>
+      <trans-unit id="419" resname="noImageToDelete">
+        <source>noImageToDelete</source>
+        <target>Aucune image à supprimer.</target>
+      </trans-unit>
+      <trans-unit id="420" resname="invalidToken">
+        <source>invalidToken</source>
+        <target>Token de sécurité invalide.</target>
+      </trans-unit>
+      <trans-unit id="421" resname="noBillUploaded">
+        <source>noBillUploaded</source>
+        <target>Aucune facture téléversée</target>
+      </trans-unit>
+      <trans-unit id="422" resname="billImageDeleted">
+        <source>billImageDeleted</source>
+        <target>La facture a été supprimée.</target>
+      </trans-unit>
+      <trans-unit id="423" resname="confirmDeleteBillImage">
+        <source>confirmDeleteBillImage</source>
+        <target>Êtes-vous sûr de vouloir supprimer cette facture ?</target>
       </trans-unit>
     </body>
   </file>

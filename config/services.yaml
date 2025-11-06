@@ -24,6 +24,11 @@ services:
         arguments:
             $domain: "%domain%"
 
+    # PurchaseController with S3 filesystem injection
+    App\Controller\Club\PurchaseController:
+        arguments:
+            $s3Filesystem: '@oneup_flysystem.s3_filesystem'
+
     # PDO Session Handler
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
