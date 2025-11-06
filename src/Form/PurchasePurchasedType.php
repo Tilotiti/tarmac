@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class PurchasePurchasedType extends AbstractType
 {
@@ -21,12 +22,45 @@ class PurchasePurchasedType extends AbstractType
         $currentMembership = $options['current_membership'];
 
         $builder
+            ->add('requestImage', FileType::class, [
+                'label' => 'purchaseRequestImageOrPdf',
+                'required' => false,
+                'mapped' => false,
+                'upload' => 'purchase',
+                'attr' => ['class' => 'form-control', 'accept' => 'image/*,.pdf,application/pdf'],
+                'constraints' => [
+                    new Assert\File([
+                        'maxSize' => '10M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                            'application/pdf',
+                        ],
+                        'mimeTypesMessage' => 'invalidFileFormat',
+                    ]),
+                ],
+            ])
             ->add('billImage', FileType::class, [
-                'label' => 'purchaseBillImage',
+                'label' => 'purchaseBillImageOrPdf',
                 'required' => false,
                 'mapped' => false,
                 'upload' => 'bill',
                 'attr' => ['class' => 'form-control', 'accept' => 'image/*,.pdf,application/pdf'],
+                'constraints' => [
+                    new Assert\File([
+                        'maxSize' => '10M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                            'application/pdf',
+                        ],
+                        'mimeTypesMessage' => 'invalidFileFormat',
+                    ]),
+                ],
             ])
         ;
 

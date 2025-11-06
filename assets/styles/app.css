@@ -333,6 +333,12 @@
     display: none !important;
 }
 
+/* Ensure file input is visible */
+.uploaded-file-content input[type="file"] {
+    display: block !important;
+    width: 100%;
+}
+
 /* Custom grid layout for uploaded files */
 .uploaded-file-grid {
     display: flex;

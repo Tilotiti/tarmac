@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/purchases', host: '{subdomain}.%domain%', requirements: ['subdomain' => '(?!www).*'])]
 #[IsGranted('ROLE_USER')]
@@ -37,6 +38,7 @@ class PurchaseController extends ExtendedController
         private readonly MembershipRepository $membershipRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly Filesystem $s3Filesystem,
+        private readonly TranslatorInterface $translator,
     ) {
         parent::__construct($subdomainService);
     }
@@ -306,7 +308,7 @@ class PurchaseController extends ExtendedController
         if ($form->isSubmitted() && $form->isValid()) {
             $now = new \DateTimeImmutable();
 
-            // The UploadedFileTypeExtension automatically sets billImage on the purchase entity
+            // The UploadedFileTypeExtension automatically sets requestImage and billImage on the purchase entity
             // Handle purchasedBy - if manager selected someone, use that; otherwise use current user
             if ($isManager && $form->has('purchasedByMembership')) {
                 $selectedMembership = $form->get('purchasedByMembership')->getData();
@@ -583,12 +585,15 @@ class PurchaseController extends ExtendedController
 
         $this->entityManager->flush();
 
-        // Log status reversion activity
+        // Get French translation of the status we're reverting from
+        $currentStatusLabel = $this->translator->trans($currentStatus->value, [], null, 'fr');
+
+        // Log status reversion activity using the same activity type as if the user changed to the reverted status
         $activity = new Activity();
         $activity->setPurchase($purchase);
-        $activity->setType(ActivityType::EDITED);
+        $activity->setType($this->getActivityTypeForStatus($previousStatus));
         $activity->setUser($user);
-        $activity->setMessage(sprintf('Status reverted to %s', $previousStatus->value));
+        $activity->setMessage(sprintf('Retour au statut précédent depuis le statut "%s"', $currentStatusLabel));
         $this->entityManager->persist($activity);
         $this->entityManager->flush();
 
@@ -619,6 +624,22 @@ class PurchaseController extends ExtendedController
     {
         $purchase->setReimbursedBy(null);
         $purchase->setReimbursedAt(null);
+    }
+
+    /**
+     * Get the activity type that corresponds to a status change
+     * This matches the activity types used when directly changing to that status
+     */
+    private function getActivityTypeForStatus(PurchaseStatus $status): ActivityType
+    {
+        return match ($status) {
+            PurchaseStatus::PENDING_APPROVAL => ActivityType::EDITED, // No direct action to set to pending_approval, so use EDITED
+            PurchaseStatus::APPROVED => ActivityType::INSPECTED_APPROVED,
+            PurchaseStatus::PURCHASED => ActivityType::DONE,
+            PurchaseStatus::COMPLETE => ActivityType::CLOSED,
+            PurchaseStatus::REIMBURSED => ActivityType::DONE,
+            default => ActivityType::EDITED,
+        };
     }
 }
 
