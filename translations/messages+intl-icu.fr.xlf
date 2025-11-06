@@ -560,6 +560,10 @@
         <source>save</source>
         <target>Enregistrer</target>
       </trans-unit>
+      <trans-unit id="94a" resname="create">
+        <source>create</source>
+        <target>Créer</target>
+      </trans-unit>
       <trans-unit id="95" resname="cancel">
         <source>cancel</source>
         <target>Annuler</target>
