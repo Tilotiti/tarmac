@@ -1877,6 +1877,22 @@
         <source>confirmMarkAsReimbursed</source>
         <target>Êtes-vous sûr de vouloir marquer cet achat comme remboursé ?</target>
       </trans-unit>
+      <trans-unit id="402e" resname="revertStatus">
+        <source>revertStatus</source>
+        <target>Revenir au statut précédent</target>
+      </trans-unit>
+      <trans-unit id="402f" resname="confirmRevertStatus">
+        <source>confirmRevertStatus</source>
+        <target>Êtes-vous sûr de vouloir revenir au statut précédent ?</target>
+      </trans-unit>
+      <trans-unit id="402g" resname="purchaseStatusReverted">
+        <source>purchaseStatusReverted</source>
+        <target>Le statut de la demande d'achat a été restauré au statut précédent.</target>
+      </trans-unit>
+      <trans-unit id="402h" resname="cannotRevertStatus">
+        <source>cannotRevertStatus</source>
+        <target>Impossible de revenir au statut précédent.</target>
+      </trans-unit>
       <trans-unit id="403" resname="currentImage">
         <source>currentImage</source>
         <target>Image</target>

@@ -150,6 +150,12 @@
 				<a href="{{ path('club_purchase_show', {id: purchase.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
 					{{ 'cancel'|trans }}
 				</a>
+				{% if is_granted('PURCHASE_REVERT_STATUS', purchase) and purchase.canRevertStatus %}
+					<a href="{{ path('club_purchase_revert_status', {id: purchase.id, _token: csrf_token('revert_status_purchase' ~ purchase.id)}) }}" class="btn btn-outline-warning" style="min-height: 44px;" data-controller="confirm" data-confirm="{{ 'confirmRevertStatus'|trans }}">
+						<i class="ti ti-arrow-back me-2"></i>
+						{{ 'revertStatus'|trans }}
+					</a>
+				{% endif %}
 			</div>
 			{{ form_end(form) }}
 		</div>

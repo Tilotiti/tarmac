@@ -510,5 +510,69 @@ class Purchase
         $activities = $this->activities;
         return $activities->matching($criteria);
     }
+
+    /**
+     * Get the previous status that can be reverted to
+     * Returns null if status cannot be reverted
+     */
+    public function getPreviousStatus(): ?PurchaseStatus
+    {
+        return match ($this->status) {
+            PurchaseStatus::APPROVED => PurchaseStatus::PENDING_APPROVAL,
+            PurchaseStatus::PURCHASED => PurchaseStatus::APPROVED,
+            PurchaseStatus::COMPLETE => PurchaseStatus::PURCHASED,
+            PurchaseStatus::REIMBURSED => PurchaseStatus::COMPLETE,
+            default => null, // REQUESTED, PENDING_APPROVAL, CANCELLED cannot be reverted
+        };
+    }
+
+    /**
+     * Check if the current status can be reverted
+     */
+    public function canRevertStatus(): bool
+    {
+        return $this->getPreviousStatus() !== null;
+    }
+
+    /**
+     * Get the user who performed the last status change
+     * Returns null if status cannot be reverted or no user is associated
+     */
+    public function getLastStatusChangeUser(): ?User
+    {
+        return match ($this->status) {
+            PurchaseStatus::APPROVED => $this->approvedBy,
+            PurchaseStatus::PURCHASED => $this->purchasedBy,
+            PurchaseStatus::COMPLETE => $this->deliveredBy,
+            PurchaseStatus::REIMBURSED => $this->reimbursedBy,
+            default => null,
+        };
+    }
+
+    /**
+     * Check if a user can revert the status
+     * A user can revert if:
+     * - They are a manager, OR
+     * - They are the user who made the last status change
+     */
+    public function canRevertStatusBy(User $user, bool $isManager): bool
+    {
+        if (!$this->canRevertStatus()) {
+            return false;
+        }
+
+        // Managers can always revert
+        if ($isManager) {
+            return true;
+        }
+
+        // Check if user made the last status change
+        $lastStatusChangeUser = $this->getLastStatusChangeUser();
+        if ($lastStatusChangeUser && $lastStatusChangeUser->getId() === $user->getId()) {
+            return true;
+        }
+
+        return false;
+    }
 }
 

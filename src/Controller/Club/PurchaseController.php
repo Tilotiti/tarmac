@@ -182,6 +182,7 @@ class PurchaseController extends ExtendedController
     {
         $club = $this->clubResolver->resolve();
         $user = $this->getUser();
+        $isManager = $this->isGranted('MANAGE');
 
         $form = $this->createForm(PurchaseType::class, $purchase);
         $form->handleRequest($request);
@@ -206,6 +207,7 @@ class PurchaseController extends ExtendedController
             'club' => $club,
             'purchase' => $purchase,
             'form' => $form,
+            'isManager' => $isManager,
         ]);
     }
 
@@ -545,6 +547,78 @@ class PurchaseController extends ExtendedController
         $this->addFlash('success', 'billImageDeleted');
 
         return $this->redirectToRoute('club_purchase_edit', ['id' => $purchase->getId()]);
+    }
+
+    #[Route('/{id}/revert-status', name: 'club_purchase_revert_status', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[IsGranted(PurchaseVoter::REVERT_STATUS, 'purchase')]
+    public function revertStatus(Purchase $purchase, Request $request): Response
+    {
+        $token = $request->query->get('_token');
+
+        if (!$token || !$this->isCsrfTokenValid('revert_status_purchase' . $purchase->getId(), $token)) {
+            $this->addFlash('danger', 'invalidToken');
+            return $this->redirectToRoute('club_purchase_edit', ['id' => $purchase->getId()]);
+        }
+
+        $previousStatus = $purchase->getPreviousStatus();
+        if (!$previousStatus) {
+            $this->addFlash('danger', 'cannotRevertStatus');
+            return $this->redirectToRoute('club_purchase_edit', ['id' => $purchase->getId()]);
+        }
+
+        $user = $this->getUser();
+        $currentStatus = $purchase->getStatus();
+
+        // Clear fields related to the current status (before reverting)
+        match ($currentStatus) {
+            PurchaseStatus::APPROVED => $this->clearApprovalFields($purchase),
+            PurchaseStatus::PURCHASED => $this->clearPurchasedFields($purchase),
+            PurchaseStatus::COMPLETE => $this->clearDeliveredFields($purchase),
+            PurchaseStatus::REIMBURSED => $this->clearReimbursedFields($purchase),
+            default => null,
+        };
+
+        // Revert status to previous
+        $purchase->setStatus($previousStatus);
+
+        $this->entityManager->flush();
+
+        // Log status reversion activity
+        $activity = new Activity();
+        $activity->setPurchase($purchase);
+        $activity->setType(ActivityType::EDITED);
+        $activity->setUser($user);
+        $activity->setMessage(sprintf('Status reverted to %s', $previousStatus->value));
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'purchaseStatusReverted');
+
+        return $this->redirectToRoute('club_purchase_show', ['id' => $purchase->getId()]);
+    }
+
+    private function clearApprovalFields(Purchase $purchase): void
+    {
+        $purchase->setApprovedBy(null);
+        $purchase->setApprovedAt(null);
+    }
+
+    private function clearPurchasedFields(Purchase $purchase): void
+    {
+        $purchase->setPurchasedBy(null);
+        $purchase->setPurchasedAt(null);
+    }
+
+    private function clearDeliveredFields(Purchase $purchase): void
+    {
+        $purchase->setDeliveredBy(null);
+        $purchase->setDeliveredAt(null);
+    }
+
+    private function clearReimbursedFields(Purchase $purchase): void
+    {
+        $purchase->setReimbursedBy(null);
+        $purchase->setReimbursedAt(null);
     }
 }
 

@@ -18,6 +18,7 @@ class PurchaseVoter extends Voter
     public const MARK_PURCHASED = 'PURCHASE_MARK_PURCHASED';
     public const MARK_DELIVERED = 'PURCHASE_MARK_DELIVERED';
     public const MARK_REIMBURSED = 'PURCHASE_MARK_REIMBURSED';
+    public const REVERT_STATUS = 'PURCHASE_REVERT_STATUS';
     public const COMMENT = 'PURCHASE_COMMENT';
 
     public function __construct(
@@ -35,6 +36,7 @@ class PurchaseVoter extends Voter
             self::MARK_PURCHASED,
             self::MARK_DELIVERED,
             self::MARK_REIMBURSED,
+            self::REVERT_STATUS,
             self::COMMENT,
         ]) && $subject instanceof Purchase;
     }
@@ -75,6 +77,7 @@ class PurchaseVoter extends Voter
             self::MARK_PURCHASED => $this->canMarkPurchased($purchase),
             self::MARK_DELIVERED => $this->canMarkDelivered($purchase),
             self::MARK_REIMBURSED => $this->canMarkReimbursed($purchase, $isManager),
+            self::REVERT_STATUS => $this->canRevertStatus($purchase, $user, $isManager),
             self::COMMENT => true, // Any club member can comment
             default => false,
         };
@@ -149,6 +152,11 @@ class PurchaseVoter extends Voter
         }
 
         return $purchase->canMarkReimbursed();
+    }
+
+    private function canRevertStatus(Purchase $purchase, User $user, bool $isManager): bool
+    {
+        return $purchase->canRevertStatusBy($user, $isManager);
     }
 }
 
