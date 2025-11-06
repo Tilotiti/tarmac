@@ -356,6 +356,12 @@
     border: 1px solid var(--tblr-border-color);
     border-radius: var(--tblr-border-radius);
     background-color: var(--tblr-bg-surface);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.uploaded-file-thumbnail:hover {
+    border-color: var(--tblr-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .uploaded-file-thumbnail img {
@@ -365,6 +371,15 @@
     height: auto;
     margin: 0 auto;
     border-radius: calc(var(--tblr-border-radius) - 0.125rem);
+    transition: opacity 0.2s ease;
+}
+
+.uploaded-file-thumbnail a {
+    display: block;
+}
+
+.uploaded-file-thumbnail a:hover img {
+    opacity: 0.8;
 }
 
 .uploaded-file-preview {
@@ -393,9 +408,133 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1.5rem;
+    padding: 2rem 1.5rem;
     text-align: center;
-    min-height: 150px;
+    min-height: 180px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    border: 2px solid var(--tblr-border-color);
+    border-radius: var(--tblr-border-radius);
+    background-color: var(--tblr-bg-surface);
+    gap: 1rem;
+}
+
+.uploaded-file-document:hover {
+    border-color: var(--tblr-primary);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    background-color: var(--tblr-bg-surface-secondary);
+}
+
+.uploaded-file-document-icon {
+    font-size: 4rem;
+    color: var(--tblr-danger);
+    line-height: 1;
+}
+
+.uploaded-file-document-icon i {
+    display: block;
+}
+
+.uploaded-file-document-label {
+    font-weight: 500;
+    color: var(--tblr-body-color);
+    font-size: 0.95rem;
+}
+
+.uploaded-file-document-action {
+    margin-top: 0.5rem;
+}
+
+/* Compact versions for show page */
+.uploaded-file-thumbnail-compact {
+    display: inline-block;
+    width: 100%;
+    max-width: 200px;
+    text-align: center;
+    padding: 0.5rem;
+    border: 1px solid var(--tblr-border-color);
+    border-radius: var(--tblr-border-radius);
+    background-color: var(--tblr-bg-surface);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.uploaded-file-thumbnail-compact:hover {
+    border-color: var(--tblr-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.uploaded-file-thumbnail-compact img {
+    display: block;
+    max-width: 100%;
+    max-height: 150px;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+    border-radius: calc(var(--tblr-border-radius) - 0.125rem);
+    transition: opacity 0.2s ease;
+}
+
+.uploaded-file-thumbnail-compact a {
+    display: block;
+}
+
+.uploaded-file-thumbnail-compact a:hover img {
+    opacity: 0.8;
+}
+
+.uploaded-file-document-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--tblr-border-color);
+    border-radius: var(--tblr-border-radius);
+    background-color: var(--tblr-bg-surface);
+    max-width: 400px;
+}
+
+.uploaded-file-document-compact-icon {
+    font-size: 2rem;
+    color: var(--tblr-danger);
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.uploaded-file-document-compact-icon i {
+    display: block;
+}
+
+.uploaded-file-document-compact-label {
+    font-weight: 500;
+    color: var(--tblr-body-color);
+    font-size: 0.9rem;
+    flex: 1;
+}
+
+.uploaded-file-document-compact .btn {
+    flex-shrink: 0;
+}
+
+/* Mobile: adjust compact sizes */
+@media (max-width: 767.98px) {
+    .uploaded-file-thumbnail-compact {
+        max-width: 100%;
+        max-height: 120px;
+    }
+
+    .uploaded-file-thumbnail-compact img {
+        max-height: 120px;
+    }
+
+    .uploaded-file-document-compact {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        max-width: 100%;
+    }
+
+    .uploaded-file-document-compact .btn {
+        width: 100%;
+    }
 }
 
 .uploaded-file-empty {
@@ -407,6 +546,15 @@
     text-align: center;
     min-height: 150px;
     opacity: 0.6;
+    transition: opacity 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    border: 2px dashed var(--tblr-border-color);
+    border-radius: var(--tblr-border-radius);
+}
+
+.uploaded-file-empty:hover {
+    opacity: 1;
+    border-color: var(--tblr-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .uploaded-file-actions {
@@ -421,7 +569,16 @@
         padding: 0.75rem;
     }
 
-    .uploaded-file-document,
+    .uploaded-file-document {
+        min-height: 140px;
+        padding: 1.5rem 1rem;
+        gap: 0.75rem;
+    }
+
+    .uploaded-file-document-icon {
+        font-size: 3rem;
+    }
+
     .uploaded-file-empty {
         min-height: 120px;
         padding: 1.5rem 1rem;

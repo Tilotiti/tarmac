@@ -9,47 +9,41 @@
 		class="btn-list">
 		{# Show only the next primary action #}
 		{% if nextPrimaryAction == 'approve' and is_granted('PURCHASE_APPROVE', purchase) %}
-			<form method="post" action="{{ path('club_purchase_approve', {id: purchase.id}) }}" class="d-inline">
-				<button type="submit" class="btn btn-success" style="min-height: 44px;">
-					<i class="ti ti-check me-2"></i>
-					<span class="d-none d-sm-inline">{{ 'approvePurchase'|trans }}</span>
-				</button>
-			</form>
+			<a href="{{ path('club_purchase_approve', {id: purchase.id, _token: csrf_token('approve_purchase' ~ purchase.id)}) }}" class="btn btn-success" data-confirm="{{ 'confirmApprovePurchase'|trans }}">
+				<i class="ti ti-check me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'approvePurchase'|trans }}</span>
+			</a>
 		{% elseif nextPrimaryAction == 'mark_purchased' and is_granted('PURCHASE_MARK_PURCHASED', purchase) %}
-			<a href="{{ path('club_purchase_mark_purchased', {id: purchase.id}) }}" class="btn btn-primary" style="min-height: 44px;">
+			<a href="{{ path('club_purchase_mark_purchased', {id: purchase.id}) }}" class="btn btn-primary" data-confirm="{{ 'confirmMarkAsPurchased'|trans }}">
 				<i class="ti ti-shopping-cart me-2"></i>
 				<span class="d-none d-sm-inline">{{ 'markAsPurchased'|trans }}</span>
 			</a>
 		{% elseif nextPrimaryAction == 'mark_delivered' and is_granted('PURCHASE_MARK_DELIVERED', purchase) %}
-			<form method="post" action="{{ path('club_purchase_mark_delivered', {id: purchase.id}) }}" class="d-inline">
-				<button type="submit" class="btn btn-info" style="min-height: 44px;">
-					<i class="ti ti-truck me-2"></i>
-					<span class="d-none d-sm-inline">{{ 'markAsDelivered'|trans }}</span>
-				</button>
-			</form>
+			<a href="{{ path('club_purchase_mark_delivered', {id: purchase.id, _token: csrf_token('mark_delivered_purchase' ~ purchase.id)}) }}" class="btn btn-info" data-confirm="{{ 'confirmMarkAsDelivered'|trans }}">
+				<i class="ti ti-truck me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'markAsDelivered'|trans }}</span>
+			</a>
 		{% elseif nextPrimaryAction == 'mark_reimbursed' and is_granted('PURCHASE_MARK_REIMBURSED', purchase) %}
-			<form method="post" action="{{ path('club_purchase_mark_reimbursed', {id: purchase.id}) }}" class="d-inline">
-				<button type="submit" class="btn btn-success" style="min-height: 44px;">
-					<i class="ti ti-currency-dollar me-2"></i>
-					<span class="d-none d-sm-inline">{{ 'markAsReimbursed'|trans }}</span>
-				</button>
-			</form>
+			<a href="{{ path('club_purchase_mark_reimbursed', {id: purchase.id, _token: csrf_token('mark_reimbursed_purchase' ~ purchase.id)}) }}" class="btn btn-success" data-confirm="{{ 'confirmMarkAsReimbursed'|trans }}">
+				<i class="ti ti-currency-dollar me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'markAsReimbursed'|trans }}</span>
+			</a>
 		{% endif %}
 
 		{# Secondary actions: Edit and Cancel (only if not completed) #}
 		{% if not purchase.isCompleted %}
 			{% if is_granted('PURCHASE_EDIT', purchase) %}
-				<a href="{{ path('club_purchase_edit', {id: purchase.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
+				<a href="{{ path('club_purchase_edit', {id: purchase.id}) }}" class="btn btn-secondary">
 					<i class="ti ti-edit me-2"></i>
 					<span class="d-none d-sm-inline">{{ 'editPurchase'|trans }}</span>
 				</a>
 			{% endif %}
 
 			{% if is_granted('PURCHASE_CANCEL', purchase) %}
-				<button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal" style="min-height: 44px;">
+				<a href="{{ path('club_purchase_cancel', {id: purchase.id, _token: csrf_token('cancel_purchase' ~ purchase.id)}) }}" class="btn btn-outline-danger" data-confirm="{{ 'confirmCancelPurchase'|trans }}">
 					<i class="ti ti-ban me-2"></i>
 					<span class="d-none d-sm-inline">{{ 'cancelPurchase'|trans }}</span>
-				</button>
+				</a>
 			{% endif %}
 		{% endif %}
 	</div>
@@ -83,42 +77,74 @@
 					<div>{{ purchase.quantity }}</div>
 				</div>
 
-			{% if purchase.description %}
-				<div class="col-12 mb-3">
-					<div class="text-secondary small mb-1">{{ 'purchaseDescription'|trans }}</div>
-					<div>{{ purchase.description|nl2br }}</div>
-				</div>
-			{% endif %}
+				{% if purchase.description %}
+					<div class="col-12 mb-3">
+						<div class="text-secondary small mb-1">{{ 'purchaseDescription'|trans }}</div>
+						<div>{{ purchase.description|nl2br }}</div>
+					</div>
+				{% endif %}
 
-			{% if purchase.expectedDeliveryDate %}
-				<div class="col-12 col-md-6 mb-3">
-					<div class="text-secondary small mb-1">{{ 'purchaseExpectedDeliveryDate'|trans }}</div>
-					<div>{{ purchase.expectedDeliveryDate|date('d/m/Y') }}</div>
-				</div>
-			{% endif %}
+				{% if purchase.expectedDeliveryDate %}
+					<div class="col-12 col-md-6 mb-3">
+						<div class="text-secondary small mb-1">{{ 'purchaseExpectedDeliveryDate'|trans }}</div>
+						<div>{{ purchase.expectedDeliveryDate|date('d/m/Y') }}</div>
+					</div>
+				{% endif %}
 			</div>
 
 			{# Files (Request Image and Bill) #}
 			{% if purchase.requestImage or purchase.billImage %}
 				<hr class="my-4">
-				<div class="row">
+				<div class="row g-3">
 					{% if purchase.requestImage %}
-						<div class="col-12 col-md-6 mb-3">
-							<div class="text-secondary small mb-2">{{ 'purchaseRequestImage'|trans }}</div>
-							<a href="{{ purchase.requestImage }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
-								<i class="ti ti-file me-2"></i>
-								{{ 'viewFile'|trans }}
-							</a>
+						<div class="col-12 col-md-6">
+							<div class="text-secondary small mb-2">{{ 'purchaseRequestImageOrPdf'|trans }}</div>
+							{% if purchase.requestImage matches '/\\.(jpg|jpeg|png|gif|webp)$/i' %}
+								<div class="uploaded-file-thumbnail-compact">
+									<a href="{{ purchase.requestImage }}" target="_blank" rel="noopener noreferrer">
+										<img src="{{ purchase.requestImage }}" alt="{{ 'purchaseRequestImage'|trans }}">
+									</a>
+								</div>
+							{% else %}
+								<div class="uploaded-file-document-compact">
+									<div class="uploaded-file-document-compact-icon">
+										<i class="ti ti-file-type-pdf"></i>
+									</div>
+									<div class="uploaded-file-document-compact-label">
+										{{ 'pdfDocument'|trans }}
+									</div>
+									<a href="{{ purchase.requestImage }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+										<i class="ti ti-external-link me-2"></i>
+										{{ 'viewFile'|trans }}
+									</a>
+								</div>
+							{% endif %}
 						</div>
 					{% endif %}
 
 					{% if purchase.billImage %}
-						<div class="col-12 col-md-6 mb-3">
-							<div class="text-secondary small mb-2">{{ 'purchaseBillImage'|trans }}</div>
-							<a href="{{ purchase.billImage }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
-								<i class="ti ti-file me-2"></i>
-								{{ 'viewBill'|trans }}
-							</a>
+						<div class="col-12 col-md-6">
+							<div class="text-secondary small mb-2">{{ 'purchaseBillImageOrPdf'|trans }}</div>
+							{% if purchase.billImage matches '/\\.(jpg|jpeg|png|gif|webp)$/i' %}
+								<div class="uploaded-file-thumbnail-compact">
+									<a href="{{ purchase.billImage }}" target="_blank" rel="noopener noreferrer">
+										<img src="{{ purchase.billImage }}" alt="{{ 'purchaseBillImage'|trans }}">
+									</a>
+								</div>
+							{% else %}
+								<div class="uploaded-file-document-compact">
+									<div class="uploaded-file-document-compact-icon">
+										<i class="ti ti-file-type-pdf"></i>
+									</div>
+									<div class="uploaded-file-document-compact-label">
+										{{ 'pdfDocument'|trans }}
+									</div>
+									<a href="{{ purchase.billImage }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+										<i class="ti ti-external-link me-2"></i>
+										{{ 'viewBill'|trans }}
+									</a>
+								</div>
+							{% endif %}
 						</div>
 					{% endif %}
 				</div>
@@ -179,26 +205,4 @@
 		</div>
 	</div>
 
-	{# Cancel modal #}
-	{% if is_granted('PURCHASE_CANCEL', purchase) %}
-		<div class="modal modal-blur fade" id="cancelModal" tabindex="-1" role="dialog" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">{{ 'cancelPurchase'|trans }}</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<p>{{ 'confirmCancelPurchase'|trans }}</p>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'cancel'|trans }}</button>
-						<form method="post" action="{{ path('club_purchase_cancel', {id: purchase.id}) }}" class="d-inline">
-							<button type="submit" class="btn btn-danger">{{ 'confirm'|trans }}</button>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	{% endif %}
 {% endblock %}

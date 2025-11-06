@@ -1733,13 +1733,29 @@
         <source>purchaseRequestImage</source>
         <target>Image de la demande</target>
       </trans-unit>
+      <trans-unit id="376a" resname="purchaseRequestImageOrPdf">
+        <source>purchaseRequestImageOrPdf</source>
+        <target>Image ou PDF de la demande</target>
+      </trans-unit>
       <trans-unit id="377" resname="purchaseBillImage">
         <source>purchaseBillImage</source>
         <target>Image de la facture</target>
       </trans-unit>
+      <trans-unit id="377d" resname="purchaseBillImageOrPdf">
+        <source>purchaseBillImageOrPdf</source>
+        <target>Image ou PDF de la facture</target>
+      </trans-unit>
+      <trans-unit id="377c" resname="clickToUploadImage">
+        <source>clickToUploadImage</source>
+        <target>Cliquez pour télécharger une image ou un PDF</target>
+      </trans-unit>
       <trans-unit id="377a" resname="viewFile">
         <source>viewFile</source>
         <target>Voir le fichier</target>
+      </trans-unit>
+      <trans-unit id="377e" resname="pdfDocument">
+        <source>pdfDocument</source>
+        <target>Document PDF</target>
       </trans-unit>
       <trans-unit id="377b" resname="viewBill">
         <source>viewBill</source>
@@ -1845,6 +1861,22 @@
         <source>confirmCancelPurchase</source>
         <target>Êtes-vous sûr de vouloir annuler cette demande d'achat ?</target>
       </trans-unit>
+      <trans-unit id="402a" resname="confirmApprovePurchase">
+        <source>confirmApprovePurchase</source>
+        <target>Êtes-vous sûr de vouloir approuver cette demande d'achat ?</target>
+      </trans-unit>
+      <trans-unit id="402b" resname="confirmMarkAsPurchased">
+        <source>confirmMarkAsPurchased</source>
+        <target>Êtes-vous sûr de vouloir marquer cette demande comme achetée ?</target>
+      </trans-unit>
+      <trans-unit id="402c" resname="confirmMarkAsDelivered">
+        <source>confirmMarkAsDelivered</source>
+        <target>Êtes-vous sûr de vouloir marquer cet achat comme livré ?</target>
+      </trans-unit>
+      <trans-unit id="402d" resname="confirmMarkAsReimbursed">
+        <source>confirmMarkAsReimbursed</source>
+        <target>Êtes-vous sûr de vouloir marquer cet achat comme remboursé ?</target>
+      </trans-unit>
       <trans-unit id="403" resname="currentImage">
         <source>currentImage</source>
         <target>Image</target>
@@ -1905,9 +1937,13 @@
         <source>deleteImage</source>
         <target>Supprimer l'image</target>
       </trans-unit>
+      <trans-unit id="417a" resname="deleteFile">
+        <source>deleteFile</source>
+        <target>Supprimer le fichier</target>
+      </trans-unit>
       <trans-unit id="418" resname="confirmDeleteRequestImage">
         <source>confirmDeleteRequestImage</source>
-        <target>Êtes-vous sûr de vouloir supprimer cette image ?</target>
+        <target>Êtes-vous sûr de vouloir supprimer cette image ou PDF de demande ?</target>
       </trans-unit>
       <trans-unit id="419" resname="noImageToDelete">
         <source>noImageToDelete</source>
@@ -1927,7 +1963,7 @@
       </trans-unit>
       <trans-unit id="423" resname="confirmDeleteBillImage">
         <source>confirmDeleteBillImage</source>
-        <target>Êtes-vous sûr de vouloir supprimer cette facture ?</target>
+        <target>Êtes-vous sûr de vouloir supprimer cette image ou PDF de facture ?</target>
       </trans-unit>
     </body>
   </file>

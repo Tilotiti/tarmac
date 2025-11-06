@@ -42,18 +42,44 @@ class PurchaseType extends AbstractType
                 'attr' => ['class' => 'form-control', 'rows' => 4],
             ])
             ->add('requestImage', FileType::class, [
-                'label' => 'purchaseRequestImage',
+                'label' => 'purchaseRequestImageOrPdf',
                 'required' => false,
                 'mapped' => false,
                 'upload' => 'purchase',
-                'attr' => ['class' => 'form-control', 'accept' => 'image/*'],
+                'attr' => ['class' => 'form-control', 'accept' => 'image/*,.pdf,application/pdf'],
+                'constraints' => [
+                    new Assert\File([
+                        'maxSize' => '10M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                            'application/pdf',
+                        ],
+                        'mimeTypesMessage' => 'invalidFileFormat',
+                    ]),
+                ],
             ])
             ->add('billImage', FileType::class, [
-                'label' => 'purchaseBillImage',
+                'label' => 'purchaseBillImageOrPdf',
                 'required' => false,
                 'mapped' => false,
                 'upload' => 'bill',
                 'attr' => ['class' => 'form-control', 'accept' => 'image/*,.pdf,application/pdf'],
+                'constraints' => [
+                    new Assert\File([
+                        'maxSize' => '10M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                            'application/pdf',
+                        ],
+                        'mimeTypesMessage' => 'invalidFileFormat',
+                    ]),
+                ],
             ])
         ;
     }

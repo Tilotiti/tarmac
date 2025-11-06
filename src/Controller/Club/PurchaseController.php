@@ -209,10 +209,17 @@ class PurchaseController extends ExtendedController
         ]);
     }
 
-    #[Route('/{id}/cancel', name: 'club_purchase_cancel', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/{id}/cancel', name: 'club_purchase_cancel', requirements: ['id' => '\d+'], methods: ['GET'])]
     #[IsGranted(PurchaseVoter::CANCEL, 'purchase')]
-    public function cancel(Purchase $purchase): Response
+    public function cancel(Purchase $purchase, Request $request): Response
     {
+        $token = $request->query->get('_token');
+
+        if (!$token || !$this->isCsrfTokenValid('cancel_purchase' . $purchase->getId(), $token)) {
+            $this->addFlash('danger', 'invalidToken');
+            return $this->redirectToRoute('club_purchase_show', ['id' => $purchase->getId()]);
+        }
+
         $user = $this->getUser();
         $now = new \DateTimeImmutable();
 
@@ -235,10 +242,17 @@ class PurchaseController extends ExtendedController
         return $this->redirectToRoute('club_purchases');
     }
 
-    #[Route('/{id}/approve', name: 'club_purchase_approve', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/{id}/approve', name: 'club_purchase_approve', requirements: ['id' => '\d+'], methods: ['GET'])]
     #[IsGranted(PurchaseVoter::APPROVE, 'purchase')]
-    public function approve(Purchase $purchase): Response
+    public function approve(Purchase $purchase, Request $request): Response
     {
+        $token = $request->query->get('_token');
+
+        if (!$token || !$this->isCsrfTokenValid('approve_purchase' . $purchase->getId(), $token)) {
+            $this->addFlash('danger', 'invalidToken');
+            return $this->redirectToRoute('club_purchase_show', ['id' => $purchase->getId()]);
+        }
+
         $user = $this->getUser();
         $now = new \DateTimeImmutable();
 
@@ -329,10 +343,17 @@ class PurchaseController extends ExtendedController
         ]);
     }
 
-    #[Route('/{id}/mark-delivered', name: 'club_purchase_mark_delivered', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/{id}/mark-delivered', name: 'club_purchase_mark_delivered', requirements: ['id' => '\d+'], methods: ['GET'])]
     #[IsGranted(PurchaseVoter::MARK_DELIVERED, 'purchase')]
-    public function markDelivered(Purchase $purchase): Response
+    public function markDelivered(Purchase $purchase, Request $request): Response
     {
+        $token = $request->query->get('_token');
+
+        if (!$token || !$this->isCsrfTokenValid('mark_delivered_purchase' . $purchase->getId(), $token)) {
+            $this->addFlash('danger', 'invalidToken');
+            return $this->redirectToRoute('club_purchase_show', ['id' => $purchase->getId()]);
+        }
+
         $user = $this->getUser();
         $now = new \DateTimeImmutable();
 
@@ -356,10 +377,17 @@ class PurchaseController extends ExtendedController
         return $this->redirectToRoute('club_purchase_show', ['id' => $purchase->getId()]);
     }
 
-    #[Route('/{id}/mark-reimbursed', name: 'club_purchase_mark_reimbursed', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/{id}/mark-reimbursed', name: 'club_purchase_mark_reimbursed', requirements: ['id' => '\d+'], methods: ['GET'])]
     #[IsGranted(PurchaseVoter::MARK_REIMBURSED, 'purchase')]
-    public function markReimbursed(Purchase $purchase): Response
+    public function markReimbursed(Purchase $purchase, Request $request): Response
     {
+        $token = $request->query->get('_token');
+
+        if (!$token || !$this->isCsrfTokenValid('mark_reimbursed_purchase' . $purchase->getId(), $token)) {
+            $this->addFlash('danger', 'invalidToken');
+            return $this->redirectToRoute('club_purchase_show', ['id' => $purchase->getId()]);
+        }
+
         $user = $this->getUser();
         $now = new \DateTimeImmutable();
 

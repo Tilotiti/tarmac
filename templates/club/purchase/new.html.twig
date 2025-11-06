@@ -12,13 +12,14 @@
 			{{ form_row(form.quantity) }}
 			{{ form_row(form.description) }}
 			{{ form_row(form.requestImage) }}
+			{{ form_row(form.billImage) }}
 
 			<div class="form-footer">
-				<button type="submit" class="btn btn-primary" style="min-height: 44px;">
+				<button type="submit" class="btn btn-primary">
 					<i class="ti ti-check me-2"></i>
 					{{ 'create'|trans }}
 				</button>
-				<a href="{{ path('club_purchases') }}" class="btn btn-secondary" style="min-height: 44px;">
+				<a href="{{ path('club_purchases') }}" class="btn btn-secondary">
 					{{ 'cancel'|trans }}
 				</a>
 			</div>
