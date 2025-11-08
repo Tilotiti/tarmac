@@ -108,7 +108,7 @@ class PlanApplicationController extends ExtendedController
         $qb = $this->taskRepository->queryAll();
         $qb = $this->taskRepository->filterByPlanApplication($qb, $application);
         $qb = $this->taskRepository->orderByRelevantDate($qb, 'ASC');
-        
+
         $tasks = $qb->getQuery()->getResult();
 
         return $this->render('club/plan/application/show.html.twig', [
@@ -139,7 +139,7 @@ class PlanApplicationController extends ExtendedController
     }
 
     #[Route('/{id}/print', name: 'club_plan_application_print', requirements: ['id' => '\d+'])]
-    public function print(PlanApplication $application): Response
+    public function print(PlanApplication $application, Request $request): Response
     {
         $club = $this->clubResolver->resolve();
 
@@ -151,10 +151,10 @@ class PlanApplicationController extends ExtendedController
         // Get tasks for this application ordered by ID ASC
         $qb = $this->taskRepository->queryAll();
         $qb = $this->taskRepository->filterByPlanApplication($qb, $application);
-        
+
         // Order by task ID ASC
         $qb = $qb->addOrderBy('task.id', 'ASC');
-        
+
         $tasks = $qb->getQuery()->getResult();
 
         $html = $this->renderView('club/plan/application/print.html.twig', [
@@ -162,6 +162,10 @@ class PlanApplicationController extends ExtendedController
             'application' => $application,
             'tasks' => $tasks,
         ]);
+
+        if ($request->query->getBoolean('preview') || $request->query->getBoolean('previw')) {
+            return new Response($html);
+        }
 
         $filename = sprintf(
             'carte-travail-%s-%s.pdf',
@@ -176,6 +180,7 @@ class PlanApplicationController extends ExtendedController
             'margin-right' => '15mm',
             'margin-bottom' => '20mm',
             'margin-left' => '15mm',
+            'Attachment' => false,
         ]);
 
         $response->headers->set('Content-Type', 'application/pdf');

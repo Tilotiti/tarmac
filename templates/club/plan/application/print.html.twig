@@ -51,16 +51,42 @@
 
 			#footer {
 				position: fixed;
-				bottom: -60px;
+				bottom: -70px;
 				left: 0;
 				right: 0;
-				height: 50px;
+				min-height: 60px;
 				border-top: 1px solid #000;
-				padding-top: 5px;
+				padding-top: 6px;
+				padding-bottom: 4px;
 				font-size: 8px;
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+			}
+
+			.footer-row {
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
+				width: 100%;
+				gap: 12px;
+			}
+
+			.footer-legends {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 12px;
+				line-height: 1.4;
+			}
+
+			.footer-legends strong {
+				margin-right: 2px;
+			}
+
+			.footer-note {
+				flex: 1;
+				text-align: center;
+				font-style: italic;
 			}
 
 
@@ -191,13 +217,26 @@
 		</div>
 
 		<div id="footer">
-			<div>
-				<strong>{{ application.plan.name }}</strong>
+			<div class="footer-row">
+				<div>
+					<strong>{{ application.plan.name }}</strong>
+				</div>
+				<div class="footer-note">Emargez avec un T pour indiquer que vous avez signé sur Tarmac</div>
+				<div>
+					Date de mise à jour:
+					{{ "now"|date('d/m/Y à H:i') }}
+				</div>
 			</div>
-			<div></div>
-			<div>
-				Date de mise à jour:
-				{{ "now"|date('d/m/Y à H:i') }}
+			<div class="footer-legends">
+				<div>
+					<strong>TC</strong>
+					= Tâche Critique. Requiert la validation d'un membre qualifié PART66L.</div>
+				<div>
+					<strong>VA</strong>
+					= Tâche réalisée.</div>
+				<div>
+					<strong>VISA</strong>
+					= Nom et signature du membre ayant effectué la tâche.</div>
 			</div>
 		</div>
 
@@ -284,17 +323,17 @@
 		</div>
 
 		 <script type="text/php">
-									if (isset($pdf)) {
-										$pdf->page_script('
-											$font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-											$size = 8;
-											$pageText = "Page " . $PAGE_NUM . " sur " . $PAGE_COUNT;
-											$y = $pdf->get_height() - 50;
-											$x = $pdf->get_width() - 100;
-											$pdf->text($x, $y, $pageText, $font, $size);
-										');
-									}
-								</script>
+															if (isset($pdf)) {
+																$pdf->page_script('
+																	$font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+																	$size = 8;
+																	$pageText = "Page " . $PAGE_NUM . " sur " . $PAGE_COUNT;
+																	$y = $pdf->get_height() - 55;
+																	$x = $pdf->get_width() - 100;
+																	$pdf->text($x, $y, $pageText, $font, $size);
+																');
+															}
+														</script>
 
 	</body>
 </html>
