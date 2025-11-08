@@ -2,10 +2,10 @@
 
 namespace App\Controller\Public;
 
-use App\Entity\User;
 use App\Entity\Invitation;
-use App\Form\RegistrationFormType;
+use App\Entity\User;
 use App\Form\ChangePasswordFormType;
+use App\Form\RegistrationFormType;
 use App\Form\ResetPasswordRequestFormType;
 use App\Repository\InvitationRepository;
 use App\Service\InvitationService;
@@ -13,16 +13,19 @@ use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
@@ -32,6 +35,7 @@ use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 class SecurityController extends AbstractController
 {
     use ResetPasswordControllerTrait;
+    use TargetPathTrait;
 
     public function __construct(
         private readonly ResetPasswordHelperInterface $resetPasswordHelper,
@@ -66,6 +70,10 @@ class SecurityController extends AbstractController
                 return $this->redirectToRoute('public_invitation_accept', [
                     'token' => $request->query->get('invitation'),
                 ]);
+            }
+
+            if ($redirectUrl = $this->resolveLoginRedirectUrl($request)) {
+                return new RedirectResponse($redirectUrl);
             }
 
             return $this->redirectToRoute('public_clubs');
@@ -260,6 +268,109 @@ class SecurityController extends AbstractController
         return $this->render('public/security/resetPassword/reset.html.twig', [
             'resetForm' => $form,
         ]);
+    }
+
+    private function resolveLoginRedirectUrl(Request $request): ?string
+    {
+        $candidates = [];
+        $session = $request->getSession();
+        $sessionTarget = null;
+
+        if ($session instanceof SessionInterface) {
+            $sessionTarget = $this->getTargetPath($session, 'main');
+            if (is_string($sessionTarget) && $sessionTarget !== '') {
+                $candidates[] = ['value' => $sessionTarget, 'type' => 'session'];
+            }
+        }
+
+        $targetParam = $request->query->get('_target_path');
+        if (is_string($targetParam) && $targetParam !== '') {
+            $candidates[] = ['value' => $targetParam, 'type' => 'query'];
+        }
+
+        $referer = $request->headers->get('referer');
+        if (is_string($referer) && $referer !== '') {
+            $candidates[] = ['value' => $referer, 'type' => 'referer'];
+        }
+
+        foreach ($candidates as $candidate) {
+            $url = $candidate['value'];
+
+            if ($this->isSafeRedirectUrl($url) && !$this->isLoginRouteUrl($url)) {
+                if ($candidate['type'] === 'session' && $session instanceof SessionInterface && $sessionTarget === $url) {
+                    $this->removeTargetPath($session, 'main');
+                }
+
+                return $url;
+            }
+        }
+
+        return null;
+    }
+
+    private function isSafeRedirectUrl(string $url): bool
+    {
+        if (str_starts_with($url, '/')) {
+            return true;
+        }
+
+        $parts = parse_url($url);
+        if ($parts === false || !isset($parts['host'])) {
+            return false;
+        }
+
+        $scheme = $parts['scheme'] ?? 'https';
+        if (!in_array(strtolower($scheme), ['http', 'https'], true)) {
+            return false;
+        }
+
+        return $this->isSameApplicationHost($parts['host']);
+    }
+
+    private function isLoginRouteUrl(string $url): bool
+    {
+        $loginPath = $this->generateUrl('public_login');
+        $absoluteLoginUrl = $this->generateUrl('public_login', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        if ($url === $absoluteLoginUrl || $url === $loginPath) {
+            return true;
+        }
+
+        if (str_starts_with($url, '/')) {
+            return $url === $loginPath;
+        }
+
+        $parts = parse_url($url);
+        if ($parts === false) {
+            return false;
+        }
+
+        $path = $parts['path'] ?? null;
+        if ($path !== $loginPath) {
+            return false;
+        }
+
+        if (!isset($parts['host'])) {
+            return true;
+        }
+
+        return $this->isSameApplicationHost($parts['host']);
+    }
+
+    private function isSameApplicationHost(string $host): bool
+    {
+        $host = strtolower(explode(':', $host)[0]);
+        $domain = strtolower($this->subdomainService->getDomain());
+
+        if ($host === $domain) {
+            return true;
+        }
+
+        if ($host === 'www.' . $domain) {
+            return true;
+        }
+
+        return str_ends_with($host, '.' . $domain);
     }
 
     private function processSendingPasswordResetEmail(string $emailFormData, MailerInterface $mailer): RedirectResponse
