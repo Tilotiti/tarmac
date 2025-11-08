@@ -1,0 +1,25 @@
+{% set lightboxGroup = lightboxGroup|default('documentation') %}
+{% set downloadLabelKey = downloadLabelKey|default('viewDocumentation') %}
+{% set altKey = altKey|default('documentationPreview') %}
+{% set isImage = url matches '/\\.(jpg|jpeg|png|gif|webp)$/i' %}
+
+{% if isImage %}
+	<div class="uploaded-file-thumbnail-compact">
+		<a href="{{ url }}" data-fslightbox="{{ lightboxGroup }}">
+			<img src="{{ url }}" alt="{{ altKey|trans }}">
+		</a>
+	</div>
+{% else %}
+	<div class="uploaded-file-document-compact">
+		<div class="uploaded-file-document-compact-icon">
+			<i class="ti ti-file-type-pdf"></i>
+		</div>
+		<div class="uploaded-file-document-compact-label">
+			{{ 'pdfDocument'|trans }}
+		</div>
+		<a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="min-height: 44px;">
+			<i class="ti ti-external-link me-2"></i>
+			{{ downloadLabelKey|trans }}
+		</a>
+	</div>
+{% endif %}

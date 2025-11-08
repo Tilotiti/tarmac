@@ -29,6 +29,9 @@ class PlanTask
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $documentation = null;
+
     #[ORM\Column(type: Types::SMALLINT)]
     private int $position = 0;
 
@@ -87,6 +90,18 @@ class PlanTask
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDocumentation(): ?string
+    {
+        return $this->documentation;
+    }
+
+    public function setDocumentation(?string $documentation): static
+    {
+        $this->documentation = $documentation;
 
         return $this;
     }

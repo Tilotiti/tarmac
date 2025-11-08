@@ -101,6 +101,16 @@
 									<p class="text-secondary mb-2">{{ taskTemplate.description }}</p>
 								{% endif %}
 
+								{% if taskTemplate.documentation %}
+									<div class="mb-3">
+										<div class="text-secondary small mb-1">{{ 'documentation'|trans }}</div>
+										{% include 'component/documentationPreview.html.twig' with {
+											url: taskTemplate.documentation,
+											lightboxGroup: 'plan-task-documentation-' ~ loop.index
+										} %}
+									</div>
+								{% endif %}
+
 								{# Subtasks #}
 								{% if taskTemplate.subTaskTemplates|length > 0 %}
 									<div class="mt-3">
@@ -111,9 +121,24 @@
 														<div class="d-flex align-items-start flex-grow-1">
 															<span class="badge badge-outline text-secondary me-2">{{ loop.parent.loop.index }}.{{ loop.index }}</span>
 															<div class="flex-grow-1">
-																<div class="fw-bold">{{ subTaskTemplate.title }}</div>
+																<div class="fw-bold">
+																	{{ subTaskTemplate.title }}
+																	{% if subTaskTemplate.documentation %}
+																		<i class="ti ti-file-description text-secondary ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'documentationAvailable'|trans }}"></i>
+																	{% endif %}
+																</div>
 																{% if subTaskTemplate.description %}
 																	<div class="text-secondary small">{{ subTaskTemplate.description }}</div>
+																{% endif %}
+
+																{% if subTaskTemplate.documentation %}
+																	<div class="mt-2">
+																		<div class="text-secondary small mb-1">{{ 'documentation'|trans }}</div>
+																		{% include 'component/documentationPreview.html.twig' with {
+																			url: subTaskTemplate.documentation,
+																			lightboxGroup: 'plan-subtask-documentation-' ~ loop.parent.loop.index ~ '-' ~ loop.index
+																		} %}
+																	</div>
 																{% endif %}
 															</div>
 														</div>

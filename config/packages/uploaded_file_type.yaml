@@ -13,3 +13,7 @@ uploaded_file_type:
       filesystem: "oneup_flysystem.s3_filesystem"
       base_uri: "%env(AWS_S3_URL)%"
       path: "/purchases/bills"
+    documentation:
+      filesystem: "oneup_flysystem.s3_filesystem"
+      base_uri: "%env(AWS_S3_URL)%"
+      path: "/documentation"

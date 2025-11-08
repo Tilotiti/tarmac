@@ -16,6 +16,7 @@ use App\Service\ClubResolver;
 use App\Service\Maintenance\TaskStatusService;
 use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\Filesystem;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,6 +34,7 @@ class TaskController extends ExtendedController
         private readonly TaskRepository $taskRepository,
         private readonly TaskStatusService $taskStatusService,
         private readonly EntityManagerInterface $entityManager,
+        private readonly Filesystem $s3Filesystem,
     ) {
         parent::__construct($subdomainService);
     }
@@ -307,6 +309,50 @@ class TaskController extends ExtendedController
         }
 
         return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
+    }
+
+    #[Route('/{id}/delete-documentation', name: 'club_task_delete_documentation', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[IsGranted(TaskVoter::EDIT, 'task')]
+    public function deleteDocumentation(Task $task, Request $request): Response
+    {
+        $token = $request->query->get('_token');
+
+        if (!$token || !$this->isCsrfTokenValid('del_task_doc' . $task->getId(), $token)) {
+            $this->addFlash('danger', 'invalidToken');
+            return $this->redirectToRoute('club_task_edit', ['id' => $task->getId()]);
+        }
+
+        if (!$task->getDocumentation()) {
+            $this->addFlash('warning', 'noDocumentationToDelete');
+            return $this->redirectToRoute('club_task_edit', ['id' => $task->getId()]);
+        }
+
+        $documentationUrl = $task->getDocumentation();
+        $parsedUrl = parse_url($documentationUrl);
+        $filePath = $parsedUrl['path'] ?? null;
+
+        if ($filePath) {
+            $filePath = ltrim($filePath, '/');
+            try {
+                if ($this->s3Filesystem->fileExists($filePath)) {
+                    $this->s3Filesystem->delete($filePath);
+                }
+            } catch (\Throwable) {
+                // Ignore storage deletion errors, we'll still remove reference.
+            }
+        }
+
+        $task->setDocumentation(null);
+        $activity = new Activity();
+        $activity->setTask($task);
+        $activity->setType(ActivityType::EDITED);
+        $activity->setUser($this->getUser());
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'taskDocumentationDeleted');
+
+        return $this->redirectToRoute('club_task_edit', ['id' => $task->getId()]);
     }
 }
 

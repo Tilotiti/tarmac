@@ -899,6 +899,10 @@
         <source>planSpreadsheet.header.taskDescription</source>
         <target>Description de la tâche</target>
       </trans-unit>
+      <trans-unit id="139v1" resname="planSpreadsheet.header.taskDocumentation">
+        <source>planSpreadsheet.header.taskDocumentation</source>
+        <target>Documentation de la tâche</target>
+      </trans-unit>
       <trans-unit id="139w" resname="planSpreadsheet.header.subtaskPosition">
         <source>planSpreadsheet.header.subtaskPosition</source>
         <target>Position sous-tâche</target>
@@ -910,6 +914,10 @@
       <trans-unit id="139y" resname="planSpreadsheet.header.subtaskDescription">
         <source>planSpreadsheet.header.subtaskDescription</source>
         <target>Description de la sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="139y1" resname="planSpreadsheet.header.subtaskDocumentation">
+        <source>planSpreadsheet.header.subtaskDocumentation</source>
+        <target>Documentation de la sous-tâche</target>
       </trans-unit>
       <trans-unit id="139z" resname="planSpreadsheet.header.difficulty">
         <source>planSpreadsheet.header.difficulty</source>
@@ -2092,6 +2100,62 @@
       <trans-unit id="423" resname="confirmDeleteBillImage">
         <source>confirmDeleteBillImage</source>
         <target>Êtes-vous sûr de vouloir supprimer cette image ou PDF de facture ?</target>
+      </trans-unit>
+      <trans-unit id="424" resname="taskDocumentation">
+        <source>taskDocumentation</source>
+        <target>Documentation</target>
+      </trans-unit>
+      <trans-unit id="425" resname="subTaskDocumentation">
+        <source>subTaskDocumentation</source>
+        <target>Documentation</target>
+      </trans-unit>
+      <trans-unit id="426" resname="planTaskDocumentation">
+        <source>planTaskDocumentation</source>
+        <target>Documentation (URL)</target>
+      </trans-unit>
+      <trans-unit id="427" resname="planSubTaskDocumentation">
+        <source>planSubTaskDocumentation</source>
+        <target>Documentation (URL)</target>
+      </trans-unit>
+      <trans-unit id="428" resname="clickToUploadDocumentation">
+        <source>clickToUploadDocumentation</source>
+        <target>Cliquez pour téléverser une documentation</target>
+      </trans-unit>
+      <trans-unit id="429" resname="documentationPreview">
+        <source>documentationPreview</source>
+        <target>Aperçu de la documentation</target>
+      </trans-unit>
+      <trans-unit id="430" resname="viewDocumentation">
+        <source>viewDocumentation</source>
+        <target>Voir la documentation</target>
+      </trans-unit>
+      <trans-unit id="431" resname="confirmDeleteTaskDocumentation">
+        <source>confirmDeleteTaskDocumentation</source>
+        <target>Êtes-vous sûr de vouloir supprimer cette documentation ?</target>
+      </trans-unit>
+      <trans-unit id="432" resname="confirmDeleteSubTaskDocumentation">
+        <source>confirmDeleteSubTaskDocumentation</source>
+        <target>Êtes-vous sûr de vouloir supprimer cette documentation de sous-tâche ?</target>
+      </trans-unit>
+      <trans-unit id="433" resname="noDocumentationToDelete">
+        <source>noDocumentationToDelete</source>
+        <target>Aucune documentation à supprimer.</target>
+      </trans-unit>
+      <trans-unit id="434" resname="taskDocumentationDeleted">
+        <source>taskDocumentationDeleted</source>
+        <target>La documentation de la tâche a été supprimée.</target>
+      </trans-unit>
+      <trans-unit id="435" resname="subTaskDocumentationDeleted">
+        <source>subTaskDocumentationDeleted</source>
+        <target>La documentation de la sous-tâche a été supprimée.</target>
+      </trans-unit>
+      <trans-unit id="436" resname="documentation">
+        <source>documentation</source>
+        <target>Documentation</target>
+      </trans-unit>
+      <trans-unit id="437" resname="documentationAvailable">
+        <source>documentationAvailable</source>
+        <target>Documentation disponible</target>
       </trans-unit>
     </body>
   </file>

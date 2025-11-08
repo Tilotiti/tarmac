@@ -10,12 +10,12 @@
 		<div class="card-body">
 			<div
 				class="d-flex align-items-center flex-wrap">
-			{# Equipment Avatar #}
-			<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
-				<span class="avatar avatar-xl me-3 bg-{{ task.equipment.type.color }}-lt">
-					<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 2.5rem;"></i>
-				</span>
-			</a>
+				{# Equipment Avatar #}
+				<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
+					<span class="avatar avatar-xl me-3 bg-{{ task.equipment.type.color }}-lt">
+						<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 2.5rem;"></i>
+					</span>
+				</a>
 				<div class="flex-fill">
 					<h2 class="mb-1">
 						<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-reset">
@@ -74,6 +74,14 @@
 				{{ form_widget(form.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
 				{{ form_label(form.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
 			</div>
+			{% set subtaskDocumentationDeletePath = subTask.documentation ? path('club_subtask_delete_documentation', {taskId: task.id, id: subTask.id, _token: csrf_token('del_subtask_doc' ~ subTask.id)}) : null %}
+			{% include 'component/documentationUploader.html.twig' with {
+				field: form.documentation,
+				existingUrl: subTask.documentation,
+				deletePath: subtaskDocumentationDeletePath,
+				deleteConfirmKey: 'confirmDeleteSubTaskDocumentation',
+				lightboxGroup: 'subtask-documentation-' ~ subTask.id
+			} %}
 
 			<div class="form-footer">
 				<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">

@@ -10,12 +10,12 @@
 		<div class="card-body">
 			<div
 				class="d-flex align-items-center flex-wrap">
-			{# Equipment Avatar #}
-			<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
-				<span class="avatar avatar-xl me-3 bg-{{ task.equipment.type.color }}-lt">
-					<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 2.5rem;"></i>
-				</span>
-			</a>
+				{# Equipment Avatar #}
+				<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
+					<span class="avatar avatar-xl me-3 bg-{{ task.equipment.type.color }}-lt">
+						<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 2.5rem;"></i>
+					</span>
+				</a>
 				<div class="flex-fill">
 					<h2 class="mb-1">
 						<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-reset">
@@ -61,6 +61,21 @@
 			{{ form_start(form) }}
 			{{ form_row(form.title) }}
 			{{ form_row(form.description) }}
+			<div class="row">
+				<div class="col-12 col-md-6 mb-3">
+					{{ form_row(form.difficulty) }}
+				</div>
+				<div class="col-12 col-md-6 mb-3">
+					{{ form_row(form.requiresInspection) }}
+				</div>
+			</div>
+			{% include 'component/documentationUploader.html.twig' with {
+				field: form.documentation,
+				existingUrl: null,
+				lightboxGroup: 'subtask-documentation',
+				emptyTextKey: 'clickToUploadDocumentation',
+				deletePath: null
+			} %}
 
 			<div class="form-footer">
 				<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">

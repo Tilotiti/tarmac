@@ -6,10 +6,12 @@ use App\Entity\SubTask;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class SubTaskType extends AbstractType
 {
@@ -36,6 +38,29 @@ class SubTaskType extends AbstractType
                 'required' => true,
                 'data' => 2,
                 'attr' => ['class' => 'form-select'],
+            ])
+            ->add('documentation', FileType::class, [
+                'label' => 'subTaskDocumentation',
+                'required' => false,
+                'mapped' => false,
+                'upload' => 'documentation',
+                'attr' => [
+                    'class' => 'form-control',
+                    'accept' => 'image/*,.pdf,application/pdf',
+                ],
+                'constraints' => [
+                    new Assert\File([
+                        'maxSize' => '10M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                            'application/pdf',
+                        ],
+                        'mimeTypesMessage' => 'invalidFileFormat',
+                    ]),
+                ],
             ])
             ->add('requiresInspection', CheckboxType::class, [
                 'label' => 'requiresInspection',

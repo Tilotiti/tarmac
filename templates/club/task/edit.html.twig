@@ -65,6 +65,14 @@
 					{{ form_start(form) }}
 					{{ form_row(form.title) }}
 					{{ form_row(form.description) }}
+					{% set taskDocumentationDeletePath = task.documentation ? path('club_task_delete_documentation', {id: task.id, _token: csrf_token('del_task_doc' ~ task.id)}) : null %}
+					{% include 'component/documentationUploader.html.twig' with {
+						field: form.documentation,
+						existingUrl: task.documentation,
+						deletePath: taskDocumentationDeletePath,
+						deleteConfirmKey: 'confirmDeleteTaskDocumentation',
+						lightboxGroup: 'task-documentation-' ~ task.id
+					} %}
 					{{ form_row(form.dueAt) }}
 
 					<div class="form-footer">

@@ -39,6 +39,9 @@ class Task
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $documentation = null;
+
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dueAt = null;
 
@@ -141,6 +144,18 @@ class Task
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDocumentation(): ?string
+    {
+        return $this->documentation;
+    }
+
+    public function setDocumentation(?string $documentation): static
+    {
+        $this->documentation = $documentation;
 
         return $this;
     }

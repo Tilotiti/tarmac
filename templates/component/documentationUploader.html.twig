@@ -1,0 +1,65 @@
+{# Documentation uploader component #}
+{% set emptyTextKey = emptyTextKey|default('clickToUploadDocumentation') %}
+{% set lightboxGroup = lightboxGroup|default('documentation') %}
+
+<div class="uploaded-file-cell">
+	<div class="uploaded-file-header">
+		{{ form_label(field) }}
+	</div>
+	<div class="uploaded-file-content">
+		{{ form_errors(field) }}
+
+		<div class="uploaded-file-grid" data-controller="file-input-trigger">
+			<div class="row g-2 align-items-end">
+				<div class="col">
+					{{ form_widget(field) }}
+				</div>
+				{% if existingUrl is defined and existingUrl and deletePath is defined and deletePath %}
+					<div class="col-auto" data-controller="confirm" data-confirm-title-value="{{ 'confirmDelete'|trans }}" data-confirm-yes-value="{{ 'delete'|trans }}" data-confirm-cancel-value="{{ 'cancel'|trans }}">
+						<a href="{{ deletePath }}" class="btn btn-outline-danger btn-sm" {% if deleteConfirmKey is defined and deleteConfirmKey %} data-confirm="{{ deleteConfirmKey|trans }}" {% endif %}>
+							<i class="ti ti-trash me-2"></i>
+							{{ 'deleteFile'|trans }}
+						</a>
+					</div>
+				{% endif %}
+			</div>
+
+			<div class="row mt-3">
+				<div class="col-12">
+					{% if existingUrl is defined and existingUrl %}
+						{% set isImage = existingUrl matches '/\\.(jpg|jpeg|png|gif|webp)$/i' %}
+						{% if isImage %}
+							<div class="uploaded-file-thumbnail" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
+								<a href="{{ existingUrl }}" data-fslightbox="{{ lightboxGroup }}" onclick="event.stopPropagation();">
+									<img src="{{ existingUrl }}" alt="{{ 'documentationPreview'|trans }}">
+								</a>
+							</div>
+						{% else %}
+							<div class="uploaded-file-document" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
+								<div class="uploaded-file-document-icon">
+									<i class="ti ti-file-type-pdf"></i>
+								</div>
+								<div class="uploaded-file-document-label">
+									{{ 'pdfDocument'|trans }}
+								</div>
+								<div class="uploaded-file-document-action">
+									<a href="{{ existingUrl }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="min-height: 44px;" onclick="event.stopPropagation();">
+										<i class="ti ti-external-link me-2"></i>
+										{{ 'viewDocumentation'|trans }}
+									</a>
+								</div>
+							</div>
+						{% endif %}
+					{% else %}
+						<div class="uploaded-file-empty" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
+							<i class="ti ti-photo fs-1 text-muted mb-2"></i>
+							<div class="text-muted">{{ emptyTextKey|trans }}</div>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% do field.setRendered %}

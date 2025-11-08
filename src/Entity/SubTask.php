@@ -31,6 +31,9 @@ class SubTask
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $documentation = null;
+
     #[ORM\Column(length: 20)]
     #[Assert\Choice(choices: ['open', 'done', 'closed', 'cancelled'])]
     private string $status = 'open';
@@ -145,6 +148,18 @@ class SubTask
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDocumentation(): ?string
+    {
+        return $this->documentation;
+    }
+
+    public function setDocumentation(?string $documentation): static
+    {
+        $this->documentation = $documentation;
 
         return $this;
     }

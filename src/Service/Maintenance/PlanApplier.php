@@ -56,6 +56,7 @@ class PlanApplier
             $task->setEquipment($equipment);
             $task->setTitle($taskTemplate->getTitle());
             $task->setDescription($taskTemplate->getDescription());
+            $task->setDocumentation($taskTemplate->getDocumentation());
             $task->setCreatedBy($appliedBy);
             $task->setPlanApplication($application);
 
@@ -76,6 +77,7 @@ class PlanApplier
                 $subTask->setDescription($subTaskTemplate->getDescription());
                 $subTask->setDifficulty($subTaskTemplate->getDifficulty());
                 $subTask->setRequiresInspection($subTaskTemplate->requiresInspection());
+                $subTask->setDocumentation($subTaskTemplate->getDocumentation());
                 $subTask->setPosition($subTaskPosition++);
 
                 $this->entityManager->persist($subTask);

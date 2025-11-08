@@ -21,9 +21,11 @@ class PlanSpreadsheetService
         'taskPosition',
         'taskTitle',
         'taskDescription',
+        'taskDocumentation',
         'subtaskPosition',
         'subtaskTitle',
         'subtaskDescription',
+        'subtaskDocumentation',
         'difficulty',
         'requiresInspection',
     ];
@@ -54,6 +56,8 @@ class PlanSpreadsheetService
                     $task->getPosition(),
                     $task->getTitle(),
                     $task->getDescription(),
+                    $task->getDocumentation(),
+                    null,
                     null,
                     null,
                     null,
@@ -69,9 +73,11 @@ class PlanSpreadsheetService
                     $task->getPosition(),
                     $task->getTitle(),
                     $task->getDescription(),
+                    $task->getDocumentation(),
                     $subTask->getPosition(),
                     $subTask->getTitle(),
                     $subTask->getDescription(),
+                    $subTask->getDocumentation(),
                     $subTask->getDifficulty(),
                     $subTask->requiresInspection()
                 );
@@ -79,7 +85,7 @@ class PlanSpreadsheetService
         }
 
         // Auto-size columns for readability.
-        foreach (range('A', 'H') as $column) {
+        foreach (range('A', 'J') as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
 
@@ -136,6 +142,7 @@ class PlanSpreadsheetService
             }
 
             $taskDescription = $this->extractString($row, $columnMap['taskDescription']);
+            $taskDocumentation = $this->extractString($row, $columnMap['taskDocumentation'] ?? null);
             $taskPositionRaw = $this->extractString($row, $columnMap['taskPosition']);
             $taskPosition = is_numeric($taskPositionRaw) ? (int) $taskPositionRaw : null;
 
@@ -144,6 +151,7 @@ class PlanSpreadsheetService
                 $task = new PlanTask();
                 $task->setTitle($taskTitle);
                 $task->setDescription($taskDescription);
+                $task->setDocumentation($taskDocumentation !== '' ? $taskDocumentation : null);
                 $task->setPosition($taskPosition ?? count($tasks));
 
                 $tasks[$taskKey] = $task;
@@ -154,10 +162,14 @@ class PlanSpreadsheetService
                 if ($taskDescription !== '') {
                     $task->setDescription($taskDescription);
                 }
+                if ($taskDocumentation !== '') {
+                    $task->setDocumentation($taskDocumentation);
+                }
             }
 
             $subtaskTitle = $this->extractString($row, $columnMap['subtaskTitle']);
             $subtaskDescription = $this->extractString($row, $columnMap['subtaskDescription']);
+            $subtaskDocumentation = $this->extractString($row, $columnMap['subtaskDocumentation'] ?? null);
             $difficultyRaw = $this->extractString($row, $columnMap['difficulty']);
             $requiresInspectionRaw = $this->extractString($row, $columnMap['requiresInspection']);
             $subtaskPositionRaw = $this->extractString($row, $columnMap['subtaskPosition']);
@@ -177,6 +189,7 @@ class PlanSpreadsheetService
             $subtask = new PlanSubTask();
             $subtask->setTitle($subtaskTitle);
             $subtask->setDescription($subtaskDescription !== '' ? $subtaskDescription : null);
+            $subtask->setDocumentation($subtaskDocumentation !== '' ? $subtaskDocumentation : null);
             $subtask->setDifficulty($difficulty);
             $subtask->setRequiresInspection($requiresInspection);
 
@@ -251,20 +264,24 @@ class PlanSpreadsheetService
         ?int $taskPosition,
         ?string $taskTitle,
         ?string $taskDescription,
+        ?string $taskDocumentation,
         ?int $subtaskPosition,
         ?string $subtaskTitle,
         ?string $subtaskDescription,
+        ?string $subtaskDocumentation,
         ?int $difficulty,
         ?bool $requiresInspection = null
     ): int {
         $sheet->setCellValue("A{$rowIndex}", $taskPosition !== null ? $taskPosition : '');
         $sheet->setCellValue("B{$rowIndex}", $taskTitle ?? '');
         $sheet->setCellValue("C{$rowIndex}", $taskDescription ?? '');
-        $sheet->setCellValue("D{$rowIndex}", $subtaskPosition !== null ? $subtaskPosition : '');
-        $sheet->setCellValue("E{$rowIndex}", $subtaskTitle ?? '');
-        $sheet->setCellValue("F{$rowIndex}", $subtaskDescription ?? '');
-        $sheet->setCellValue("G{$rowIndex}", $difficulty ?? '');
-        $sheet->setCellValue("H{$rowIndex}", $requiresInspection === null ? '' : ($requiresInspection ? '1' : '0'));
+        $sheet->setCellValue("D{$rowIndex}", $taskDocumentation ?? '');
+        $sheet->setCellValue("E{$rowIndex}", $subtaskPosition !== null ? $subtaskPosition : '');
+        $sheet->setCellValue("F{$rowIndex}", $subtaskTitle ?? '');
+        $sheet->setCellValue("G{$rowIndex}", $subtaskDescription ?? '');
+        $sheet->setCellValue("H{$rowIndex}", $subtaskDocumentation ?? '');
+        $sheet->setCellValue("I{$rowIndex}", $difficulty ?? '');
+        $sheet->setCellValue("J{$rowIndex}", $requiresInspection === null ? '' : ($requiresInspection ? '1' : '0'));
 
         return $rowIndex + 1;
     }

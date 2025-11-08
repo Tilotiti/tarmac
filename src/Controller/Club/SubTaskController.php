@@ -20,6 +20,7 @@ use App\Service\ClubResolver;
 use App\Service\Maintenance\TaskStatusService;
 use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\Filesystem;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use SlopeIt\BreadcrumbBundle\Service\BreadcrumbBuilder;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -40,6 +41,7 @@ class SubTaskController extends ExtendedController
         private readonly EntityManagerInterface $entityManager,
         private readonly MembershipRepository $membershipRepository,
         private readonly ContributionRepository $contributionRepository,
+        private readonly Filesystem $s3Filesystem,
         private readonly TranslatorInterface $translator,
     ) {
         parent::__construct($subdomainService);
@@ -325,6 +327,52 @@ class SubTaskController extends ExtendedController
 
         $this->addFlash('error', 'invalidRequest');
         return $this->redirectToRoute('club_subtask_show', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
+    }
+
+    #[Route('/{id}/delete-documentation', name: 'club_subtask_delete_documentation', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[IsGranted(SubTaskVoter::EDIT, 'subTask')]
+    public function deleteDocumentation(SubTask $subTask, Request $request): Response
+    {
+        $task = $subTask->getTask();
+        $token = $request->query->get('_token');
+
+        if (!$token || !$this->isCsrfTokenValid('del_subtask_doc' . $subTask->getId(), $token)) {
+            $this->addFlash('danger', 'invalidToken');
+            return $this->redirectToRoute('club_subtask_edit', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
+        }
+
+        if (!$subTask->getDocumentation()) {
+            $this->addFlash('warning', 'noDocumentationToDelete');
+            return $this->redirectToRoute('club_subtask_edit', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
+        }
+
+        $documentationUrl = $subTask->getDocumentation();
+        $parsedUrl = parse_url($documentationUrl);
+        $filePath = $parsedUrl['path'] ?? null;
+
+        if ($filePath) {
+            $filePath = ltrim($filePath, '/');
+            try {
+                if ($this->s3Filesystem->fileExists($filePath)) {
+                    $this->s3Filesystem->delete($filePath);
+                }
+            } catch (\Throwable) {
+                // Ignore storage deletion issues, but remove DB reference.
+            }
+        }
+
+        $subTask->setDocumentation(null);
+        $activity = new Activity();
+        $activity->setTask($task);
+        $activity->setSubTask($subTask);
+        $activity->setType(ActivityType::EDITED);
+        $activity->setUser($this->getUser());
+        $this->entityManager->persist($activity);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'subTaskDocumentationDeleted');
+
+        return $this->redirectToRoute('club_subtask_edit', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
     }
 
 

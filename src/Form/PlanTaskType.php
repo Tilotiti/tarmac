@@ -5,10 +5,12 @@ namespace App\Form;
 use App\Entity\PlanTask;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class PlanTaskType extends AbstractType
 {
@@ -24,6 +26,29 @@ class PlanTaskType extends AbstractType
                 'label' => 'description',
                 'required' => false,
                 'attr' => ['class' => 'form-control', 'rows' => 3],
+            ])
+            ->add('documentation', FileType::class, [
+                'label' => 'planTaskDocumentation',
+                'required' => false,
+                'mapped' => false,
+                'upload' => 'documentation',
+                'attr' => [
+                    'class' => 'form-control',
+                    'accept' => 'image/*,.pdf,application/pdf',
+                ],
+                'constraints' => [
+                    new Assert\File([
+                        'maxSize' => '10M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                            'image/webp',
+                            'application/pdf',
+                        ],
+                        'mimeTypesMessage' => 'invalidFileFormat',
+                    ]),
+                ],
             ])
             ->add('subTaskTemplates', CollectionType::class, [
                 'entry_type' => PlanSubTaskType::class,

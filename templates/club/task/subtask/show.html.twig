@@ -34,11 +34,11 @@
 		<div class="card-body">
 			<div class="text-secondary small mb-2">{{ 'task'|trans }}</div>
 			<div class="d-flex align-items-center">
-			<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
-				<span class="avatar avatar-lg me-3 bg-{{ task.equipment.type.color }}-lt">
-					<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 1.5rem;"></i>
-				</span>
-			</a>
+				<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
+					<span class="avatar avatar-lg me-3 bg-{{ task.equipment.type.color }}-lt">
+						<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 1.5rem;"></i>
+					</span>
+				</a>
 				<div>
 					<h3 class="mb-0">
 						<a href="{{ path('club_task_show', {id: task.id}) }}" class="text-reset">
@@ -52,13 +52,15 @@
 							<a href="{{ path('club_plan_application_show', {id: task.planApplication.id}) }}">
 								{{ task.planApplication.plan.name }}
 								{% if task.planApplication.equipment %}
-									- {{ task.planApplication.equipment.name }}
+									-
+									{{ task.planApplication.equipment.name }}
 								{% endif %}
 							</a>
 							{% if task.planApplication.dueAt %}
 								<div class="mt-1">
 									<i class="ti ti-calendar me-1"></i>
-									{{ 'dueAt'|trans }}: {{ task.planApplication.dueAt|date('d/m/Y') }}
+									{{ 'dueAt'|trans }}:
+									{{ task.planApplication.dueAt|date('d/m/Y') }}
 								</div>
 							{% endif %}
 						</div>
@@ -144,6 +146,17 @@
 				<div>
 					<div class="text-secondary small mb-2">{{ 'description'|trans }}</div>
 					<div>{{ subTask.description|nl2br }}</div>
+				</div>
+			{% endif %}
+
+			{% if subTask.documentation %}
+				<hr class="my-4">
+				<div>
+					<div class="text-secondary small mb-2">{{ 'documentation'|trans }}</div>
+					{% include 'component/documentationPreview.html.twig' with {
+						url: subTask.documentation,
+						lightboxGroup: 'subtask-documentation-' ~ subTask.id
+					} %}
 				</div>
 			{% endif %}
 
