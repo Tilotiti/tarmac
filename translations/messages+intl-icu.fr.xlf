@@ -811,6 +811,114 @@
         <source>planApplicationCancelled</source>
         <target>L'application du plan de maintenance a été annulée.</target>
       </trans-unit>
+      <trans-unit id="139a" resname="exportPlan">
+        <source>exportPlan</source>
+        <target>Exporter le plan</target>
+      </trans-unit>
+      <trans-unit id="139b" resname="importPlan">
+        <source>importPlan</source>
+        <target>Importer le plan</target>
+      </trans-unit>
+      <trans-unit id="139c" resname="importPlanFromXlsx">
+        <source>importPlanFromXlsx</source>
+        <target>Importer depuis un fichier XLSX</target>
+      </trans-unit>
+      <trans-unit id="139d" resname="planImportWarningTitle">
+        <source>planImportWarningTitle</source>
+        <target>Attention, cette action est destructive</target>
+      </trans-unit>
+      <trans-unit id="139e" resname="planImportWarningMessage">
+        <source>planImportWarningMessage</source>
+        <target>L'import écrasera toutes les tâches et sous-tâches du plan. Les applications déjà créées resteront inchangées.</target>
+      </trans-unit>
+      <trans-unit id="139f" resname="planImportHint">
+        <source>planImportHint</source>
+        <target>Utilisez le fichier XLSX exporté ou respectez les colonnes du modèle.</target>
+      </trans-unit>
+      <trans-unit id="139g" resname="planExportFailed">
+        <source>planExportFailed</source>
+        <target>L'export du plan a échoué. Veuillez réessayer.</target>
+      </trans-unit>
+      <trans-unit id="139h" resname="planImportInvalidForm">
+        <source>planImportInvalidForm</source>
+        <target>Veuillez sélectionner un fichier XLSX valide.</target>
+      </trans-unit>
+      <trans-unit id="139i" resname="planImportSuccess">
+        <source>planImportSuccess</source>
+        <target>Le plan a été mis à jour ({tasks} tâches / {subtasks} sous-tâches).</target>
+      </trans-unit>
+      <trans-unit id="139j" resname="planImportFileRequired">
+        <source>planImportFileRequired</source>
+        <target>Veuillez sélectionner un fichier XLSX.</target>
+      </trans-unit>
+      <trans-unit id="139k" resname="planImportInvalidMime">
+        <source>planImportInvalidMime</source>
+        <target>Le fichier doit être au format XLSX.</target>
+      </trans-unit>
+      <trans-unit id="139l" resname="planImportError.invalidFile">
+        <source>planImportError.invalidFile</source>
+        <target>Impossible de lire le fichier : {message}.</target>
+      </trans-unit>
+      <trans-unit id="139m" resname="planImportError.emptyFile">
+        <source>planImportError.emptyFile</source>
+        <target>Le fichier est vide.</target>
+      </trans-unit>
+      <trans-unit id="139n" resname="planImportError.missingHeaders">
+        <source>planImportError.missingHeaders</source>
+        <target>Colonnes manquantes : {headers}.</target>
+      </trans-unit>
+      <trans-unit id="139o" resname="planImportError.noTasksFound">
+        <source>planImportError.noTasksFound</source>
+        <target>Aucune tâche n'a été trouvée dans le fichier.</target>
+      </trans-unit>
+      <trans-unit id="139p" resname="planImportRowError.missingTaskTitle">
+        <source>planImportRowError.missingTaskTitle</source>
+        <target>Ligne {row} : le titre de la tâche est obligatoire.</target>
+      </trans-unit>
+      <trans-unit id="139q" resname="planImportRowWarning.missingSubtaskTitle">
+        <source>planImportRowWarning.missingSubtaskTitle</source>
+        <target>Ligne {row} : sous-tâche ignorée car le titre est vide.</target>
+      </trans-unit>
+      <trans-unit id="139r" resname="planImportRowWarning.invalidDifficulty">
+        <source>planImportRowWarning.invalidDifficulty</source>
+        <target>Ligne {row} : difficulté "{provided}" invalide, valeur par défaut appliquée.</target>
+      </trans-unit>
+      <trans-unit id="139s" resname="planImportFile">
+        <source>planImportFile</source>
+        <target>Fichier XLSX</target>
+      </trans-unit>
+      <trans-unit id="139t" resname="planSpreadsheet.header.taskPosition">
+        <source>planSpreadsheet.header.taskPosition</source>
+        <target>Position tâche</target>
+      </trans-unit>
+      <trans-unit id="139u" resname="planSpreadsheet.header.taskTitle">
+        <source>planSpreadsheet.header.taskTitle</source>
+        <target>Titre de la tâche</target>
+      </trans-unit>
+      <trans-unit id="139v" resname="planSpreadsheet.header.taskDescription">
+        <source>planSpreadsheet.header.taskDescription</source>
+        <target>Description de la tâche</target>
+      </trans-unit>
+      <trans-unit id="139w" resname="planSpreadsheet.header.subtaskPosition">
+        <source>planSpreadsheet.header.subtaskPosition</source>
+        <target>Position sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="139x" resname="planSpreadsheet.header.subtaskTitle">
+        <source>planSpreadsheet.header.subtaskTitle</source>
+        <target>Titre de la sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="139y" resname="planSpreadsheet.header.subtaskDescription">
+        <source>planSpreadsheet.header.subtaskDescription</source>
+        <target>Description de la sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="139z" resname="planSpreadsheet.header.difficulty">
+        <source>planSpreadsheet.header.difficulty</source>
+        <target>Difficulté</target>
+      </trans-unit>
+      <trans-unit id="139aa" resname="planSpreadsheet.header.requiresInspection">
+        <source>planSpreadsheet.header.requiresInspection</source>
+        <target>Inspection requise</target>
+      </trans-unit>
       <trans-unit id="140" resname="noPlansAvailable">
         <source>noPlansAvailable</source>
         <target>Aucun plan de maintenance disponible pour ce type d'équipement.</target>

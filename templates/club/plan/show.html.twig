@@ -7,6 +7,16 @@
 {% block page_actions %}
 	{% if is_granted('MANAGE', club) %}
 		<div class="btn-list" data-controller="confirm" data-confirm-title-value="{{ 'confirmDelete'|trans }}" data-confirm-yes-value="{{ 'delete'|trans }}" data-confirm-cancel-value="{{ 'cancel'|trans }}">
+			<a href="{{ path('club_plan_export', {id: plan.id}) }}" class="btn">
+				<i class="ti ti-file-spreadsheet me-2"></i>
+				{{ 'exportPlan'|trans }}
+			</a>
+			{% if importForm is defined and importForm %}
+				<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#plan-import-modal">
+					<i class="ti ti-upload me-2"></i>
+					{{ 'importPlan'|trans }}
+				</button>
+			{% endif %}
 			<a href="{{ path('club_plan_apply', {id: plan.id}) }}" class="btn btn-primary">
 				<i class="ti ti-clipboard-check me-2"></i>
 				{{ 'apply'|trans }}
@@ -99,12 +109,12 @@
 												<div class="list-group-item px-0">
 													<div class="d-flex align-items-start justify-content-between">
 														<div class="d-flex align-items-start flex-grow-1">
-														<span class="badge badge-outline text-secondary me-2">{{ loop.parent.loop.index }}.{{ loop.index }}</span>
-														<div class="flex-grow-1">
-															<div class="fw-bold">{{ subTaskTemplate.title }}</div>
-															{% if subTaskTemplate.description %}
-																<div class="text-secondary small">{{ subTaskTemplate.description }}</div>
-															{% endif %}
+															<span class="badge badge-outline text-secondary me-2">{{ loop.parent.loop.index }}.{{ loop.index }}</span>
+															<div class="flex-grow-1">
+																<div class="fw-bold">{{ subTaskTemplate.title }}</div>
+																{% if subTaskTemplate.description %}
+																	<div class="text-secondary small">{{ subTaskTemplate.description }}</div>
+																{% endif %}
 															</div>
 														</div>
 														<div class="d-flex gap-2 align-items-start ms-3">
@@ -145,6 +155,43 @@
 					{% endif %}
 				</div>
 			</div>
+			{% if importForm is defined and importForm %}
+				<div class="modal fade" id="plan-import-modal" tabindex="-1" aria-labelledby="plan-import-modal-label" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="plan-import-modal-label">{{ 'importPlanFromXlsx'|trans }}</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'cancel'|trans }}"></button>
+							</div>
+							{{ form_start(importForm, {
+								action: path('club_plan_import', {id: plan.id}),
+								attr: {'enctype': 'multipart/form-data'}
+							}) }}
+							<div class="modal-body">
+								<div class="alert alert-warning d-flex align-items-start gap-2">
+									<i class="ti ti-alert-triangle mt-1"></i>
+									<div>
+										<div class="fw-semibold">{{ 'planImportWarningTitle'|trans }}</div>
+										<div class="small text-muted">{{ 'planImportWarningMessage'|trans }}</div>
+									</div>
+								</div>
+								<div class="mb-3">
+									{{ form_row(importForm.file) }}
+								</div>
+								<div class="text-secondary small">{{ 'planImportHint'|trans }}</div>
+							</div>
+							<div class="modal-footer d-flex flex-column flex-sm-row gap-2">
+								<button type="submit" class="btn btn-primary w-100 w-sm-auto">
+									<i class="ti ti-upload me-2"></i>
+									{{ 'importPlan'|trans }}
+								</button>
+							</div>
+							{{ form_rest(importForm) }}
+							{{ form_end(importForm) }}
+						</div>
+					</div>
+				</div>
+			{% endif %}
 		</div>
 	</div>
 
@@ -166,12 +213,14 @@
 											<div class="fw-bold mb-1">{{ application.equipment.name }}</div>
 											<div class="text-secondary small mb-1">
 												<i class="ti ti-calendar me-1"></i>
-												{{ 'appliedAt'|trans }}: {{ application.appliedAt|date('d/m/Y') }}
+												{{ 'appliedAt'|trans }}:
+												{{ application.appliedAt|date('d/m/Y') }}
 											</div>
 											<div class="text-secondary small">
 												{% if application.dueAt %}
 													<i class="ti ti-calendar-due me-1"></i>
-													{{ 'dueDate'|trans }}: {{ application.dueAt|date('d/m/Y') }}
+													{{ 'dueDate'|trans }}:
+													{{ application.dueAt|date('d/m/Y') }}
 												{% else %}
 													<i class="ti ti-calendar-x me-1"></i>
 													{{ 'noDueDate'|trans }}
@@ -193,7 +242,7 @@
 											</div>
 										</div>
 									</div>
-									
+
 									{# Progress bar for tasks #}
 									{% if application.tasks|length > 0 %}
 										{% set progress = 0 %}
@@ -210,7 +259,11 @@
 											</div>
 										</div>
 										<div class="text-secondary small">
-											{{ closed }} / {{ application.tasks|length }} {{ 'tasks'|trans|lower }} {{ 'completed'|trans|lower }}
+											{{ closed }}
+											/
+											{{ application.tasks|length }}
+											{{ 'tasks'|trans|lower }}
+											{{ 'completed'|trans|lower }}
 										</div>
 									{% endif %}
 								</a>

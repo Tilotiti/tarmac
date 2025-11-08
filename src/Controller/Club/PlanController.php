@@ -5,6 +5,7 @@ namespace App\Controller\Club;
 use App\Entity\Plan;
 use App\Entity\PlanTask;
 use App\Entity\PlanSubTask;
+use App\Form\PlanImportType;
 use App\Form\PlanType;
 use App\Entity\Equipment;
 use App\Form\PlanApplyType;
@@ -15,13 +16,17 @@ use App\Repository\PlanRepository;
 use App\Form\Filter\PlanFilterType;
 use App\Controller\ExtendedController;
 use App\Service\Maintenance\PlanApplier;
+use App\Service\PlanSpreadsheetService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\PlanApplicationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/plans', host: '{subdomain}.%domain%', requirements: ['subdomain' => '(?!www|app).*'])]
 #[IsGranted('ROLE_USER')]
@@ -34,6 +39,8 @@ class PlanController extends ExtendedController
         private readonly PlanApplicationRepository $applicationRepository,
         private readonly PlanApplier $planApplier,
         private readonly EntityManagerInterface $entityManager,
+        private readonly PlanSpreadsheetService $planSpreadsheetService,
+        private readonly TranslatorInterface $translator,
     ) {
         parent::__construct($subdomainService);
     }
@@ -140,6 +147,11 @@ class PlanController extends ExtendedController
     {
         $club = $this->clubResolver->resolve();
 
+        $importForm = null;
+        if ($this->isGranted('MANAGE', $club)) {
+            $importForm = $this->createForm(PlanImportType::class);
+        }
+
         // Get applications for this plan
         $qb = $this->applicationRepository->queryAll();
         $qb = $this->applicationRepository->filterByPlan($qb, $plan);
@@ -152,6 +164,7 @@ class PlanController extends ExtendedController
             'club' => $club,
             'plan' => $plan,
             'applications' => $applications,
+            'importForm' => $importForm?->createView(),
         ]);
     }
 
@@ -280,7 +293,102 @@ class PlanController extends ExtendedController
         ]);
     }
 
+    #[Route('/{id}/export', name: 'club_plan_export', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[IsGranted('MANAGE')]
+    public function export(Plan $plan): Response
+    {
+        $spreadsheet = $this->planSpreadsheetService->generateSpreadsheet($plan);
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
 
+        $tempBase = tempnam(sys_get_temp_dir(), 'plan_export_');
+        if ($tempBase === false) {
+            $this->addFlash('error', 'planExportFailed');
+            return $this->redirectToRoute('club_plan_show', ['id' => $plan->getId()]);
+        }
 
+        $tempFile = $tempBase . '.xlsx';
+
+        try {
+            $writer->save($tempFile);
+        } catch (\Throwable $exception) {
+            $this->addFlash('error', 'planExportFailed');
+            @unlink($tempBase);
+            return $this->redirectToRoute('club_plan_show', ['id' => $plan->getId()]);
+        }
+
+        @unlink($tempBase);
+
+        $filename = sprintf('plan-%d.xlsx', $plan->getId());
+
+        return $this->file($tempFile, $filename, ResponseHeaderBag::DISPOSITION_ATTACHMENT)
+            ->deleteFileAfterSend(true);
+    }
+
+    #[Route('/{id}/import', name: 'club_plan_import', methods: ['POST'], requirements: ['id' => '\d+'])]
+    #[IsGranted('MANAGE')]
+    public function import(Plan $plan, Request $request): Response
+    {
+        $form = $this->createForm(PlanImportType::class);
+        $form->handleRequest($request);
+
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            $this->addFlash('error', 'planImportInvalidForm');
+            return $this->redirectToRoute('club_plan_show', ['id' => $plan->getId()]);
+        }
+
+        /** @var \Symfony\Component\HttpFoundation\File\UploadedFile $file */
+        $file = $form->get('file')->getData();
+
+        $result = $this->planSpreadsheetService->importFromFile($plan, $file);
+
+        if ($result->hasErrors()) {
+            foreach ($result->getErrors() as $error) {
+                $context = $this->formatImportContext($error['context'] ?? []);
+                $this->addFlash('error', $this->translator->trans('planImportError.' . $error['code'], $context));
+            }
+
+            foreach ($result->getRowMessages() as $message) {
+                if ($message['severity'] === 'error') {
+                    $context = $this->formatImportContext($message['context'] ?? []);
+                    $context['{row}'] = (string) $message['row'];
+                    $this->addFlash('error', $this->translator->trans('planImportRowError.' . $message['code'], $context));
+                }
+            }
+
+            return $this->redirectToRoute('club_plan_show', ['id' => $plan->getId()]);
+        }
+
+        $this->entityManager->flush();
+
+        foreach ($result->getRowMessages() as $message) {
+            if ($message['severity'] === 'warning') {
+                $context = $this->formatImportContext($message['context'] ?? []);
+                $context['{row}'] = (string) $message['row'];
+                $this->addFlash('warning', $this->translator->trans('planImportRowWarning.' . $message['code'], $context));
+            }
+        }
+
+        $this->addFlash('success', $this->translator->trans('planImportSuccess', [
+            '{tasks}' => $result->getTaskCount(),
+            '{subtasks}' => $result->getSubtaskCount(),
+        ]));
+
+        return $this->redirectToRoute('club_plan_show', ['id' => $plan->getId()]);
+    }
+    private function formatImportContext(array $context): array
+    {
+        $formatted = [];
+
+        foreach ($context as $key => $value) {
+            $placeholder = sprintf('{%s}', $key);
+            if (is_array($value)) {
+                $formatted[$placeholder] = implode(', ', array_map(static fn($item) => (string) $item, $value));
+            } else {
+                $formatted[$placeholder] = (string) $value;
+            }
+        }
+
+        return $formatted;
+    }
 }
 
