@@ -1,6 +1,7 @@
 {% extends 'club/base.html.twig' %}
 
-{% block page_title %}{{ 'pendingInvitations'|trans }}
+{% block page_title %}
+	{{ 'pendingInvitations'|trans }}
 {% endblock %}
 
 {% block page_actions %}
@@ -26,14 +27,16 @@
 				<a href="{{ path('club_invitation_show', {id: invitation.id}) }}" class="text-decoration-none">
 					<div class="card card-link" style="cursor: pointer;">
 						<div class="card-body">
-							<div class="d-flex align-items-start mb-3">
+							<div
+								class="d-flex align-items-start mb-3">
 								{# Mail Avatar - similar to task list's equipment avatar #}
 								<span class="avatar avatar-lg me-3 bg-yellow-lt">
 									<i class="ti ti-mail text-yellow" style="font-size: 1.5rem;"></i>
 								</span>
 
 								{# Main content #}
-								<div class="flex-grow-1">
+								<div
+									class="flex-grow-1">
 									{# Name/Email (main title) #}
 									<h3 class="card-title mb-1">
 										{% if invitation.fullname %}
@@ -63,7 +66,8 @@
 								</div>
 
 								{# Badges on desktop - right side #}
-								<div class="ms-3 d-none d-md-flex gap-2 align-items-start">
+								<div
+									class="ms-3 d-none d-md-flex gap-2 align-items-start">
 									{# Roles badges #}
 									{% if invitation.isManager %}
 										<span class="badge bg-blue text-white">
@@ -77,7 +81,13 @@
 											{{ 'inspector'|trans }}
 										</span>
 									{% endif %}
-									{% if not invitation.isManager and not invitation.isInspector %}
+									{% if invitation.isPilote %}
+										<span class="badge bg-purple text-white">
+											<i class="ti ti-plane me-1"></i>
+											{{ 'pilot'|trans }}
+										</span>
+									{% endif %}
+									{% if not invitation.isManager and not invitation.isInspector and not invitation.isPilote %}
 										<span class="badge bg-secondary text-white">
 											<i class="ti ti-user me-1"></i>
 											{{ 'member'|trans }}
@@ -95,7 +105,8 @@
 							</div>
 
 							{# Badges on mobile - full width under avatar #}
-							<div class="d-flex d-md-none gap-2 flex-wrap">
+							<div
+								class="d-flex d-md-none gap-2 flex-wrap">
 								{# Roles badges #}
 								{% if invitation.isManager %}
 									<span class="badge bg-blue text-white">
@@ -109,7 +120,13 @@
 										{{ 'inspector'|trans }}
 									</span>
 								{% endif %}
-								{% if not invitation.isManager and not invitation.isInspector %}
+								{% if invitation.isPilote %}
+									<span class="badge bg-purple text-white">
+										<i class="ti ti-plane me-1"></i>
+										{{ 'pilot'|trans }}
+									</span>
+								{% endif %}
+								{% if not invitation.isManager and not invitation.isInspector and not invitation.isPilote %}
 									<span class="badge bg-secondary text-white">
 										<i class="ti ti-user me-1"></i>
 										{{ 'member'|trans }}
@@ -151,4 +168,3 @@
 		{{ pagination(invitations) }}
 	</div>
 {% endblock %}
-
