@@ -135,7 +135,10 @@ class SubTaskController extends ExtendedController
 
             $this->addFlash('success', 'subTaskUpdated');
 
-            return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
+            return $this->redirectToRoute('club_subtask_show', [
+                'taskId' => $task->getId(),
+                'id' => $subTask->getId(),
+            ]);
         }
 
         return $this->render('club/task/subtask/edit.html.twig', [
