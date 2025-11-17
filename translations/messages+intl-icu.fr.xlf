@@ -656,6 +656,10 @@
         <source>emailRequired</source>
         <target>Veuillez saisir votre e-mail</target>
       </trans-unit>
+      <trans-unit id="110a" resname="emailInvalid">
+        <source>emailInvalid</source>
+        <target>Veuillez saisir une adresse e-mail valide</target>
+      </trans-unit>
       <trans-unit id="111" resname="passwordRequired">
         <source>passwordRequired</source>
         <target>Veuillez saisir un mot de passe</target>

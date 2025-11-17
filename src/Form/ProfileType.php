@@ -7,8 +7,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Email;
 
 class ProfileType extends AbstractType
 {
@@ -48,6 +50,21 @@ class ProfileType extends AbstractType
                         'max' => 50,
                         'minMessage' => 'lastnameMinLength',
                         'maxMessage' => 'lastnameMaxLength',
+                    ]),
+                ],
+            ])
+            ->add('email', EmailType::class, [
+                'label' => 'email',
+                'attr' => [
+                    'placeholder' => 'emailPlaceholder',
+                    'class' => 'form-control',
+                ],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'emailRequired',
+                    ]),
+                    new Email([
+                        'message' => 'emailInvalid',
                     ]),
                 ],
             ])
