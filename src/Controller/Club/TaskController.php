@@ -15,6 +15,7 @@ use App\Security\Voter\TaskVoter;
 use App\Service\ClubResolver;
 use App\Service\Maintenance\TaskStatusService;
 use App\Service\SubdomainService;
+use App\Service\TaskCommentNotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
@@ -35,6 +36,7 @@ class TaskController extends ExtendedController
         private readonly TaskStatusService $taskStatusService,
         private readonly EntityManagerInterface $entityManager,
         private readonly Filesystem $s3Filesystem,
+        private readonly TaskCommentNotificationService $commentNotificationService,
     ) {
         parent::__construct($subdomainService);
     }
@@ -311,6 +313,9 @@ class TaskController extends ExtendedController
 
             $this->entityManager->persist($activity);
             $this->entityManager->flush();
+
+            // Send email notifications to users with activity on the task
+            $this->commentNotificationService->sendTaskCommentNotifications($task, $activity, $this->getUser());
 
             $this->addFlash('success', 'commentAdded');
         }

@@ -1,0 +1,75 @@
+{% extends 'email/base.html.twig' %}
+
+{% block title %}Nouveau commentaire - Tarmac
+{% endblock %}
+
+{% block preheader %}
+	{% if subTask %}
+		{{ commentAuthor.fullname ?? commentAuthor.email }} a commenté la sous-tâche "{{ subTask.title }}"
+	{% else %}
+		{{ commentAuthor.fullname ?? commentAuthor.email }} a commenté la tâche "{{ task.title }}"
+	{% endif %}
+{% endblock %}
+
+{% block email_title %}Nouveau commentaire
+{% endblock %}
+
+{% block email_body %}
+	<h2 style="margin-top: 0; font-size: 20px; color: #111827; font-weight: 600;">
+		{% if subTask %}
+			Nouveau commentaire sur une sous-tâche
+		{% else %}
+			Nouveau commentaire sur une tâche
+		{% endif %}
+	</h2>
+
+	<p style="margin: 16px 0; color: #4b5563;">
+		<strong>{{ commentAuthor.fullname ?? commentAuthor.email }}</strong>
+		a ajouté un commentaire sur
+		{% if subTask %}
+			la sous-tâche
+			<strong style="color: #345B7C;">"{{ subTask.title }}"</strong>
+			de la tâche
+			<strong style="color: #345B7C;">"{{ task.title }}"</strong>
+		{% else %}
+			la tâche
+			<strong style="color: #345B7C;">"{{ task.title }}"</strong>
+		{% endif %}
+		du club
+		<strong style="color: #345B7C;">{{ club.name }}</strong>.
+	</p>
+
+	{% if comment.message %}
+		<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 24px 0;">
+			<tr>
+				<td class="alert alert-info" style="background-color: #e3f2fd; border-left: 4px solid #345B7C; border-radius: 6px; padding: 16px;">
+					<p style="margin: 0; color: #1565c0; white-space: pre-wrap;">{{ comment.message|nl2br }}</p>
+				</td>
+			</tr>
+		</table>
+	{% endif %}
+
+	<p style="margin: 16px 0; color: #4b5563;">Pour voir le commentaire et répondre, cliquez sur le bouton ci-dessous :</p>
+
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 30px 0;">
+		<tr>
+			<td align="center">
+				<a href="{{ taskUrl }}" class="btn" style="display: inline-block; padding: 14px 32px; background-color: #345B7C; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
+					Voir le commentaire
+				</a>
+			</td>
+		</tr>
+	</table>
+
+	<p style="font-size: 14px; color: #667382; margin: 16px 0;">
+		Si vous ne souhaitez plus recevoir ces notifications, vous pouvez modifier vos préférences dans l'application.
+	</p>
+
+	<hr style="border: 0; border-top: 1px solid #e8ebee; margin: 30px 0;">
+
+	<p style="font-size: 13px; color: #667382; margin: 16px 0;">
+		Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :<br>
+		<a href="{{ taskUrl }}" style="color: #345B7C; word-break: break-all; text-decoration: none;">{{ taskUrl }}</a>
+	</p>
+{% endblock %}
+
