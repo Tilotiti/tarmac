@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>{{ 'taskProgram'|trans }}</title>
+		<style>
+			@page {
+				size: A4 landscape;
+				margin: 20mm 15mm;
+			}
+
+			body {
+				font-family: Arial, sans-serif;
+				font-size: 11px;
+				line-height: 1.4;
+				margin: 0;
+				padding: 0;
+			}
+
+			.header {
+				text-align: center;
+				border-bottom: 2px solid #000;
+				padding-bottom: 10px;
+				margin-bottom: 20px;
+			}
+
+			.header h1 {
+				font-size: 20px;
+				font-weight: bold;
+				margin: 0 0 5px;
+			}
+
+			.header-info {
+				font-size: 10px;
+				color: #666;
+			}
+
+			.subtask-table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-bottom: 15px;
+				page-break-inside: avoid;
+			}
+
+			.subtask-table td {
+				border: 1px solid #ddd;
+				padding: 12px;
+				vertical-align: top;
+			}
+
+			.subtask-content {
+				width: 100%;
+			}
+
+			.subtask-qrcode {
+				width: 80px;
+				text-align: center;
+			}
+
+			.subtask-qrcode img {
+				width: 80px;
+				height: 80px;
+				border: 1px solid #ddd;
+			}
+
+			.subtask-qrcode-label {
+				font-size: 9px;
+				color: #666;
+				margin-top: 5px;
+			}
+
+			.subtask-header {
+				display: flex;
+				align-items: start;
+				margin-bottom: 8px;
+			}
+
+			.subtask-title {
+				font-size: 14px;
+				font-weight: bold;
+				margin: 0;
+				flex: 1;
+			}
+
+			.subtask-meta {
+				font-size: 10px;
+				color: #666;
+				margin-bottom: 8px;
+			}
+
+			.subtask-meta-item {
+				margin-right: 15px;
+			}
+
+			.subtask-description {
+				font-size: 10px;
+				color: #333;
+				margin-top: 8px;
+				line-height: 1.5;
+			}
+
+			.task-context {
+				background-color: #f5f5f5;
+				padding: 8px;
+				border-radius: 4px;
+				margin-bottom: 8px;
+				font-size: 10px;
+			}
+
+			.task-context-label {
+				font-weight: bold;
+				color: #666;
+			}
+
+			.equipment-name {
+				font-weight: bold;
+				color: #333;
+			}
+
+			.page-break {
+				page-break-before: always;
+			}
+
+			.footer {
+				position: fixed;
+				bottom: -15mm;
+				left: 0;
+				right: 0;
+				text-align: center;
+				font-size: 9px;
+				color: #666;
+				border-top: 1px solid #ddd;
+				padding-top: 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<h1>{{ 'taskProgram'|trans }}</h1>
+			<div class="header-info">
+				{{ 'club'|trans }}: {{ club.name }} | {{ 'printDate'|trans }}: {{ "now"|date('d/m/Y à H:i') }}
+			</div>
+		</div>
+
+		<div class="content">
+			{% if subTasks is not empty %}
+				<table class="subtask-table">
+					{% for item in subTasks %}
+						{% set subtask = item.subTask %}
+						{% set task = subtask.task %}
+						<tr>
+							<td class="subtask-content">
+								<div class="task-context">
+									<span class="task-context-label">{{ 'equipment'|trans }}:</span>
+									<span class="equipment-name">{{ task.equipment.name }}</span>
+									| <span class="task-context-label">{{ 'task'|trans }}:</span>
+									{{ task.title }}
+								</div>
+
+								<div class="subtask-header">
+									<h2 class="subtask-title">{{ subtask.title }}</h2>
+								</div>
+
+								<div class="subtask-meta">
+									{% if task.dueAt %}
+										<span class="subtask-meta-item">
+											<strong>{{ 'dueAt'|trans }}:</strong>
+											{{ task.dueAt|date('d/m/Y') }}
+										</span>
+									{% endif %}
+									<span class="subtask-meta-item">
+										<strong>{{ 'difficulty'|trans }}:</strong>
+										{{ subtask.getDifficultyLabel()|trans }}
+									</span>
+									{% if subtask.requiresInspection %}
+										<span class="subtask-meta-item">
+											<strong>{{ 'requiresInspection'|trans }}</strong>
+										</span>
+									{% endif %}
+								</div>
+
+								{% if subtask.description %}
+									<div class="subtask-description">
+										{{ subtask.description|nl2br }}
+									</div>
+								{% endif %}
+							</td>
+							<td class="subtask-qrcode">
+								<img src="{{ item.qrCodeDataUri }}" alt="QR Code">
+								<div class="subtask-qrcode-label">{{ 'scanToView'|trans }}</div>
+							</td>
+						</tr>
+					{% endfor %}
+				</table>
+			{% else %}
+				<div style="text-align: center; padding: 40px; color: #666;">
+					<p>{{ 'noPrioritySubTasks'|trans }}</p>
+				</div>
+			{% endif %}
+		</div>
+
+		<div class="footer">
+			{{ 'club'|trans }}: {{ club.name }} | {{ "now"|date('d/m/Y à H:i') }}
+		</div>
+
+		<script type="text/php">
+			if (isset($pdf)) {
+				$pdf->page_script('
+					$font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+					$size = 9;
+					$pageText = "Page " . $PAGE_NUM . " / " . $PAGE_COUNT;
+					$y = $pdf->get_height() - 15;
+					$x = $pdf->get_width() - 50;
+					$pdf->text($x, $y, $pageText, $font, $size);
+				');
+			}
+		</script>
+	</body>
+</html>
+

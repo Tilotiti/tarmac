@@ -38,12 +38,20 @@
 					{{ 'priorityTasks'|trans }}
 					<span class="badge bg-secondary-lt ms-2">{{ priorityTasksCount }}</span>
 				</h3>
-				{% if priorityTasksCount > 20 %}
-					<a href="{{ path('club_tasks') }}" class="btn btn-sm btn-outline-primary">
-						{{ 'seeAll'|trans }}
-						<i class="ti ti-arrow-right ms-1"></i>
-					</a>
-				{% endif %}
+				<div class="d-flex gap-2">
+					{% if is_granted('MANAGE') %}
+						<a href="{{ path('club_dashboard_print_priority_subtasks') }}" class="btn btn-sm btn-outline-primary" target="_blank">
+							<i class="ti ti-printer me-1"></i>
+							{{ 'printPrioritySubTasks'|trans }}
+						</a>
+					{% endif %}
+					{% if priorityTasksCount > 20 %}
+						<a href="{{ path('club_tasks') }}" class="btn btn-sm btn-outline-primary">
+							{{ 'seeAll'|trans }}
+							<i class="ti ti-arrow-right ms-1"></i>
+						</a>
+					{% endif %}
+				</div>
 			</div>
 			<div class="row">
 				{% for task in priorityTasks %}

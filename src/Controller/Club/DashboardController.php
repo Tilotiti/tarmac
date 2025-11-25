@@ -12,9 +12,15 @@ use App\Entity\Enum\EquipmentOwner;
 use App\Entity\Enum\PurchaseStatus;
 use App\Controller\ExtendedController;
 use App\Repository\PlanApplicationRepository;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\Writer\PngWriter;
+use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/', host: '{subdomain}.%domain%', requirements: ['subdomain' => '(?!www).*'])]
@@ -29,6 +35,8 @@ class DashboardController extends ExtendedController
         private readonly SubTaskRepository $subTaskRepository,
         private readonly PlanApplicationRepository $applicationRepository,
         private readonly PurchaseRepository $purchaseRepository,
+        private readonly DompdfWrapperInterface $dompdf,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
         parent::__construct($subdomainService);
     }
@@ -138,6 +146,87 @@ class DashboardController extends ExtendedController
             'purchasesWaitingDelivery' => $purchasesWaitingDelivery,
             'purchasesWaitingDeliveryCount' => $purchasesWaitingDeliveryCount,
         ]);
+    }
+
+    #[Route('/print-priority-subtasks', name: 'club_dashboard_print_priority_subtasks', methods: ['GET'])]
+    #[IsGranted('MANAGE')]
+    public function printPrioritySubTasks(Request $request): Response
+    {
+        $club = $this->clubResolver->resolve();
+        $subdomain = $club->getSubdomain();
+
+        // Query all priority subtasks
+        $prioritySubTasksQb = $this->subTaskRepository->createQueryBuilder('subtask')
+            ->join('subtask.task', 'task')
+            ->join('task.equipment', 'equipment')
+            ->where('task.club = :club')
+            ->setParameter('club', $club)
+            ->andWhere('subtask.priority = :true')
+            ->setParameter('true', true)
+            ->andWhere('subtask.status = :open')
+            ->setParameter('open', 'open')
+            ->orderBy('task.dueAt', 'ASC')
+            ->addOrderBy('subtask.position', 'ASC');
+
+        $prioritySubTasks = $prioritySubTasksQb->getQuery()->getResult();
+
+        // Generate QR codes for each subtask
+        $subTasksWithQrCodes = [];
+        foreach ($prioritySubTasks as $subTask) {
+            $task = $subTask->getTask();
+            
+            // Generate URL for the subtask - need to pass subdomain parameter
+            $subTaskUrl = $this->urlGenerator->generate(
+                'club_subtask_show',
+                [
+                    'subdomain' => $subdomain,
+                    'taskId' => $task->getId(),
+                    'id' => $subTask->getId(),
+                ],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+
+            // Generate QR code (smaller size for table layout)
+            $qrCode = Builder::create()
+                ->writer(new PngWriter())
+                ->data($subTaskUrl)
+                ->encoding(new Encoding('UTF-8'))
+                ->errorCorrectionLevel(ErrorCorrectionLevel::Medium)
+                ->size(80)
+                ->margin(5)
+                ->build();
+
+            $subTasksWithQrCodes[] = [
+                'subTask' => $subTask,
+                'qrCodeDataUri' => $qrCode->getDataUri(),
+            ];
+        }
+
+        $html = $this->renderView('club/dashboard/print_priority_subtasks.html.twig', [
+            'club' => $club,
+            'subTasks' => $subTasksWithQrCodes,
+        ]);
+
+        if ($request->query->getBoolean('preview')) {
+            return new Response($html);
+        }
+
+        $filename = sprintf('sous-taches-prioritaires-%s.pdf', $club->getSubdomain());
+
+        $response = $this->dompdf->getStreamResponse($html, $filename, [
+            'format' => 'A4',
+            'orientation' => 'landscape',
+            'margin-top' => '20mm',
+            'margin-right' => '15mm',
+            'margin-bottom' => '20mm',
+            'margin-left' => '15mm',
+            'Attachment' => false,
+        ]);
+
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'inline; filename="' . $filename . '"');
+
+        return $response;
     }
 }
 

@@ -1053,6 +1053,10 @@
         <source>priorityTasks</source>
         <target>Tâches prioritaires</target>
       </trans-unit>
+      <trans-unit id="422c13" resname="taskProgram">
+        <source>taskProgram</source>
+        <target>Programme des tâches</target>
+      </trans-unit>
       <trans-unit id="422c3" resname="markAsPriority">
         <source>markAsPriority</source>
         <target>Marquer comme prioritaire</target>
@@ -1076,6 +1080,22 @@
       <trans-unit id="422c8" resname="subTaskUnmarkedAsPriority">
         <source>subTaskUnmarkedAsPriority</source>
         <target>La priorité a été retirée de la sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="422c9" resname="prioritySubTasks">
+        <source>prioritySubTasks</source>
+        <target>Sous-tâches prioritaires</target>
+      </trans-unit>
+      <trans-unit id="422c10" resname="printPrioritySubTasks">
+        <source>printPrioritySubTasks</source>
+        <target>Imprimer les sous-tâches prioritaires</target>
+      </trans-unit>
+      <trans-unit id="422c11" resname="noPrioritySubTasks">
+        <source>noPrioritySubTasks</source>
+        <target>Aucune sous-tâche prioritaire</target>
+      </trans-unit>
+      <trans-unit id="422c12" resname="scanToView">
+        <source>scanToView</source>
+        <target>Scannez pour voir la sous-tâche</target>
       </trans-unit>
       <trans-unit id="422b1" resname="pendingSubTasks">
         <source>pendingSubTasks</source>
@@ -2192,6 +2212,10 @@
       <trans-unit id="437" resname="documentationAvailable">
         <source>documentationAvailable</source>
         <target>Documentation disponible</target>
+      </trans-unit>
+      <trans-unit id="438" resname="printDate">
+        <source>printDate</source>
+        <target>Date d'impression</target>
       </trans-unit>
     </body>
   </file>
