@@ -1045,6 +1045,38 @@
         <source>pendingTasks</source>
         <target>Tâches en attente</target>
       </trans-unit>
+      <trans-unit id="422c1" resname="priority">
+        <source>priority</source>
+        <target>Priorité</target>
+      </trans-unit>
+      <trans-unit id="422c2" resname="priorityTasks">
+        <source>priorityTasks</source>
+        <target>Tâches prioritaires</target>
+      </trans-unit>
+      <trans-unit id="422c3" resname="markAsPriority">
+        <source>markAsPriority</source>
+        <target>Marquer comme prioritaire</target>
+      </trans-unit>
+      <trans-unit id="422c4" resname="removePriority">
+        <source>removePriority</source>
+        <target>Retirer la priorité</target>
+      </trans-unit>
+      <trans-unit id="422c5" resname="taskMarkedAsPriority">
+        <source>taskMarkedAsPriority</source>
+        <target>La tâche a été marquée comme prioritaire</target>
+      </trans-unit>
+      <trans-unit id="422c6" resname="taskUnmarkedAsPriority">
+        <source>taskUnmarkedAsPriority</source>
+        <target>La priorité a été retirée de la tâche</target>
+      </trans-unit>
+      <trans-unit id="422c7" resname="subTaskMarkedAsPriority">
+        <source>subTaskMarkedAsPriority</source>
+        <target>La sous-tâche a été marquée comme prioritaire</target>
+      </trans-unit>
+      <trans-unit id="422c8" resname="subTaskUnmarkedAsPriority">
+        <source>subTaskUnmarkedAsPriority</source>
+        <target>La priorité a été retirée de la sous-tâche</target>
+      </trans-unit>
       <trans-unit id="422b1" resname="pendingSubTasks">
         <source>pendingSubTasks</source>
         <target>Sous-tâches en attente</target>

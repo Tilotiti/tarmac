@@ -217,6 +217,13 @@ class TaskController extends ExtendedController
                 ]);
             }
 
+            // If task is set to priority, inherit to all subtasks
+            if ($task->isPriority()) {
+                foreach ($task->getSubTasks() as $subTask) {
+                    $subTask->setPriority(true);
+                }
+            }
+
             $this->entityManager->flush();
 
             // Log task edit activity
@@ -307,6 +314,29 @@ class TaskController extends ExtendedController
 
             $this->addFlash('success', 'commentAdded');
         }
+
+        return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
+    }
+
+    #[Route('/{id}/toggle-priority', name: 'club_task_toggle_priority', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsGranted('MANAGE')]
+    public function togglePriority(Task $task): Response
+    {
+        $club = $this->clubResolver->resolve();
+        
+        // Check user has access to this task's club
+        if (!$this->getUser()->hasAccessToClub($club) || $task->getClub() !== $club) {
+            $this->addFlash('error', 'accessDenied');
+            return $this->redirectToRoute('club_tasks');
+        }
+
+        // Toggle priority
+        $newPriority = !$task->isPriority();
+        $task->setPriority($newPriority);
+        
+        $this->entityManager->flush();
+
+        $this->addFlash('success', $newPriority ? 'taskMarkedAsPriority' : 'taskUnmarkedAsPriority');
 
         return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
     }

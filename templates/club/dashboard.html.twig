@@ -29,8 +29,32 @@
 		</div>
 	{% endif %}
 
-	{# Pending Maintenance Plan Applications #}
-	{% if pendingApplications is not empty %}
+	{# Priority Tasks #}
+	{% if priorityTasks is not empty %}
+		<div class="mb-4">
+			<div class="d-flex align-items-center justify-content-between mb-3">
+				<h3 class="mb-0">
+					<i class="ti ti-flag"></i>
+					{{ 'priorityTasks'|trans }}
+					<span class="badge bg-secondary-lt ms-2">{{ priorityTasksCount }}</span>
+				</h3>
+				{% if priorityTasksCount > 20 %}
+					<a href="{{ path('club_tasks') }}" class="btn btn-sm btn-outline-primary">
+						{{ 'seeAll'|trans }}
+						<i class="ti ti-arrow-right ms-1"></i>
+					</a>
+				{% endif %}
+			</div>
+			<div class="row">
+				{% for task in priorityTasks %}
+					{% include 'component/taskCard.html.twig' with {'task': task} %}
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+
+	{# Legacy code kept for reference - Pending Maintenance Plan Applications #}
+	{% if false and pendingApplications is not empty %}
 		<div class="mb-4">
 			<div class="d-flex align-items-center justify-content-between mb-3">
 				<h3 class="mb-0">
@@ -129,8 +153,8 @@
 		</div>
 	{% endif %}
 
-	{# Standalone Pending Tasks #}
-	{% if standaloneTasks is not empty %}
+	{# Legacy code kept for reference - Standalone Pending Tasks #}
+	{% if false and standaloneTasks is not empty %}
 		<div class="mb-4">
 			<div class="d-flex align-items-center justify-content-between mb-3">
 				<h3 class="mb-0">
@@ -200,7 +224,7 @@
 	{% endif %}
 
 	{# Empty state #}
-	{% if pendingApplications is empty and standaloneTasks is empty and purchasesWaitingDelivery is empty and (not is_granted('INSPECT') or awaitingInspectionSubTasks is empty) %}
+	{% if priorityTasks is empty and purchasesWaitingDelivery is empty and (not is_granted('INSPECT') or awaitingInspectionSubTasks is empty) %}
 		<div class="empty">
 			<div class="empty-icon">
 				<i class="ti ti-clipboard-check"></i>

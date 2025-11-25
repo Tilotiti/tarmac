@@ -75,93 +75,49 @@ class DashboardController extends ExtendedController
             $awaitingInspectionSubTasks = $inspectionQb->getQuery()->getResult();
         }
 
-        // === 2. PENDING PLAN APPLICATIONS ===
-        // Get applications with tasks that still need work (open status, including those waiting for inspection)
-        $applicationQb = $this->taskRepository->queryAll();
-        $applicationQb->join('task.equipment', 'equipment_application')
-            ->andWhere('task.planApplication IS NOT NULL')
-            ->andWhere('task.status = :openStatus')
-            ->setParameter('openStatus', TaskStatus::OPEN);
+        // === 2. PRIORITY TASKS ===
+        // Show only priority tasks (tasks with priority flag or tasks with priority subtasks)
+        $priorityQb = $this->taskRepository->queryAll();
+        $priorityQb->join('task.equipment', 'equipment_priority')
+            ->where('task.club = :club')
+            ->setParameter('club', $club)
+            ->andWhere('task.status IN (:taskStatuses)')
+            ->setParameter('taskStatuses', ['open', 'done'])
+            ->andWhere('(
+                task.priority = :true 
+                OR EXISTS (
+                    SELECT 1 FROM App\Entity\SubTask st 
+                    WHERE st.task = task AND st.priority = :true
+                )
+            )')
+            ->setParameter('true', true);
 
         // Apply pilot visibility filter: non-pilotes can only see facility equipment
         if (!$isPilote && !$isManager && !$isInspector) {
-            $applicationQb = $this->taskRepository->filterByFacilityEquipment($applicationQb);
+            $priorityQb = $this->taskRepository->filterByFacilityEquipment($priorityQb);
         }
 
         // Apply privacy filter for non-managers
         if (!$isManager) {
             // Show only club equipment OR private equipment owned by the user
-            $applicationQb->leftJoin('equipment_application.owners', 'owners')
-                ->andWhere('equipment_application.owner = :owner_club OR (equipment_application.owner = :owner_private AND owners.id = :user)')
+            $priorityQb->leftJoin('equipment_priority.owners', 'owners')
+                ->andWhere('equipment_priority.owner = :owner_club OR (equipment_priority.owner = :owner_private AND owners.id = :user)')
                 ->setParameter('owner_club', EquipmentOwner::CLUB)
                 ->setParameter('owner_private', EquipmentOwner::PRIVATE)
                 ->setParameter('user', $user->getId());
         }
 
-        // Group by application to count unique applications
-        $applicationTasksForCount = (clone $applicationQb)
-            ->select('DISTINCT IDENTITY(task.planApplication)')
-            ->getQuery()
-            ->getResult();
-        $pendingApplicationsCount = count($applicationTasksForCount);
-
-        // Get tasks for display (limit by application) - order by dueAt with NULL values last
-        $applicationTasks = (clone $applicationQb)
-            ->addOrderBy('CASE WHEN task.dueAt IS NULL THEN 1 ELSE 0 END', 'ASC')
-            ->addOrderBy('task.dueAt', 'ASC')
-            ->setMaxResults(50) // Get more to ensure we have tasks from at least 5 applications
-            ->getQuery()
-            ->getResult();
-
-        // Group by application and limit to 5 applications
-        $pendingApplications = [];
-        foreach ($applicationTasks as $task) {
-            $application = $task->getPlanApplication();
-            if ($application && count($pendingApplications) < 5) {
-                if (!isset($pendingApplications[$application->getId()])) {
-                    $pendingApplications[$application->getId()] = [
-                        'application' => $application,
-                        'tasks' => [],
-                    ];
-                }
-                $pendingApplications[$application->getId()]['tasks'][] = $task;
-            }
-        }
-
-        // === 3. STANDALONE OPEN TASKS ===
-        // Only show tasks that are open or done (exclude closed/cancelled)
-        $standaloneQb = $this->taskRepository->queryAll();
-        $standaloneQb->join('task.equipment', 'equipment_standalone')
-            ->andWhere('task.planApplication IS NULL')
-            ->andWhere('task.status IN (:standaloneStatuses)')
-            ->setParameter('standaloneStatuses', ['open', 'done']);
-
-        // Apply pilot visibility filter: non-pilotes can only see facility equipment
-        if (!$isPilote && !$isManager && !$isInspector) {
-            $standaloneQb = $this->taskRepository->filterByFacilityEquipment($standaloneQb);
-        }
-
-        // Apply privacy filter for non-managers
-        if (!$isManager) {
-            // Show only club equipment OR private equipment owned by the user
-            $standaloneQb->leftJoin('equipment_standalone.owners', 'owners')
-                ->andWhere('equipment_standalone.owner = :clubStandalone OR (equipment_standalone.owner = :privateStandalone AND owners.id = :userIdStandalone)')
-                ->setParameter('clubStandalone', EquipmentOwner::CLUB)
-                ->setParameter('privateStandalone', EquipmentOwner::PRIVATE)
-                ->setParameter('userIdStandalone', $user->getId());
-        }
-
         // Get count
-        $standaloneCountQb = clone $standaloneQb;
-        $standaloneTasksCount = (int) $standaloneCountQb->select('COUNT(DISTINCT task.id)')
+        $priorityCountQb = clone $priorityQb;
+        $priorityTasksCount = (int) $priorityCountQb->select('COUNT(DISTINCT task.id)')
             ->getQuery()
             ->getSingleScalarResult();
 
         // Get limited results - order by dueAt with NULL values last
-        $standaloneQb->addOrderBy('CASE WHEN task.dueAt IS NULL THEN 1 ELSE 0 END', 'ASC')
+        $priorityQb->addOrderBy('CASE WHEN task.dueAt IS NULL THEN 1 ELSE 0 END', 'ASC')
             ->addOrderBy('task.dueAt', 'ASC')
-            ->setMaxResults(5);
-        $standaloneTasks = $standaloneQb->getQuery()->getResult();
+            ->setMaxResults(20);
+        $priorityTasks = $priorityQb->getQuery()->getResult();
 
         // === 4. PURCHASES WAITING FOR DELIVERY ===
         $purchasesWaitingDeliveryQb = $this->purchaseRepository->queryAll();
@@ -175,10 +131,8 @@ class DashboardController extends ExtendedController
 
         return $this->render('club/dashboard.html.twig', [
             'club' => $club,
-            'pendingApplications' => $pendingApplications,
-            'pendingApplicationsCount' => $pendingApplicationsCount,
-            'standaloneTasks' => $standaloneTasks,
-            'standaloneTasksCount' => $standaloneTasksCount,
+            'priorityTasks' => $priorityTasks,
+            'priorityTasksCount' => $priorityTasksCount,
             'awaitingInspectionSubTasks' => $awaitingInspectionSubTasks,
             'awaitingInspectionCount' => $awaitingInspectionCount,
             'purchasesWaitingDelivery' => $purchasesWaitingDelivery,

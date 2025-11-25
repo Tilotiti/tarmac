@@ -49,6 +49,9 @@ class Task
     #[Assert\Choice(choices: ['open', 'done', 'closed', 'cancelled'])]
     private string $status = 'open';
 
+    #[ORM\Column]
+    private bool $priority = false;
+
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $cancelledBy = null;
@@ -443,6 +446,46 @@ class Task
             $total += $subTask->getTotalTimeSpent();
         }
         return $total;
+    }
+
+    public function isPriority(): bool
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(bool $priority): static
+    {
+        $this->priority = $priority;
+        
+        // If task is set to priority, inherit to all subtasks
+        if ($priority) {
+            foreach ($this->subTasks as $subTask) {
+                $subTask->setPriority(true);
+            }
+        }
+        
+        return $this;
+    }
+
+    /**
+     * Check if any subtask is priority
+     */
+    public function hasPrioritySubTask(): bool
+    {
+        foreach ($this->subTasks as $subTask) {
+            if ($subTask->isPriority()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if task is priority or has any priority subtask
+     */
+    public function isPriorityOrHasPrioritySubTask(): bool
+    {
+        return $this->priority || $this->hasPrioritySubTask();
     }
 }
 

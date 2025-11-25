@@ -8,6 +8,15 @@
 
 {% block page_actions %}
 	<div class="btn-list">
+		{% if is_granted('MANAGE') %}
+			<form method="post" action="{{ path('club_task_toggle_priority', {id: task.id}) }}" class="d-inline">
+				<input type="hidden" name="_token" value="{{ csrf_token('toggle_priority_task' ~ task.id) }}">
+				<button type="submit" class="btn {{ task.isPriority() ? 'btn-warning' : 'btn-outline-secondary' }}" style="min-height: 44px;" title="{{ task.isPriority() ? 'removePriority'|trans : 'markAsPriority'|trans }}">
+					<i class="ti ti-flag"></i>
+				</button>
+			</form>
+		{% endif %}
+
 		{% if is_granted('TASK_EDIT', task) %}
 			<a href="{{ path('club_task_edit', {id: task.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
 				<i class="ti ti-edit me-2"></i>

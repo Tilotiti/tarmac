@@ -40,6 +40,14 @@
 					{# Badges on desktop - right side #}
 					<div
 						class="ms-3 d-none d-md-flex gap-2 align-items-start">
+						{# Priority badge - show if task is priority or has priority subtasks #}
+						{% if task.isPriorityOrHasPrioritySubTask %}
+							<span class="badge bg-red-lt text-white">
+								<i class="ti ti-flag me-1"></i>
+								{{ 'priority'|trans }}
+							</span>
+						{% endif %}
+
 						{# If task is cancelled, always show cancelled badge #}
 						{% if task.status == 'cancelled' %}
 							<span class="badge bg-danger-lt text-white">
@@ -68,6 +76,14 @@
 				{# Badges on mobile - full width under avatar #}
 				<div
 					class="d-flex d-md-none gap-2 flex-wrap mb-3">
+					{# Priority badge - show if task is priority or has priority subtasks #}
+					{% if task.isPriorityOrHasPrioritySubTask %}
+						<span class="badge bg-red text-white">
+							<i class="ti ti-flag me-1"></i>
+							{{ 'priority'|trans }}
+						</span>
+					{% endif %}
+
 					{# If task is cancelled, always show cancelled badge #}
 					{% if task.status == 'cancelled' %}
 						<span class="badge bg-danger text-white">

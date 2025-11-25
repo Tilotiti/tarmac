@@ -75,10 +75,20 @@ class SubTaskController extends ExtendedController
         }
         $subTask->setPosition($maxPosition + 1);
 
+        // If task is priority, inherit to new subtask
+        if ($task->isPriority()) {
+            $subTask->setPriority(true);
+        }
+
         $form = $this->createForm(SubTaskType::class, $subTask);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Ensure priority inheritance if task is priority
+            if ($task->isPriority() && !$subTask->isPriority()) {
+                $subTask->setPriority(true);
+            }
+
             $this->entityManager->persist($subTask);
             $this->entityManager->flush();
 
@@ -439,6 +449,33 @@ class SubTaskController extends ExtendedController
 
         $this->addFlash('error', 'invalidRequest');
         return $this->redirectToRoute('club_task_show', ['id' => $subTask->getTask()->getId()]);
+    }
+
+    #[Route('/{id}/toggle-priority', name: 'club_subtask_toggle_priority', methods: ['POST'], requirements: ['id' => '\d+'])]
+    #[IsGranted('MANAGE')]
+    public function togglePriority(SubTask $subTask): Response
+    {
+        $club = $this->clubResolver->resolve();
+        $task = $subTask->getTask();
+
+        // Check user has access to this task's club
+        if (!$this->getUser()->hasAccessToClub($club) || $task->getClub() !== $club) {
+            $this->addFlash('error', 'accessDenied');
+            return $this->redirectToRoute('club_tasks');
+        }
+
+        // Toggle priority
+        $newPriority = !$subTask->isPriority();
+        $subTask->setPriority($newPriority);
+
+        $this->entityManager->flush();
+
+        $this->addFlash('success', $newPriority ? 'subTaskMarkedAsPriority' : 'subTaskUnmarkedAsPriority');
+
+        return $this->redirectToRoute('club_subtask_show', [
+            'taskId' => $task->getId(),
+            'id' => $subTask->getId(),
+        ]);
     }
 
     #[Route('/{id}/comment', name: 'club_subtask_comment', methods: ['POST'], requirements: ['id' => '\d+'])]

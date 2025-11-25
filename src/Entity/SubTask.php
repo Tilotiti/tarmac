@@ -46,6 +46,9 @@ class SubTask
     #[ORM\Column]
     private bool $requiresInspection = false;
 
+    #[ORM\Column]
+    private bool $priority = false;
+
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $doneBy = null;
@@ -444,6 +447,17 @@ class SubTask
             $total += $contribution->getTimeSpent();
         }
         return $total;
+    }
+
+    public function isPriority(): bool
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(bool $priority): static
+    {
+        $this->priority = $priority;
+        return $this;
     }
 }
 

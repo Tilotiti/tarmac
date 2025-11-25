@@ -6,6 +6,15 @@
 
 {% block page_actions %}
 	<div class="btn-list">
+		{% if is_granted('MANAGE') %}
+			<form method="post" action="{{ path('club_subtask_toggle_priority', {taskId: task.id, id: subTask.id}) }}" class="d-inline">
+				<input type="hidden" name="_token" value="{{ csrf_token('toggle_priority_subtask' ~ subTask.id) }}">
+				<button type="submit" class="btn {{ subTask.isPriority() ? 'btn-warning' : 'btn-outline-secondary' }}" style="min-height: 44px;" title="{{ subTask.isPriority() ? 'removePriority'|trans : 'markAsPriority'|trans }}">
+					<i class="ti ti-flag"></i>
+				</button>
+			</form>
+		{% endif %}
+
 		{% if is_granted('SUBTASK_EDIT', subTask) %}
 			<a href="{{ path('club_subtask_edit', {taskId: task.id, id: subTask.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
 				<i class="ti ti-edit me-2"></i>
