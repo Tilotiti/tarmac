@@ -41,8 +41,8 @@ class SubTaskCompleteFormType extends AbstractType
                         ->join('m.user', 'u')
                         ->where('m.club = :club')
                         ->setParameter('club', $club)
-                        ->orderBy('u.firstname', 'ASC')
-                        ->addOrderBy('u.lastname', 'ASC');
+                        ->orderBy('u.lastname', 'ASC')
+                        ->addOrderBy('u.firstname', 'ASC');
 
                     // Only filter by pilot status for aircraft equipment
                     if ($requiresPilot) {
@@ -60,7 +60,8 @@ class SubTaskCompleteFormType extends AbstractType
                 },
                 'choice_label' => function (Membership $membership) {
                     $user = $membership->getUser();
-                    return $user->getFullName() ?: $user->getEmail();
+                    $user = $membership->getUser();
+                    return $user->getLastname() . ' ' . $user->getFirstname() . ' (' . $user->getEmail() . ')';
                 },
                 'label' => 'whoDidTask',
                 'required' => true,

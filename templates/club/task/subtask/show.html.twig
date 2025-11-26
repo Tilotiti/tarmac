@@ -252,6 +252,8 @@
 						</span>
 					</div>
 
+					{{ form_help(completeForm.contributors) }}
+
 					{# Search input #}
 					<div class="mb-3">
 						<input type="text" class="form-control" placeholder="{{ 'searchMember'|trans }}..." data-user-list-filter-target="search" data-action="input->user-list-filter#filter">
@@ -269,7 +271,6 @@
 						</div>
 					</div>
 					{{ form_errors(completeForm.contributors) }}
-					{{ form_help(completeForm.contributors) }}
 				</fieldset>
 
 				{# Mark fields as rendered #}
