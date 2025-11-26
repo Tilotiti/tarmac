@@ -32,6 +32,9 @@ class Club
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $welcomeMessage = null;
+
     /**
      * @var Collection<int, Membership>
      */
@@ -113,6 +116,18 @@ class Club
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getWelcomeMessage(): ?string
+    {
+        return $this->welcomeMessage;
+    }
+
+    public function setWelcomeMessage(?string $welcomeMessage): static
+    {
+        $this->welcomeMessage = $welcomeMessage;
 
         return $this;
     }

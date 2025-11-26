@@ -139,8 +139,17 @@
 		<div class="header">
 			<h1>{{ 'taskProgram'|trans }}</h1>
 			<div class="header-info">
-				{{ 'club'|trans }}: {{ club.name }} | {{ 'printDate'|trans }}: {{ "now"|date('d/m/Y à H:i') }}
+				{{ 'club'|trans }}:
+				{{ club.name }}
+				|
+				{{ 'printDate'|trans }}:
+				{{ "now"|date('d/m/Y à H:i') }}
 			</div>
+			{% if club.welcomeMessage %}
+				<div class="welcome-message" style="margin-top: 15px; padding: 10px; background-color: #f5f5f5; border-radius: 4px; font-size: 10px; line-height: 1.5; text-align: left;">
+					{{ club.welcomeMessage|nl2br }}
+				</div>
+			{% endif %}
 		</div>
 
 		<div class="content">
@@ -154,7 +163,8 @@
 								<div class="task-context">
 									<span class="task-context-label">{{ 'equipment'|trans }}:</span>
 									<span class="equipment-name">{{ task.equipment.name }}</span>
-									| <span class="task-context-label">{{ 'task'|trans }}:</span>
+									|
+									<span class="task-context-label">{{ 'task'|trans }}:</span>
 									{{ task.title }}
 								</div>
 
@@ -201,21 +211,23 @@
 		</div>
 
 		<div class="footer">
-			{{ 'club'|trans }}: {{ club.name }} | {{ "now"|date('d/m/Y à H:i') }}
+			{{ 'club'|trans }}:
+			{{ club.name }}
+			|
+			{{ "now"|date('d/m/Y à H:i') }}
 		</div>
 
-		<script type="text/php">
-			if (isset($pdf)) {
-				$pdf->page_script('
-					$font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-					$size = 9;
-					$pageText = "Page " . $PAGE_NUM . " / " . $PAGE_COUNT;
-					$y = $pdf->get_height() - 15;
-					$x = $pdf->get_width() - 50;
-					$pdf->text($x, $y, $pageText, $font, $size);
-				');
-			}
-		</script>
+		 <script type="text/php">
+					if (isset($pdf)) {
+						$pdf->page_script('
+							$font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+							$size = 9;
+							$pageText = "Page " . $PAGE_NUM . " / " . $PAGE_COUNT;
+							$y = $pdf->get_height() - 15;
+							$x = $pdf->get_width() - 50;
+							$pdf->text($x, $y, $pageText, $font, $size);
+						');
+					}
+				</script>
 	</body>
 </html>
-

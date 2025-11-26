@@ -2217,6 +2217,34 @@
         <source>printDate</source>
         <target>Date d'impression</target>
       </trans-unit>
+      <trans-unit id="439" resname="welcomeMessage">
+        <source>welcomeMessage</source>
+        <target>Message d'accueil</target>
+      </trans-unit>
+      <trans-unit id="440" resname="editWelcomeMessage">
+        <source>editWelcomeMessage</source>
+        <target>Modifier le message d'accueil</target>
+      </trans-unit>
+      <trans-unit id="441" resname="addWelcomeMessage">
+        <source>addWelcomeMessage</source>
+        <target>Ajouter un message d'accueil</target>
+      </trans-unit>
+      <trans-unit id="442" resname="noWelcomeMessage">
+        <source>noWelcomeMessage</source>
+        <target>Aucun message d'accueil défini</target>
+      </trans-unit>
+      <trans-unit id="443" resname="welcomeMessageUpdated">
+        <source>welcomeMessageUpdated</source>
+        <target>Le message d'accueil a été mis à jour.</target>
+      </trans-unit>
+      <trans-unit id="444" resname="welcomeMessageHelp">
+        <source>welcomeMessageHelp</source>
+        <target>Ce message sera visible par tous les membres sur le tableau de bord et sera inclus dans l'impression des sous-tâches prioritaires.</target>
+      </trans-unit>
+      <trans-unit id="445" resname="welcomeMessagePlaceholder">
+        <source>welcomeMessagePlaceholder</source>
+        <target>Saisissez votre message d'accueil ici...</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

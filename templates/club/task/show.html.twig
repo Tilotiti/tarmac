@@ -256,6 +256,12 @@
 
 							{# Badges #}
 							<div class="mb-2">
+								{% if subtask.isPriority %}
+									<span class="badge bg-red-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'priority'|trans }}">
+										<i class="ti ti-flag me-1"></i>
+										{{ 'priority'|trans }}
+									</span>
+								{% endif %}
 								{% if subtask.isWaitingForApproval %}
 									<span class="badge bg-warning-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'status'|trans }}">
 										<i class="ti ti-hourglass me-1"></i>

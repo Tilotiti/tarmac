@@ -12,6 +12,8 @@ use App\Entity\Enum\EquipmentOwner;
 use App\Entity\Enum\PurchaseStatus;
 use App\Controller\ExtendedController;
 use App\Repository\PlanApplicationRepository;
+use App\Form\WelcomeMessageType;
+use Doctrine\ORM\EntityManagerInterface;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
@@ -37,6 +39,7 @@ class DashboardController extends ExtendedController
         private readonly PurchaseRepository $purchaseRepository,
         private readonly DompdfWrapperInterface $dompdf,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($subdomainService);
     }
@@ -174,7 +177,7 @@ class DashboardController extends ExtendedController
         $subTasksWithQrCodes = [];
         foreach ($prioritySubTasks as $subTask) {
             $task = $subTask->getTask();
-            
+
             // Generate URL for the subtask - need to pass subdomain parameter
             $subTaskUrl = $this->urlGenerator->generate(
                 'club_subtask_show',
@@ -202,7 +205,7 @@ class DashboardController extends ExtendedController
             ];
         }
 
-        $html = $this->renderView('club/dashboard/print_priority_subtasks.html.twig', [
+        $html = $this->renderView('club/dashboard/printPrioritySubtasks.html.twig', [
             'club' => $club,
             'subTasks' => $subTasksWithQrCodes,
         ]);
@@ -227,6 +230,31 @@ class DashboardController extends ExtendedController
         $response->headers->set('Content-Disposition', 'inline; filename="' . $filename . '"');
 
         return $response;
+    }
+
+    #[Route('/edit-welcome-message', name: 'club_dashboard_edit_welcome_message', methods: ['GET', 'POST'])]
+    #[IsGranted('MANAGE')]
+    public function editWelcomeMessage(Request $request): Response
+    {
+        $club = $this->clubResolver->resolve();
+
+        $form = $this->createForm(WelcomeMessageType::class, ['welcomeMessage' => $club->getWelcomeMessage()]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $club->setWelcomeMessage($data['welcomeMessage'] ?? null);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'welcomeMessageUpdated');
+
+            return $this->redirectToRoute('club_dashboard');
+        }
+
+        return $this->render('club/dashboard/editWelcomeMessage.html.twig', [
+            'club' => $club,
+            'form' => $form,
+        ]);
     }
 }
 

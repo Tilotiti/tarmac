@@ -5,6 +5,47 @@
 {% endblock %}
 
 {% block page_content %}
+	{# Welcome Message #}
+	{% if club.welcomeMessage %}
+		<div class="mb-4">
+			<div class="card bg-primary-lt">
+				<div class="card-body">
+					<div class="d-flex align-items-start">
+						<div class="flex-fill">
+							<div class="text-body">
+								{{ club.welcomeMessage|nl2br }}
+							</div>
+						</div>
+						{% if is_granted('MANAGE') %}
+							<a href="{{ path('club_dashboard_edit_welcome_message') }}" class="btn btn-sm btn-outline-primary ms-3">
+								<i class="ti ti-edit me-1"></i>
+								{{ 'edit'|trans }}
+							</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	{% elseif is_granted('MANAGE') %}
+		<div class="mb-4">
+			<div class="card bg-secondary-lt">
+				<div class="card-body">
+					<div class="d-flex align-items-center justify-content-between">
+						<div>
+							<div class="text-body">
+								{{ 'noWelcomeMessage'|trans }}
+							</div>
+						</div>
+						<a href="{{ path('club_dashboard_edit_welcome_message') }}" class="btn btn-sm btn-primary">
+							<i class="ti ti-plus me-1"></i>
+							{{ 'addWelcomeMessage'|trans }}
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
 	{# SubTasks Awaiting Inspection (Inspector View) #}
 	{% if is_granted('INSPECT') and awaitingInspectionSubTasks is not empty %}
 		<div class="mb-4">
