@@ -38,6 +38,7 @@ class TaskCommentNotificationService
 
         $club = $task->getClub();
         $taskUrl = $this->urlGenerator->generate('club_task_show', [
+            'subdomain' => $club->getSubdomain(),
             'id' => $task->getId(),
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -85,6 +86,7 @@ class TaskCommentNotificationService
         $task = $subTask->getTask();
         $club = $task->getClub();
         $taskUrl = $this->urlGenerator->generate('club_subtask_show', [
+            'subdomain' => $club->getSubdomain(),
             'taskId' => $task->getId(),
             'id' => $subTask->getId(),
         ], UrlGeneratorInterface::ABSOLUTE_URL);

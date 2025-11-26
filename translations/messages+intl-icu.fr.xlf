@@ -1301,11 +1301,11 @@
       </trans-unit>
       <trans-unit id="209" resname="noActivityYet">
         <source>noActivityYet</source>
-        <target>Aucune activité pour le moment</target>
+        <target>Aucun historique pour le moment</target>
       </trans-unit>
       <trans-unit id="210" resname="activity">
         <source>activity</source>
-        <target>Activité</target>
+        <target>Historique</target>
       </trans-unit>
       <trans-unit id="211" resname="information">
         <source>information</source>
