@@ -97,7 +97,7 @@ class SubTaskCompleteFormType extends AbstractType
                 },
                 'choice_label' => function (Membership $membership) {
                     $user = $membership->getUser();
-                    return $user->getFullName() ?: $user->getEmail();
+                    return $user->getFullName() . ' (' . $user->getEmail() . ')';
                 },
                 'label' => 'contributors',
                 'multiple' => true,
