@@ -161,14 +161,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setFirstname(?string $firstname): static
     {
-        $this->firstname = $firstname;
+        $this->firstname = ucfirst(mb_strtolower($firstname));
 
         return $this;
     }
 
     public function getLastname(): ?string
     {
-        return $this->lastname;
+        return strtoupper($this->lastname);
     }
 
     public function setLastname(?string $lastname): static
