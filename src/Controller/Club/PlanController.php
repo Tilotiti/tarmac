@@ -75,7 +75,6 @@ class PlanController extends ExtendedController
     }
 
     #[Route('/new', name: 'club_plan_new')]
-    #[IsGranted('MANAGE')]
     #[Breadcrumb([
         ['label' => 'home', 'route' => 'club_dashboard'],
         ['label' => 'plans', 'route' => 'club_plans'],

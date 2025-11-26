@@ -92,8 +92,8 @@ class SubTaskCompleteFormType extends AbstractType
                         ->join('m.user', 'u')
                         ->where('m.club = :club')
                         ->setParameter('club', $club)
-                        ->orderBy('u.firstname', 'ASC')
-                        ->addOrderBy('u.lastname', 'ASC');
+                        ->orderBy('u.lastname', 'ASC')
+                        ->addOrderBy('u.firstname', 'ASC');
                 },
                 'choice_label' => function (Membership $membership) {
                     $user = $membership->getUser();

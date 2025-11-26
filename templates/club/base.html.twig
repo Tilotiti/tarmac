@@ -18,16 +18,6 @@
 
 {% block navbar_menu %}
 	<div class="navbar-nav flex-md-row order-md-last">
-		<div class="nav-item {{ app.request.get('_route') starts with 'club_equipment' ? 'active' : '' }}">
-			<a href="{{ path('club_equipments') }}" class="nav-link">
-				<span class="nav-link-icon d-md-none d-lg-inline-block">
-					<i class="ti ti-plane"></i>
-				</span>
-				<span class="nav-link-title">
-					{{ 'equipments'|trans }}
-				</span>
-			</a>
-		</div>
 		<div class="nav-item {{ app.request.get('_route') starts with 'club_task' ? 'active' : '' }}">
 			<a href="{{ path('club_tasks') }}" class="nav-link">
 				<span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -38,6 +28,18 @@
 				</span>
 			</a>
 		</div>
+		{% if is_granted('MANAGE', club) or is_granted('INSPECT', club) %}
+			<div class="nav-item {{ app.request.get('_route') starts with 'club_equipment' ? 'active' : '' }}">
+				<a href="{{ path('club_equipments') }}" class="nav-link">
+					<span class="nav-link-icon d-md-none d-lg-inline-block">
+						<i class="ti ti-plane"></i>
+					</span>
+					<span class="nav-link-title">
+						{{ 'equipments'|trans }}
+					</span>
+				</a>
+			</div>
+		{% endif %}
 		<div class="nav-item {{ app.request.get('_route') starts with 'club_purchase' ? 'active' : '' }}">
 			<a href="{{ path('club_purchases') }}" class="nav-link">
 				<span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -48,7 +50,7 @@
 				</span>
 			</a>
 		</div>
-		{% if is_granted('MANAGE', club) %}
+		{% if is_granted('MANAGE', club) or is_granted('INSPECT', club) %}
 			<div class="nav-item {{ app.request.get('_route') starts with 'club_plan' ? 'active' : '' }}">
 				<a href="{{ path('club_plans') }}" class="nav-link">
 					<span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -59,6 +61,8 @@
 					</span>
 				</a>
 			</div>
+		{% endif %}
+		{% if is_granted('MANAGE', club) %}
 			<div class="nav-item {{ app.request.get('_route') starts with 'club_member' or app.request.get('_route') starts with 'club_invitation' ? 'active' : '' }}">
 				<a href="{{ path('club_members') }}" class="nav-link">
 					<span class="nav-link-icon d-md-none d-lg-inline-block">
