@@ -158,7 +158,7 @@
       </trans-unit>
       <trans-unit id="34" resname="clubNamePlaceholder">
         <source>clubNamePlaceholder</source>
-        <target>Ex: Les Planeurs de Bailleau</target>
+        <target>Ex. : Les Planeurs de Bailleau</target>
       </trans-unit>
       <trans-unit id="35" resname="subdomain">
         <source>subdomain</source>
@@ -166,11 +166,11 @@
       </trans-unit>
       <trans-unit id="36" resname="subdomainPlaceholder">
         <source>subdomainPlaceholder</source>
-        <target>Ex: cvve</target>
+        <target>Ex. : cvve</target>
       </trans-unit>
       <trans-unit id="37" resname="subdomainHelp">
         <source>subdomainHelp</source>
-        <target>Ce sous-domaine sera utilisé pour accéder au club (ex: cvve)</target>
+        <target>Ce sous-domaine sera utilisé pour accéder au club (Ex. : cvve)</target>
       </trans-unit>
       <trans-unit id="38" resname="active">
         <source>active</source>
@@ -188,7 +188,7 @@
       </trans-unit>
       <trans-unit id="41" resname="equipmentNamePlaceholder">
         <source>equipmentNamePlaceholder</source>
-        <target>Ex: F-CGCD ou Remorqueur</target>
+        <target>Ex. : F-CGCD ou Remorqueur</target>
       </trans-unit>
       <trans-unit id="42" resname="type">
         <source>type</source>
@@ -1193,7 +1193,7 @@
       </trans-unit>
       <trans-unit id="183" resname="relativeDueDaysPlaceholder">
         <source>relativeDueDaysPlaceholder</source>
-        <target>ex: -7 pour 7 jours avant</target>
+        <target>Ex. : -7 pour 7 jours avant</target>
       </trans-unit>
       <trans-unit id="184" resname="relativeDueDaysHelp">
         <source>relativeDueDaysHelp</source>
