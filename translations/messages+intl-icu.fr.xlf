@@ -729,7 +729,7 @@
       </trans-unit>
       <trans-unit id="127" resname="taskCannotBeClosed">
         <source>taskCannotBeClosed</source>
-        <target>Cette tâche ne peut pas être clôturée (sous-tâches non terminées ou inspection requise).</target>
+        <target>Cette tâche ne peut pas être clôturée (sous-tâches non terminées ou validation requise).</target>
       </trans-unit>
       <trans-unit id="128" resname="commentAdded">
         <source>commentAdded</source>
@@ -787,11 +787,11 @@
       <!-- Flash Messages: Inspection -->
       <trans-unit id="133" resname="inspectionApproved">
         <source>inspectionApproved</source>
-        <target>L'inspection a été approuvée.</target>
+        <target>La tâche critique a été validée.</target>
       </trans-unit>
       <trans-unit id="134" resname="inspectionRejected">
         <source>inspectionRejected</source>
-        <target>L'inspection a été rejetée.</target>
+        <target>La tâche critique n'a pas été approuvée.</target>
       </trans-unit>
       <trans-unit id="135" resname="rejectionReasonRequired">
         <source>rejectionReasonRequired</source>
@@ -929,7 +929,7 @@
       </trans-unit>
       <trans-unit id="139aa" resname="planSpreadsheet.header.requiresInspection">
         <source>planSpreadsheet.header.requiresInspection</source>
-        <target>Inspection requise</target>
+        <target>Vérification requise</target>
       </trans-unit>
       <trans-unit id="140" resname="noPlansAvailable">
         <source>noPlansAvailable</source>
@@ -1003,7 +1003,7 @@
       </trans-unit>
       <trans-unit id="157" resname="awaitingInspection">
         <source>awaitingInspection</source>
-        <target>En attente d'inspection</target>
+        <target>En attente de validation</target>
       </trans-unit>
       <trans-unit id="157a" resname="tasksToInspect">
         <source>tasksToInspect</source>
@@ -1107,11 +1107,11 @@
       </trans-unit>
       <trans-unit id="162" resname="approveInspection">
         <source>approveInspection</source>
-        <target>Approuver l'inspection</target>
+        <target>Approuver la tâche critique</target>
       </trans-unit>
       <trans-unit id="163" resname="rejectInspection">
         <source>rejectInspection</source>
-        <target>Rejeter l'inspection</target>
+        <target>Rejeter la tâche critique</target>
       </trans-unit>
       <trans-unit id="164" resname="rejectionReason">
         <source>rejectionReason</source>
@@ -1267,11 +1267,11 @@
       </trans-unit>
       <trans-unit id="201" resname="inspectionApproved">
         <source>inspectionApproved</source>
-        <target>Inspection approuvée</target>
+        <target>Tâche critique approuvée</target>
       </trans-unit>
       <trans-unit id="202" resname="inspectionRejected">
         <source>inspectionRejected</source>
-        <target>Inspection rejetée</target>
+        <target>Tâche critique rejetée</target>
       </trans-unit>
       <trans-unit id="203" resname="active">
         <source>active</source>
@@ -1543,19 +1543,19 @@
       </trans-unit>
       <trans-unit id="267" resname="inspection">
         <source>inspection</source>
-        <target>Inspection</target>
+        <target>Tâche critique</target>
       </trans-unit>
       <trans-unit id="267a" resname="inspectionPlanned">
         <source>inspectionPlanned</source>
-        <target>Inspection à prévoir</target>
+        <target>Validation à prévoir</target>
       </trans-unit>
       <trans-unit id="267b" resname="inspectionPending">
         <source>inspectionPending</source>
-        <target>Inspection en attente</target>
+        <target>Validation en attente</target>
       </trans-unit>
       <trans-unit id="267c" resname="inspectionValidated">
         <source>inspectionValidated</source>
-        <target>Inspection validée</target>
+        <target>Tâche critique validée</target>
       </trans-unit>
       <trans-unit id="268" resname="allSubTasksMustBeDone">
         <source>allSubTasksMustBeDone</source>
