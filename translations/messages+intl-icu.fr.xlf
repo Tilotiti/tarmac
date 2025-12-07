@@ -737,11 +737,11 @@
       </trans-unit>
       <trans-unit id="128a" resname="pilotRequiredForGliderTasks">
         <source>pilotRequiredForGliderTasks</source>
-        <target>Vous devez être pilote pour créer des tâches sur des planeurs.</target>
+        <target>Vous devez être pilote propriétaire pour créer des tâches sur des planeurs.</target>
       </trans-unit>
       <trans-unit id="128b" resname="pilotRequiredForAircraftTasks">
         <source>pilotRequiredForAircraftTasks</source>
-        <target>Vous devez être pilote pour créer des tâches sur des aéronefs.</target>
+        <target>Vous devez être pilote propriétaire pour créer des tâches sur des aéronefs.</target>
       </trans-unit>
 
       <!-- Task/SubTask Labels -->
