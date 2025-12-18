@@ -166,11 +166,11 @@
       </trans-unit>
       <trans-unit id="36" resname="subdomainPlaceholder">
         <source>subdomainPlaceholder</source>
-        <target>Ex. : cvve</target>
+        <target>Ex. : CVVE</target>
       </trans-unit>
       <trans-unit id="37" resname="subdomainHelp">
         <source>subdomainHelp</source>
-        <target>Ce sous-domaine sera utilisé pour accéder au club (Ex. : cvve)</target>
+        <target>Ce sous-domaine sera utilisé pour accéder au club (Ex. : CVVE)</target>
       </trans-unit>
       <trans-unit id="38" resname="active">
         <source>active</source>
@@ -256,7 +256,7 @@
       </trans-unit>
       <trans-unit id="57" resname="canInspect">
         <source>canInspect</source>
-        <target>Peut inspecter et valider les activités sensibles du club</target>
+        <target>Peut réaliser ou valider les tâches critiques au sein du club</target>
       </trans-unit>
       <trans-unit id="58" resname="canManageMembers">
         <source>canManageMembers</source>
@@ -324,7 +324,7 @@
       </trans-unit>
       <trans-unit id="72" resname="infrastructure">
         <source>infrastructure</source>
-        <target>Infrastructure</target>
+        <target>Autre</target>
       </trans-unit>
 
       <!-- Equipment Owners -->
@@ -468,7 +468,7 @@
       </trans-unit>
       <trans-unit id="158n" resname="existingUserInfo">
         <source>existingUserInfo</source>
-        <target>Cet utilisateur a déjà un compte sur Tarmac. L'invitation sera automatiquement liée à son compte.</target>
+        <target>Cet utilisateur a déjà un compte TARMAC. L'invitation sera automatiquement liée à son compte.</target>
       </trans-unit>
       <trans-unit id="158o" resname="howItWorks">
         <source>howItWorks</source>
@@ -480,11 +480,11 @@
       </trans-unit>
       <trans-unit id="158q" resname="invitationExistingUser">
         <source>invitationExistingUser</source>
-        <target>Si l'utilisateur a déjà un compte, il pourra accepter directement</target>
+        <target>Si l'utilisateur a déjà un compte TARMAC, il pourra accepter directement.</target>
       </trans-unit>
       <trans-unit id="158r" resname="invitationNewUser">
         <source>invitationNewUser</source>
-        <target>Sinon, il pourra créer son compte en acceptant l'invitation</target>
+        <target>Sinon, il pourra créer son compte en acceptant l'invitation.</target>
       </trans-unit>
       <trans-unit id="158s" resname="invitationValidDays">
         <source>invitationValidDays</source>
@@ -612,7 +612,7 @@
       </trans-unit>
       <trans-unit id="104" resname="inspectorHelp">
         <source>inspectorHelp</source>
-        <target>Dispose de la qualification PART66L</target>
+        <target>Dispose de la qualification PART 66L</target>
       </trans-unit>
       <trans-unit id="1600" resname="pilot">
         <source>pilot</source>
@@ -620,15 +620,15 @@
       </trans-unit>
       <trans-unit id="1601" resname="pilotHelp">
         <source>pilotHelp</source>
-        <target>Pilote propriétaire habilité à maintenir les planeurs</target>
+        <target>Pilote propriétaire habilité à maintenir les planeurs du club</target>
       </trans-unit>
       <trans-unit id="1602" resname="qualifiedTooltip">
         <source>qualifiedTooltip</source>
-        <target>Dispose de la qualification PART66L</target>
+        <target>Dispose de la qualification PART 66L</target>
       </trans-unit>
       <trans-unit id="1603" resname="pilotTooltip">
         <source>pilotTooltip</source>
-        <target>Pilote propriétaire habilité à maintenir les planeurs</target>
+        <target>Pilote propriétaire habilité à maintenir les planeurs du club</target>
       </trans-unit>
 
       <!-- Validation Messages -->
@@ -729,7 +729,7 @@
       </trans-unit>
       <trans-unit id="127" resname="taskCannotBeClosed">
         <source>taskCannotBeClosed</source>
-        <target>Cette tâche ne peut pas être clôturée (sous-tâches non terminées ou validation requise).</target>
+        <target>Cette tâche ne peut pas être clôturée (sous-tâches non terminées ou validation tâche critique requise).</target>
       </trans-unit>
       <trans-unit id="128" resname="commentAdded">
         <source>commentAdded</source>
@@ -741,7 +741,7 @@
       </trans-unit>
       <trans-unit id="128b" resname="pilotRequiredForAircraftTasks">
         <source>pilotRequiredForAircraftTasks</source>
-        <target>Vous devez être pilote propriétaire pour créer des tâches sur des aéronefs.</target>
+        <target>Vous devez être pilote propriétaire pour créer des tâches sur des avions.</target>
       </trans-unit>
 
       <!-- Task/SubTask Labels -->
@@ -755,11 +755,11 @@
       </trans-unit>
       <trans-unit id="128e" resname="inspectedBy">
         <source>inspectedBy</source>
-        <target>Inspecté par</target>
+        <target>Validé par</target>
       </trans-unit>
       <trans-unit id="128f" resname="inspectedAt">
         <source>inspectedAt</source>
-        <target>Inspecté le</target>
+        <target>Validé le</target>
       </trans-unit>
       <trans-unit id="128g" resname="dueAt">
         <source>dueAt</source>
@@ -829,7 +829,7 @@
       </trans-unit>
       <trans-unit id="139d" resname="planImportWarningTitle">
         <source>planImportWarningTitle</source>
-        <target>Attention, cette action est destructive</target>
+        <target>Attention, cette action est destructive.</target>
       </trans-unit>
       <trans-unit id="139e" resname="planImportWarningMessage">
         <source>planImportWarningMessage</source>
@@ -929,7 +929,7 @@
       </trans-unit>
       <trans-unit id="139aa" resname="planSpreadsheet.header.requiresInspection">
         <source>planSpreadsheet.header.requiresInspection</source>
-        <target>Vérification requise</target>
+        <target>Validation requise</target>
       </trans-unit>
       <trans-unit id="140" resname="noPlansAvailable">
         <source>noPlansAvailable</source>
@@ -999,7 +999,7 @@
       </trans-unit>
       <trans-unit id="1604" resname="requiresValidationTooltip">
         <source>requiresValidationTooltip</source>
-        <target>Cette sous-tâche nécessite une validation par un membre qualifié PART66L</target>
+        <target>Cette sous-tâche nécessite une validation par un membre qualifié PART 66L</target>
       </trans-unit>
       <trans-unit id="157" resname="awaitingInspection">
         <source>awaitingInspection</source>
@@ -1007,7 +1007,7 @@
       </trans-unit>
       <trans-unit id="157a" resname="tasksToInspect">
         <source>tasksToInspect</source>
-        <target>Tâches à inspecter</target>
+        <target>Tâches à valider</target>
       </trans-unit>
       <trans-unit id="1605" resname="subTasksToValidate">
         <source>subTasksToValidate</source>
@@ -1107,7 +1107,7 @@
       </trans-unit>
       <trans-unit id="162" resname="approveInspection">
         <source>approveInspection</source>
-        <target>Approuver la tâche critique</target>
+        <target>Valider la tâche critique</target>
       </trans-unit>
       <trans-unit id="163" resname="rejectInspection">
         <source>rejectInspection</source>
@@ -1335,7 +1335,7 @@
       </trans-unit>
       <trans-unit id="217" resname="toInspect">
         <source>toInspect</source>
-        <target>À inspecter</target>
+        <target>À approuver</target>
       </trans-unit>
       <trans-unit id="218" resname="noPendingTasks">
         <source>noPendingTasks</source>
@@ -1347,7 +1347,7 @@
       </trans-unit>
       <trans-unit id="220" resname="inspect">
         <source>inspect</source>
-        <target>Inspecter</target>
+        <target>Approuver</target>
       </trans-unit>
       <trans-unit id="221" resname="viewTask">
         <source>viewTask</source>
@@ -1459,7 +1459,7 @@
       </trans-unit>
       <trans-unit id="246" resname="infrastructureType">
         <source>infrastructureType</source>
-        <target>Infrastructure</target>
+        <target>Autre</target>
       </trans-unit>
       <trans-unit id="247" resname="searchPlans">
         <source>searchPlans</source>
@@ -1605,7 +1605,7 @@
       </trans-unit>
       <trans-unit id="303" resname="fileFormatHelp">
         <source>fileFormatHelp</source>
-        <target>Le fichier doit être au format Excel (.xls ou .xlsx) avec les colonnes : Courriel, Prénom, Nom</target>
+        <target>Le fichier doit être au format Excel (.xls ou .xlsx) avec les colonnes : Courriel, Prénom, Nom.</target>
       </trans-unit>
       <trans-unit id="304" resname="givavFileDescription">
         <source>givavFileDescription</source>
@@ -1725,7 +1725,7 @@
       </trans-unit>
       <trans-unit id="334" resname="inspectSubTask">
         <source>inspectSubTask</source>
-        <target>Inspecter la sous-tâche</target>
+        <target>Valider la sous-tâche</target>
       </trans-unit>
       <trans-unit id="335" resname="allSubTasksMustBeClosed">
         <source>allSubTasksMustBeClosed</source>
