@@ -75,18 +75,18 @@ class EquipmentController extends ExtendedController
             $qb = $this->taskRepository->queryAll();
             $qb = $this->taskRepository->filterByEquipment($qb, $equipment);
             $qb = $this->taskRepository->filterByStatus($qb, 'open');
-            
+
             // Apply pilot visibility filter: non-pilotes cannot see glider tasks
             $isManager = $this->isGranted('MANAGE');
             $isInspector = $this->isGranted('INSPECT');
             $isPilote = $this->isGranted('PILOT');
-            
+
             if (!$isPilote && !$isManager && !$isInspector) {
                 $qb = $this->taskRepository->filterByFacilityEquipment($qb);
             }
-            
+
             $tasks = $qb->getQuery()->getResult();
-            
+
             // Count total pending subtasks
             $subtasksCount = 0;
             foreach ($tasks as $task) {
@@ -96,7 +96,7 @@ class EquipmentController extends ExtendedController
                     }
                 }
             }
-            
+
             $pendingCounts[$equipment->getId()] = [
                 'tasks' => count($tasks),
                 'subtasks' => $subtasksCount,
@@ -169,16 +169,16 @@ class EquipmentController extends ExtendedController
         $qb = $this->taskRepository->queryAll();
         $qb = $this->taskRepository->filterByEquipment($qb, $equipment);
         $qb = $this->taskRepository->filterByStatus($qb, 'open');
-        
+
         // Apply pilot visibility filter: non-pilotes cannot see glider tasks
         $isManager = $this->isGranted('MANAGE');
         $isInspector = $this->isGranted('INSPECT');
         $isPilote = $this->isGranted('PILOT');
-        
+
         if (!$isPilote && !$isManager && !$isInspector) {
             $qb = $this->taskRepository->filterByFacilityEquipment($qb);
         }
-        
+
         $qb = $this->taskRepository->orderByRelevantDate($qb, 'ASC');
         $pendingTasks = $qb->setMaxResults(10)->getQuery()->getResult();
 
@@ -298,6 +298,9 @@ class EquipmentController extends ExtendedController
             'club' => $club,
         ]);
 
+        // Remove equipment field since we're already on an equipment page
+        $form->remove('equipment');
+
         // Add plan selection
         $form->add('plan', \Symfony\Bridge\Doctrine\Form\Type\EntityType::class, [
             'class' => \App\Entity\Plan::class,
@@ -315,6 +318,11 @@ class EquipmentController extends ExtendedController
             $plan = $data['plan'];
             $dueAt = $data['dueAt'];
 
+            // Convert DateTime to DateTimeImmutable if needed
+            if ($dueAt instanceof \DateTime) {
+                $dueAt = \DateTimeImmutable::createFromMutable($dueAt);
+            }
+
             try {
                 $application = $this->planApplier->applyPlan(
                     $plan,
@@ -331,11 +339,29 @@ class EquipmentController extends ExtendedController
             }
         }
 
+        // Get timeline data if applying with a due date
+        $timeline = [];
+        if ($form->isSubmitted() && $form->get('dueAt')->getData()) {
+            $dueAt = $form->get('dueAt')->getData();
+
+            if ($dueAt) {
+                // Convert DateTime to DateTimeImmutable if needed
+                if ($dueAt instanceof \DateTime) {
+                    $dueAt = \DateTimeImmutable::createFromMutable($dueAt);
+                }
+
+                $startDate = $dueAt->modify('-2 weeks');
+                $endDate = $dueAt->modify('+2 weeks');
+                $timeline = $this->planApplier->getApplicationsInDateRange($equipment, $startDate, $endDate);
+            }
+        }
+
         return $this->render('club/equipment/apply_plan.html.twig', [
             'club' => $club,
             'equipment' => $equipment,
             'availablePlans' => $availablePlans,
             'form' => $form,
+            'timeline' => $timeline,
         ]);
     }
 }
