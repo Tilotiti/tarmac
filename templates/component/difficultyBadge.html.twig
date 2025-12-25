@@ -4,9 +4,12 @@
   Usage:
     {% include 'component/difficultyBadge.html.twig' with {'difficulty': task.difficulty} %}
     {% include 'component/difficultyBadge.html.twig' with {'difficulty': 2, 'size': 'sm'} %}
+    {% include 'component/difficultyBadge.html.twig' with {'label': task.difficultyLabel, 'color': task.difficultyColor} %}
   
   Parameters:
-  - difficulty: integer (1-3) representing the difficulty level
+  - difficulty: integer (1-3) representing the difficulty level (for single difficulty)
+  - label: string (optional) - pre-formatted label (e.g., 'debutant - experimente' for range)
+  - color: string (optional) - color name (e.g., 'success', 'warning', 'danger')
   - size: string (optional) - 'sm' for small badge
 #}
 {% set difficultyMap = {
@@ -21,7 +24,24 @@
   3: 'danger'
 } %}
 
-<span class="badge bg-{{ difficultyColorMap[difficulty] }}-lt text-white{% if size is defined %} badge-{{ size }}{% endif %}">
+{% if label is defined %}
+	{# Use provided label and color (for task with range) #}
+	{% set badgeLabel = label %}
+	{% set badgeColor = color|default('warning') %}
+	{# If label contains a range (e.g., 'debutant - experimente'), translate each part separately #}
+	{% if ' - ' in badgeLabel %}
+		{% set labelParts = badgeLabel|split(' - ') %}
+		{% set badgeLabel = (labelParts[0]|trans) ~ ' - ' ~ (labelParts[1]|trans) %}
+	{% else %}
+		{% set badgeLabel = badgeLabel|trans %}
+	{% endif %}
+{% else %}
+	{# Use integer difficulty (for single subtask) #}
+	{% set badgeLabel = difficultyMap[difficulty]|trans %}
+	{% set badgeColor = difficultyColorMap[difficulty] %}
+{% endif %}
+
+<span class="badge bg-{{ badgeColor }}-lt text-white{% if size is defined %} badge-{{ size }}{% endif %}">
 	<i class="ti ti-gauge me-1"></i>
-	{{ difficultyMap[difficulty]|trans }}
+	{{ badgeLabel }}
 </span>
