@@ -46,7 +46,7 @@ class TaskType extends AbstractType
                     'class' => Equipment::class,
                     'choice_label' => 'name',
                     'group_by' => function (Equipment $equipment) {
-                        return $this->translator->trans($equipment->getType()->value . 'Type');
+                        return $this->translator->trans($equipment->getType()->getLabel() . 'Type');
                     },
                     'query_builder' => function (EntityRepository $er) use ($club, $isPilot) {
                         $qb = $er->createQueryBuilder('e')
