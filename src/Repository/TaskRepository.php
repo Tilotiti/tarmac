@@ -129,9 +129,20 @@ class TaskRepository extends ServiceEntityRepository
 
     public function filterByDifficulty(QueryBuilder $qb, int $difficulty): QueryBuilder
     {
+        // Filter tasks that have open subtasks (status 'open' or 'done') with the requested difficulty
+        // Use EXISTS subquery to avoid DISTINCT issues with ORDER BY
+        $subQuery = $this->createQueryBuilder('task_sub')
+            ->select('1')
+            ->join('task_sub.subTasks', 'subtask_difficulty')
+            ->where('subtask_difficulty.difficulty = :difficulty')
+            ->andWhere('subtask_difficulty.status IN (:openStatuses)')
+            ->andWhere('task_sub.id = task.id')
+            ->getDQL();
+
         return $qb
-            ->andWhere('task.difficulty = :difficulty')
-            ->setParameter('difficulty', $difficulty);
+            ->andWhere('EXISTS (' . $subQuery . ')')
+            ->setParameter('difficulty', $difficulty)
+            ->setParameter('openStatuses', ['open', 'done']);
     }
 
     public function filterByDifficultyRange(QueryBuilder $qb, int $min, int $max): QueryBuilder

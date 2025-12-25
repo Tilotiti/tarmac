@@ -69,7 +69,7 @@
 						{% endif %}
 
 						{# Difficulty badge #}
-						{% include 'component/difficultyBadge.html.twig' with {'difficulty': task.difficulty} %}
+						{% include 'component/difficultyBadge.html.twig' with {'label': task.difficultyLabel, 'color': task.difficultyColor} %}
 					</div>
 				</div>
 
@@ -105,7 +105,7 @@
 					{% endif %}
 
 					{# Difficulty badge with icon and same style #}
-					{% include 'component/difficultyBadge.html.twig' with {'difficulty': task.difficulty} %}
+					{% include 'component/difficultyBadge.html.twig' with {'label': task.difficultyLabel, 'color': task.difficultyColor} %}
 				</div>
 
 				{# Progress bar at the bottom - full width #}

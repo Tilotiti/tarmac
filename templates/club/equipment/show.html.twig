@@ -265,7 +265,7 @@
 							<div
 								class="d-flex gap-2 align-items-center">
 								{# Difficulty badge #}
-								{% include 'component/difficultyBadge.html.twig' with {difficulty: task.difficulty} %}
+								{% include 'component/difficultyBadge.html.twig' with {'label': task.difficultyLabel, 'color': task.difficultyColor} %}
 
 								{# Inspection badge #}
 								{% if task.requiresInspection %}

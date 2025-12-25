@@ -177,37 +177,84 @@ class Task
 
     /**
      * Get computed difficulty as rounded average of all subtasks
+     * Kept for backward compatibility, returns minimum of available range
      */
     public function getDifficulty(): int
     {
-        $subTasks = $this->subTasks;
-        if ($subTasks->count() === 0) {
-            return 2; // Default difficulty if no subtasks
+        $range = $this->getAvailableDifficultyRange();
+        if ($range === null) {
+            return 2; // Default difficulty if no open subtasks
+        }
+        return $range[0]; // Return minimum for compatibility
+    }
+
+    /**
+     * Get available difficulty range from open subtasks
+     * Returns [min, max] array or null if no open subtasks
+     * Open subtasks are those with status 'open' or 'done'
+     */
+    public function getAvailableDifficultyRange(): ?array
+    {
+        $openSubTasks = [];
+        foreach ($this->subTasks as $subTask) {
+            // Consider subtasks as "open" if status is 'open' or 'done'
+            $status = $subTask->getStatus();
+            if ($status === 'open' || $status === 'done') {
+                $openSubTasks[] = $subTask->getDifficulty();
+            }
         }
 
-        $total = 0;
-        foreach ($subTasks as $subTask) {
-            $total += $subTask->getDifficulty();
+        if (empty($openSubTasks)) {
+            return null;
         }
 
-        return (int) round($total / $subTasks->count());
+        $min = min($openSubTasks);
+        $max = max($openSubTasks);
+
+        return [$min, $max];
     }
 
     public function getDifficultyLabel(): string
     {
-        $difficulty = $this->getDifficulty();
-        return match ($difficulty) {
+        $range = $this->getAvailableDifficultyRange();
+        if ($range === null) {
+            return 'experimente'; // Default if no open subtasks
+        }
+
+        $min = $range[0];
+        $max = $range[1];
+
+        $minLabel = match ($min) {
             1 => 'debutant',
             2 => 'experimente',
             3 => 'expert',
             default => 'experimente',
         };
+
+        // If min and max are the same, return single label
+        if ($min === $max) {
+            return $minLabel;
+        }
+
+        $maxLabel = match ($max) {
+            1 => 'debutant',
+            2 => 'experimente',
+            3 => 'expert',
+            default => 'experimente',
+        };
+
+        return $minLabel . ' - ' . $maxLabel;
     }
 
     public function getDifficultyColor(): string
     {
-        $difficulty = $this->getDifficulty();
-        return match ($difficulty) {
+        $range = $this->getAvailableDifficultyRange();
+        if ($range === null) {
+            return 'warning'; // Default if no open subtasks
+        }
+
+        $min = $range[0];
+        return match ($min) {
             1 => 'success',
             2 => 'warning',
             3 => 'danger',
