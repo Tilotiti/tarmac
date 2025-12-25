@@ -10,9 +10,14 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaskFilterType extends AbstractFilterType
 {
+    public function __construct(private readonly TranslatorInterface $translator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $club = $options['club'];
@@ -21,6 +26,9 @@ class TaskFilterType extends AbstractFilterType
             ->add('equipment', EntityType::class, [
                 'class' => Equipment::class,
                 'choice_label' => 'name',
+                'group_by' => function (Equipment $equipment) {
+                    return $this->translator->trans($equipment->getType()->getLabel() . 'Type');
+                },
                 'label' => 'equipment',
                 'required' => false,
                 'placeholder' => 'all',
