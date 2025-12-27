@@ -66,7 +66,6 @@ class SubTaskCompleteFormType extends AbstractType
                 'label' => 'whoDidTask',
                 'required' => true,
                 'expanded' => true,
-                'data' => $currentMembership,
                 'attr' => [
                     'class' => 'form-check-input',
                 ],
@@ -74,7 +73,6 @@ class SubTaskCompleteFormType extends AbstractType
             ->add('timeSpent', IntegerType::class, [
                 'label' => 'timeSpent',
                 'required' => true,
-                'data' => 1,
                 'attr' => [
                     'class' => 'form-control',
                     'min' => 1,
@@ -104,7 +102,6 @@ class SubTaskCompleteFormType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'required' => false,
-                'data' => $currentMembership ? [$currentMembership] : [],
                 'attr' => [
                     'class' => 'form-check-input',
                 ],

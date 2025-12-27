@@ -147,6 +147,53 @@ class LoadDemoFixturesCommand extends Command
 
         $io->success('Created 5 memberships');
 
+        // Step 4.5: Create admin user and add to all clubs
+        $io->section('Creating admin user and adding to all clubs');
+        
+        // Flush to ensure demo club is saved before retrieving all clubs
+        $this->entityManager->flush();
+        
+        $adminUser = $this->createOrGetUser(
+            'contact+admin-system@tarmac.club',
+            'Admin',
+            'System',
+            'demo123',
+            ['ROLE_ADMIN']
+        );
+        
+        // Flush to ensure admin user has an ID before checking memberships
+        $this->entityManager->flush();
+        
+        // Get all clubs (including the demo club we just created)
+        $allClubs = $this->entityManager->getRepository(Club::class)->findAll();
+        
+        $adminMembershipCount = 0;
+        foreach ($allClubs as $clubToAdd) {
+            // Check if membership already exists
+            $existingMembership = $this->entityManager->getRepository(Membership::class)->findOneBy([
+                'user' => $adminUser,
+                'club' => $clubToAdd,
+            ]);
+            
+            if (!$existingMembership) {
+                $adminMembership = new Membership();
+                $adminMembership->setUser($adminUser);
+                $adminMembership->setClub($clubToAdd);
+                $adminMembership->setIsManager(true);
+                $adminMembership->setIsInspector(true);
+                $adminMembership->setIsPilote(true);
+                $this->entityManager->persist($adminMembership);
+                $adminMembershipCount++;
+            }
+        }
+        
+        if ($adminMembershipCount > 0) {
+            $this->entityManager->flush();
+            $io->success(sprintf('Created %d memberships for admin user in %d clubs', $adminMembershipCount, count($allClubs)));
+        } else {
+            $io->note('Admin user already member of all clubs');
+        }
+
         // Step 5: Create equipment
         $io->section('Creating equipment');
 
@@ -723,12 +770,13 @@ class LoadDemoFixturesCommand extends Command
             '  - contact+user@tarmac.club (Pilot) - password: demo123',
             '  - contact+nonpilot@tarmac.club (Non-Pilot Member) - password: demo123',
             '  - contact+admin@tarmac.club (Manager, Inspector, Pilot) - password: demo123',
+            '  - contact+admin-system@tarmac.club (System Admin, ROLE_ADMIN, member of all clubs) - password: demo123',
         ]);
 
         return Command::SUCCESS;
     }
 
-    private function createOrGetUser(string $email, string $firstname, string $lastname, string $plainPassword): User
+    private function createOrGetUser(string $email, string $firstname, string $lastname, string $plainPassword, array $roles = []): User
     {
         $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => $email]);
@@ -739,6 +787,10 @@ class LoadDemoFixturesCommand extends Command
             $user->setPassword($hashedPassword);
             $user->setVerified(true);
             $user->setActive(true);
+            // Update roles if provided
+            if (!empty($roles)) {
+                $user->setRoles($roles);
+            }
             return $user;
         }
 
@@ -749,6 +801,11 @@ class LoadDemoFixturesCommand extends Command
         $user->setLastname($lastname);
         $user->setVerified(true);
         $user->setActive(true);
+        
+        // Set roles if provided, otherwise default to ROLE_USER
+        if (!empty($roles)) {
+            $user->setRoles($roles);
+        }
 
         $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
         $user->setPassword($hashedPassword);

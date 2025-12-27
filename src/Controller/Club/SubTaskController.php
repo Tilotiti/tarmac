@@ -185,12 +185,48 @@ class SubTaskController extends ExtendedController
             ]);
             $isManager = $this->isGranted('MANAGE');
 
-            // Check for existing contributions (e.g., after rejection)
+            // Check for existing contributions (e.g., after rejection or reopen)
             $existingContributions = $this->contributionRepository->findBySubTaskIndexedByMembership($subTask);
             $formData = null;
 
+            // Find who closed the subtask last (from activities)
+            $lastDoneByMembership = null;
+            $activities = $subTask->getActivities()->toArray();
+            // Filter activities for DONE or INSPECTED_APPROVED (these indicate who closed the subtask)
+            $closingActivities = array_filter($activities, function ($activity) {
+                return in_array($activity->getType(), [ActivityType::DONE, ActivityType::INSPECTED_APPROVED]);
+            });
+            
+            if (!empty($closingActivities)) {
+                // Sort by creation date descending to get the most recent one
+                usort($closingActivities, function ($a, $b) {
+                    return $b->getCreatedAt() <=> $a->getCreatedAt();
+                });
+                
+                $lastClosingActivity = $closingActivities[0];
+                $lastDoneByUser = $lastClosingActivity->getUser();
+                
+                if ($lastDoneByUser) {
+                    $lastDoneByMembership = $this->membershipRepository->findOneBy([
+                        'user' => $lastDoneByUser,
+                        'club' => $club,
+                    ]);
+                }
+            }
+
+            // Pre-fill form with existing data (if contributions exist or we found who closed it)
+            $formData = [];
+            
+            if ($lastDoneByMembership !== null) {
+                // Pre-fill doneBy with the last person who closed the subtask
+                $formData['doneBy'] = $lastDoneByMembership;
+            } elseif ($currentMembership) {
+                // Default to current user if no previous closer found
+                $formData['doneBy'] = $currentMembership;
+            }
+            
             if (!empty($existingContributions)) {
-                // Pre-fill form with existing contribution data
+                // Pre-fill time and contributors from existing contributions
                 $totalTimeSpent = 0;
                 $contributorMemberships = [];
 
@@ -199,11 +235,12 @@ class SubTaskController extends ExtendedController
                     $contributorMemberships[] = $contribution->getMembership();
                 }
 
-                $formData = [
-                    'doneBy' => $currentMembership,
-                    'timeSpent' => (int) ceil($totalTimeSpent), // Convert back to integer hours
-                    'contributors' => $contributorMemberships,
-                ];
+                $formData['timeSpent'] = (int) ceil($totalTimeSpent); // Convert back to integer hours
+                $formData['contributors'] = $contributorMemberships;
+            } else {
+                // Default values if no contributions exist
+                $formData['timeSpent'] = 1;
+                $formData['contributors'] = $currentMembership ? [$currentMembership] : [];
             }
 
             $completeForm = $this->createForm(SubTaskCompleteFormType::class, $formData, [
@@ -282,8 +319,17 @@ class SubTaskController extends ExtendedController
             /** @var Membership $doneByMembership */
             $doneByMembership = $data['doneBy'];
             $timeSpent = $data['timeSpent'];
-            /** @var array<Membership> $contributors */
+            /** @var array<Membership>|Collection $contributors */
             $contributors = $data['contributors'] ?? [];
+            
+            // Convert to array if it's a Collection
+            if ($contributors instanceof \Doctrine\Common\Collections\Collection) {
+                $contributors = $contributors->toArray();
+            }
+            // Ensure it's an array
+            if (!is_array($contributors)) {
+                $contributors = [];
+            }
 
             // Mark subtask as done (auto-validate if user is qualified)
             $isInspector = $doneByMembership->isInspector();
@@ -454,6 +500,48 @@ class SubTaskController extends ExtendedController
 
         $this->addFlash('error', 'invalidRequest');
         return $this->redirectToRoute('club_task_show', ['id' => $subTask->getTask()->getId()]);
+    }
+
+    #[Route('/{id}/reopen', name: 'club_subtask_reopen', methods: ['POST'], requirements: ['id' => '\d+'])]
+    #[IsGranted(SubTaskVoter::REOPEN, 'subTask')]
+    public function reopen(SubTask $subTask, Request $request): Response
+    {
+        $task = $subTask->getTask();
+
+        $reason = null;
+        
+        // Try to get reason from form if present (for modal usage)
+        if ($request->request->has('activity_form')) {
+            $form = $this->createForm(ActivityFormType::class, null, [
+                'required' => false,
+                'label' => 'reopenReason',
+                'placeholder' => 'optionalReason',
+            ]);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $data = $form->getData();
+                $reason = $data['message'] ?? null;
+            }
+        }
+
+        try {
+            $this->taskStatusService->handleSubTaskReopen($subTask, $this->getUser(), $reason);
+
+            $this->addFlash('success', 'subTaskReopened');
+
+            return $this->redirectToRoute('club_subtask_show', [
+                'taskId' => $task->getId(),
+                'id' => $subTask->getId(),
+            ]);
+        } catch (\RuntimeException $e) {
+            $this->addFlash('error', $e->getMessage());
+
+            return $this->redirectToRoute('club_subtask_show', [
+                'taskId' => $task->getId(),
+                'id' => $subTask->getId(),
+            ]);
+        }
     }
 
     #[Route('/{id}/toggle-priority', name: 'club_subtask_toggle_priority', methods: ['POST'], requirements: ['id' => '\d+'])]
