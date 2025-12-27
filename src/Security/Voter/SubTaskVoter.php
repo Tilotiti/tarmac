@@ -17,6 +17,7 @@ class SubTaskVoter extends Voter
     public const DO = 'SUBTASK_DO';
     public const INSPECT = 'SUBTASK_INSPECT';
     public const CANCEL = 'SUBTASK_CANCEL';
+    public const REOPEN = 'SUBTASK_REOPEN';
 
     public function __construct(
         private readonly Security $security
@@ -32,6 +33,7 @@ class SubTaskVoter extends Voter
             self::DO,
             self::INSPECT,
             self::CANCEL,
+            self::REOPEN,
         ]) && $subject instanceof SubTask;
     }
 
@@ -70,6 +72,7 @@ class SubTaskVoter extends Voter
             self::DO => $this->canDo($subTask, $user, $isManager, $isInspector, $isPilote),
             self::INSPECT => $this->canInspect($subTask, $isInspector),
             self::CANCEL => $this->canCancel($subTask, $user, $isManager),
+            self::REOPEN => $this->canReopen($subTask, $user, $isManager, $isInspector, $isPilote),
             default => false,
         };
     }
@@ -177,6 +180,33 @@ class SubTaskVoter extends Voter
 
         // SubTask must be done and not yet inspected
         return $subTask->isDone() && !$subTask->isInspected() && $subTask->getStatus() === 'done';
+    }
+
+    private function canReopen(SubTask $subTask, User $user, bool $isManager, bool $isInspector, bool $isPilote): bool
+    {
+        // SubTask must be closed
+        if (!$subTask->isClosed()) {
+            return false;
+        }
+
+        // Parent task must be open
+        $task = $subTask->getTask();
+        if (!$task->isOpen()) {
+            return false;
+        }
+
+        $equipment = $task->getEquipment();
+
+        // Check pilot rules for aircraft equipment (same as canDo)
+        if ($equipment->getType()->isAircraft()) {
+            // Non-pilotes cannot reopen aircraft subtasks (unless manager or inspector)
+            if (!$isPilote && !$isManager && !$isInspector) {
+                return false;
+            }
+        }
+
+        // Any club member can reopen closed subtasks (with pilot rules above)
+        return true;
     }
 }
 

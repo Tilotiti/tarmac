@@ -34,6 +34,13 @@
 				<span class="d-none d-sm-inline">{{ 'rejectInspection'|trans }}</span>
 			</button>
 		{% endif %}
+
+		{% if is_granted('SUBTASK_REOPEN', subTask) and subTask.isClosed() and task.isOpen() %}
+			<button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#reopenModal" style="min-height: 44px;" title="{{ 'reopenSubTask'|trans }}">
+				<i class="ti ti-refresh me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'reopenSubTask'|trans }}</span>
+			</button>
+		{% endif %}
 	</div>
 {% endblock %}
 
@@ -363,6 +370,33 @@
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="min-height: 44px;">{{ 'cancel'|trans }}</button>
 							<button type="submit" class="btn btn-danger" style="min-height: 44px;">{{ 'rejectInspection'|trans }}</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
+	{# Reopen Modal #}
+	{% if is_granted('SUBTASK_REOPEN', subTask) and subTask.isClosed() and task.isOpen() %}
+		<div class="modal fade" id="reopenModal" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">{{ 'reopenSubTask'|trans }}</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<form method="post" action="{{ path('club_subtask_reopen', {taskId: task.id, id: subTask.id}) }}">
+						<input type="hidden" name="activity_form[_token]" value="{{ csrf_token('activity_form') }}">
+						<div class="modal-body">
+							<div class="mb-3">
+								<label class="form-label">{{ 'reopenReason'|trans }}</label>
+								<textarea name="activity_form[message]" class="form-control" rows="3" placeholder="{{ 'optionalReason'|trans }}"></textarea>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="min-height: 44px;">{{ 'cancel'|trans }}</button>
+							<button type="submit" class="btn btn-outline-secondary" style="min-height: 44px;">{{ 'reopenSubTask'|trans }}</button>
 						</div>
 					</form>
 				</div>

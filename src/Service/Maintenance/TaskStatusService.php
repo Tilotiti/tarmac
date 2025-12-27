@@ -270,6 +270,43 @@ class TaskStatusService
     }
 
     /**
+     * Handle reopening a closed subtask
+     */
+    public function handleSubTaskReopen(SubTask $subTask, User $user, ?string $reason = null): void
+    {
+        // Verify subtask is closed
+        if (!$subTask->isClosed()) {
+            throw new \RuntimeException('Cannot reopen subtask: subtask is not closed');
+        }
+
+        // Verify parent task is open
+        $task = $subTask->getTask();
+        if (!$task->isOpen()) {
+            throw new \RuntimeException('Cannot reopen subtask: parent task is not open');
+        }
+
+        // Revert to open state
+        $subTask->setStatus('open');
+        
+        // Reset done/inspection fields (contributions are preserved like in rejection)
+        $subTask->setDoneBy(null);
+        $subTask->setDoneAt(null);
+        $subTask->setInspectedBy(null);
+        $subTask->setInspectedAt(null);
+
+        // Log activity with optional reason
+        $activity = new Activity();
+        $activity->setTask($task);
+        $activity->setSubTask($subTask);
+        $activity->setType(ActivityType::UNDONE);
+        $activity->setUser($user);
+        $activity->setMessage($reason);
+        $this->entityManager->persist($activity);
+
+        $this->entityManager->flush();
+    }
+
+    /**
      * Handle cancelling a maintenance plan application (cascades to all tasks/subtasks)
      */
     public function handleCancelApplication(\App\Entity\PlanApplication $application, User $user, ?string $reason = null): void

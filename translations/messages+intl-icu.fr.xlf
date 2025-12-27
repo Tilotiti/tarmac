@@ -783,6 +783,10 @@
         <source>subTaskCancelled</source>
         <target>La sous-tâche a été annulée.</target>
       </trans-unit>
+      <trans-unit id="132a" resname="subTaskReopened">
+        <source>subTaskReopened</source>
+        <target>La sous-tâche a été réouverte.</target>
+      </trans-unit>
 
       <!-- Flash Messages: Inspection -->
       <trans-unit id="133" resname="inspectionApproved">
@@ -1120,6 +1124,14 @@
       <trans-unit id="165" resname="cancellationReason">
         <source>cancellationReason</source>
         <target>Raison de l'annulation</target>
+      </trans-unit>
+      <trans-unit id="165a" resname="reopenSubTask">
+        <source>reopenSubTask</source>
+        <target>Réouvrir la sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="165b" resname="reopenReason">
+        <source>reopenReason</source>
+        <target>Raison de la réouverture</target>
       </trans-unit>
       <trans-unit id="166" resname="approve">
         <source>approve</source>
