@@ -57,10 +57,8 @@ class EquipmentController extends ExtendedController
         // Force club context
         $params['club'] = $club;
 
-        // Members can only see active equipments, managers can see all
-        if (!$this->isGranted('MANAGE')) {
-            $params['active'] = true;
-        }
+        // Hide disabled equipments for all users
+        $params['active'] = true;
 
         // Get equipments with pagination
         $equipments = Paginator::paginate(
