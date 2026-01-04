@@ -244,10 +244,14 @@
 					</div>
 				{% endif %}
 
-				{# Time spent #}
-				<div class="mb-3">
-					{{ form_row(completeForm.timeSpent) }}
-				</div>
+			{# Time spent #}
+			<div class="mb-3">
+				{{ form_label(completeForm.timeSpent) }}
+				{{ form_help(completeForm.timeSpent) }}
+				{{ form_widget(completeForm.timeSpent) }}
+				{{ form_errors(completeForm.timeSpent) }}
+				<small class="form-hint">{{ 'timeSpentDivided'|trans }}</small>
+			</div>
 
 				{# Contributors #}
 				<fieldset class="form-fieldset mb-3 pt-1" data-controller="user-list-filter" data-user-list-filter-type-value="contributors">

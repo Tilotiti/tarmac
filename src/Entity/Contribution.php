@@ -28,7 +28,7 @@ class Contribution
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotNull(message: 'timeSpentRequired')]
-    #[Assert\Positive(message: 'timeSpentMustBePositive')]
+    #[Assert\GreaterThanOrEqual(0, message: 'timeSpentMustBePositive')]
     private ?string $timeSpent = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]

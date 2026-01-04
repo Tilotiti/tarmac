@@ -1717,7 +1717,11 @@
       </trans-unit>
       <trans-unit id="329" resname="timeSpentHelp">
         <source>timeSpentHelp</source>
-        <target>Le temps sera divisé entre tous les contributeurs</target>
+        <target>Si la sous-tâche est sans objet et n'a pas besoin d'être réalisée, indiquez 0 comme temps passé et clôturez la sous-tâche.</target>
+      </trans-unit>
+      <trans-unit id="329a" resname="timeSpentDivided">
+        <source>timeSpentDivided</source>
+        <target>Le temps sera divisé entre tous les contributeurs.</target>
       </trans-unit>
       <trans-unit id="330" resname="contributors">
         <source>contributors</source>
@@ -1789,7 +1793,11 @@
       </trans-unit>
       <trans-unit id="345" resname="timeSpentMustBePositive">
         <source>timeSpentMustBePositive</source>
-        <target>Le temps passé doit être supérieur à 0</target>
+        <target>Le temps passé doit être supérieur ou égal à 0</target>
+      </trans-unit>
+      <trans-unit id="345a" resname="timeSpentZeroRequiresClosed">
+        <source>timeSpentZeroRequiresClosed</source>
+        <target>Si le temps passé est 0, la sous-tâche doit être clôturée (car elle n'a pas eu besoin d'être réalisée). Cette sous-tâche nécessite une inspection, vous devez être inspecteur pour utiliser 0.</target>
       </trans-unit>
       <trans-unit id="346" resname="planApplication">
         <source>planApplication</source>

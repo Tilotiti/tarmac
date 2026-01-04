@@ -73,14 +73,15 @@ class SubTaskCompleteFormType extends AbstractType
             ->add('timeSpent', IntegerType::class, [
                 'label' => 'timeSpent',
                 'required' => true,
+                'data' => 1,
                 'attr' => [
                     'class' => 'form-control',
-                    'min' => 1,
+                    'min' => 0,
                     'placeholder' => 'timeSpentPlaceholder',
                 ],
                 'constraints' => [
                     new Assert\NotBlank(message: 'timeSpentRequired'),
-                    new Assert\Positive(message: 'timeSpentMustBePositive'),
+                    new Assert\GreaterThanOrEqual(0, message: 'timeSpentMustBePositive'),
                 ],
                 'help' => 'timeSpentHelp',
             ])
