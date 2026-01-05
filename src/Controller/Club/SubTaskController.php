@@ -333,7 +333,7 @@ class SubTaskController extends ExtendedController
 
             // Validate: if timeSpent is 0, the subtask must be closable (no inspection required or user is inspector)
             $isInspector = $doneByMembership->isInspector();
-            if ($timeSpent === 0 && $subTask->requiresInspection() && !$isInspector) {
+            if ($timeSpent == 0 && $subTask->requiresInspection() && !$isInspector) {
                 $this->addFlash('error', 'timeSpentZeroRequiresClosed');
                 return $this->redirectToRoute('club_subtask_show', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
             }
