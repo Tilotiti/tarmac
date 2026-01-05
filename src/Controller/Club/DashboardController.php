@@ -14,10 +14,6 @@ use App\Controller\ExtendedController;
 use App\Repository\PlanApplicationRepository;
 use App\Form\WelcomeMessageType;
 use Doctrine\ORM\EntityManagerInterface;
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\Writer\SvgWriter;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -163,9 +159,6 @@ class DashboardController extends ExtendedController
     #[IsGranted('MANAGE')]
     public function printPrioritySubTasks(Request $request): Response
     {
-        // Increase memory limit for PDF generation with QR codes
-        ini_set('memory_limit', '512M');
-
         $club = $this->clubResolver->resolve();
         $subdomain = $club->getSubdomain();
 
@@ -189,14 +182,14 @@ class DashboardController extends ExtendedController
 
         $prioritySubTasks = $prioritySubTasksQb->getQuery()->getResult();
 
-        // Generate QR codes for each subtask using SVG (much lighter on memory than PNG)
+        // Build subtasks with QR code URLs
         $subTasksWithQrCodes = [];
-        $svgWriter = new SvgWriter();
+        $qrCodeUrls = [];
 
-        foreach ($prioritySubTasks as $subTask) {
+        // First pass: collect all QR code URLs
+        foreach ($prioritySubTasks as $index => $subTask) {
             $task = $subTask->getTask();
 
-            // Generate URL for the subtask - need to pass subdomain parameter
             $subTaskUrl = $this->urlGenerator->generate(
                 'club_subtask_show',
                 [
@@ -207,27 +200,24 @@ class DashboardController extends ExtendedController
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
 
-            // Generate QR code as SVG (lighter on memory than PNG)
-            $qrCode = Builder::create()
-                ->writer($svgWriter)
-                ->data($subTaskUrl)
-                ->encoding(new Encoding('UTF-8'))
-                ->errorCorrectionLevel(ErrorCorrectionLevel::Low) // Low is sufficient for URLs and uses less memory
-                ->size(80)
-                ->margin(2)
-                ->build();
-
-            $subTasksWithQrCodes[] = [
-                'subTask' => $subTask,
-                'qrCodeDataUri' => $qrCode->getDataUri(),
-            ];
-
-            // Free memory after each QR code generation
-            unset($qrCode);
+            $qrCodeUrls[$index] = 'https://api.qrserver.com/v1/create-qr-code/?' . http_build_query([
+                'size' => '80x80',
+                'data' => $subTaskUrl,
+                'format' => 'png',
+                'margin' => '2',
+            ]);
         }
 
-        // Force garbage collection
-        gc_collect_cycles();
+        // Fetch all QR codes using multi-curl for parallel requests
+        $qrCodeDataUris = $this->fetchQrCodesInParallel($qrCodeUrls);
+
+        // Second pass: build final array with data URIs
+        foreach ($prioritySubTasks as $index => $subTask) {
+            $subTasksWithQrCodes[] = [
+                'subTask' => $subTask,
+                'qrCodeUrl' => $qrCodeDataUris[$index] ?? $qrCodeUrls[$index],
+            ];
+        }
 
         $html = $this->renderView('club/dashboard/printPrioritySubtasks.html.twig', [
             'club' => $club,
@@ -279,6 +269,60 @@ class DashboardController extends ExtendedController
             'club' => $club,
             'form' => $form,
         ]);
+    }
+
+    /**
+     * Fetch multiple QR codes in parallel using multi-curl and return as data URIs.
+     * 
+     * @param array<int, string> $urls
+     * @return array<int, string>
+     */
+    private function fetchQrCodesInParallel(array $urls): array
+    {
+        if (empty($urls)) {
+            return [];
+        }
+
+        $multiHandle = curl_multi_init();
+        $handles = [];
+
+        // Initialize all curl handles
+        foreach ($urls as $index => $url) {
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 10,
+                CURLOPT_FOLLOWLOCATION => true,
+            ]);
+            curl_multi_add_handle($multiHandle, $ch);
+            $handles[$index] = $ch;
+        }
+
+        // Execute all requests in parallel
+        do {
+            $status = curl_multi_exec($multiHandle, $active);
+            if ($active) {
+                curl_multi_select($multiHandle);
+            }
+        } while ($active && $status === CURLM_OK);
+
+        // Collect results
+        $results = [];
+        foreach ($handles as $index => $ch) {
+            $content = curl_multi_getcontent($ch);
+            if ($content !== false && curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200) {
+                $results[$index] = 'data:image/png;base64,' . base64_encode($content);
+            } else {
+                // Fallback to URL if fetch failed
+                $results[$index] = $urls[$index];
+            }
+            curl_multi_remove_handle($multiHandle, $ch);
+            curl_close($ch);
+        }
+
+        curl_multi_close($multiHandle);
+
+        return $results;
     }
 }
 
