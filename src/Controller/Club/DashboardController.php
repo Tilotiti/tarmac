@@ -17,7 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Writer\SvgWriter;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -186,8 +186,10 @@ class DashboardController extends ExtendedController
 
         $prioritySubTasks = $prioritySubTasksQb->getQuery()->getResult();
 
-        // Generate QR codes for each subtask
+        // Generate QR codes for each subtask using SVG (much lighter on memory than PNG)
         $subTasksWithQrCodes = [];
+        $svgWriter = new SvgWriter();
+
         foreach ($prioritySubTasks as $subTask) {
             $task = $subTask->getTask();
 
@@ -202,21 +204,27 @@ class DashboardController extends ExtendedController
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
 
-            // Generate QR code (smaller size for table layout)
+            // Generate QR code as SVG (lighter on memory than PNG)
             $qrCode = Builder::create()
-                ->writer(new PngWriter())
+                ->writer($svgWriter)
                 ->data($subTaskUrl)
                 ->encoding(new Encoding('UTF-8'))
-                ->errorCorrectionLevel(ErrorCorrectionLevel::Medium)
+                ->errorCorrectionLevel(ErrorCorrectionLevel::Low) // Low is sufficient for URLs and uses less memory
                 ->size(80)
-                ->margin(5)
+                ->margin(2)
                 ->build();
 
             $subTasksWithQrCodes[] = [
                 'subTask' => $subTask,
                 'qrCodeDataUri' => $qrCode->getDataUri(),
             ];
+
+            // Free memory after each QR code generation
+            unset($qrCode);
         }
+
+        // Force garbage collection
+        gc_collect_cycles();
 
         $html = $this->renderView('club/dashboard/printPrioritySubtasks.html.twig', [
             'club' => $club,

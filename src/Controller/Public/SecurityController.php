@@ -14,7 +14,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -206,9 +205,6 @@ class SecurityController extends AbstractController
     public function reset(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
-        UserAuthenticatorInterface $userAuthenticator,
-        #[Autowire(service: 'security.authenticator.form_login.main')]
-        FormLoginAuthenticator $formLoginAuthenticator,
         ?string $token = null
     ): Response {
         if ($token) {
@@ -257,12 +253,10 @@ class SecurityController extends AbstractController
 
             $this->addFlash('success', 'passwordResetSuccess');
 
-            // Auto-login the user and redirect to app dashboard
-            return $userAuthenticator->authenticateUser(
-                $user,
-                $formLoginAuthenticator,
-                $request
-            );
+            // Auto-login the user and redirect to clubs page
+            $this->security->login($user);
+
+            return $this->redirectToRoute('public_clubs');
         }
 
         return $this->render('public/security/resetPassword/reset.html.twig', [
