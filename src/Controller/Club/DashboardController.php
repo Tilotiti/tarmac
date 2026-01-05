@@ -163,6 +163,9 @@ class DashboardController extends ExtendedController
     #[IsGranted('MANAGE')]
     public function printPrioritySubTasks(Request $request): Response
     {
+        // Increase memory limit for PDF generation with QR codes
+        ini_set('memory_limit', '512M');
+
         $club = $this->clubResolver->resolve();
         $subdomain = $club->getSubdomain();
 
