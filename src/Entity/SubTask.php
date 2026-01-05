@@ -84,6 +84,9 @@ class SubTask
     #[ORM\Column(type: Types::SMALLINT)]
     private int $position = 0;
 
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $planPosition = null;
+
     /**
      * @var Collection<int, Contribution>
      */
@@ -375,6 +378,18 @@ class SubTask
     public function setPosition(int $position): static
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    public function getPlanPosition(): ?int
+    {
+        return $this->planPosition;
+    }
+
+    public function setPlanPosition(?int $planPosition): static
+    {
+        $this->planPosition = $planPosition;
 
         return $this;
     }

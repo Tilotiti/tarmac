@@ -168,7 +168,10 @@ class DashboardController extends ExtendedController
             ->setParameter('true', true)
             ->andWhere('subtask.status = :open')
             ->setParameter('open', 'open')
+            // Order by dueAt, then by plan position (task and subtask)
             ->orderBy('task.dueAt', 'ASC')
+            ->addOrderBy('COALESCE(task.planPosition, 1000)', 'ASC')
+            ->addOrderBy('COALESCE(subtask.planPosition, subtask.position + 1000)', 'ASC')
             ->addOrderBy('subtask.position', 'ASC');
 
         $prioritySubTasks = $prioritySubTasksQb->getQuery()->getResult();

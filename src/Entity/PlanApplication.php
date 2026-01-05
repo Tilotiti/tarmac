@@ -47,6 +47,7 @@ class PlanApplication
      * @var Collection<int, Task>
      */
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'planApplication')]
+    #[ORM\OrderBy(['planPosition' => 'ASC', 'createdAt' => 'ASC'])]
     private Collection $tasks;
 
     public function __construct()

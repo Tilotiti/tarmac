@@ -60,7 +60,9 @@ class ContributionRepository extends ServiceEntityRepository
             ->join('contribution.subTask', 'subtask')
             ->where('subtask.task = :task')
             ->setParameter('task', $task)
-            ->orderBy('subtask.position', 'ASC')
+            // Order by subtask position (plan-aware)
+            ->orderBy('COALESCE(subtask.planPosition, subtask.position + 1000)', 'ASC')
+            ->addOrderBy('subtask.position', 'ASC')
             ->addOrderBy('contribution.timeSpent', 'DESC')
             ->getQuery()
             ->getResult();

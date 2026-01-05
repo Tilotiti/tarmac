@@ -70,11 +70,14 @@ class Task
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?PlanApplication $planApplication = null;
 
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $planPosition = null;
+
     /**
      * @var Collection<int, SubTask>
      */
     #[ORM\OneToMany(targetEntity: SubTask::class, mappedBy: 'task', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(['planPosition' => 'ASC', 'position' => 'ASC'])]
     #[Assert\Count(min: 1, minMessage: 'atLeastOneSubTaskRequired')]
     private Collection $subTasks;
 
@@ -403,6 +406,18 @@ class Task
     public function setPlanApplication(?PlanApplication $planApplication): static
     {
         $this->planApplication = $planApplication;
+
+        return $this;
+    }
+
+    public function getPlanPosition(): ?int
+    {
+        return $this->planPosition;
+    }
+
+    public function setPlanPosition(?int $planPosition): static
+    {
+        $this->planPosition = $planPosition;
 
         return $this;
     }
