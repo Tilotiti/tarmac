@@ -331,8 +331,14 @@ class SubTaskController extends ExtendedController
                 $contributors = [];
             }
 
-            // Mark subtask as done (auto-validate if user is qualified)
+            // Validate: if timeSpent is 0, the subtask must be closable (no inspection required or user is inspector)
             $isInspector = $doneByMembership->isInspector();
+            if ($timeSpent === 0 && $subTask->requiresInspection() && !$isInspector) {
+                $this->addFlash('error', 'timeSpentZeroRequiresClosed');
+                return $this->redirectToRoute('club_subtask_show', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
+            }
+
+            // Mark subtask as done (auto-validate if user is qualified)
             $this->taskStatusService->handleSubTaskDone(
                 $subTask,
                 $doneByMembership->getUser(),
@@ -346,7 +352,7 @@ class SubTaskController extends ExtendedController
             }
 
             // Calculate time per contributor (divided evenly with decimal precision)
-            $timePerContributor = round($timeSpent / count($contributors), 2);
+            $timePerContributor = count($contributors) > 0 ? round($timeSpent / count($contributors), 2) : 0;
 
             // Update or create contributions
             $existingContributions = $this->contributionRepository->findBySubTaskIndexedByMembership($subTask);
@@ -438,7 +444,6 @@ class SubTaskController extends ExtendedController
 
         return $this->redirectToRoute('club_subtask_edit', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
     }
-
 
     #[Route('/{id}/inspect/approve', name: 'club_subtask_inspect_approve', methods: ['POST'], requirements: ['id' => '\d+'])]
     #[IsGranted(SubTaskVoter::INSPECT, 'subTask')]

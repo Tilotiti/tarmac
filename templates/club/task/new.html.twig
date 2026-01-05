@@ -19,12 +19,12 @@
 					{{ form_row(form.title) }}
 					{{ form_row(form.description, {'attr': {'class': 'form-control w-100', 'rows': 3}}) }}
 					{% include 'component/documentationUploader.html.twig' with {
-						field: form.documentation,
-						existingUrl: null,
-						lightboxGroup: 'task-documentation',
-						emptyTextKey: 'clickToUploadDocumentation',
-						deletePath: null
-					} %}
+					field: form.documentation,
+					existingUrl: null,
+					lightboxGroup: 'task-documentation',
+					emptyTextKey: 'clickToUploadDocumentation',
+					deletePath: null
+				} %}
 					{{ form_row(form.dueAt) }}
 				</div>
 			</div>
