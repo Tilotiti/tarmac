@@ -79,9 +79,14 @@ class DashboardController extends ExtendedController
                 ->getQuery()
                 ->getSingleScalarResult();
 
-            // Get limited results - order by task dueAt with NULL values last
+            // Get limited results - order by task dueAt with NULL values last, then by plan position
             $inspectionQb->addOrderBy('CASE WHEN task.dueAt IS NULL THEN 1 ELSE 0 END', 'ASC')
                 ->addOrderBy('task.dueAt', 'ASC')
+                ->addOrderBy('CASE WHEN task.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+                ->addOrderBy('task.planPosition', 'ASC')
+                ->addOrderBy('CASE WHEN subtask.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+                ->addOrderBy('subtask.planPosition', 'ASC')
+                ->addOrderBy('subtask.position', 'ASC')
                 ->setMaxResults(5);
             $awaitingInspectionSubTasks = $inspectionQb->getQuery()->getResult();
         }
@@ -124,9 +129,12 @@ class DashboardController extends ExtendedController
             ->getQuery()
             ->getSingleScalarResult();
 
-        // Get limited results - order by dueAt with NULL values last
+        // Get limited results - order by dueAt with NULL values last, then by plan position
         $priorityQb->addOrderBy('CASE WHEN task.dueAt IS NULL THEN 1 ELSE 0 END', 'ASC')
             ->addOrderBy('task.dueAt', 'ASC')
+            ->addOrderBy('CASE WHEN task.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+            ->addOrderBy('task.planPosition', 'ASC')
+            ->addOrderBy('task.createdAt', 'ASC')
             ->setMaxResults(20);
         $priorityTasks = $priorityQb->getQuery()->getResult();
 
@@ -170,8 +178,10 @@ class DashboardController extends ExtendedController
             ->setParameter('open', 'open')
             // Order by dueAt, then by plan position (task and subtask)
             ->orderBy('task.dueAt', 'ASC')
-            ->addOrderBy('COALESCE(task.planPosition, 1000)', 'ASC')
-            ->addOrderBy('COALESCE(subtask.planPosition, subtask.position + 1000)', 'ASC')
+            ->addOrderBy('CASE WHEN task.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+            ->addOrderBy('task.planPosition', 'ASC')
+            ->addOrderBy('CASE WHEN subtask.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+            ->addOrderBy('subtask.planPosition', 'ASC')
             ->addOrderBy('subtask.position', 'ASC');
 
         $prioritySubTasks = $prioritySubTasksQb->getQuery()->getResult();
