@@ -1101,6 +1101,10 @@
         <source>scanToView</source>
         <target>Scannez pour voir la sous-tâche</target>
       </trans-unit>
+      <trans-unit id="422c17" resname="accessClub">
+        <source>accessClub</source>
+        <target>Accéder au club</target>
+      </trans-unit>
       <trans-unit id="422b1" resname="pendingSubTasks">
         <source>pendingSubTasks</source>
         <target>Sous-tâches en attente</target>

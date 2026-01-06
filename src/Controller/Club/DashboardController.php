@@ -182,11 +182,13 @@ class DashboardController extends ExtendedController
 
         $prioritySubTasks = $prioritySubTasksQb->getQuery()->getResult();
 
-        // Build subtasks with QR code URLs
-        $subTasksWithQrCodes = [];
+        // Include QR codes automatically if 100 or fewer subtasks (for performance)
+        $includeQrCodes = count($prioritySubTasks) <= 100;
+
+        // Build subtasks data
+        $subTasksData = [];
         $qrCodeUrls = [];
 
-        // First pass: collect all QR code URLs
         foreach ($prioritySubTasks as $index => $subTask) {
             $task = $subTask->getTask();
 
@@ -200,28 +202,47 @@ class DashboardController extends ExtendedController
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
 
-            $qrCodeUrls[$index] = 'https://api.qrserver.com/v1/create-qr-code/?' . http_build_query([
-                'size' => '80x80',
-                'data' => $subTaskUrl,
-                'format' => 'png',
-                'margin' => '2',
-            ]);
-        }
+            if ($includeQrCodes) {
+                $qrCodeUrls[$index] = 'https://api.qrserver.com/v1/create-qr-code/?' . http_build_query([
+                    'size' => '80x80',
+                    'data' => $subTaskUrl,
+                    'format' => 'png',
+                    'margin' => '2',
+                ]);
+            }
 
-        // Fetch all QR codes using multi-curl for parallel requests
-        $qrCodeDataUris = $this->fetchQrCodesInParallel($qrCodeUrls);
-
-        // Second pass: build final array with data URIs
-        foreach ($prioritySubTasks as $index => $subTask) {
-            $subTasksWithQrCodes[] = [
+            $subTasksData[$index] = [
                 'subTask' => $subTask,
-                'qrCodeUrl' => $qrCodeDataUris[$index] ?? $qrCodeUrls[$index],
+                'index' => $index + 1,
             ];
         }
 
+        // Fetch QR codes in parallel if needed
+        if ($includeQrCodes && !empty($qrCodeUrls)) {
+            $qrCodeDataUris = $this->fetchQrCodesInParallel($qrCodeUrls);
+            foreach ($qrCodeDataUris as $index => $dataUri) {
+                $subTasksData[$index]['qrCodeUrl'] = $dataUri;
+            }
+        }
+
+        // Generate QR code for club dashboard (always included)
+        $clubDashboardUrl = $this->urlGenerator->generate(
+            'club_dashboard',
+            ['subdomain' => $subdomain],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+        $clubQrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?' . http_build_query([
+            'size' => '100x100',
+            'data' => $clubDashboardUrl,
+            'format' => 'png',
+            'margin' => '2',
+        ]);
+
         $html = $this->renderView('club/dashboard/printPrioritySubtasks.html.twig', [
             'club' => $club,
-            'subTasks' => $subTasksWithQrCodes,
+            'subTasks' => $subTasksData,
+            'includeQrCodes' => $includeQrCodes,
+            'clubQrCodeUrl' => $clubQrCodeUrl,
         ]);
 
         if ($request->query->getBoolean('preview')) {
