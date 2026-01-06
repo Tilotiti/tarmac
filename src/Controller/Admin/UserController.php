@@ -75,9 +75,7 @@ class UserController extends ExtendedController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
-
             $this->addFlash('success', 'userUpdated');
-
             return $this->redirectToRoute('admin_user_show', ['id' => $user->getId()]);
         }
 
