@@ -18,23 +18,48 @@
 				padding: 0;
 			}
 
-			.header {
-				text-align: center;
-				border-bottom: 2px solid #000;
-				padding-bottom: 10px;
-				margin-bottom: 20px;
-			}
+		.header {
+			border-bottom: 2px solid #000;
+			padding-bottom: 10px;
+			margin-bottom: 20px;
+			display: table;
+			width: 100%;
+		}
 
-			.header h1 {
-				font-size: 20px;
-				font-weight: bold;
-				margin: 0 0 5px;
-			}
+		.header-content {
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
+		}
 
-			.header-info {
-				font-size: 10px;
-				color: #666;
-			}
+		.header-qrcode {
+			display: table-cell;
+			vertical-align: middle;
+			width: 100px;
+			text-align: right;
+		}
+
+		.header-qrcode img {
+			width: 80px;
+			height: 80px;
+		}
+
+		.header-qrcode-label {
+			font-size: 8px;
+			color: #666;
+			margin-top: 3px;
+		}
+
+		.header h1 {
+			font-size: 20px;
+			font-weight: bold;
+			margin: 0 0 5px;
+		}
+
+		.header-info {
+			font-size: 10px;
+			color: #666;
+		}
 
 			.subtask-table {
 				width: 100%;
@@ -137,19 +162,25 @@
 	</head>
 	<body>
 		<div class="header">
-			<h1>{{ 'taskProgram'|trans }}</h1>
-			<div class="header-info">
-				{{ 'club'|trans }}:
-				{{ club.name }}
-				|
-				{{ 'printDate'|trans }}:
-				{{ "now"|date('d/m/Y à H:i') }}
-			</div>
-			{% if club.welcomeMessage %}
-				<div class="welcome-message" style="margin-top: 15px; padding: 10px; background-color: #f5f5f5; border-radius: 4px; font-size: 10px; line-height: 1.5; text-align: left;">
-					{{ club.welcomeMessage|nl2br }}
+			<div class="header-content">
+				<h1>{{ 'taskProgram'|trans }}</h1>
+				<div class="header-info">
+					{{ 'club'|trans }}:
+					{{ club.name }}
+					|
+					{{ 'printDate'|trans }}:
+					{{ "now"|date('d/m/Y à H:i') }}
 				</div>
-			{% endif %}
+				{% if club.welcomeMessage %}
+					<div class="welcome-message" style="margin-top: 15px; padding: 10px; background-color: #f5f5f5; border-radius: 4px; font-size: 10px; line-height: 1.5; text-align: left;">
+						{{ club.welcomeMessage|nl2br }}
+					</div>
+				{% endif %}
+			</div>
+			<div class="header-qrcode">
+				<img src="{{ clubQrCodeUrl }}" alt="QR Code Club">
+				<div class="header-qrcode-label">{{ 'accessClub'|trans }}</div>
+			</div>
 		</div>
 
 		<div class="content">
@@ -196,10 +227,18 @@
 									</div>
 								{% endif %}
 							</td>
+							{% if includeQrCodes and item.qrCodeUrl is defined %}
 							<td class="subtask-qrcode">
-								<img src="{{ item.qrCodeDataUri }}" alt="QR Code">
+								<img src="{{ item.qrCodeUrl }}" alt="QR Code">
 								<div class="subtask-qrcode-label">{{ 'scanToView'|trans }}</div>
 							</td>
+							{% else %}
+							<td class="subtask-qrcode" style="text-align: center; vertical-align: middle;">
+								<div style="font-size: 18px; font-weight: bold; font-family: monospace; background: #f0f0f0; padding: 15px 10px; border-radius: 4px;">
+									#{{ item.index }}
+								</div>
+							</td>
+							{% endif %}
 						</tr>
 					{% endfor %}
 				</table>
@@ -217,17 +256,17 @@
 			{{ "now"|date('d/m/Y à H:i') }}
 		</div>
 
-		 <script type="text/php">
-					if (isset($pdf)) {
-						$pdf->page_script('
-							$font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-							$size = 9;
-							$pageText = "Page " . $PAGE_NUM . " / " . $PAGE_COUNT;
-							$y = $pdf->get_height() - 15;
-							$x = $pdf->get_width() - 50;
-							$pdf->text($x, $y, $pageText, $font, $size);
-						');
-					}
-				</script>
+		<script type="text/php">
+			if (isset($pdf)) {
+				$pdf->page_script('
+					$font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+					$size = 9;
+					$pageText = "Page " . $PAGE_NUM . " / " . $PAGE_COUNT;
+					$y = $pdf->get_height() - 15;
+					$x = $pdf->get_width() - 100;
+					$pdf->text($x, $y, $pageText, $font, $size);
+				');
+			}
+		</script>
 	</body>
 </html>

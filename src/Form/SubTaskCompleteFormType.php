@@ -9,7 +9,7 @@ use App\Entity\SubTask;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -70,18 +70,22 @@ class SubTaskCompleteFormType extends AbstractType
                     'class' => 'form-check-input',
                 ],
             ])
-            ->add('timeSpent', IntegerType::class, [
+            ->add('timeSpent', NumberType::class, [
                 'label' => 'timeSpent',
                 'required' => true,
                 'data' => 1,
+                'scale' => 1,
+                'html5' => true,
                 'attr' => [
                     'class' => 'form-control',
                     'min' => 0,
+                    'step' => 0.5,
                     'placeholder' => 'timeSpentPlaceholder',
                 ],
                 'constraints' => [
                     new Assert\NotBlank(message: 'timeSpentRequired'),
                     new Assert\GreaterThanOrEqual(0, message: 'timeSpentMustBePositive'),
+                    new Assert\DivisibleBy(value: 0.5, message: 'timeSpentMustBeHalfHour'),
                 ],
                 'help' => 'timeSpentHelp',
             ])

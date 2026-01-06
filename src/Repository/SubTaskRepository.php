@@ -84,16 +84,37 @@ class SubTaskRepository extends ServiceEntityRepository
             ->setParameter('status', 'done');
     }
 
+    /**
+     * Add plan-aware position ordering to a query builder
+     * This respects planPosition from maintenance plans, falling back to regular position
+     */
+    public function addPositionOrdering(QueryBuilder $qb, string $direction = 'ASC'): QueryBuilder
+    {
+        return $qb
+            // Subtasks with planPosition set are ordered by planPosition first
+            // Subtasks without planPosition (NULL) come after
+            ->addOrderBy('CASE WHEN subTask.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+            ->addOrderBy('subTask.planPosition', $direction)
+            ->addOrderBy('subTask.position', $direction);
+    }
+
     public function orderByPosition(QueryBuilder $qb): QueryBuilder
     {
-        return $qb->addOrderBy('subTask.position', 'ASC');
+        return $this->addPositionOrdering($qb);
+    }
+
+    /**
+     * @deprecated Use orderByPosition() instead, which now includes plan position ordering
+     */
+    public function orderByPlanPosition(QueryBuilder $qb, string $direction = 'ASC'): QueryBuilder
+    {
+        return $this->addPositionOrdering($qb, $direction);
     }
 
     public function orderByDueDate(QueryBuilder $qb, string $direction = 'ASC'): QueryBuilder
     {
-        return $qb
-            ->addOrderBy('subTask.dueAt', $direction)
-            ->addOrderBy('subTask.position', 'ASC');
+        $qb->addOrderBy('subTask.dueAt', $direction);
+        return $this->addPositionOrdering($qb);
     }
 }
 

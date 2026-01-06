@@ -1101,6 +1101,10 @@
         <source>scanToView</source>
         <target>Scannez pour voir la sous-tâche</target>
       </trans-unit>
+      <trans-unit id="422c17" resname="accessClub">
+        <source>accessClub</source>
+        <target>Accéder au club</target>
+      </trans-unit>
       <trans-unit id="422b1" resname="pendingSubTasks">
         <source>pendingSubTasks</source>
         <target>Sous-tâches en attente</target>
@@ -1717,7 +1721,7 @@
       </trans-unit>
       <trans-unit id="329" resname="timeSpentHelp">
         <source>timeSpentHelp</source>
-        <target>Si la sous-tâche est sans objet et n'a pas besoin d'être réalisée, indiquez 0 comme temps passé et clôturez la sous-tâche.</target>
+        <target>Indiquez le temps en heures (ex: 0.5, 1, 1.5...). Si la sous-tâche est sans objet, indiquez 0.</target>
       </trans-unit>
       <trans-unit id="329a" resname="timeSpentDivided">
         <source>timeSpentDivided</source>
@@ -1794,6 +1798,10 @@
       <trans-unit id="345" resname="timeSpentMustBePositive">
         <source>timeSpentMustBePositive</source>
         <target>Le temps passé doit être supérieur ou égal à 0</target>
+      </trans-unit>
+      <trans-unit id="345b" resname="timeSpentMustBeHalfHour">
+        <source>timeSpentMustBeHalfHour</source>
+        <target>Le temps passé doit être un multiple de 0.5 (ex: 0.5, 1, 1.5, 2...)</target>
       </trans-unit>
       <trans-unit id="345a" resname="timeSpentZeroRequiresClosed">
         <source>timeSpentZeroRequiresClosed</source>

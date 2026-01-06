@@ -14,7 +14,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +25,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
@@ -45,6 +45,7 @@ class SecurityController extends AbstractController
         private readonly SubdomainService $subdomainService,
         private readonly TranslatorInterface $translator,
         private readonly Security $security,
+        private readonly ValidatorInterface $validator,
     ) {
     }
 
@@ -151,24 +152,33 @@ class SecurityController extends AbstractController
             $plainPassword = $form->get('plainPassword')->getData();
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
+            // Validate the entity (UniqueEntity constraint will check email uniqueness)
+            $errors = $this->validator->validate($user);
+            if (count($errors) > 0) {
+                // Add errors to the form
+                foreach ($errors as $error) {
+                    $form->addError(new \Symfony\Component\Form\FormError($this->translator->trans($error->getMessage())));
+                }
+            } else {
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
 
-            // Accept the invitation
-            try {
-                $this->invitationService->acceptInvitation($user, $invitation);
-                $message = $this->translator->trans('accountCreatedAndInvitationAccepted', ['clubName' => $invitation->getClub()->getName()]);
-                $this->addFlash('success', $message);
-            } catch (\Exception $e) {
-                $this->addFlash('warning', $e->getMessage());
+                // Accept the invitation
+                try {
+                    $this->invitationService->acceptInvitation($user, $invitation);
+                    $message = $this->translator->trans('accountCreatedAndInvitationAccepted', ['clubName' => $invitation->getClub()->getName()]);
+                    $this->addFlash('success', $message);
+                } catch (\Exception $e) {
+                    $this->addFlash('warning', $e->getMessage());
+                }
+
+                // Automatically authenticate the user
+                $this->security->login($user);
+
+                // Redirect to club dashboard
+                $clubUrl = $this->subdomainService->generateClubUrl($invitation->getClub()->getSubdomain());
+                return new RedirectResponse($clubUrl);
             }
-
-            // Automatically authenticate the user
-            $this->security->login($user);
-
-            // Redirect to club dashboard
-            $clubUrl = $this->subdomainService->generateClubUrl($invitation->getClub()->getSubdomain());
-            return new RedirectResponse($clubUrl);
         }
 
         return $this->render('public/security/register.html.twig', [
@@ -206,9 +216,6 @@ class SecurityController extends AbstractController
     public function reset(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
-        UserAuthenticatorInterface $userAuthenticator,
-        #[Autowire(service: 'security.authenticator.form_login.main')]
-        FormLoginAuthenticator $formLoginAuthenticator,
         ?string $token = null
     ): Response {
         if ($token) {
@@ -257,12 +264,10 @@ class SecurityController extends AbstractController
 
             $this->addFlash('success', 'passwordResetSuccess');
 
-            // Auto-login the user and redirect to app dashboard
-            return $userAuthenticator->authenticateUser(
-                $user,
-                $formLoginAuthenticator,
-                $request
-            );
+            // Auto-login the user and redirect to clubs page
+            $this->security->login($user);
+
+            return $this->redirectToRoute('public_clubs');
         }
 
         return $this->render('public/security/resetPassword/reset.html.twig', [

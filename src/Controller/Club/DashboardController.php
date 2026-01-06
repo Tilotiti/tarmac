@@ -14,10 +14,6 @@ use App\Controller\ExtendedController;
 use App\Repository\PlanApplicationRepository;
 use App\Form\WelcomeMessageType;
 use Doctrine\ORM\EntityManagerInterface;
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\Writer\PngWriter;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -79,9 +75,14 @@ class DashboardController extends ExtendedController
                 ->getQuery()
                 ->getSingleScalarResult();
 
-            // Get limited results - order by task dueAt with NULL values last
+            // Get limited results - order by task dueAt with NULL values last, then by plan position
             $inspectionQb->addOrderBy('CASE WHEN task.dueAt IS NULL THEN 1 ELSE 0 END', 'ASC')
                 ->addOrderBy('task.dueAt', 'ASC')
+                ->addOrderBy('CASE WHEN task.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+                ->addOrderBy('task.planPosition', 'ASC')
+                ->addOrderBy('CASE WHEN subtask.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+                ->addOrderBy('subtask.planPosition', 'ASC')
+                ->addOrderBy('subtask.position', 'ASC')
                 ->setMaxResults(5);
             $awaitingInspectionSubTasks = $inspectionQb->getQuery()->getResult();
         }
@@ -124,9 +125,12 @@ class DashboardController extends ExtendedController
             ->getQuery()
             ->getSingleScalarResult();
 
-        // Get limited results - order by dueAt with NULL values last
+        // Get limited results - order by dueAt with NULL values last, then by plan position
         $priorityQb->addOrderBy('CASE WHEN task.dueAt IS NULL THEN 1 ELSE 0 END', 'ASC')
             ->addOrderBy('task.dueAt', 'ASC')
+            ->addOrderBy('CASE WHEN task.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+            ->addOrderBy('task.planPosition', 'ASC')
+            ->addOrderBy('task.createdAt', 'ASC')
             ->setMaxResults(20);
         $priorityTasks = $priorityQb->getQuery()->getResult();
 
@@ -168,17 +172,26 @@ class DashboardController extends ExtendedController
             ->setParameter('true', true)
             ->andWhere('subtask.status = :open')
             ->setParameter('open', 'open')
+            // Order by dueAt, then by plan position (task and subtask)
             ->orderBy('task.dueAt', 'ASC')
+            ->addOrderBy('CASE WHEN task.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+            ->addOrderBy('task.planPosition', 'ASC')
+            ->addOrderBy('CASE WHEN subtask.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+            ->addOrderBy('subtask.planPosition', 'ASC')
             ->addOrderBy('subtask.position', 'ASC');
 
         $prioritySubTasks = $prioritySubTasksQb->getQuery()->getResult();
 
-        // Generate QR codes for each subtask
-        $subTasksWithQrCodes = [];
-        foreach ($prioritySubTasks as $subTask) {
+        // Include QR codes automatically if 100 or fewer subtasks (for performance)
+        $includeQrCodes = count($prioritySubTasks) <= 100;
+
+        // Build subtasks data
+        $subTasksData = [];
+        $qrCodeUrls = [];
+
+        foreach ($prioritySubTasks as $index => $subTask) {
             $task = $subTask->getTask();
 
-            // Generate URL for the subtask - need to pass subdomain parameter
             $subTaskUrl = $this->urlGenerator->generate(
                 'club_subtask_show',
                 [
@@ -189,25 +202,47 @@ class DashboardController extends ExtendedController
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
 
-            // Generate QR code (smaller size for table layout)
-            $qrCode = Builder::create()
-                ->writer(new PngWriter())
-                ->data($subTaskUrl)
-                ->encoding(new Encoding('UTF-8'))
-                ->errorCorrectionLevel(ErrorCorrectionLevel::Medium)
-                ->size(80)
-                ->margin(5)
-                ->build();
+            if ($includeQrCodes) {
+                $qrCodeUrls[$index] = 'https://api.qrserver.com/v1/create-qr-code/?' . http_build_query([
+                    'size' => '80x80',
+                    'data' => $subTaskUrl,
+                    'format' => 'png',
+                    'margin' => '2',
+                ]);
+            }
 
-            $subTasksWithQrCodes[] = [
+            $subTasksData[$index] = [
                 'subTask' => $subTask,
-                'qrCodeDataUri' => $qrCode->getDataUri(),
+                'index' => $index + 1,
             ];
         }
 
+        // Fetch QR codes in parallel if needed
+        if ($includeQrCodes && !empty($qrCodeUrls)) {
+            $qrCodeDataUris = $this->fetchQrCodesInParallel($qrCodeUrls);
+            foreach ($qrCodeDataUris as $index => $dataUri) {
+                $subTasksData[$index]['qrCodeUrl'] = $dataUri;
+            }
+        }
+
+        // Generate QR code for club dashboard (always included)
+        $clubDashboardUrl = $this->urlGenerator->generate(
+            'club_dashboard',
+            ['subdomain' => $subdomain],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+        $clubQrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?' . http_build_query([
+            'size' => '100x100',
+            'data' => $clubDashboardUrl,
+            'format' => 'png',
+            'margin' => '2',
+        ]);
+
         $html = $this->renderView('club/dashboard/printPrioritySubtasks.html.twig', [
             'club' => $club,
-            'subTasks' => $subTasksWithQrCodes,
+            'subTasks' => $subTasksData,
+            'includeQrCodes' => $includeQrCodes,
+            'clubQrCodeUrl' => $clubQrCodeUrl,
         ]);
 
         if ($request->query->getBoolean('preview')) {
@@ -255,6 +290,60 @@ class DashboardController extends ExtendedController
             'club' => $club,
             'form' => $form,
         ]);
+    }
+
+    /**
+     * Fetch multiple QR codes in parallel using multi-curl and return as data URIs.
+     * 
+     * @param array<int, string> $urls
+     * @return array<int, string>
+     */
+    private function fetchQrCodesInParallel(array $urls): array
+    {
+        if (empty($urls)) {
+            return [];
+        }
+
+        $multiHandle = curl_multi_init();
+        $handles = [];
+
+        // Initialize all curl handles
+        foreach ($urls as $index => $url) {
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 10,
+                CURLOPT_FOLLOWLOCATION => true,
+            ]);
+            curl_multi_add_handle($multiHandle, $ch);
+            $handles[$index] = $ch;
+        }
+
+        // Execute all requests in parallel
+        do {
+            $status = curl_multi_exec($multiHandle, $active);
+            if ($active) {
+                curl_multi_select($multiHandle);
+            }
+        } while ($active && $status === CURLM_OK);
+
+        // Collect results
+        $results = [];
+        foreach ($handles as $index => $ch) {
+            $content = curl_multi_getcontent($ch);
+            if ($content !== false && curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200) {
+                $results[$index] = 'data:image/png;base64,' . base64_encode($content);
+            } else {
+                // Fallback to URL if fetch failed
+                $results[$index] = $urls[$index];
+            }
+            curl_multi_remove_handle($multiHandle, $ch);
+            curl_close($ch);
+        }
+
+        curl_multi_close($multiHandle);
+
+        return $results;
     }
 }
 

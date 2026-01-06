@@ -107,7 +107,8 @@ class PlanApplicationController extends ExtendedController
         // Get tasks for this application
         $qb = $this->taskRepository->queryAll();
         $qb = $this->taskRepository->filterByPlanApplication($qb, $application);
-        $qb = $this->taskRepository->orderByRelevantDate($qb, 'ASC');
+        // Order by plan position to respect maintenance plan ordering
+        $qb = $this->taskRepository->orderByPlanPosition($qb, 'ASC');
 
         $tasks = $qb->getQuery()->getResult();
 
@@ -148,12 +149,12 @@ class PlanApplicationController extends ExtendedController
             throw $this->createNotFoundException();
         }
 
-        // Get tasks for this application ordered by ID ASC
+        // Get tasks for this application ordered by plan position
         $qb = $this->taskRepository->queryAll();
         $qb = $this->taskRepository->filterByPlanApplication($qb, $application);
 
-        // Order by task ID ASC
-        $qb = $qb->addOrderBy('task.id', 'ASC');
+        // Order by plan position to respect maintenance plan ordering
+        $qb = $this->taskRepository->orderByPlanPosition($qb, 'ASC');
 
         $tasks = $qb->getQuery()->getResult();
 

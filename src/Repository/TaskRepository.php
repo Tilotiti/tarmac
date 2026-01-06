@@ -194,6 +194,7 @@ class TaskRepository extends ServiceEntityRepository
 
     /**
      * Smart ordering: for non-done tasks order by dueAt (NULL last), for done tasks order by doneAt
+     * Also respects plan position for tasks from maintenance plans
      */
     public function orderByRelevantDate(QueryBuilder $qb, string $direction = 'ASC'): QueryBuilder
     {
@@ -204,6 +205,9 @@ class TaskRepository extends ServiceEntityRepository
             ->addOrderBy('CASE WHEN task.status NOT IN (:closedStatuses) AND task.dueAt IS NULL THEN 1 ELSE 0 END', 'ASC')
             // For open/done tasks: order by dueAt, for closed tasks: order by createdAt
             ->addOrderBy('CASE WHEN task.status NOT IN (:closedStatuses) THEN task.dueAt ELSE task.createdAt END', $direction)
+            // Then by plan position (if set from maintenance plan)
+            ->addOrderBy('CASE WHEN task.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+            ->addOrderBy('task.planPosition', $direction)
             // Final fallback: createdAt
             ->addOrderBy('task.createdAt', $direction)
             ->setParameter('closedStatuses', ['closed']);
@@ -212,6 +216,20 @@ class TaskRepository extends ServiceEntityRepository
     public function orderByStatus(QueryBuilder $qb): QueryBuilder
     {
         return $qb->addOrderBy('task.status', 'ASC');
+    }
+
+    /**
+     * Order by plan position first (if set), then by createdAt
+     * Useful for tasks coming from a maintenance plan
+     */
+    public function orderByPlanPosition(QueryBuilder $qb, string $direction = 'ASC'): QueryBuilder
+    {
+        return $qb
+            // Tasks with planPosition set are ordered by planPosition
+            // Tasks without planPosition (NULL) come after
+            ->addOrderBy('CASE WHEN task.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
+            ->addOrderBy('task.planPosition', $direction)
+            ->addOrderBy('task.createdAt', $direction);
     }
 
     public function countPendingForApplication(PlanApplication $application): int

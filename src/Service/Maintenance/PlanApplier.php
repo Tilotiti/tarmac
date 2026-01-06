@@ -59,6 +59,8 @@ class PlanApplier
             $task->setDocumentation($taskTemplate->getDocumentation());
             $task->setCreatedBy($appliedBy);
             $task->setPlanApplication($application);
+            // Copy plan position to preserve ordering from the maintenance plan
+            $task->setPlanPosition($taskTemplate->getPosition());
 
             // Set due date if provided
             if ($dueAt) {
@@ -79,6 +81,8 @@ class PlanApplier
                 $subTask->setRequiresInspection($subTaskTemplate->requiresInspection());
                 $subTask->setDocumentation($subTaskTemplate->getDocumentation());
                 $subTask->setPosition($subTaskPosition++);
+                // Copy plan position to preserve ordering from the maintenance plan
+                $subTask->setPlanPosition($subTaskTemplate->getPosition());
 
                 $this->entityManager->persist($subTask);
                 $task->addSubTask($subTask);
