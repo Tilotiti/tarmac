@@ -184,6 +184,7 @@ class Activity
 
         return match ($this->type) {
             ActivityType::COMMENT => 'comment',
+            ActivityType::CONTRIBUTED => 'contributionAdded',
             ActivityType::CREATED => $isSubTask ? 'subTaskCreated' : 'taskCreated',
             ActivityType::EDITED => $isSubTask ? 'subTaskEdited' : 'taskEdited',
             ActivityType::DONE => $isSubTask ? 'subTaskDone' : 'taskDone',
@@ -201,6 +202,7 @@ class Activity
     {
         return match ($this->type) {
             ActivityType::COMMENT => 'ti-message',
+            ActivityType::CONTRIBUTED => 'ti-clock',
             ActivityType::CREATED => 'ti-plus',
             ActivityType::EDITED => 'ti-edit',
             ActivityType::DONE => 'ti-check',
@@ -217,6 +219,7 @@ class Activity
     {
         return match ($this->type) {
             ActivityType::COMMENT => 'blue',
+            ActivityType::CONTRIBUTED => 'info',
             ActivityType::CREATED => 'info',
             ActivityType::EDITED => 'yellow',
             ActivityType::DONE => 'green',

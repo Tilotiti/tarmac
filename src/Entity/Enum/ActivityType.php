@@ -5,6 +5,7 @@ namespace App\Entity\Enum;
 enum ActivityType: string
 {
     case COMMENT = 'comment';
+    case CONTRIBUTED = 'contributed';
     case CREATED = 'created';
     case EDITED = 'edited';
     case DONE = 'done';

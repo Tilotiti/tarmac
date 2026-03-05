@@ -183,15 +183,7 @@ class TaskVoter extends Voter
     {
         $equipment = $task->getEquipment();
 
-        // Check pilot visibility rules for aircraft equipment
-        if ($equipment->getType()->isAircraft()) {
-            // Non-pilotes cannot view aircraft tasks (unless manager or inspector)
-            if (!$isPilote && !$isManager && !$isInspector) {
-                return false;
-            }
-        }
-
-        // Public equipment - anyone can view (with pilot rules above)
+        // Public equipment - any club member can view (including non-pilotes on aircraft)
         if (!$equipment->isPrivate()) {
             return true;
         }

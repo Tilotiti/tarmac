@@ -1,0 +1,16 @@
+{% use "bootstrap_5_layout.html.twig" %}
+
+{% block time_spent_type_widget %}
+	<div class="d-flex align-items-center gap-2">
+		<div class="input-group">
+			{{ form_widget(form.hours, {'attr': {'class': 'form-control', 'placeholder': '0', 'min': 0}}) }}
+			<span class="input-group-text">{{ 'hours'|trans|capitalize }}</span>
+		</div>
+		<div class="input-group">
+			{{ form_widget(form.minutes, {'attr': {'class': 'form-control', 'placeholder': '0', 'min': 0, 'max': 59}}) }}
+			<span class="input-group-text">{{ 'minutes'|trans|capitalize }}</span>
+		</div>
+	</div>
+	{{ form_errors(form.hours) }}
+	{{ form_errors(form.minutes) }}
+{% endblock %}

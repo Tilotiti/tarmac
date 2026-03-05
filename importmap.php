@@ -28,6 +28,12 @@ return [
     '@tabler/core' => [
         'version' => '1.4.0',
     ],
+    'bootstrap' => [
+        'version' => '5.3.8',
+    ],
+    '@popperjs/core' => [
+        'version' => '2.11.8',
+    ],
     '@tabler/core/dist/css/tabler.min.css' => [
         'version' => '1.4.0',
         'type' => 'css',

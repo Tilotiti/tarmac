@@ -14,6 +14,7 @@ class SubTaskVoter extends Voter
     public const VIEW = 'SUBTASK_VIEW';
     public const EDIT = 'SUBTASK_EDIT';
     public const COMMENT = 'SUBTASK_COMMENT';
+    public const CONTRIBUTE = 'SUBTASK_CONTRIBUTE';
     public const DO = 'SUBTASK_DO';
     public const INSPECT = 'SUBTASK_INSPECT';
     public const CANCEL = 'SUBTASK_CANCEL';
@@ -30,7 +31,8 @@ class SubTaskVoter extends Voter
             self::VIEW,
             self::EDIT,
             self::COMMENT,
-            self::DO,
+            self::CONTRIBUTE,
+            self::DO ,
             self::INSPECT,
             self::CANCEL,
             self::REOPEN,
@@ -69,6 +71,7 @@ class SubTaskVoter extends Voter
             self::VIEW => $this->canView($subTask, $user, $isManager, $isInspector, $isPilote),
             self::EDIT => $this->canEdit($subTask, $user, $isManager),
             self::COMMENT => true, // Any club member can comment
+            self::CONTRIBUTE => $this->canContribute($subTask, $user, $isManager, $isInspector, $isPilote),
             self::DO => $this->canDo($subTask, $user, $isManager, $isInspector, $isPilote),
             self::INSPECT => $this->canInspect($subTask, $isInspector),
             self::CANCEL => $this->canCancel($subTask, $user, $isManager),
@@ -83,17 +86,17 @@ class SubTaskVoter extends Voter
         if ($subTask->getStatus() !== 'open') {
             return false;
         }
-        
+
         // Managers can edit any open subtask
         if ($isManager) {
             return true;
         }
-        
+
         // Members can edit their own open subtasks
         if ($subTask->getCreatedBy() && $subTask->getCreatedBy()->getId() === $user->getId()) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -103,17 +106,17 @@ class SubTaskVoter extends Voter
         if ($subTask->getStatus() !== 'open') {
             return false;
         }
-        
+
         // Managers can cancel any open subtask
         if ($isManager) {
             return true;
         }
-        
+
         // Members can cancel their own open subtasks
         if ($subTask->getCreatedBy() && $subTask->getCreatedBy()->getId() === $user->getId()) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -122,15 +125,7 @@ class SubTaskVoter extends Voter
         $task = $subTask->getTask();
         $equipment = $task->getEquipment();
 
-        // Check pilot visibility rules for aircraft equipment
-        if ($equipment->getType()->isAircraft()) {
-            // Non-pilotes cannot view aircraft tasks (unless manager or inspector)
-            if (!$isPilote && !$isManager && !$isInspector) {
-                return false;
-            }
-        }
-
-        // Public equipment - anyone can view (with pilot rules above)
+        // Public equipment - any club member can view (including non-pilotes on aircraft)
         if (!$equipment->isPrivate()) {
             return true;
         }
@@ -142,6 +137,22 @@ class SubTaskVoter extends Voter
 
         // Check if user is an owner of the equipment
         return $equipment->getOwners()->contains($user);
+    }
+
+    private function canContribute(SubTask $subTask, User $user, bool $isManager, bool $isInspector, bool $isPilote): bool
+    {
+        // Can only contribute to open subtasks
+        if ($subTask->getStatus() !== 'open') {
+            return false;
+        }
+
+        // Must be able to view the subtask first
+        if (!$this->canView($subTask, $user, $isManager, $isInspector, $isPilote)) {
+            return false;
+        }
+
+        // Any club member who can view can contribute (including non-pilotes on aircraft)
+        return true;
     }
 
     private function canDo(SubTask $subTask, User $user, bool $isManager, bool $isInspector, bool $isPilote): bool

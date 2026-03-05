@@ -256,6 +256,12 @@
 
 							{# Badges #}
 							<div class="mb-2">
+								{% if subtask.status == 'open' and subtask.contributions|length > 0 %}
+									<span class="badge bg-azure-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'started'|trans }}">
+										<i class="ti ti-clock-play me-1"></i>
+										{{ 'started'|trans }}
+									</span>
+								{% endif %}
 								{% if subtask.isPriority %}
 									<span class="badge bg-red-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'priority'|trans }}">
 										<i class="ti ti-flag me-1"></i>

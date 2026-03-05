@@ -7,6 +7,7 @@ import './bootstrap.js';
  */
 import './styles/app.css';
 import '@tabler/core';
+import { Modal, Tooltip } from 'bootstrap';
 
 console.log('Tarmac with Tabler.io - Ready! 🚀');
 
@@ -14,7 +15,7 @@ console.log('Tarmac with Tabler.io - Ready! 🚀');
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all tooltips
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
 
     // Auto-open modal if specified (for form validation errors)
     const modalToOpen = document.querySelector('[data-auto-open-modal]');
@@ -22,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const modalId = modalToOpen.getAttribute('data-auto-open-modal');
         const modalElement = document.getElementById(modalId);
         if (modalElement) {
-            const modal = new bootstrap.Modal(modalElement);
+            const modal = new Modal(modalElement);
             modal.show();
         }
     }

@@ -735,6 +735,46 @@
         <source>commentAdded</source>
         <target>Votre commentaire a été ajouté.</target>
       </trans-unit>
+      <trans-unit id="127b" resname="contributionAdded">
+        <source>contributionAdded</source>
+        <target>Contribution ajoutée</target>
+      </trans-unit>
+      <trans-unit id="127c" resname="addMyContribution">
+        <source>addMyContribution</source>
+        <target>Ajouter ma contribution</target>
+      </trans-unit>
+      <trans-unit id="127d" resname="addContribution">
+        <source>addContribution</source>
+        <target>Enregistrer une contribution</target>
+      </trans-unit>
+      <trans-unit id="127da" resname="myContributionAlreadySavedHint">
+        <source>myContributionAlreadySavedHint</source>
+        <target>Votre contribution est déjà enregistrée. Vous pouvez la modifier ici.</target>
+      </trans-unit>
+      <trans-unit id="127db" resname="myContributionNotSavedHint">
+        <source>myContributionNotSavedHint</source>
+        <target>Aucune contribution enregistrée pour vous pour le moment.</target>
+      </trans-unit>
+      <trans-unit id="127dc" resname="removeMyContribution">
+        <source>removeMyContribution</source>
+        <target>Supprimer ma contribution</target>
+      </trans-unit>
+      <trans-unit id="127dd" resname="contributionRemoved">
+        <source>contributionRemoved</source>
+        <target>Votre contribution a été supprimée.</target>
+      </trans-unit>
+      <trans-unit id="127de" resname="noContributionToRemove">
+        <source>noContributionToRemove</source>
+        <target>Aucune contribution à supprimer.</target>
+      </trans-unit>
+      <trans-unit id="127df" resname="noContributionInCompleteForm">
+        <source>noContributionInCompleteForm</source>
+        <target>Aucune contribution pour le moment. Ajoutez-en une pour compléter la sous-tâche.</target>
+      </trans-unit>
+      <trans-unit id="127e" resname="started">
+        <source>started</source>
+        <target>Entamée</target>
+      </trans-unit>
       <trans-unit id="128a" resname="pilotRequiredForGliderTasks">
         <source>pilotRequiredForGliderTasks</source>
         <target>Vous devez être pilote propriétaire pour créer des tâches sur des planeurs.</target>
@@ -942,6 +982,30 @@
       <trans-unit id="141" resname="invalidRequest">
         <source>invalidRequest</source>
         <target>Requête invalide.</target>
+      </trans-unit>
+      <trans-unit id="141a" resname="invalidContribution">
+        <source>invalidContribution</source>
+        <target>La contribution est invalide. Vérifiez le temps saisi.</target>
+      </trans-unit>
+      <trans-unit id="141b" resname="membershipRequired">
+        <source>membershipRequired</source>
+        <target>Vous devez être membre du club pour contribuer.</target>
+      </trans-unit>
+      <trans-unit id="141c" resname="minutes">
+        <source>minutes</source>
+        <target>Minutes</target>
+      </trans-unit>
+      <trans-unit id="141d" resname="timeSpentTooHigh">
+        <source>timeSpentTooHigh</source>
+        <target>Le nombre d'heures est trop élevé.</target>
+      </trans-unit>
+      <trans-unit id="141e" resname="minutesMustBeBetween0And59">
+        <source>minutesMustBeBetween0And59</source>
+        <target>Les minutes doivent être entre 0 et 59.</target>
+      </trans-unit>
+      <trans-unit id="141f" resname="timeSpentInvalid">
+        <source>timeSpentInvalid</source>
+        <target>La valeur du temps passé n'est pas valide.</target>
       </trans-unit>
 
       <!-- Labels: Tasks -->
@@ -1709,11 +1773,11 @@
       </trans-unit>
       <trans-unit id="326" resname="whoDidTask">
         <source>whoDidTask</source>
-        <target>Qui a réalisé la tâche ?</target>
+        <target>Qui valide la réalisation de la tâche ?</target>
       </trans-unit>
       <trans-unit id="327" resname="timeSpent">
         <source>timeSpent</source>
-        <target>Temps passé (en heures)</target>
+        <target>Temps passé</target>
       </trans-unit>
       <trans-unit id="328" resname="timeSpentPlaceholder">
         <source>timeSpentPlaceholder</source>
