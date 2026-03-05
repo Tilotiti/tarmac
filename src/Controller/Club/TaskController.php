@@ -50,10 +50,6 @@ class TaskController extends ExtendedController
     {
         $club = $this->clubResolver->resolve();
 
-        $isManager = $this->isGranted('MANAGE');
-        $isInspector = $this->isGranted('INSPECT');
-        $isPilote = $this->isGranted('PILOT');
-
         // Handle filters with default status 'open'
         $filters = $this->createFilter(TaskFilterType::class, ['status' => 'open'], [
             'club' => $club,
@@ -62,11 +58,6 @@ class TaskController extends ExtendedController
 
         // Build query with filters
         $qb = $this->taskRepository->queryByFilters($filters->getData() ?? []);
-
-        // Apply pilot visibility filter: non-pilotes can only see facility equipment
-        if (!$isPilote && !$isManager && !$isInspector) {
-            $qb = $this->taskRepository->filterByFacilityEquipment($qb);
-        }
 
         // Smart ordering: by dueAt for non-done tasks, by doneAt for done tasks
         $qb = $this->taskRepository->orderByRelevantDate($qb, 'ASC');

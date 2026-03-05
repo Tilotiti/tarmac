@@ -74,15 +74,6 @@ class EquipmentController extends ExtendedController
             $qb = $this->taskRepository->filterByEquipment($qb, $equipment);
             $qb = $this->taskRepository->filterByStatus($qb, 'open');
 
-            // Apply pilot visibility filter: non-pilotes cannot see glider tasks
-            $isManager = $this->isGranted('MANAGE');
-            $isInspector = $this->isGranted('INSPECT');
-            $isPilote = $this->isGranted('PILOT');
-
-            if (!$isPilote && !$isManager && !$isInspector) {
-                $qb = $this->taskRepository->filterByFacilityEquipment($qb);
-            }
-
             $tasks = $qb->getQuery()->getResult();
 
             // Count total pending subtasks
@@ -167,15 +158,6 @@ class EquipmentController extends ExtendedController
         $qb = $this->taskRepository->queryAll();
         $qb = $this->taskRepository->filterByEquipment($qb, $equipment);
         $qb = $this->taskRepository->filterByStatus($qb, 'open');
-
-        // Apply pilot visibility filter: non-pilotes cannot see glider tasks
-        $isManager = $this->isGranted('MANAGE');
-        $isInspector = $this->isGranted('INSPECT');
-        $isPilote = $this->isGranted('PILOT');
-
-        if (!$isPilote && !$isManager && !$isInspector) {
-            $qb = $this->taskRepository->filterByFacilityEquipment($qb);
-        }
 
         $qb = $this->taskRepository->orderByRelevantDate($qb, 'ASC');
         $pendingTasks = $qb->setMaxResults(10)->getQuery()->getResult();

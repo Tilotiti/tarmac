@@ -11,6 +11,7 @@ use App\Entity\Activity;
 use App\Entity\Membership;
 use App\Form\SubTaskType;
 use App\Form\ActivityFormType;
+use App\Form\ContributionAddFormType;
 use App\Form\SubTaskCompleteFormType;
 use App\Repository\ContributionRepository;
 use App\Repository\MembershipRepository;
@@ -178,77 +179,37 @@ class SubTaskController extends ExtendedController
 
         // Complete form (if user can do the subtask)
         $completeForm = null;
+        $contributionUsedMembershipIds = [];
+        $contributionAllMembershipIds = [];
         if ($this->isGranted(SubTaskVoter::DO , $subTask) && !$subTask->isDone() && $subTask->getStatus() === 'open') {
-            $currentMembership = $this->membershipRepository->findOneBy([
+            $contributions = $subTask->getContributions()->toArray();
+            $initialDoneBy = $subTask->getDoneBy();
+            if ($initialDoneBy === null && $user instanceof \App\Entity\User) {
+                $initialDoneBy = $user;
+            }
+            $completeForm = $this->createForm(SubTaskCompleteFormType::class, $subTask, [
+                'subtask' => $subTask,
+                'initial_done_by' => $initialDoneBy,
+            ]);
+            $contributionUsedMembershipIds = array_map(fn ($c) => $c->getMembership()->getId(), $contributions);
+            $contributionAllMembershipIds = array_map(fn ($m) => $m->getId(), $this->membershipRepository->findBy(['club' => $club], ['id' => 'ASC']));
+        }
+
+        // Contribution form (add contribution without closing)
+        $contributionForm = null;
+        $contributionAlreadyExistsForCurrentUser = false;
+        if ($this->isGranted(SubTaskVoter::CONTRIBUTE, $subTask) && $subTask->getStatus() === 'open') {
+            $currentMembershipForContribution = $this->membershipRepository->findOneBy([
                 'user' => $user,
                 'club' => $club,
             ]);
-            $isManager = $this->isGranted('MANAGE');
-
-            // Check for existing contributions (e.g., after rejection or reopen)
-            $existingContributions = $this->contributionRepository->findBySubTaskIndexedByMembership($subTask);
-            $formData = null;
-
-            // Find who closed the subtask last (from activities)
-            $lastDoneByMembership = null;
-            $activities = $subTask->getActivities()->toArray();
-            // Filter activities for DONE or INSPECTED_APPROVED (these indicate who closed the subtask)
-            $closingActivities = array_filter($activities, function ($activity) {
-                return in_array($activity->getType(), [ActivityType::DONE, ActivityType::INSPECTED_APPROVED]);
-            });
-            
-            if (!empty($closingActivities)) {
-                // Sort by creation date descending to get the most recent one
-                usort($closingActivities, function ($a, $b) {
-                    return $b->getCreatedAt() <=> $a->getCreatedAt();
-                });
-                
-                $lastClosingActivity = $closingActivities[0];
-                $lastDoneByUser = $lastClosingActivity->getUser();
-                
-                if ($lastDoneByUser) {
-                    $lastDoneByMembership = $this->membershipRepository->findOneBy([
-                        'user' => $lastDoneByUser,
-                        'club' => $club,
-                    ]);
-                }
-            }
-
-            // Pre-fill form with existing data (if contributions exist or we found who closed it)
-            $formData = [];
-            
-            if ($lastDoneByMembership !== null) {
-                // Pre-fill doneBy with the last person who closed the subtask
-                $formData['doneBy'] = $lastDoneByMembership;
-            } elseif ($currentMembership) {
-                // Default to current user if no previous closer found
-                $formData['doneBy'] = $currentMembership;
-            }
-            
-            if (!empty($existingContributions)) {
-                // Pre-fill time and contributors from existing contributions
-                $totalTimeSpent = 0;
-                $contributorMemberships = [];
-
-                foreach ($existingContributions as $contribution) {
-                    $totalTimeSpent += $contribution->getTimeSpent();
-                    $contributorMemberships[] = $contribution->getMembership();
-                }
-
-                $formData['timeSpent'] = (int) ceil($totalTimeSpent); // Convert back to integer hours
-                $formData['contributors'] = $contributorMemberships;
-            } else {
-                // Default values if no contributions exist
-                $formData['timeSpent'] = 1;
-                $formData['contributors'] = $currentMembership ? [$currentMembership] : [];
-            }
-
-            $completeForm = $this->createForm(SubTaskCompleteFormType::class, $formData, [
-                'club' => $club,
-                'current_membership' => $currentMembership,
-                'is_manager' => $isManager,
-                'subtask' => $subTask,
-            ]);
+            $existingContribution = $currentMembershipForContribution
+                ? $this->contributionRepository->findOneBySubTaskAndMembership($subTask, $currentMembershipForContribution)
+                : null;
+            $contributionAlreadyExistsForCurrentUser = $existingContribution !== null;
+            $contributionForm = $this->createForm(ContributionAddFormType::class, $existingContribution ? [
+                'timeSpent' => $existingContribution->getTimeSpent(),
+            ] : ['timeSpent' => 1]);
         }
 
         // Comment form
@@ -287,7 +248,11 @@ class SubTaskController extends ExtendedController
             'task' => $task,
             'subTask' => $subTask,
             'completeForm' => $completeForm?->createView(),
+            'contributionForm' => $contributionForm?->createView(),
+            'contributionAlreadyExistsForCurrentUser' => $contributionAlreadyExistsForCurrentUser,
             'commentForm' => $commentForm?->createView(),
+            'contributionUsedMembershipIds' => $contributionUsedMembershipIds,
+            'contributionAllMembershipIds' => $contributionAllMembershipIds,
         ]);
     }
 
@@ -299,88 +264,46 @@ class SubTaskController extends ExtendedController
         $task = $subTask->getTask();
         $user = $this->getUser();
 
-        $currentMembership = $this->membershipRepository->findOneBy([
-            'user' => $user,
-            'club' => $club,
-        ]);
-        $isManager = $this->isGranted('MANAGE');
-
-        $form = $this->createForm(SubTaskCompleteFormType::class, null, [
-            'club' => $club,
-            'current_membership' => $currentMembership,
-            'is_manager' => $isManager,
+        $form = $this->createForm(SubTaskCompleteFormType::class, $subTask, [
             'subtask' => $subTask,
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
+            /** @var SubTask $subTask */
+            $subTask = $form->getData();
+            $doneByUser = $subTask->getDoneBy();
+            $doneByMembership = $doneByUser
+                ? $this->membershipRepository->findOneBy(['user' => $doneByUser, 'club' => $club])
+                : null;
 
-            /** @var Membership $doneByMembership */
-            $doneByMembership = $data['doneBy'];
-            $timeSpent = $data['timeSpent'];
-            /** @var array<Membership>|Collection $contributors */
-            $contributors = $data['contributors'] ?? [];
-            
-            // Convert to array if it's a Collection
-            if ($contributors instanceof \Doctrine\Common\Collections\Collection) {
-                $contributors = $contributors->toArray();
-            }
-            // Ensure it's an array
-            if (!is_array($contributors)) {
-                $contributors = [];
+            // If no contributions, auto-create one for doneBy
+            if ($subTask->getContributions()->isEmpty() && $doneByMembership instanceof Membership) {
+                $subTask->addContribution(
+                    (new Contribution())
+                        ->setMembership($doneByMembership)
+                        ->setTimeSpent('1.0')
+                );
             }
 
-            // Validate: if timeSpent is 0, the subtask must be closable (no inspection required or user is inspector)
-            $isInspector = $doneByMembership->isInspector();
-            if ($timeSpent == 0 && $subTask->requiresInspection() && !$isInspector) {
+            $totalTimeSpent = 0.0;
+            foreach ($subTask->getContributions() as $contribution) {
+                $totalTimeSpent += (float) ($contribution->getTimeSpent() ?? 0);
+            }
+
+            $isInspector = $doneByMembership instanceof Membership && $doneByMembership->isInspector();
+            if ($totalTimeSpent <= 0 && $subTask->requiresInspection() && !$isInspector) {
                 $this->addFlash('error', 'timeSpentZeroRequiresClosed');
                 return $this->redirectToRoute('club_subtask_show', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
             }
 
-            // Mark subtask as done (auto-validate if user is qualified)
+            // Mark subtask as done
             $this->taskStatusService->handleSubTaskDone(
                 $subTask,
-                $doneByMembership->getUser(),
+                $doneByUser,
                 $isInspector,
-                $user // completedBy - the logged-in user who submitted the form
+                $user
             );
-
-            // Always include doneBy as a contributor
-            if (!in_array($doneByMembership, $contributors, true)) {
-                $contributors[] = $doneByMembership;
-            }
-
-            // Calculate time per contributor (divided evenly with decimal precision)
-            $timePerContributor = count($contributors) > 0 ? round($timeSpent / count($contributors), 2) : 0;
-
-            // Update or create contributions
-            $existingContributions = $this->contributionRepository->findBySubTaskIndexedByMembership($subTask);
-
-            foreach ($contributors as $contributorMembership) {
-                $membershipId = $contributorMembership->getId();
-
-                // Check if contribution already exists (e.g., after rejection)
-                if (isset($existingContributions[$membershipId])) {
-                    // Update existing contribution
-                    $contribution = $existingContributions[$membershipId];
-                    $contribution->setTimeSpent($timePerContributor);
-                    // Remove from array so we can delete unused contributions later
-                    unset($existingContributions[$membershipId]);
-                } else {
-                    // Create new contribution
-                    $contribution = new Contribution();
-                    $contribution->setSubTask($subTask);
-                    $contribution->setMembership($contributorMembership);
-                    $contribution->setTimeSpent($timePerContributor);
-                    $this->entityManager->persist($contribution);
-                }
-            }
-
-            // Remove contributions for members no longer selected
-            foreach ($existingContributions as $unusedContribution) {
-                $this->entityManager->remove($unusedContribution);
-            }
 
             $this->entityManager->flush();
 
@@ -605,5 +528,6 @@ class SubTaskController extends ExtendedController
 
         return $this->redirectToRoute('club_task_show', ['id' => $subTask->getTask()->getId()]);
     }
+
 }
 

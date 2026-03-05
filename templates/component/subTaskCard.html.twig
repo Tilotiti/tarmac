@@ -43,6 +43,13 @@
 					{# Badges on desktop - right side #}
 					<div
 						class="ms-3 d-none d-md-flex gap-2 align-items-start">
+						{# Started badge (open + has contributions) #}
+						{% if subTask.status == 'open' and subTask.contributions|length > 0 %}
+							<span class="badge bg-azure-lt text-white">
+								<i class="ti ti-clock-play me-1"></i>
+								{{ 'started'|trans }}
+							</span>
+						{% endif %}
 						{# Priority badge #}
 						{% if subTask.isPriority %}
 							<span class="badge bg-red-lt text-white">
@@ -80,6 +87,13 @@
 				{# Badges on mobile - full width under avatar #}
 				<div
 					class="d-flex d-md-none gap-2 flex-wrap mb-3">
+					{# Started badge (open + has contributions) #}
+					{% if subTask.status == 'open' and subTask.contributions|length > 0 %}
+						<span class="badge bg-azure text-white">
+							<i class="ti ti-clock-play me-1"></i>
+							{{ 'started'|trans }}
+						</span>
+					{% endif %}
 					{# Priority badge #}
 					{% if subTask.isPriority %}
 						<span class="badge bg-red text-white">

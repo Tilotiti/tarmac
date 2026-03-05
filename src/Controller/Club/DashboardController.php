@@ -48,7 +48,6 @@ class DashboardController extends ExtendedController
 
         $isManager = $this->isGranted('MANAGE');
         $isInspector = $this->isGranted('INSPECT');
-        $isPilote = $this->isGranted('PILOT');
 
         // === 1. SUBTASKS AWAITING INSPECTION (for inspectors only) ===
         $awaitingInspectionSubTasks = [];
@@ -103,11 +102,6 @@ class DashboardController extends ExtendedController
                 )
             )')
             ->setParameter('true', true);
-
-        // Apply pilot visibility filter: non-pilotes can only see facility equipment
-        if (!$isPilote && !$isManager && !$isInspector) {
-            $priorityQb = $this->taskRepository->filterByFacilityEquipment($priorityQb);
-        }
 
         // Apply privacy filter for non-managers
         if (!$isManager) {

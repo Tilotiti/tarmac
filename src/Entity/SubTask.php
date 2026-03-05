@@ -453,6 +453,14 @@ class SubTask
     }
 
     /**
+     * Check if this subtask has contributions (started but not yet closed)
+     */
+    public function hasContributions(): bool
+    {
+        return $this->contributions->count() > 0;
+    }
+
+    /**
      * Get total time spent on this subtask (sum of all contributions)
      */
     public function getTotalTimeSpent(): float
