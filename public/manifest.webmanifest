@@ -1,0 +1,17 @@
+{
+  "name": "Tarmac",
+  "short_name": "Tarmac",
+  "description": "Application de gestion pour clubs aéronautiques",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#345B7C",
+  "icons": [
+    {
+      "src": "/glider.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

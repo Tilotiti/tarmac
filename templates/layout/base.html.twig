@@ -8,7 +8,10 @@
 			{% endblock %}
 			- Tarmac
 		</title>
-		<link rel="icon" href="{{ asset('glider.svg') }}">
+		<link rel="icon" href="{{ asset('glider.svg') }}" type="image/svg+xml">
+		<link rel="apple-touch-icon" href="{{ asset('glider.svg') }}">
+		<link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
+		<meta name="theme-color" content="#345B7C">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css"/>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"/>
 		{% block stylesheets %}
@@ -30,7 +33,7 @@
 						<div class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal p-0 m-0 me-4">
 							{% block navbar_brand %}
 								<a href="{{ path('public_landing') }}">
-									<img src="{{ asset('logo.png') }}" alt="Tarmac">
+									<img src="{{ asset('logo.svg') }}" alt="Tarmac">
 								</a>
 							{% endblock %}
 						</div>
