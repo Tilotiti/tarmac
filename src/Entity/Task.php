@@ -518,14 +518,12 @@ class Task
     public function setPriority(bool $priority): static
     {
         $this->priority = $priority;
-        
-        // If task is set to priority, inherit to all subtasks
-        if ($priority) {
-            foreach ($this->subTasks as $subTask) {
-                $subTask->setPriority(true);
-            }
+
+        // Propagate to all subtasks (both prioritization and deprioritization)
+        foreach ($this->subTasks as $subTask) {
+            $subTask->setPriority($priority);
         }
-        
+
         return $this;
     }
 
