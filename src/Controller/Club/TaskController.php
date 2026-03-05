@@ -4,8 +4,10 @@ namespace App\Controller\Club;
 
 use App\Controller\ExtendedController;
 use App\Entity\Enum\ActivityType;
+use App\Entity\SubTask;
 use App\Entity\Task;
 use App\Entity\Activity;
+use App\Form\Filter\SubTaskFilterType;
 use App\Form\Filter\TaskFilterType;
 use App\Form\ActivityFormType;
 use App\Form\TaskType;
@@ -158,8 +160,14 @@ class TaskController extends ExtendedController
     ])]
     public function show(Task $task, Request $request): Response
     {
-
         $club = $this->clubResolver->resolve();
+
+        // SubTask filters (status default: open)
+        $subTaskFilters = $this->createFilter(SubTaskFilterType::class, ['status' => 'open']);
+        $subTaskFilters->handleRequest($request);
+        $filterData = $this->getFilterData($subTaskFilters);
+
+        $filteredSubTasks = $this->filterSubTasks($task->getSubTasks(), $filterData);
 
         // Comment form
         $commentForm = null;
@@ -173,9 +181,56 @@ class TaskController extends ExtendedController
         return $this->render('club/task/show.html.twig', [
             'club' => $club,
             'task' => $task,
+            'filteredSubTasks' => $filteredSubTasks,
+            'filters' => $subTaskFilters->createView(),
             'commentForm' => $commentForm,
             'taskStatusService' => $this->taskStatusService,
         ]);
+    }
+
+    /**
+     * Filter subtasks by status and search.
+     *
+     * @param iterable<SubTask> $subTasks
+     *
+     * @return SubTask[]
+     */
+    private function filterSubTasks(iterable $subTasks, array $filterData): array
+    {
+        $search = isset($filterData['search']) ? mb_strtolower(trim($filterData['search'])) : null;
+        $status = $filterData['status'] ?? null;
+
+        $result = [];
+        foreach ($subTasks as $subTask) {
+            // Status filter: open = open, done or waitingForApproval
+            if ($status === 'open') {
+                $statusMatch = \in_array($subTask->getStatus(), ['open', 'done'], true)
+                    || $subTask->isWaitingForApproval();
+            } elseif ($status === 'closed') {
+                $statusMatch = $subTask->getStatus() === 'closed';
+            } elseif ($status === 'cancelled') {
+                $statusMatch = $subTask->getStatus() === 'cancelled';
+            } else {
+                $statusMatch = true;
+            }
+
+            if (!$statusMatch) {
+                continue;
+            }
+
+            // Search filter (title + description)
+            if ($search !== null && $search !== '') {
+                $title = mb_strtolower($subTask->getTitle() ?? '');
+                $description = mb_strtolower($subTask->getDescription() ?? '');
+                if (!str_contains($title, $search) && !str_contains($description, $search)) {
+                    continue;
+                }
+            }
+
+            $result[] = $subTask;
+        }
+
+        return $result;
     }
 
     #[Route('/{id}/edit', name: 'club_task_edit', requirements: ['id' => '\d+'])]

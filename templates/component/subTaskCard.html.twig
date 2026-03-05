@@ -1,13 +1,15 @@
 {#
     SubTask Card Component
-    
+
     Parameters:
     - subTask: The SubTask entity to display
 #}
 {% set task = subTask.task %}
+{% set statusColor = subTask.isWaitingForApproval ? 'warning' : (subTask.status == 'closed' ? 'success' : (subTask.status == 'cancelled' ? 'danger' : 'info')) %}
 <div class="col-12 mb-3">
 	<a href="{{ path('club_subtask_show', {taskId: task.id, id: subTask.id}) }}" class="text-decoration-none">
-		<div class="card card-link" style="cursor: pointer;">
+		<div class="card card-link" style="cursor: pointer;" title="{{ subTask.status|trans }}" role="article" aria-label="{{ subTask.title }} - {{ subTask.status|trans }}">
+			<div class="card-status-start bg-{{ statusColor }}"></div>
 			<div class="card-body">
 				<div
 					class="d-flex align-items-start mb-3">
@@ -40,17 +42,15 @@
 						</div>
 					</div>
 
-					{# Badges on desktop - right side #}
+					{# Badges on desktop - right side (status shown via card border) #}
 					<div
 						class="ms-3 d-none d-md-flex gap-2 align-items-start">
-						{# Started badge (open + has contributions) #}
 						{% if subTask.status == 'open' and subTask.contributions|length > 0 %}
 							<span class="badge bg-azure-lt text-white">
 								<i class="ti ti-clock-play me-1"></i>
 								{{ 'started'|trans }}
 							</span>
 						{% endif %}
-						{# Priority badge #}
 						{% if subTask.isPriority %}
 							<span class="badge bg-red-lt text-white">
 								<i class="ti ti-flag me-1"></i>
@@ -58,23 +58,8 @@
 							</span>
 						{% endif %}
 
-						{# Status badge #}
-						{% if subTask.isWaitingForApproval %}
-							<span class="badge bg-warning-lt text-white">
-								<i class="ti ti-hourglass me-1"></i>
-								{{ 'waitingForApproval'|trans }}
-							</span>
-						{% else %}
-							<span class="badge bg-{{ subTask.status == 'closed' ? 'success' : (subTask.status == 'cancelled' ? 'danger' : 'info') }}-lt text-white">
-								<i class="ti ti-{{ subTask.status == 'closed' ? 'circle-check' : (subTask.status == 'cancelled' ? 'x' : (subTask.status == 'done' ? 'check' : 'circle')) }} me-1"></i>
-								{{ subTask.status|trans }}
-							</span>
-						{% endif %}
-
-						{# Difficulty badge #}
 						{% include 'component/difficultyBadge.html.twig' with {'difficulty': subTask.difficulty} %}
 
-						{# Validation badge #}
 						{% if subTask.requiresInspection %}
 							<span class="badge bg-warning-lt text-white">
 								<i class="ti ti-shield-check me-1"></i>
@@ -84,17 +69,15 @@
 					</div>
 				</div>
 
-				{# Badges on mobile - full width under avatar #}
+				{# Badges on mobile (status shown via card border) #}
 				<div
 					class="d-flex d-md-none gap-2 flex-wrap mb-3">
-					{# Started badge (open + has contributions) #}
 					{% if subTask.status == 'open' and subTask.contributions|length > 0 %}
 						<span class="badge bg-azure text-white">
 							<i class="ti ti-clock-play me-1"></i>
 							{{ 'started'|trans }}
 						</span>
 					{% endif %}
-					{# Priority badge #}
 					{% if subTask.isPriority %}
 						<span class="badge bg-red text-white">
 							<i class="ti ti-flag me-1"></i>
@@ -102,20 +85,6 @@
 						</span>
 					{% endif %}
 
-					{# Status badge #}
-					{% if subTask.isWaitingForApproval %}
-						<span class="badge bg-warning text-white">
-							<i class="ti ti-hourglass me-1"></i>
-							{{ 'waitingForApproval'|trans }}
-						</span>
-					{% else %}
-						<span class="badge bg-{{ subTask.status == 'closed' ? 'success' : (subTask.status == 'cancelled' ? 'danger' : 'info') }} text-white">
-							<i class="ti ti-{{ subTask.status == 'closed' ? 'circle-check' : (subTask.status == 'cancelled' ? 'x' : (subTask.status == 'done' ? 'check' : 'circle')) }} me-1"></i>
-							{{ subTask.status|trans }}
-						</span>
-					{% endif %}
-
-					{# Difficulty badge #}
 					{% include 'component/difficultyBadge.html.twig' with {'difficulty': subTask.difficulty} %}
 
 					{# Validation badge #}

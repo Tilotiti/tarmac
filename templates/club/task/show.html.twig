@@ -225,89 +225,83 @@
 		</div>
 	{% endif %}
 
-	{# SubTasks Card #}
-	<div class="card mb-3">
-		<div class="card-header">
-			<h3 class="card-title">{{ 'subTasks'|trans }}</h3>
+	{# SubTasks Section - une card par sous-tâche, pas de card englobante #}
+	<div class="mb-4">
+		<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+			<h3 class="card-title mb-0">{{ 'subTasks'|trans }}</h3>
 			{% if is_granted('TASK_CREATE_SUBTASK', task) %}
-				<div class="card-actions">
-					<a href="{{ path('club_subtask_new', {taskId: task.id}) }}" class="btn btn-primary btn-sm" style="min-height: 44px;">
-						<i class="ti ti-plus me-2"></i>
-						{{ 'add'|trans }}
-					</a>
-				</div>
+				<a href="{{ path('club_subtask_new', {taskId: task.id}) }}" class="btn btn-primary btn-sm" style="min-height: 44px;">
+					<i class="ti ti-plus me-2"></i>
+					{{ 'add'|trans }}
+				</a>
 			{% endif %}
 		</div>
-		<div class="list-group list-group-flush">
-			{% for subtask in task.subTasks %}
-				<a href="{{ path('club_subtask_show', {taskId: task.id, id: subtask.id}) }}" class="list-group-item list-group-item-action">
-					<div
-						class="d-flex align-items-start justify-content-between">
-						{# Content Column #}
-						<div
-							class="flex-grow-1">
-							{# Title #}
-							<div class="mb-2">
-								<strong>{{ subtask.title }}</strong>
-								{% if subtask.documentation %}
-									<i class="ti ti-file-description text-secondary ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'documentationAvailable'|trans }}"></i>
-								{% endif %}
-							</div>
 
-							{# Badges #}
-							<div class="mb-2">
-								{% if subtask.status == 'open' and subtask.contributions|length > 0 %}
-									<span class="badge bg-azure-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'started'|trans }}">
-										<i class="ti ti-clock-play me-1"></i>
-										{{ 'started'|trans }}
-									</span>
-								{% endif %}
-								{% if subtask.isPriority %}
-									<span class="badge bg-red-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'priority'|trans }}">
-										<i class="ti ti-flag me-1"></i>
-										{{ 'priority'|trans }}
-									</span>
-								{% endif %}
-								{% if subtask.isWaitingForApproval %}
-									<span class="badge bg-warning-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'status'|trans }}">
-										<i class="ti ti-hourglass me-1"></i>
-										{{ 'waitingForApproval'|trans }}
-									</span>
-								{% else %}
-									<span class="badge bg-{{ subtask.status == 'closed' ? 'success' : (subtask.status == 'cancelled' ? 'danger' : 'info') }}-lt	 text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'status'|trans }}">
-										<i class="ti ti-{{ subtask.status == 'closed' ? 'circle-check' : (subtask.status == 'cancelled' ? 'x' : 'circle') }} me-1"></i>
-										{{ subtask.status|trans }}
-									</span>
-								{% endif %}
-								{% if subtask.requiresInspection %}
-									<span class="badge bg-warning-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
-										<i class="ti ti-shield-check me-1"></i>
-										{{ 'requiresInspection'|trans }}
-									</span>
-								{% endif %}
-								{% include 'component/difficultyBadge.html.twig' with {'difficulty': subtask.difficulty} %}
-							</div>
+		{% if task.subTasks|length > 0 %}
+			<div class="mb-3">
+				{% include 'component/filters.html.twig' with { form: filters, style: 'small' } %}
+			</div>
+		{% endif %}
 
-							{# Description #}
-							{% if subtask.description %}
-								<div class="text-secondary small">
-									{{ subtask.description }}
+		{% for subtask in filteredSubTasks %}
+			{% set statusColor = subtask.isWaitingForApproval ? 'warning' : (subtask.status == 'closed' ? 'success' : (subtask.status == 'cancelled' ? 'danger' : 'info')) %}
+			<div class="mb-3">
+				<a href="{{ path('club_subtask_show', {taskId: task.id, id: subtask.id}) }}" class="text-decoration-none">
+					<div class="card card-link" style="cursor: pointer;" title="{{ subtask.status|trans }}" role="article" aria-label="{{ subtask.title }} - {{ subtask.status|trans }}">
+						<div class="card-status-start bg-{{ statusColor }}"></div>
+						<div class="card-body">
+							<div class="d-flex align-items-start justify-content-between">
+								<div class="flex-grow-1">
+									<div class="mb-2">
+										<strong>{{ subtask.title }}</strong>
+										{% if subtask.documentation %}
+											<i class="ti ti-file-description text-secondary ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'documentationAvailable'|trans }}"></i>
+										{% endif %}
+									</div>
+
+									{# Badges (sans statut - représenté par la bordure colorée) #}
+									<div class="mb-2">
+										{% if subtask.status == 'open' and subtask.contributions|length > 0 %}
+											<span class="badge bg-azure-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'started'|trans }}">
+												<i class="ti ti-clock-play me-1"></i>
+												{{ 'started'|trans }}
+											</span>
+										{% endif %}
+										{% if subtask.isPriority %}
+											<span class="badge bg-red-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'priority'|trans }}">
+												<i class="ti ti-flag me-1"></i>
+												{{ 'priority'|trans }}
+											</span>
+										{% endif %}
+										{% if subtask.requiresInspection %}
+											<span class="badge bg-warning-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+												<i class="ti ti-shield-check me-1"></i>
+												{{ 'requiresInspection'|trans }}
+											</span>
+										{% endif %}
+										{% include 'component/difficultyBadge.html.twig' with {'difficulty': subtask.difficulty} %}
+									</div>
+
+									{% if subtask.description %}
+										<div class="text-secondary small">
+											{{ subtask.description }}
+										</div>
+									{% endif %}
 								</div>
-							{% endif %}
-						</div>
 
-						{# Arrow icon #}
-						<div class="ms-3">
-							<i class="ti ti-chevron-right text-secondary"></i>
+								<div class="ms-3">
+									<i class="ti ti-chevron-right text-secondary"></i>
+								</div>
+							</div>
 						</div>
 					</div>
 				</a>
-			{% else %}
-				<div class="list-group-item text-center text-secondary">
-					<em>{{ 'noSubTasksFound'|trans }}</em>
-				</div>
-			{% endfor %}
-		</div>
+			</div>
+		{% else %}
+			<p class="text-center text-secondary mb-0">
+				<em>{{ 'noSubTasksFound'|trans }}</em>
+			</p>
+		{% endfor %}
 	</div>
 
 	{# Activity Timeline #}
