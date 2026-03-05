@@ -1,6 +1,18 @@
 /* Custom styles */
 /* Tabler uses Inter font family by default - no need to override */
 
+/* Welcome message - Markdown rendered content */
+.text-body p:last-child,
+.card-body .text-body p:last-child {
+	margin-bottom: 0;
+}
+
+.text-body ul,
+.text-body ol {
+	margin-bottom: 0.5rem;
+	padding-left: 1.25rem;
+}
+
 /* Compact navbar */
 .navbar {
     padding-top: 0.25rem !important;

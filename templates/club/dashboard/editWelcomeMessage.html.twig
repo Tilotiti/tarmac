@@ -11,8 +11,40 @@
 		</div>
 		<div class="card-body">
 			{{ form_start(form) }}
-			<div class="mb-3">
+			<div class="mb-3" data-controller="markdown-editor">
 				{{ form_label(form.welcomeMessage) }}
+				<div class="btn-toolbar mb-2" role="toolbar" data-markdown-editor-target="toolbar">
+					<div class="btn-group btn-group-sm me-1" role="group">
+						<button type="button" class="btn btn-outline-secondary" title="{{ 'markdownBold'|trans }}" data-action="click->markdown-editor#bold">
+							<i class="ti ti-bold"></i>
+						</button>
+						<button type="button" class="btn btn-outline-secondary" title="{{ 'markdownItalic'|trans }}" data-action="click->markdown-editor#italic">
+							<i class="ti ti-italic"></i>
+						</button>
+						<button type="button" class="btn btn-outline-secondary" title="{{ 'markdownCode'|trans }}" data-action="click->markdown-editor#code">
+							<i class="ti ti-code"></i>
+						</button>
+					</div>
+					<div class="btn-group btn-group-sm me-1" role="group">
+						<button type="button" class="btn btn-outline-secondary" title="{{ 'markdownHeading'|trans }}" data-action="click->markdown-editor#heading">
+							<i class="ti ti-heading"></i>
+						</button>
+						<button type="button" class="btn btn-outline-secondary" title="{{ 'markdownLink'|trans }}" data-action="click->markdown-editor#link">
+							<i class="ti ti-link"></i>
+						</button>
+					</div>
+					<div class="btn-group btn-group-sm" role="group">
+						<button type="button" class="btn btn-outline-secondary" title="{{ 'markdownBulletList'|trans }}" data-action="click->markdown-editor#bulletList">
+							<i class="ti ti-list"></i>
+						</button>
+						<button type="button" class="btn btn-outline-secondary" title="{{ 'markdownOrderedList'|trans }}" data-action="click->markdown-editor#orderedList">
+							<i class="ti ti-list-numbers"></i>
+						</button>
+						<button type="button" class="btn btn-outline-secondary" title="{{ 'markdownBlockquote'|trans }}" data-action="click->markdown-editor#blockquote">
+							<i class="ti ti-quote"></i>
+						</button>
+					</div>
+				</div>
 				{{ form_widget(form.welcomeMessage) }}
 				{{ form_help(form.welcomeMessage) }}
 				{{ form_errors(form.welcomeMessage) }}

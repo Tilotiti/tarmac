@@ -13,7 +13,7 @@
 					<div class="d-flex align-items-start">
 						<div class="flex-fill">
 							<div class="text-body">
-								{{ club.welcomeMessage|nl2br }}
+								{{ club.welcomeMessage|markdown_to_html }}
 							</div>
 						</div>
 						{% if is_granted('MANAGE') %}

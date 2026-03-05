@@ -13,6 +13,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.6.2",
         "endroid/qr-code": "^5.1",
+        "league/commonmark": "^2.8",
         "league/flysystem-aws-s3-v3": "^3.32",
         "nucleos/dompdf-bundle": "^4.4",
         "phpdocumentor/reflection-docblock": "^5.6.6",
@@ -54,6 +55,7 @@
         "tiloweb/pagination-bundle": "^1.6.4",
         "tiloweb/uploaded-file-type-bundle": "^1.0.3",
         "twig/extra-bundle": "^2.12|^3.23",
+        "twig/markdown-extra": "^3.23",
         "twig/string-extra": "^3.23",
         "twig/twig": "^2.12|^3.23.0"
     },

@@ -2331,11 +2331,43 @@
       </trans-unit>
       <trans-unit id="444" resname="welcomeMessageHelp">
         <source>welcomeMessageHelp</source>
-        <target>Ce message sera visible par tous les membres sur le tableau de bord et sera inclus dans l'impression des sous-tâches prioritaires.</target>
+        <target>Ce message sera visible par tous les membres sur le tableau de bord et sera inclus dans l'impression des sous-tâches prioritaires. Vous pouvez utiliser du Markdown (gras, italique, listes, liens…).</target>
       </trans-unit>
       <trans-unit id="445" resname="welcomeMessagePlaceholder">
         <source>welcomeMessagePlaceholder</source>
         <target>Saisissez votre message d'accueil ici...</target>
+      </trans-unit>
+      <trans-unit id="446" resname="markdownBold">
+        <source>markdownBold</source>
+        <target>Gras</target>
+      </trans-unit>
+      <trans-unit id="447" resname="markdownItalic">
+        <source>markdownItalic</source>
+        <target>Italique</target>
+      </trans-unit>
+      <trans-unit id="448" resname="markdownCode">
+        <source>markdownCode</source>
+        <target>Code</target>
+      </trans-unit>
+      <trans-unit id="449" resname="markdownHeading">
+        <source>markdownHeading</source>
+        <target>Titre</target>
+      </trans-unit>
+      <trans-unit id="450" resname="markdownLink">
+        <source>markdownLink</source>
+        <target>Lien</target>
+      </trans-unit>
+      <trans-unit id="451" resname="markdownBulletList">
+        <source>markdownBulletList</source>
+        <target>Liste à puces</target>
+      </trans-unit>
+      <trans-unit id="452" resname="markdownOrderedList">
+        <source>markdownOrderedList</source>
+        <target>Liste numérotée</target>
+      </trans-unit>
+      <trans-unit id="453" resname="markdownBlockquote">
+        <source>markdownBlockquote</source>
+        <target>Citation</target>
       </trans-unit>
     </body>
   </file>

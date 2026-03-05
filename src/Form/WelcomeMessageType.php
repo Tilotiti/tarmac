@@ -20,6 +20,7 @@ class WelcomeMessageType extends AbstractType
                     'class' => 'form-control',
                     'rows' => 5,
                     'placeholder' => 'welcomeMessagePlaceholder',
+                    'data-markdown-editor-target' => 'textarea',
                 ],
             ])
         ;
