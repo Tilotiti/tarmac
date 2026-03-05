@@ -74,7 +74,7 @@ class SubTaskVoter extends Voter
             self::CONTRIBUTE => $this->canContribute($subTask, $user, $isManager, $isInspector, $isPilote),
             self::DO => $this->canDo($subTask, $user, $isManager, $isInspector, $isPilote),
             self::INSPECT => $this->canInspect($subTask, $isInspector),
-            self::CANCEL => $this->canCancel($subTask, $user, $isManager),
+            self::CANCEL => $this->canCancel($subTask, $user, $isManager, $isInspector, $isPilote),
             self::REOPEN => $this->canReopen($subTask, $user, $isManager, $isInspector, $isPilote),
             default => false,
         };
@@ -100,24 +100,12 @@ class SubTaskVoter extends Voter
         return false;
     }
 
-    private function canCancel(SubTask $subTask, User $user, bool $isManager): bool
+    private function canCancel(SubTask $subTask, User $user, bool $isManager, bool $isInspector, bool $isPilote): bool
     {
-        // Can only cancel open subtasks
         if ($subTask->getStatus() !== 'open') {
             return false;
         }
-
-        // Managers can cancel any open subtask
-        if ($isManager) {
-            return true;
-        }
-
-        // Members can cancel their own open subtasks
-        if ($subTask->getCreatedBy() && $subTask->getCreatedBy()->getId() === $user->getId()) {
-            return true;
-        }
-
-        return false;
+        return $this->canDo($subTask, $user, $isManager, $isInspector, $isPilote);
     }
 
     private function canView(SubTask $subTask, User $user, bool $isManager, bool $isInspector, bool $isPilote): bool

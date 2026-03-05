@@ -1105,6 +1105,10 @@
         <source>cancelTask</source>
         <target>Annuler la tâche</target>
       </trans-unit>
+      <trans-unit id="161a" resname="cancelSubTask">
+        <source>cancelSubTask</source>
+        <target>Annuler la sous-tâche</target>
+      </trans-unit>
       <trans-unit id="422a" resname="viewTasks">
         <source>viewTasks</source>
         <target>Voir les tâches</target>

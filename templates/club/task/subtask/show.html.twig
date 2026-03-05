@@ -22,6 +22,13 @@
 			</a>
 		{% endif %}
 
+		{% if is_granted('SUBTASK_CANCEL', subTask) and subTask.isOpen() %}
+			<button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelSubTaskModal" style="min-height: 44px;" title="{{ 'cancelSubTask'|trans }}">
+				<i class="ti ti-ban me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'cancelSubTask'|trans }}</span>
+			</button>
+		{% endif %}
+
 		{% if is_granted('SUBTASK_INSPECT', subTask) %}
 			<form method="post" action="{{ path('club_subtask_inspect_approve', {taskId: task.id, id: subTask.id}) }}" class="d-inline">
 				<button type="submit" class="btn btn-success" style="min-height: 44px;">
@@ -462,6 +469,33 @@
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="min-height: 44px;">{{ 'cancel'|trans }}</button>
 							<button type="submit" class="btn btn-outline-secondary" style="min-height: 44px;">{{ 'reopenSubTask'|trans }}</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
+	{# Cancel SubTask Modal #}
+	{% if is_granted('SUBTASK_CANCEL', subTask) and subTask.isOpen() %}
+		<div class="modal fade" id="cancelSubTaskModal" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">{{ 'cancelSubTask'|trans }}</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<form method="post" action="{{ path('club_subtask_cancel', {taskId: task.id, id: subTask.id}) }}">
+						<input type="hidden" name="activity_form[_token]" value="{{ csrf_token('activity_form') }}">
+						<div class="modal-body">
+							<div class="mb-3">
+								<label class="form-label">{{ 'cancellationReason'|trans }}</label>
+								<textarea name="activity_form[message]" class="form-control" rows="3" placeholder="{{ 'optionalReason'|trans }}"></textarea>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="min-height: 44px;">{{ 'cancel'|trans }}</button>
+							<button type="submit" class="btn btn-danger" style="min-height: 44px;">{{ 'cancelSubTask'|trans }}</button>
 						</div>
 					</form>
 				</div>
