@@ -8,6 +8,12 @@
 
 {% block page_actions %}
 	<div class="btn-list">
+		{% if task.planApplication %}
+			<a href="{{ path('club_plan_application_show', {id: task.planApplication.id}) }}" class="btn btn-outline-secondary" style="min-height: 44px;" title="{{ 'viewMaintenancePlan'|trans }}">
+				<i class="ti ti-file-check me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'viewMaintenancePlan'|trans }}</span>
+			</a>
+		{% endif %}
 		{% if is_granted('MANAGE') %}
 			<form method="post" action="{{ path('club_task_toggle_priority', {id: task.id}) }}" class="d-inline">
 				<input type="hidden" name="_token" value="{{ csrf_token('toggle_priority_task' ~ task.id) }}">

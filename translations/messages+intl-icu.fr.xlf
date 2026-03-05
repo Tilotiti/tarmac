@@ -1875,6 +1875,10 @@
         <source>planApplication</source>
         <target>Application de plan</target>
       </trans-unit>
+      <trans-unit id="346a" resname="viewMaintenancePlan">
+        <source>viewMaintenancePlan</source>
+        <target>Voir le plan d'entretien</target>
+      </trans-unit>
       <trans-unit id="347" resname="maintenancePlans">
         <source>maintenancePlans</source>
         <target>Plans de maintenance</target>
