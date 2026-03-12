@@ -98,10 +98,11 @@ class DashboardController extends ExtendedController
                 task.priority = :true 
                 OR EXISTS (
                     SELECT 1 FROM App\Entity\SubTask st 
-                    WHERE st.task = task AND st.priority = :true
+                    WHERE st.task = task AND st.priority = :true AND st.status = :subtaskOpen
                 )
             )')
-            ->setParameter('true', true);
+            ->setParameter('true', true)
+            ->setParameter('subtaskOpen', 'open');
 
         // Apply privacy filter for non-managers
         if (!$isManager) {
