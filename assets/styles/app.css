@@ -17,6 +17,11 @@
 .navbar {
     padding-top: 0.25rem !important;
     padding-bottom: 0.25rem !important;
+    overflow: visible !important; /* Allow dropdown to show outside navbar */
+}
+
+.navbar .container-xl {
+    overflow: visible !important;
 }
 
 .navbar-brand {

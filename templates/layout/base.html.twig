@@ -39,8 +39,8 @@
 						</div>
 						<div class="navbar-nav flex-row order-md-last">
 							{% block user_dropdown %}
-								<div class="nav-item dropdown">
-									<a href="#" class="nav-link d-flex lh-1 p-0 px-2" data-bs-toggle="dropdown" aria-label="Ouvrir le menu utilisateur" style="min-height: 44px; min-width: 44px;">
+								<div class="nav-item dropdown" data-controller="dropdown">
+									<a href="#" class="nav-link d-flex lh-1 p-0 px-2" data-dropdown-target="toggle" aria-label="Ouvrir le menu utilisateur" aria-expanded="false" style="min-height: 44px; min-width: 44px;">
 										<span class="avatar avatar-sm">{{ app.user.firstname[:1] }}{{ app.user.lastname[:1] }}</span>
 										<div class="d-none d-md-block ps-2">
 											<div class="small">{{ app.user.fullName|default('Utilisateur') }}</div>
@@ -49,7 +49,7 @@
 											{% endblock %}
 										</div>
 									</a>
-									<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+									<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" data-dropdown-target="menu">
 										{% block user_dropdown_menu %}
 											<a href="{{ path('public_profile_edit') }}" class="dropdown-item">
 												<i class="ti ti-user"></i>
