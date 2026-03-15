@@ -23,6 +23,21 @@ Apply this skill when the user:
 4. Si tu as absolument besoin d’un fichier temporaire pour t’organiser, utilise un emplacement temporaire hors dépôt (par exemple un chemin système type `/tmp/…`), et considère-le comme éphémère.
 5. Renvoie toujours le markdown complet dans ta réponse (bloc de code markdown ou message principal) afin que l’utilisateur puisse le copier-coller dans Headway.
 
+### Ton style d’écriture pour Headway
+
+- **Public visé** : grand public / membres de club, pas des développeurs.
+- **Ton** : clair, positif, orienté bénéfices (ce que ça change pour l’utilisateur), pas de jargon technique.
+- **Niveau de détail** :
+  - Ne pas décrire les détails d’implémentation (pas de DQL, entités, PDF engine, etc.).
+  - Expliquer la fonctionnalité en termes simples : *ce qu’on peut faire*, *pourquoi c’est utile*, *dans quels cas on l’utilise*.
+- **Structure recommandée** :
+  - Un titre clair et court.
+  - 2–4 sections maximum, avec des sous-titres simples (ex. “Ce qui change pour vous”, “Comment l’utiliser”).
+  - Des listes à puces pour les points importants.
+- **Évite** :
+  - Les termes trop techniques (ORM, repository, Twig, etc.).
+  - Les messages trop longs : privilégie un texte que l’on lit en **30–60 secondes**.
+
 Si plusieurs fichiers existent dans `headway/`, renvoie le contenu du plus récent ou du plus pertinent, sauf si l’utilisateur demande un fichier précis.
 
 Ne résume ni ne réécris le contenu sauf si l’utilisateur demande explicitement des modifications ; renvoie-le tel quel pour un simple copier-coller.
