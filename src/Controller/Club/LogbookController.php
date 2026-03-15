@@ -65,9 +65,8 @@ class LogbookController extends ExtendedController
     #[Route('/members/member/{id}/logbook', name: 'club_member_logbook')]
     #[Breadcrumb([
         ['label' => 'home', 'route' => 'club_dashboard'],
-        ['label' => 'members', 'route' => 'club_members'],
-        ['label' => '$membership.user.fullname', 'route' => 'club_member_show', 'routeParameters' => ['id' => '$membership.id']],
-        ['label' => 'mechanicLogbook'],
+        ['label' => 'mechanicLogbook', 'route' => 'club_logbook'],
+        ['label' => '$membership.user.fullname'],
     ])]
     public function show(Request $request, #[MapEntity] Membership $membership): Response
     {
