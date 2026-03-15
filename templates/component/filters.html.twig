@@ -1,4 +1,4 @@
-{% form_theme form 'form/tag_filter.html.twig' %}
+{% form_theme form 'form/tags.html.twig' %}
 
 {% set style = style ?? 'default' %}
 {% set defaults = form.vars.defaults ?? {} %}
@@ -9,20 +9,20 @@
 	{# Use filter.vars.value (view data) if filter.vars.data (normalized data) is empty #}
 	{% set value = filter.vars.data is not empty ? filter.vars.data : filter.vars.value %}
 	{% if value is not empty %}
-		{# Convert DateTime objects to ISO strings #}
-		{% if value is instanceof('DateTime') %}
+		{# Convert DateTimeInterface objects (DateTime / DateTimeImmutable) to ISO strings #}
+		{% if value is instanceof('\\DateTimeInterface') %}
 			{% set value = value | date('Y-m-d\\TH:i:sP') %}
 			{# Handle Enum objects - convert to their value #}
 		{% elseif value is instanceof('\\UnitEnum') %}
 			{% set value = value.value %}
-			{# Handle nested arrays (like date ranges) - convert DateTime objects #}
+			{# Handle nested arrays (like date ranges) - convert DateTimeInterface objects #}
 		{% elseif value is iterable and not (value.id is defined) %}
 			{# Check if it's a simple array (like status[]) or associative array (like date range) #}
 			{% if value is iterable and value|keys|first == 0 %}
 				{# Simple array - keep as array for URL parameters #}
 				{% set convertedValue = [] %}
 				{% for val in value %}
-					{% if val is instanceof('DateTime') %}
+					{% if val is instanceof('\\DateTimeInterface') %}
 						{% set convertedValue = convertedValue|merge([val | date('Y-m-d\\TH:i:sP')]) %}
 					{% elseif val is not empty %}
 						{% set convertedValue = convertedValue|merge([val]) %}
@@ -33,7 +33,7 @@
 				{# Associative array (like date range) #}
 				{% set convertedValue = {} %}
 				{% for key, val in value %}
-					{% if val is instanceof('DateTime') %}
+					{% if val is instanceof('\\DateTimeInterface') %}
 						{% set convertedValue = convertedValue | merge({(key): val | date('Y-m-d\\TH:i:sP')}) %}
 					{% elseif val is not empty %}
 						{% set convertedValue = convertedValue | merge({(key): val}) %}
@@ -94,7 +94,7 @@
 					<span class="tag">
 						<strong>{{ filter.vars.name | trans }}</strong>
 						:
-						{% if filter.vars.data is instanceof('DateTime') %}
+						{% if filter.vars.data is instanceof('\\DateTimeInterface') %}
 							{{ filter.vars.data | date('d/m/Y') }}
 						{% elseif filter.vars.data is iterable %}
 							{# Check if it's a simple indexed array (like status[]) #}
@@ -107,16 +107,16 @@
 									{% endif %}
 								{% endfor %}
 								{{ items|join(', ') }}
-								{# Check if it's a date range (associative array with startAt/endAt) #}
-							{% elseif filter.vars.data.startAt is defined and filter.vars.data.startAt is instanceof('DateTime') and filter.vars.data.endAt is defined and filter.vars.data.endAt is instanceof('DateTime') %}
+							{# Check if it's a date range (associative array with startAt/endAt) #}
+							{% elseif filter.vars.data.startAt is defined and filter.vars.data.startAt is instanceof('\\DateTimeInterface') and filter.vars.data.endAt is defined and filter.vars.data.endAt is instanceof('\\DateTimeInterface') %}
 								Du
 								{{ filter.vars.data.startAt | date('d/m/Y') }}
 								au
 								{{ filter.vars.data.endAt | date('d/m/Y') }}
-							{% elseif filter.vars.data.endAt is defined and filter.vars.data.endAt is instanceof('DateTime') %}
+							{% elseif filter.vars.data.endAt is defined and filter.vars.data.endAt is instanceof('\\DateTimeInterface') %}
 								Jusqu'au
 								{{ filter.vars.data.endAt | date('d/m/Y') }}
-							{% elseif filter.vars.data.startAt is defined and filter.vars.data.startAt is instanceof('DateTime') %}
+							{% elseif filter.vars.data.startAt is defined and filter.vars.data.startAt is instanceof('\\DateTimeInterface') %}
 								À partir du
 								{{ filter.vars.data.startAt | date('d/m/Y') }}
 							{% else %}

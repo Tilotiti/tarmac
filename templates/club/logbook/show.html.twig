@@ -1,0 +1,243 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{% if is_own_logbook %}
+		{{ 'myMechanicLogbook'|trans }}
+	{% else %}
+		{{ 'mechanicLogbookFor'|trans({'memberName': membership.user.fullName}) }}
+	{% endif %}
+{% endblock %}
+
+{% block page_actions %}
+	<a href="{{ path('club_member_logbook_pdf', {id: membership.id}) ~ (app.request.query.all ? '?' ~ app.request.query.all|url_encode : '') }}" class="btn btn-outline-primary" style="min-height: 44px;">
+		<i class="ti ti-printer me-2"></i>
+		<span class="d-none d-sm-inline">{{ 'exportPdf'|trans }}</span>
+		<span class="d-inline d-sm-none">{{ 'pdf'|trans }}</span>
+	</a>
+{% endblock %}
+
+{% block page_content %}
+	{# Filtres #}
+	{% include 'component/filters.html.twig' with { form: filters } %}
+
+	{# Statistiques globales - carte de profil mécano #}
+	<div class="card mb-3">
+		<div class="card-body">
+			<div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-3">
+				<span class="avatar avatar-xl bg-blue-lt text-blue">
+					{{ membership.user.firstname[:1] }}{{ membership.user.lastname[:1] }}
+				</span>
+				<div class="flex-fill">
+					<h2 class="mb-1">
+						{% if is_own_logbook %}
+							{{ 'myMechanicLogbook'|trans }}
+						{% else %}
+							{{ membership.user.fullName }}
+						{% endif %}
+					</h2>
+					<div class="text-secondary small mb-1">
+						{{ 'globalStatistics'|trans }} –
+						<strong>{{ facets.global.count }}</strong>
+						{{ 'contributionsCount'|trans }}
+					</div>
+					<div class="d-flex flex-wrap gap-2">
+						<div class="badge bg-blue-lt text-blue">
+							<i class="ti ti-clock-hour-5 me-1"></i>
+							{% set totalMinutes = (facets.global.time * 60)|round(0, 'floor') %}
+							{% set hours = (totalMinutes / 60)|round(0, 'floor') %}
+							{% set minutes = totalMinutes - (hours * 60) %}
+							{{ hours }}{{ 'hours'|trans }}{% if minutes > 0 %} {{ minutes }}min{% endif %}
+						</div>
+						<div class="badge bg-purple-lt text-purple">
+							<i class="ti ti-circle-dotted me-1"></i>
+							{{ facets.bySpecialisation|length }} {{ 'specialisations'|trans }}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{# Rappel très compact des filtres actifs (si besoin on peut se contenter du composant existant) #}
+			{# On s'appuie sur component/filters pour le détail, donc rien à dupliquer ici #}
+		</div>
+	</div>
+
+	{# Statistiques par spécialisation : cartes individuelles #}
+	{% if facets.bySpecialisation is not empty %}
+		<div class="mb-3">
+			<h3 class="mb-2">{{ 'statisticsBySpecialisation'|trans }}</h3>
+			<div class="d-flex flex-column gap-2">
+				{% set totalTime = facets.global.time > 0 ? facets.global.time : 1 %}
+				{% for row in facets.bySpecialisation %}
+					{% set ratio = (row.time / totalTime * 100)|round(0, 'floor') %}
+					<div class="card card-sm">
+						<div class="card-body py-2 px-3">
+							<div class="d-flex justify-content-between align-items-center mb-1">
+								<div class="d-flex flex-wrap align-items-center gap-2">
+									<span class="badge bg-blue-lt text-blue">
+										{{ row.specialisation.name }}
+									</span>
+									<span class="text-secondary small">
+										{{ ratio }}%
+									</span>
+								</div>
+								<div class="text-end small">
+									<div class="fw-bold">
+										{{ row.count }} {{ 'contributionsCount'|trans }}
+									</div>
+									<div class="text-secondary">
+										{% set minutes = (row.time * 60)|round(0, 'floor') %}
+										{% set h = (minutes / 60)|round(0, 'floor') %}
+										{% set m = minutes - (h * 60) %}
+										{{ h }}{{ 'hours'|trans }}{% if m > 0 %} {{ m }}min{% endif %}
+									</div>
+								</div>
+							</div>
+							<div class="progress progress-xs">
+								<div class="progress-bar bg-blue" style="width: {{ ratio }}%"></div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+
+	{# Liste des contributions - style cartes inspiré des sous-tâches #}
+	<div class="mb-3">
+		<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+			<h3 class="mb-0">{{ 'contributionsList'|trans }}</h3>
+			{% if facets.global.count > 0 %}
+				<span class="text-secondary small">
+					{{ facets.global.count }}
+					{{ 'contributionsCount'|trans }}
+				</span>
+			{% endif %}
+		</div>
+
+		{% if contributions|length > 0 %}
+			<div class="row">
+				{% for contribution in contributions %}
+					{% set subTask = contribution.subTask %}
+					{% set task = subTask.task %}
+					{% set statusColor = subTask.status == 'closed' ? 'success' : (subTask.status == 'cancelled' ? 'danger' : (subTask.isWaitingForApproval ? 'warning' : 'info')) %}
+					<div class="col-12 mb-2">
+						<div class="card card-link" style="cursor: pointer;">
+							<div class="card-status-start bg-{{ statusColor }}"></div>
+							<div class="card-body">
+								<div class="d-flex align-items-start">
+									<div class="me-3 d-none d-sm-block">
+										<span class="avatar avatar-lg bg-{{ task.equipment.type.color }}-lt">
+											<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}"></i>
+										</span>
+									</div>
+									<div class="flex-fill">
+					<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-1">
+											<div>
+												<div class="text-secondary small">
+													{{ task.equipment.name }}
+												</div>
+												<div class="fw-bold">
+													{{ task.title }}
+												</div>
+												<div class="text-secondary small">
+													{{ subTask.title }}
+												</div>
+											</div>
+											<div class="text-end">
+												<div class="fw-bold">
+													<i class="ti ti-clock-hour-5 me-1"></i>
+													{{ contribution.timeSpent|number_format(2, ',', ' ') }}
+													<span class="text-muted small">{{ 'hours'|trans }}</span>
+												</div>
+												<div class="text-secondary small">
+													<i class="ti ti-calendar-time me-1"></i>
+													{{ contribution.createdAt|date('d/m/Y H:i') }}
+												</div>
+											</div>
+										</div>
+
+										<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2">
+											<div class="d-flex flex-wrap gap-1 align-items-center">
+												{% if subTask.specialisations|length > 0 %}
+													{% for specialisation in subTask.specialisations %}
+														<span class="badge bg-blue-lt text-blue">
+															{{ specialisation.name }}
+														</span>
+													{% endfor %}
+												{% else %}
+													<span class="text-secondary small">
+														{{ 'noSpecialisation'|trans }}
+													</span>
+												{% endif %}
+											</div>
+											<div class="d-flex flex-column text-end">
+												{# Statut & inspection #}
+												<div class="mb-1">
+													{% if subTask.isWaitingForApproval %}
+														<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'waitingForApproval'|trans }}">
+															<i class="ti ti-clock-check me-1"></i>
+															{{ 'statusDonePendingLabel'|trans }}
+														</span>
+													{% elseif subTask.status == 'closed' %}
+														<span class="badge bg-success-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'statusClosedTooltip'|trans }}">
+															<i class="ti ti-circle-check me-1"></i>
+															{{ 'statusClosedLabel'|trans }}
+														</span>
+													{% elseif subTask.status == 'open' %}
+														<span class="badge bg-info-lt text-white">
+															<i class="ti ti-circle-dashed me-1"></i>
+															{{ 'statusOpenLabel'|trans }}
+														</span>
+													{% elseif subTask.status == 'cancelled' %}
+														<span class="badge bg-danger-lt text-white">
+															<i class="ti ti-x me-1"></i>
+															{{ 'statusCancelledLabel'|trans }}
+														</span>
+													{% endif %}
+												</div>
+												{% if subTask.completedBy %}
+													<span class="badge bg-green-lt text-green align-self-end mb-1">
+														<i class="ti ti-signature me-1"></i>
+														{{ 'signedBy'|trans }}
+													</span>
+													<span class="text-secondary small">
+														{{ subTask.completedBy.fullName ?? subTask.completedBy.email }}
+													</span>
+													{% if subTask.status == 'closed' and subTask.doneAt %}
+														<span class="text-secondary small">
+															{{ 'validatedOn'|trans }} {{ subTask.doneAt|date('d/m/Y') }}
+														</span>
+													{% endif %}
+												{% else %}
+													<span class="badge bg-secondary-lt text-secondary align-self-end mb-1">
+														<i class="ti ti-signature-off me-1"></i>
+														{{ 'notSigned'|trans }}
+													</span>
+												{% endif %}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+
+			<div class="d-flex justify-content-center mt-3">
+				{{ pagination(contributions) }}
+			</div>
+		{% else %}
+			<div class="card">
+				<div class="card-body text-center text-secondary">
+					<em>{{ 'noContributionsFound'|trans }}</em>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+{% endblock %}
+

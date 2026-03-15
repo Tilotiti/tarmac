@@ -2469,7 +2469,139 @@
         <source>markdownBlockquote</source>
         <target>Citation</target>
       </trans-unit>
+      <trans-unit id="800" resname="mechanicLogbook">
+        <source>mechanicLogbook</source>
+        <target>Carnet mécano</target>
+      </trans-unit>
+      <trans-unit id="801" resname="myMechanicLogbook">
+        <source>myMechanicLogbook</source>
+        <target>Mon carnet mécano</target>
+      </trans-unit>
+      <trans-unit id="802" resname="mechanicLogbookFor">
+        <source>mechanicLogbookFor</source>
+        <target>Carnet mécano de {memberName}</target>
+      </trans-unit>
+      <trans-unit id="803" resname="contributionsCount">
+        <source>contributionsCount</source>
+        <target>contributions</target>
+      </trans-unit>
+      <trans-unit id="804" resname="totalTime">
+        <source>totalTime</source>
+        <target>Temps total</target>
+      </trans-unit>
+      <trans-unit id="805" resname="statisticsBySpecialisation">
+        <source>statisticsBySpecialisation</source>
+        <target>Statistiques par spécialisation</target>
+      </trans-unit>
+      <trans-unit id="806" resname="globalStatistics">
+        <source>globalStatistics</source>
+        <target>Statistiques globales</target>
+      </trans-unit>
+      <trans-unit id="807" resname="contributionsList">
+        <source>contributionsList</source>
+        <target>Liste des contributions</target>
+      </trans-unit>
+      <trans-unit id="808" resname="specialisations">
+        <source>specialisations</source>
+        <target>Spécialisations</target>
+      </trans-unit>
+      <trans-unit id="809" resname="timeSpent">
+        <source>timeSpent</source>
+        <target>Temps passé</target>
+      </trans-unit>
+      <trans-unit id="810" resname="signedBy">
+        <source>signedBy</source>
+        <target>Signé par</target>
+      </trans-unit>
+      <trans-unit id="811" resname="notSigned">
+        <source>notSigned</source>
+        <target>Non signé</target>
+      </trans-unit>
+      <trans-unit id="812" resname="noContributionsFound">
+        <source>noContributionsFound</source>
+        <target>Aucune contribution trouvée pour ces filtres.</target>
+      </trans-unit>
+      <trans-unit id="813" resname="noSpecialisationStats">
+        <source>noSpecialisationStats</source>
+        <target>Aucune spécialisation trouvée pour ces contributions.</target>
+      </trans-unit>
+      <trans-unit id="814" resname="noSpecialisation">
+        <source>noSpecialisation</source>
+        <target>Aucune spécialisation</target>
+      </trans-unit>
+      <trans-unit id="815" resname="hours">
+        <source>hours</source>
+        <target>h</target>
+      </trans-unit>
+      <trans-unit id="816" resname="exportPdf">
+        <source>exportPdf</source>
+        <target>Exporter en PDF</target>
+      </trans-unit>
+      <trans-unit id="817" resname="pdf">
+        <source>pdf</source>
+        <target>PDF</target>
+      </trans-unit>
+      <trans-unit id="818" resname="appliedFilters">
+        <source>appliedFilters</source>
+        <target>Filtres appliqués</target>
+      </trans-unit>
+      <trans-unit id="819" resname="noFiltersApplied">
+        <source>noFiltersApplied</source>
+        <target>Aucun filtre appliqué</target>
+      </trans-unit>
+      <trans-unit id="820" resname="generatedOn">
+        <source>generatedOn</source>
+        <target>Généré le</target>
+      </trans-unit>
+      <trans-unit id="821" resname="signedOnlyFilter">
+        <source>signedOnlyFilter</source>
+        <target>Uniquement les sous-tâches dont je suis signataire</target>
+      </trans-unit>
+      <trans-unit id="822" resname="periodStart">
+        <source>periodStart</source>
+        <target>Date de début</target>
+      </trans-unit>
+      <trans-unit id="823" resname="periodEnd">
+        <source>periodEnd</source>
+        <target>Date de fin</target>
+      </trans-unit>
+      <trans-unit id="824" resname="searchByTaskOrSubTaskName">
+        <source>searchByTaskOrSubTaskName</source>
+        <target>Rechercher par nom de tâche ou de sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="825" resname="logbook">
+        <source>logbook</source>
+        <target>Carnet</target>
+      </trans-unit>
+      <trans-unit id="826" resname="statusOpenLabel">
+        <source>statusOpenLabel</source>
+        <target>À faire</target>
+      </trans-unit>
+      <trans-unit id="827" resname="statusDonePendingLabel">
+        <source>statusDonePendingLabel</source>
+        <target>Terminé (en attente)</target>
+      </trans-unit>
+      <trans-unit id="828" resname="statusClosedLabel">
+        <source>statusClosedLabel</source>
+        <target>Clôturé</target>
+      </trans-unit>
+      <trans-unit id="829" resname="statusCancelledLabel">
+        <source>statusCancelledLabel</source>
+        <target>Annulé</target>
+      </trans-unit>
+      <trans-unit id="830" resname="statusClosedTooltip">
+        <source>statusClosedTooltip</source>
+        <target>La sous-tâche est entièrement validée et clôturée, plus aucune action n'est requise.</target>
+      </trans-unit>
+      <trans-unit id="831" resname="logbookStatusHelp">
+        <source>logbookStatusHelp</source>
+        <target>« Terminé (en attente) » = travail fait mais pas encore validé. « Clôturé » = travail validé et complètement bouclé.</target>
+      </trans-unit>
+      <trans-unit id="832" resname="validatedOn">
+        <source>validatedOn</source>
+        <target>Validé le</target>
+      </trans-unit>
     </body>
-  </file>
+</file>
 </xliff>
 

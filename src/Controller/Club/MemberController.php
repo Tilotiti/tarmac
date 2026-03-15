@@ -38,6 +38,11 @@ class MemberController extends ExtendedController
     {
         $club = $this->clubResolver->resolve();
 
+        $currentMembership = $this->membershipRepository->findOneBy([
+            'user' => $this->getUser(),
+            'club' => $club,
+        ]);
+
         // Handle filters
         $filters = $this->createFilter(MemberFilterType::class);
         $filters->handleRequest($request);
@@ -53,6 +58,7 @@ class MemberController extends ExtendedController
             'club' => $club,
             'memberships' => $memberships,
             'filters' => $filters->createView(),
+            'currentMembership' => $currentMembership,
         ]);
     }
 
@@ -101,6 +107,11 @@ class MemberController extends ExtendedController
     {
         $club = $this->clubResolver->resolve();
 
+        $currentMembership = $this->membershipRepository->findOneBy([
+            'user' => $this->getUser(),
+            'club' => $club,
+        ]);
+
         // Ensure membership belongs to this club
         if ($membership->getClub() !== $club) {
             throw $this->createNotFoundException();
@@ -145,6 +156,7 @@ class MemberController extends ExtendedController
             'membership' => $membership,
             'form' => $form,
             'openModal' => $openModal,
+            'currentMembership' => $currentMembership,
         ]);
     }
 }

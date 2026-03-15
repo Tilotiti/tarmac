@@ -17,9 +17,13 @@ Apply this skill when the user:
 
 ## What to do
 
-1. Read the markdown file(s) in the project's **headway/** directory (relative to workspace root).
-2. Output the full content of the file(s) in your reply, in a markdown block or as the main message, so the user can copy it directly into Headway.
+1. **Ne crée ni ne modifie jamais de fichier dans le dépôt Git** pour le contenu Headway (pas de nouveaux fichiers dans `headway/`, pas de modifications de fichiers existants).
+2. Si des fichiers markdown existent déjà dans le répertoire **headway/** du projet (relatif à la racine du workspace), lis-les uniquement en lecture et renvoie leur contenu.
+3. Si tu dois **rédiger un nouveau texte Headway**, travaille intégralement en mémoire : génère ou modifie le markdown directement dans ta réponse, sans l’enregistrer dans le repo.
+4. Si tu as absolument besoin d’un fichier temporaire pour t’organiser, utilise un emplacement temporaire hors dépôt (par exemple un chemin système type `/tmp/…`), et considère-le comme éphémère.
+5. Renvoie toujours le markdown complet dans ta réponse (bloc de code markdown ou message principal) afin que l’utilisateur puisse le copier-coller dans Headway.
 
-If there are multiple files in `headway/`, output the content of the most recent or relevant one unless the user specifies a file. If there is only one file, output that file's content.
+Si plusieurs fichiers existent dans `headway/`, renvoie le contenu du plus récent ou du plus pertinent, sauf si l’utilisateur demande un fichier précis.
 
-Do not summarize or rewrite the content unless the user asks for changes; return it as-is for copy-paste.
+Ne résume ni ne réécris le contenu sauf si l’utilisateur demande explicitement des modifications ; renvoie-le tel quel pour un simple copier-coller.
+

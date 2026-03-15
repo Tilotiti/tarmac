@@ -5,8 +5,15 @@
 {% endblock %}
 
 {% block page_actions %}
-	{% if is_granted('MANAGE', club) %}
-		<div class="d-flex gap-2">
+	{% if is_granted('MANAGE', club) or (currentMembership is defined and (currentMembership.isManager or currentMembership.isInspector)) %}
+		<div class="d-flex gap-2 flex-wrap">
+			{% if currentMembership is defined and (currentMembership.isManager or currentMembership.isInspector) %}
+				<a href="{{ path('club_member_logbook', {id: membership.id}) }}" class="btn btn-outline-primary" style="min-height: 44px;">
+					<i class="ti ti-notebook me-2"></i>
+					<span class="d-none d-sm-inline">{{ 'mechanicLogbook'|trans }}</span>
+					<span class="d-inline d-sm-none">{{ 'logbook'|trans }}</span>
+				</a>
+			{% endif %}
 			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-edit-roles" style="min-height: 44px;">
 				<i class="ti ti-edit me-2"></i>
 				<span class="d-none d-sm-inline">{{ 'editRoles'|trans }}</span>

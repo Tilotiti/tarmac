@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>Carnet Mécano de {{ membership.user.fullName }}</title>
+		<style>
+			@page {
+				margin: 12mm 14mm;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: DejaVu Sans, sans-serif;
+				font-size: 10px;
+				color: #1a1a1a;
+				line-height: 1.35;
+				margin: 0;
+				padding: 0;
+			}
+
+			.page {
+				padding: 0;
+			}
+
+			.header {
+				display: table;
+				width: 100%;
+				margin-bottom: 10px;
+			}
+
+			.header-left {
+				display: table-cell;
+				vertical-align: middle;
+			}
+
+			.header-right {
+				display: table-cell;
+				text-align: right;
+				vertical-align: middle;
+				font-size: 9px;
+				color: #666;
+			}
+
+			.logo {
+				height: 22px;
+				margin-bottom: 4px;
+			}
+
+			h1 {
+				font-size: 18px;
+				font-weight: bold;
+				margin: 0 0 2px 0;
+				color: #111;
+			}
+
+			h2 {
+				font-size: 13px;
+				font-weight: 600;
+				color: #333;
+				margin: 0 0 10px 0;
+			}
+
+			h3 {
+				font-size: 11px;
+				font-weight: 600;
+				margin: 12px 0 6px 0;
+				color: #333;
+			}
+
+			.text-muted {
+				color: #666;
+			}
+
+			.hr-light {
+				border: 0;
+				border-top: 1px solid #ddd;
+				margin: 10px 0;
+			}
+
+			.badge {
+				display: inline-block;
+				padding: 2px 6px;
+				border-radius: 3px;
+				font-size: 9px;
+				line-height: 1.3;
+			}
+
+			.badge-blue {
+				background-color: #e0edff;
+				color: #1a4d8c;
+			}
+
+			.stat-row {
+				display: table;
+				width: 100%;
+				margin-bottom: 3px;
+			}
+
+			.stat-label {
+				display: table-cell;
+				font-size: 10px;
+				color: #555;
+			}
+
+			.stat-value {
+				display: table-cell;
+				text-align: right;
+				font-weight: bold;
+				font-size: 10px;
+			}
+
+			.chip {
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				padding: 5px 8px;
+				margin-bottom: 4px;
+				page-break-inside: avoid;
+			}
+
+			.chip-header {
+				display: table;
+				width: 100%;
+				margin-bottom: 2px;
+			}
+
+			.chip-title {
+				font-weight: bold;
+				font-size: 10px;
+				display: table-cell;
+			}
+
+			.chip-meta {
+				font-size: 9px;
+				color: #555;
+				text-align: right;
+				display: table-cell;
+			}
+
+			.progress-bar-container {
+				background-color: #eee;
+				height: 4px;
+				border-radius: 2px;
+				overflow: hidden;
+			}
+
+			.progress-bar-fill {
+				background-color: #206bc4;
+				height: 4px;
+			}
+
+			ul.filters-summary {
+				list-style: none;
+				padding-left: 0;
+				margin: 0 0 10px 0;
+			}
+
+			ul.filters-summary li {
+				margin-bottom: 2px;
+				font-size: 10px;
+			}
+
+			.contribution-card {
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				padding: 6px 8px;
+				margin-bottom: 6px;
+				page-break-inside: avoid;
+			}
+
+			.contribution-card .equipment {
+				font-size: 9px;
+				color: #555;
+			}
+
+			.contribution-card .task-title {
+				font-weight: bold;
+				font-size: 10px;
+			}
+
+			.contribution-card .subtask-title {
+				font-size: 9px;
+				color: #444;
+			}
+
+			.contribution-card .meta {
+				display: table;
+				width: 100%;
+				margin-top: 4px;
+				font-size: 9px;
+				color: #555;
+			}
+
+			.contribution-card .meta-left {
+				display: table-cell;
+			}
+
+			.contribution-card .meta-right {
+				display: table-cell;
+				text-align: right;
+			}
+		</style>
+	</head>
+		<body>
+		<div class="page">
+			<div class="header">
+				<div class="header-left">
+					<img src="{{ absolute_url(asset('assets/logo.svg')) }}" alt="Tarmac" class="logo">
+					<div class="text-muted">
+						{{ club.name }}
+					</div>
+				</div>
+				<div class="header-right">
+					<div><strong>{{ 'mechanicLogbook'|trans }}</strong></div>
+					<div>{{ membership.user.fullName }}</div>
+					<div>{{ 'generatedOn'|trans }} {{ 'now'|date('d/m/Y') }}</div>
+				</div>
+			</div>
+
+			<h1>Carnet Mécano de {{ membership.user.fullName }}</h1>
+
+			<h3>{{ 'appliedFilters'|trans }}</h3>
+			<ul class="filters-summary">
+				{% set hasFilters = false %}
+				{% for child in filters %}
+					{% if child.vars.data is not empty %}
+						{% set hasFilters = true %}
+						<li>
+							<strong>{{ child.vars.name|trans }}</strong> :
+							{% if child.vars.data is instanceof('\\UnitEnum') %}
+								{{ child.vars.data.getLabel()|trans }}
+							{% elseif child.vars.data is instanceof('\\DateTimeInterface') %}
+								{{ child.vars.data|date('d/m/Y') }}
+							{% elseif child.vars.data is iterable %}
+								{% set items = [] %}
+								{% for value in child.vars.data %}
+									{% if value is instanceof('\\DateTimeInterface') %}
+										{% set items = items|merge([value|date('d/m/Y')]) %}
+									{% elseif value is not empty %}
+										{% set items = items|merge([value|trans]) %}
+									{% endif %}
+								{% endfor %}
+								{{ items|join(', ') }}
+							{% elseif child.vars.data is same as(true) %}
+								{{ 'yes'|trans }}
+							{% elseif child.vars.data is same as(false) %}
+								{{ 'no'|trans }}
+							{% elseif child.vars.data is instanceof('string') %}
+								{{ child.vars.data|trans }}
+							{% else %}
+								{{ child.vars.data }}
+							{% endif %}
+						</li>
+					{% endif %}
+				{% endfor %}
+				{% if not hasFilters %}
+					<li><em>{{ 'noFiltersApplied'|trans }}</em></li>
+				{% endif %}
+			</ul>
+
+			<div class="hr-light"></div>
+
+			<h3>{{ 'globalStatistics'|trans }}</h3>
+			{% set totalMinutes = (facets.global.time * 60)|round(0, 'floor') %}
+			{% set hours = (totalMinutes / 60)|round(0, 'floor') %}
+			{% set minutes = totalMinutes - (hours * 60) %}
+			<div style="margin-bottom: 8px;">
+				<div class="stat-row">
+					<span class="stat-label">{{ 'contributionsCount'|trans }}</span>
+					<span class="stat-value">{{ facets.global.count }}</span>
+				</div>
+				<div class="stat-row">
+					<span class="stat-label">{{ 'totalTime'|trans }}</span>
+					<span class="stat-value">{{ hours }}{{ 'hours'|trans }}{% if minutes > 0 %} {{ minutes }} min{% endif %}</span>
+				</div>
+				<div class="stat-row">
+					<span class="stat-label">{{ 'specialisations'|trans }}</span>
+					<span class="stat-value">{{ facets.bySpecialisation|length }}</span>
+				</div>
+			</div>
+
+			<div class="hr-light"></div>
+
+			<h3>{{ 'statisticsBySpecialisation'|trans }}</h3>
+			{% if facets.bySpecialisation is not empty %}
+				{% set totalTime = facets.global.time > 0 ? facets.global.time : 1 %}
+				{% for row in facets.bySpecialisation %}
+					{% set ratio = (row.time / totalTime * 100)|round(0, 'floor') %}
+					{% set rowMinutes = (row.time * 60)|round(0, 'floor') %}
+					{% set h = (rowMinutes / 60)|round(0, 'floor') %}
+					{% set m = rowMinutes - (h * 60) %}
+					<div class="chip">
+						<div class="chip-header">
+							<div class="chip-title">
+								{{ row.specialisation.name }}
+								<span class="text-muted">· {{ ratio }} %</span>
+							</div>
+							<div class="chip-meta">
+								<strong>{{ row.count }}</strong> {{ 'contributionsCount'|trans }}<br>
+								{{ h }}{{ 'hours'|trans }}{% if m > 0 %} {{ m }} min{% endif %}
+							</div>
+						</div>
+						<div class="progress-bar-container">
+							<div class="progress-bar-fill" style="width: {{ ratio }}%;"></div>
+						</div>
+					</div>
+				{% endfor %}
+			{% else %}
+				<p><em>{{ 'noSpecialisationStats'|trans }}</em></p>
+			{% endif %}
+
+			<div class="hr-light"></div>
+
+			<h3>{{ 'contributionsList'|trans }}</h3>
+
+			{% if contributions is defined and contributions|length > 0 %}
+				{% for contribution in contributions %}
+					{% set subTask = contribution.subTask %}
+					{% set task = subTask.task %}
+					{% set contribMinutes = (contribution.timeSpent * 60)|round(0, 'floor') %}
+					{% set h = (contribMinutes / 60)|round(0, 'floor') %}
+					{% set m = contribMinutes - (h * 60) %}
+					<div class="contribution-card">
+						<div style="display: table; width: 100%;">
+							<div style="display: table-cell; width: 70%;">
+								<div class="equipment">{{ task.equipment.name }}</div>
+								<div class="task-title">{{ task.title }}</div>
+								<div class="subtask-title">{{ subTask.title }}</div>
+							</div>
+							<div style="display: table-cell; width: 30%; text-align: right; vertical-align: top;">
+								<div style="font-weight: bold;">{{ h }}{{ 'hours'|trans }}{% if m > 0 %} {{ m }} min{% endif %}</div>
+								<div class="text-muted">{{ contribution.createdAt|date('d/m/Y H:i') }}</div>
+							</div>
+						</div>
+						<div class="meta">
+							<div class="meta-left">
+								{% if subTask.specialisations|length > 0 %}
+									{% for specialisation in subTask.specialisations %}
+										<span class="badge badge-blue">{{ specialisation.name }}</span>
+									{% endfor %}
+								{% else %}
+									<span class="text-muted">{{ 'noSpecialisation'|trans }}</span>
+								{% endif %}
+							</div>
+							<div class="meta-right">
+								{% if subTask.completedBy %}
+									{{ 'signedBy'|trans }} {{ subTask.completedBy.fullName ?? subTask.completedBy.email }}
+								{% else %}
+									{{ 'notSigned'|trans }}
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			{% else %}
+				<p><em>{{ 'noContributionsFound'|trans }}</em></p>
+			{% endif %}
+		</div>
+	</body>
+</html>

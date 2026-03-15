@@ -21,16 +21,16 @@
 	<div class="row">
 		{% for membership in memberships %}
 			<div class="col-12 mb-3">
-				<a href="{{ path('club_member_show', {id: membership.id}) }}" class="text-decoration-none">
-					<div class="card card-link {% if not membership.user.active %}border-danger{% endif %}" style="cursor: pointer;">
-						<div class="card-body">
-							<div class="d-flex align-items-center justify-content-between">
-								<div class="d-flex align-items-center flex-fill">
-								<span class="avatar me-3">{{ membership.user.firstname[:1] }}{{ membership.user.lastname[:1] }}</span>
-								<div class="flex-fill">
-									<div class="font-weight-medium {% if not membership.user.active %}text-danger{% else %}text-dark{% endif %}">
-										{{ membership.user.fullname }}
-									</div>
+				<div class="card card-link {% if not membership.user.active %}border-danger{% endif %}" style="cursor: pointer;">
+					<div class="card-body">
+						<div class="d-flex align-items-center justify-content-between">
+							<div class="d-flex align-items-center flex-fill">
+								<a href="{{ path('club_member_show', {id: membership.id}) }}" class="text-decoration-none text-reset d-flex align-items-center flex-fill">
+									<span class="avatar me-3">{{ membership.user.firstname[:1] }}{{ membership.user.lastname[:1] }}</span>
+									<div class="flex-fill">
+										<div class="font-weight-medium {% if not membership.user.active %}text-danger{% else %}text-dark{% endif %}">
+											{{ membership.user.fullname }}
+										</div>
 										<div class="text-secondary small">
 											<i class="ti ti-mail me-1"></i>
 											{{ membership.user.email }}
@@ -41,17 +41,19 @@
 											{{ membership.joinedAt|date('d/m/Y') }}
 										</div>
 									</div>
-								</div>
+								</a>
+							</div>
 
-								{# Badges on the right #}
-								<div class="d-flex flex-wrap gap-2 align-items-center ms-3">
-										{% if membership.isManager %}
+							{# Badges and actions on the right #}
+							<div class="d-flex flex-column align-items-end ms-3 gap-2">
+								<div class="d-flex flex-wrap gap-2 justify-content-end">
+									{% if membership.isManager %}
 										<span class="badge bg-blue-lt text-white">
 											<i class="ti ti-user-star me-1"></i>
 											{{ 'manager'|trans }}
 										</span>
-										{% endif %}
-										{% if membership.isInspector %}
+									{% endif %}
+									{% if membership.isInspector %}
 										<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'qualifiedTooltip'|trans }}">
 											<i class="ti ti-shield-check me-1"></i>
 											{{ 'inspector'|trans }}
@@ -62,13 +64,13 @@
 											<i class="ti ti-plane me-1"></i>
 											{{ 'pilot'|trans }}
 										</span>
-										{% endif %}
+									{% endif %}
 									{% if not membership.isManager and not membership.isInspector and not membership.isPilote %}
 										<span class="badge bg-secondary-lt text-white">
 											<i class="ti ti-user me-1"></i>
 											{{ 'member'|trans }}
 										</span>
-										{% endif %}
+									{% endif %}
 									{% if not membership.user.active %}
 										<span class="badge bg-danger text-white">
 											<i class="ti ti-ban me-1"></i>
@@ -76,10 +78,18 @@
 										</span>
 									{% endif %}
 								</div>
+
+								{% if currentMembership and (currentMembership.isManager or currentMembership.isInspector) %}
+									<a href="{{ path('club_member_logbook', {id: membership.id}) }}" class="btn btn-outline-primary btn-sm">
+										<i class="ti ti-notebook me-1"></i>
+										<span class="d-none d-sm-inline">{{ 'mechanicLogbook'|trans }}</span>
+										<span class="d-inline d-sm-none">{{ 'logbook'|trans }}</span>
+									</a>
+								{% endif %}
 							</div>
 						</div>
 					</div>
-				</a>
+				</div>
 			</div>
 		{% else %}
 			<div class="col-12">
