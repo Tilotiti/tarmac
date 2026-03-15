@@ -2501,11 +2501,15 @@
         <source>contributionsList</source>
         <target>Liste des contributions</target>
       </trans-unit>
-      <trans-unit id="808" resname="specialisations">
+      <trans-unit id="808" resname="specialisation">
+        <source>specialisation</source>
+        <target>Spécialisation</target>
+      </trans-unit>
+      <trans-unit id="809" resname="specialisations">
         <source>specialisations</source>
         <target>Spécialisations</target>
       </trans-unit>
-      <trans-unit id="809" resname="timeSpent">
+      <trans-unit id="809_timeSpent" resname="timeSpent">
         <source>timeSpent</source>
         <target>Temps passé</target>
       </trans-unit>

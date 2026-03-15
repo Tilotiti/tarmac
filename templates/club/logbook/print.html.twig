@@ -10,10 +10,10 @@
 
 			* {
 				box-sizing: border-box;
+				font-family: DejaVu Sans, sans-serif !important;
 			}
 
 			body {
-				font-family: DejaVu Sans, sans-serif;
 				font-size: 10px;
 				color: #1a1a1a;
 				line-height: 1.35;
@@ -51,21 +51,28 @@
 
 			h1 {
 				font-size: 18px;
-				font-weight: bold;
+				font-weight: normal;
 				margin: 0 0 2px 0;
 				color: #111;
 			}
 
 			h2 {
 				font-size: 13px;
-				font-weight: 600;
+				font-weight: normal;
 				color: #333;
 				margin: 0 0 10px 0;
 			}
 
 			h3 {
 				font-size: 11px;
-				font-weight: 600;
+				font-weight: normal;
+				margin: 12px 0 6px 0;
+				color: #333;
+			}
+
+			.section-title {
+				font-size: 11px;
+				font-weight: bold;
 				margin: 12px 0 6px 0;
 				color: #333;
 			}
@@ -207,7 +214,7 @@
 		<div class="page">
 			<div class="header">
 				<div class="header-left">
-					<img src="{{ absolute_url(asset('assets/logo.svg')) }}" alt="Tarmac" class="logo">
+					<img src="https://www.tarmac.center/logo.svg" alt="Tarmac" class="logo">
 					<div class="text-muted">
 						{{ club.name }}
 					</div>
@@ -221,14 +228,14 @@
 
 			<h1>Carnet Mécano de {{ membership.user.fullName }}</h1>
 
-			<h3>{{ 'appliedFilters'|trans }}</h3>
+			<div class="section-title">{{ 'appliedFilters'|trans }}</div>
 			<ul class="filters-summary">
 				{% set hasFilters = false %}
 				{% for child in filters %}
 					{% if child.vars.data is not empty %}
 						{% set hasFilters = true %}
 						<li>
-							<strong>{{ child.vars.name|trans }}</strong> :
+							<strong>{{ child.vars.name|trans|capitalize }}</strong> :
 							{% if child.vars.data is instanceof('\\UnitEnum') %}
 								{{ child.vars.data.getLabel()|trans }}
 							{% elseif child.vars.data is instanceof('\\DateTimeInterface') %}
@@ -262,28 +269,28 @@
 
 			<div class="hr-light"></div>
 
-			<h3>{{ 'globalStatistics'|trans }}</h3>
+			<div class="section-title">{{ 'globalStatistics'|trans }}</div>
 			{% set totalMinutes = (facets.global.time * 60)|round(0, 'floor') %}
 			{% set hours = (totalMinutes / 60)|round(0, 'floor') %}
 			{% set minutes = totalMinutes - (hours * 60) %}
 			<div style="margin-bottom: 8px;">
 				<div class="stat-row">
-					<span class="stat-label">{{ 'contributionsCount'|trans }}</span>
+					<span class="stat-label">{{ 'contributionsCount'|trans|capitalize }}</span>
 					<span class="stat-value">{{ facets.global.count }}</span>
 				</div>
 				<div class="stat-row">
-					<span class="stat-label">{{ 'totalTime'|trans }}</span>
+					<span class="stat-label">{{ 'totalTime'|trans|capitalize }}</span>
 					<span class="stat-value">{{ hours }}{{ 'hours'|trans }}{% if minutes > 0 %} {{ minutes }} min{% endif %}</span>
 				</div>
 				<div class="stat-row">
-					<span class="stat-label">{{ 'specialisations'|trans }}</span>
+					<span class="stat-label">{{ 'specialisations'|trans|capitalize }}</span>
 					<span class="stat-value">{{ facets.bySpecialisation|length }}</span>
 				</div>
 			</div>
 
 			<div class="hr-light"></div>
 
-			<h3>{{ 'statisticsBySpecialisation'|trans }}</h3>
+			<div class="section-title">{{ 'statisticsBySpecialisation'|trans }}</div>
 			{% if facets.bySpecialisation is not empty %}
 				{% set totalTime = facets.global.time > 0 ? facets.global.time : 1 %}
 				{% for row in facets.bySpecialisation %}
@@ -298,7 +305,7 @@
 								<span class="text-muted">· {{ ratio }} %</span>
 							</div>
 							<div class="chip-meta">
-								<strong>{{ row.count }}</strong> {{ 'contributionsCount'|trans }}<br>
+								<strong>{{ row.count }}</strong> {{ 'contributionsCount'|trans|capitalize }}<br>
 								{{ h }}{{ 'hours'|trans }}{% if m > 0 %} {{ m }} min{% endif %}
 							</div>
 						</div>
@@ -313,7 +320,7 @@
 
 			<div class="hr-light"></div>
 
-			<h3>{{ 'contributionsList'|trans }}</h3>
+			<div class="section-title">{{ 'contributionsList'|trans }}</div>
 
 			{% if contributions is defined and contributions|length > 0 %}
 				{% for contribution in contributions %}

@@ -92,7 +92,7 @@
 
 				{% if hasData %}
 					<span class="tag">
-						<strong>{{ filter.vars.name | trans }}</strong>
+						<strong>{{ filter.vars.name | trans | capitalize }}</strong>
 						:
 						{% if filter.vars.data is instanceof('\\DateTimeInterface') %}
 							{{ filter.vars.data | date('d/m/Y') }}
