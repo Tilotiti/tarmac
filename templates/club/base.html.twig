@@ -16,6 +16,14 @@
 	<div class="mt-1 small text-secondary">{{ club.name|default('Club') }}</div>
 {% endblock %}
 
+{% block user_dropdown %}
+	{{ parent() }}
+
+	<div class="nav-item ms-2 d-flex align-items-center">
+		<span class="js-headway-badge"></span>
+	</div>
+{% endblock %}
+
 {% block navbar_menu %}
 	<div class="navbar-nav flex-md-row order-md-last">
 		<div class="nav-item {{ app.request.get('_route') starts with 'club_task' ? 'active' : '' }}">
@@ -135,3 +143,26 @@
 
 {# Define the page_title block that child templates will override #}
 {% block page_title %}{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+	<script>
+		// @see https://docs.headwayapp.co/widget pour plus d'options de configuration.
+		var HW_config = {
+			selector: ".js-headway-badge",
+			account: "x8Za9J",
+			translations: {
+				title: "Nouveautés Tarmac",
+				readMore: "Voir toutes les nouveautés",
+				labels: {
+					"new": "Nouveau",
+					"improvement": "Amélioration",
+					"fix": "Correction"
+				},
+				footer: "Plus de détails 👉"
+			}
+		};
+	</script>
+	<script async src="https://cdn.headwayapp.co/widget.js"></script>
+{% endblock %}
