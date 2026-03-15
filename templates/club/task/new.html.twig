@@ -1,5 +1,7 @@
 {% extends 'club/base.html.twig' %}
 
+{% form_theme form 'form/specialisation_tag.html.twig' %}
+
 {% block page_title %}
 	{{ 'newTask'|trans }}
 {% endblock %}
@@ -51,6 +53,11 @@
 					<div class="mb-2">
 						{{ form_row(form.subTasks.vars.prototype.description, {'attr': {'rows': 2}}) }}
 					</div>
+					{% if form.subTasks.vars.prototype.specialisations is defined %}
+						<div class="mb-2">
+							{{ form_row(form.subTasks.vars.prototype.specialisations) }}
+						</div>
+					{% endif %}
 					<div class="form-check form-switch mb-2">
 						{{ form_widget(form.subTasks.vars.prototype.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
 						{{ form_label(form.subTasks.vars.prototype.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
@@ -95,6 +102,11 @@
 								<div class="mb-2">
 									{{ form_row(subtask.description, {'attr': {'rows': 2}}) }}
 								</div>
+								{% if subtask.specialisations is defined %}
+									<div class="mb-2">
+										{{ form_row(subtask.specialisations) }}
+									</div>
+								{% endif %}
 								<div class="form-check form-switch mb-2">
 									{{ form_widget(subtask.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
 									{{ form_label(subtask.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}

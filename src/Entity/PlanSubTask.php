@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PlanSubTaskRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -41,11 +43,19 @@ class PlanSubTask
     #[ORM\Column(type: Types::SMALLINT)]
     private int $position = 0;
 
+    /**
+     * @var Collection<int, Specialisation>
+     */
+    #[ORM\ManyToMany(targetEntity: Specialisation::class, inversedBy: 'planSubTasks')]
+    #[ORM\JoinTable(name: 'plan_sub_task_specialisation')]
+    private Collection $specialisations;
+
     public function __construct()
     {
         $this->position = 0;
         $this->difficulty = 2;
         $this->requiresInspection = false;
+        $this->specialisations = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -138,6 +148,33 @@ class PlanSubTask
     public function setPosition(int $position): static
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Specialisation>
+     */
+    public function getSpecialisations(): Collection
+    {
+        return $this->specialisations;
+    }
+
+    public function addSpecialisation(Specialisation $specialisation): static
+    {
+        if (!$this->specialisations->contains($specialisation)) {
+            $this->specialisations->add($specialisation);
+            $specialisation->addPlanSubTask($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSpecialisation(Specialisation $specialisation): static
+    {
+        if ($this->specialisations->removeElement($specialisation)) {
+            $specialisation->removePlanSubTask($this);
+        }
 
         return $this;
     }

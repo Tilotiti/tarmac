@@ -1,5 +1,7 @@
 {% extends 'club/base.html.twig' %}
 
+{% form_theme form 'form/specialisation_tag.html.twig' %}
+
 {% block page_title %}
 	{{ 'newSubTask'|trans }}
 {% endblock %}
@@ -61,6 +63,11 @@
 			{{ form_start(form) }}
 			{{ form_row(form.title) }}
 			{{ form_row(form.description) }}
+			{% if form.specialisations is defined %}
+				<div class="mb-3">
+					{{ form_row(form.specialisations) }}
+				</div>
+			{% endif %}
 			<div class="row">
 				<div class="col-12 col-md-6 mb-3">
 					{{ form_row(form.difficulty) }}

@@ -66,6 +66,12 @@
 								{{ 'requiresInspection'|trans }}
 							</span>
 						{% endif %}
+						{% for spec in subTask.specialisations %}
+							<span class="badge bg-secondary-lt text-dark" title="{{ spec.description|default('')|e('html_attr') }}">
+								<i class="ti ti-tag me-1"></i>
+								{{ spec.name }}
+							</span>
+						{% endfor %}
 					</div>
 				</div>
 
@@ -94,6 +100,12 @@
 							{{ 'requiresInspection'|trans }}
 						</span>
 					{% endif %}
+					{% for spec in subTask.specialisations %}
+						<span class="badge bg-secondary text-white" title="{{ spec.description|default('')|e('html_attr') }}">
+							<i class="ti ti-tag me-1"></i>
+							{{ spec.name }}
+						</span>
+					{% endfor %}
 				</div>
 			</div>
 		</div>

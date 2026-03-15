@@ -16,6 +16,7 @@ use App\Repository\PlanRepository;
 use App\Form\Filter\PlanFilterType;
 use App\Controller\ExtendedController;
 use App\Service\Maintenance\PlanApplier;
+use App\Service\Maintenance\SpecialisationSyncService;
 use App\Service\PlanSpreadsheetService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\PlanApplicationRepository;
@@ -40,6 +41,7 @@ class PlanController extends ExtendedController
         private readonly PlanApplier $planApplier,
         private readonly EntityManagerInterface $entityManager,
         private readonly PlanSpreadsheetService $planSpreadsheetService,
+        private readonly SpecialisationSyncService $specialisationSyncService,
         private readonly TranslatorInterface $translator,
     ) {
         parent::__construct($subdomainService);
@@ -105,7 +107,7 @@ class PlanController extends ExtendedController
             $firstTask->addSubTaskTemplate($firstSubTask);
         }
 
-        $form = $this->createForm(PlanType::class, $plan);
+        $form = $this->createForm(PlanType::class, $plan, ['club' => $club]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -179,7 +181,7 @@ class PlanController extends ExtendedController
     {
         $club = $this->clubResolver->resolve();
 
-        $form = $this->createForm(PlanType::class, $plan);
+        $form = $this->createForm(PlanType::class, $plan, ['club' => $club]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -194,6 +196,14 @@ class PlanController extends ExtendedController
                 }
             }
 
+            $this->entityManager->flush();
+
+            // Sync specialisations to already-applied SubTasks (by plan + task title + subtask title)
+            foreach ($plan->getTaskTemplates() as $taskTemplate) {
+                foreach ($taskTemplate->getSubTaskTemplates() as $planSubTask) {
+                    $this->specialisationSyncService->syncSpecialisationsToAppliedSubTasksNoFlush($planSubTask);
+                }
+            }
             $this->entityManager->flush();
 
             $this->addFlash('success', 'planUpdated');

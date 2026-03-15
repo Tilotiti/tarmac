@@ -1,0 +1,32 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'newSpecialisation'|trans }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="card">
+		<div class="card-header">
+			<h3 class="card-title">{{ 'newSpecialisation'|trans }}</h3>
+		</div>
+		<div class="card-body">
+			{{ form_start(form) }}
+			<div class="mb-3">
+				{{ form_label(form.name) }}
+				{{ form_widget(form.name) }}
+				{{ form_errors(form.name) }}
+			</div>
+			<div class="mb-3">
+				{{ form_label(form.description) }}
+				{{ form_widget(form.description) }}
+				{{ form_errors(form.description) }}
+			</div>
+			<button type="submit" class="btn btn-primary" style="min-height: 44px;">
+				<i class="ti ti-check me-2"></i>
+				{{ 'create'|trans }}
+			</button>
+			<a href="{{ path('club_specialisations') }}" class="btn btn-outline-secondary ms-2">{{ 'cancel'|trans }}</a>
+			{{ form_end(form) }}
+		</div>
+	</div>
+{% endblock %}

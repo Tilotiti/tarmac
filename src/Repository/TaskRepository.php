@@ -47,6 +47,10 @@ class TaskRepository extends ServiceEntityRepository
     {
         $qb = $this->queryAll();
 
+        if (!empty(trim($filters['name'] ?? ''))) {
+            $qb = $this->filterByTitle($qb, trim($filters['name']));
+        }
+
         if (!empty($filters['equipment'])) {
             $qb = $this->filterByEquipment($qb, $filters['equipment']);
         }
@@ -68,6 +72,13 @@ class TaskRepository extends ServiceEntityRepository
         }
 
         return $qb;
+    }
+
+    public function filterByTitle(QueryBuilder $qb, string $search): QueryBuilder
+    {
+        return $qb
+            ->andWhere('LOWER(task.title) LIKE LOWER(:taskTitle)')
+            ->setParameter('taskTitle', '%' . addcslashes($search, '%_') . '%');
     }
 
     public function filterByEquipment(QueryBuilder $qb, Equipment $equipment): QueryBuilder

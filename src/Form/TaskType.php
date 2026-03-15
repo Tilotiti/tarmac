@@ -116,7 +116,11 @@ class TaskType extends AbstractType
         if ($options['include_subtasks']) {
             $builder->add('subTasks', CollectionType::class, [
                 'entry_type' => SubTaskType::class,
-                'entry_options' => ['label' => false],
+                'entry_options' => [
+                    'label' => false,
+                    'club' => $options['club'],
+                    'can_manage_specialisations' => $options['can_manage_specialisations'] ?? false,
+                ],
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
@@ -139,11 +143,13 @@ class TaskType extends AbstractType
             'is_edit' => false,
             'user' => null,
             'club' => null,
+            'can_manage_specialisations' => false,
         ]);
 
         $resolver->setAllowedTypes('user', ['null', User::class]);
         $resolver->setAllowedTypes('club', ['null', Club::class]);
         $resolver->setAllowedTypes('is_edit', 'bool');
+        $resolver->setAllowedTypes('can_manage_specialisations', 'bool');
     }
 }
 

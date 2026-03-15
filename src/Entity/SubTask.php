@@ -101,6 +101,13 @@ class SubTask
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     private Collection $activities;
 
+    /**
+     * @var Collection<int, Specialisation>
+     */
+    #[ORM\ManyToMany(targetEntity: Specialisation::class, inversedBy: 'subTasks')]
+    #[ORM\JoinTable(name: 'sub_task_specialisation')]
+    private Collection $specialisations;
+
     public function __construct()
     {
         $this->status = 'open';
@@ -110,6 +117,7 @@ class SubTask
         $this->createdAt = new \DateTimeImmutable();
         $this->activities = new ArrayCollection();
         $this->contributions = new ArrayCollection();
+        $this->specialisations = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -480,6 +488,33 @@ class SubTask
     public function setPriority(bool $priority): static
     {
         $this->priority = $priority;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Specialisation>
+     */
+    public function getSpecialisations(): Collection
+    {
+        return $this->specialisations;
+    }
+
+    public function addSpecialisation(Specialisation $specialisation): static
+    {
+        if (!$this->specialisations->contains($specialisation)) {
+            $this->specialisations->add($specialisation);
+            $specialisation->addSubTask($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSpecialisation(Specialisation $specialisation): static
+    {
+        if ($this->specialisations->removeElement($specialisation)) {
+            $specialisation->removeSubTask($this);
+        }
+
         return $this;
     }
 }

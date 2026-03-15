@@ -1,5 +1,7 @@
 {% extends 'club/base.html.twig' %}
 
+{% form_theme form 'form/specialisation_tag.html.twig' %}
+
 {% block page_title %}
 	{{ 'editPlan'|trans }}
 {% endblock %}
@@ -91,18 +93,23 @@
 											<div class="mb-2">
 												{{ form_row(subTaskTemplate.description) }}
 											</div>
-											{% include 'component/documentationUploader.html.twig' with {
-												field: subTaskTemplate.documentation,
-												existingUrl: subTaskTemplate.vars.data.documentation ?? null,
-												deletePath: null,
-												lightboxGroup: 'plan-subtask-documentation-' ~ loop.parent.loop.index ~ '-' ~ loop.index
-											} %}
+											{% if subTaskTemplate.specialisations is defined %}
+												<div class="mb-2">
+													{{ form_row(subTaskTemplate.specialisations) }}
+												</div>
+											{% endif %}
 											<div class="mb-2">
 												<div class="form-check form-switch">
 													{{ form_widget(subTaskTemplate.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
 													{{ form_label(subTaskTemplate.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
 												</div>
 											</div>
+											{% include 'component/documentationUploader.html.twig' with {
+												field: subTaskTemplate.documentation,
+												existingUrl: subTaskTemplate.vars.data.documentation ?? null,
+												deletePath: null,
+												lightboxGroup: 'plan-subtask-documentation-' ~ loop.parent.loop.index ~ '-' ~ loop.index
+											} %}
 										</fieldset>
 									{% endfor %}
 
@@ -136,18 +143,23 @@
 										<div class="mb-2">
 											{{ form_row(taskTemplate.subTaskTemplates.vars.prototype.description) }}
 										</div>
-										{% include 'component/documentationUploader.html.twig' with {
-											field: taskTemplate.subTaskTemplates.vars.prototype.documentation,
-											existingUrl: null,
-											deletePath: null,
-											lightboxGroup: 'plan-subtask-documentation-proto'
-										} %}
+										{% if taskTemplate.subTaskTemplates.vars.prototype.specialisations is defined %}
+											<div class="mb-2">
+												{{ form_row(taskTemplate.subTaskTemplates.vars.prototype.specialisations) }}
+											</div>
+										{% endif %}
 										<div class="mb-2">
 											<div class="form-check form-switch">
 												{{ form_widget(taskTemplate.subTaskTemplates.vars.prototype.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
 												{{ form_label(taskTemplate.subTaskTemplates.vars.prototype.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
 											</div>
 										</div>
+										{% include 'component/documentationUploader.html.twig' with {
+											field: taskTemplate.subTaskTemplates.vars.prototype.documentation,
+											existingUrl: null,
+											deletePath: null,
+											lightboxGroup: 'plan-subtask-documentation-proto'
+										} %}
 									</fieldset>
 								</template>
 							</fieldset>
@@ -230,6 +242,11 @@
 								<div class="mb-2">
 									{{ form_row(form.taskTemplates.vars.prototype.subTaskTemplates.vars.prototype.description) }}
 								</div>
+								{% if form.taskTemplates.vars.prototype.subTaskTemplates.vars.prototype.specialisations is defined %}
+									<div class="mb-2">
+										{{ form_row(form.taskTemplates.vars.prototype.subTaskTemplates.vars.prototype.specialisations) }}
+									</div>
+								{% endif %}
 								<div class="mb-2">
 									<div class="form-check form-switch">
 										{{ form_widget(form.taskTemplates.vars.prototype.subTaskTemplates.vars.prototype.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}

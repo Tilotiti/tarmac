@@ -6,6 +6,7 @@ use App\Entity\Club;
 use App\Entity\Equipment;
 use App\Entity\Enum\EquipmentOwner;
 use App\Entity\Enum\EquipmentType;
+use App\Entity\User;
 use App\Service\ClubResolver;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -90,6 +91,18 @@ class EquipmentRepository extends ServiceEntityRepository
     }
 
     /**
+     * Restrict to equipments visible to a given user: club-owned or private where user is in owners.
+     */
+    public function filterByVisibleToUser(QueryBuilder $dql, User $user): QueryBuilder
+    {
+        $dql->andWhere('(equipment.owner = :visible_owner_club OR :visible_user MEMBER OF equipment.owners)')
+            ->setParameter('visible_owner_club', EquipmentOwner::CLUB)
+            ->setParameter('visible_user', $user);
+
+        return $dql;
+    }
+
+    /**
      * Filter by owner type
      */
     public function filterByOwner(QueryBuilder $dql, EquipmentOwner|string $owner): QueryBuilder
@@ -130,6 +143,10 @@ class EquipmentRepository extends ServiceEntityRepository
 
         if (isset($filters['owner']) && $filters['owner'] !== '') {
             $dql = $this->filterByOwner($dql, $filters['owner']);
+        }
+
+        if (!empty($filters['visible_to_user'])) {
+            $dql = $this->filterByVisibleToUser($dql, $filters['visible_to_user']);
         }
 
         return $dql;

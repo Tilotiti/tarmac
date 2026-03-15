@@ -83,7 +83,10 @@ class SubTaskController extends ExtendedController
             $subTask->setPriority(true);
         }
 
-        $form = $this->createForm(SubTaskType::class, $subTask);
+        $form = $this->createForm(SubTaskType::class, $subTask, [
+            'club' => $task->getClub(),
+            'can_manage_specialisations' => $this->isGranted('MANAGE', $club),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -131,7 +134,10 @@ class SubTaskController extends ExtendedController
         $club = $this->clubResolver->resolve();
         $task = $subTask->getTask();
 
-        $form = $this->createForm(SubTaskType::class, $subTask);
+        $form = $this->createForm(SubTaskType::class, $subTask, [
+            'club' => $task->getClub(),
+            'can_manage_specialisations' => $this->isGranted('MANAGE', $club),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

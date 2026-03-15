@@ -52,7 +52,10 @@ class PlanTaskType extends AbstractType
             ])
             ->add('subTaskTemplates', CollectionType::class, [
                 'entry_type' => PlanSubTaskType::class,
-                'entry_options' => ['label' => false],
+                'entry_options' => [
+                    'label' => false,
+                    'club' => $options['club'],
+                ],
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
@@ -66,7 +69,9 @@ class PlanTaskType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => PlanTask::class,
+            'club' => null,
         ]);
+        $resolver->setAllowedTypes('club', ['null', \App\Entity\Club::class]);
     }
 }
 

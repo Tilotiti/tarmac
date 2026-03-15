@@ -1,0 +1,30 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'mergeSpecialisation'|trans }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="card">
+		<div class="card-header">
+			<h3 class="card-title">{{ 'mergeSpecialisation'|trans }}</h3>
+		</div>
+		<div class="card-body">
+			<p class="text-secondary">
+				{{ 'mergeSpecialisationHelp'|trans({'name': specialisation.name}) }}
+			</p>
+			{{ form_start(form) }}
+			<div class="mb-3">
+				{{ form_label(form.target) }}
+				{{ form_widget(form.target) }}
+				{{ form_errors(form.target) }}
+			</div>
+			<button type="submit" class="btn btn-primary" style="min-height: 44px;">
+				<i class="ti ti-git-merge me-2"></i>
+				{{ 'merge'|trans }}
+			</button>
+			<a href="{{ path('club_specialisations') }}" class="btn btn-outline-secondary ms-2">{{ 'cancel'|trans }}</a>
+			{{ form_end(form) }}
+		</div>
+	</div>
+{% endblock %}

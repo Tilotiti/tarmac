@@ -5,8 +5,10 @@ namespace App\Command;
 use App\Entity\Club;
 use App\Entity\Enum\EquipmentType;
 use App\Entity\Plan;
-use App\Entity\PlanTask;
 use App\Entity\PlanSubTask;
+use App\Entity\PlanTask;
+use App\Entity\Specialisation;
+use App\Repository\SpecialisationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -23,7 +25,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ImportMaintenancePlansCommand extends Command
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SpecialisationRepository $specialisationRepository,
     ) {
         parent::__construct();
     }
@@ -108,6 +111,7 @@ class ImportMaintenancePlansCommand extends Command
             'subtask_difficulty',
             'subtask_requires_inspection',
             'subtask_position',
+            'subtask_specialisations',
         ];
 
         if ($header !== $expectedColumns) {
@@ -201,7 +205,25 @@ class ImportMaintenancePlansCommand extends Command
                 $subtask->setDescription($data['subtask_description'] ?: null);
                 $subtask->setDifficulty($difficulty);
                 $subtask->setRequiresInspection($requiresInspection);
-                
+
+                $subtaskSpecialisationsRaw = trim($data['subtask_specialisations'] ?? '');
+                if ($club !== null && $subtaskSpecialisationsRaw !== '') {
+                    $names = array_map('trim', explode(',', $subtaskSpecialisationsRaw));
+                    foreach ($names as $name) {
+                        if ($name === '') {
+                            continue;
+                        }
+                        $specialisation = $this->specialisationRepository->findOneByClubAndName($club, $name);
+                        if ($specialisation === null) {
+                            $specialisation = new Specialisation();
+                            $specialisation->setClub($club);
+                            $specialisation->setName($name);
+                            $this->entityManager->persist($specialisation);
+                        }
+                        $subtask->addSpecialisation($specialisation);
+                    }
+                }
+
                 // Calculate position automatically for subtasks within each task
                 if (!isset($subtaskPositions[$taskKey])) {
                     $subtaskPositions[$taskKey] = 1;

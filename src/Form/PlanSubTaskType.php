@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\PlanSubTask;
+use App\Form\Type\SpecialisationTagType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -68,13 +69,23 @@ class PlanSubTaskType extends AbstractType
                 ],
             ])
         ;
+
+        $club = $options['club'];
+        if ($club !== null) {
+            $builder->add('specialisations', SpecialisationTagType::class, [
+                'label' => 'specialisations',
+                'club' => $club,
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => PlanSubTask::class,
+            'club' => null,
         ]);
+        $resolver->setAllowedTypes('club', ['null', \App\Entity\Club::class]);
     }
 }
 

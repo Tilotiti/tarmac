@@ -32,11 +32,6 @@ export default class extends Controller {
 
     positionMenu() {
         const rect = this.toggleTarget.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const spaceBelow = viewportHeight - rect.bottom;
-        const spaceAbove = rect.top;
-        const estimatedMenuHeight = 180;
-
         this.menuTarget.style.position = 'fixed';
         this.menuTarget.style.minWidth = `${Math.max(rect.width, 160)}px`;
 
@@ -45,13 +40,15 @@ export default class extends Controller {
         this.menuTarget.style.left = `${left}px`;
         this.menuTarget.style.right = 'auto';
 
-        if (spaceBelow >= estimatedMenuHeight || spaceBelow >= spaceAbove) {
-            this.menuTarget.style.top = `${rect.bottom + 4}px`;
-            this.menuTarget.style.bottom = 'auto';
-        } else {
-            this.menuTarget.style.bottom = `${viewportHeight - rect.top + 4}px`;
-            this.menuTarget.style.top = 'auto';
-        }
+        // Toujours ouvrir vers le bas (navbar en haut = espace suffisant en dessous)
+        const top = Math.max(8, rect.bottom + 4);
+        this.menuTarget.style.top = `${top}px`;
+        this.menuTarget.style.bottom = 'auto';
+
+        // Limiter la hauteur pour rester dans le viewport
+        const maxHeight = window.innerHeight - top - 16;
+        this.menuTarget.style.maxHeight = `${maxHeight}px`;
+        this.menuTarget.style.overflowY = 'auto';
     }
 
     clearPosition() {
@@ -61,6 +58,8 @@ export default class extends Controller {
         this.menuTarget.style.left = '';
         this.menuTarget.style.right = '';
         this.menuTarget.style.minWidth = '';
+        this.menuTarget.style.maxHeight = '';
+        this.menuTarget.style.overflowY = '';
     }
 
     outsideClick(event) {

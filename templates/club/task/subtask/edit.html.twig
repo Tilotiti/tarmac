@@ -1,5 +1,7 @@
 {% extends 'club/base.html.twig' %}
 
+{% form_theme form 'form/specialisation_tag.html.twig' %}
+
 {% block page_title %}
 	{{ 'editSubTask'|trans }}
 {% endblock %}
@@ -70,6 +72,11 @@
 			<div class="mb-3">
 				{{ form_row(form.description, {'attr': {'rows': 3}}) }}
 			</div>
+			{% if form.specialisations is defined %}
+				<div class="mb-3">
+					{{ form_row(form.specialisations) }}
+				</div>
+			{% endif %}
 			<div class="form-check form-switch mb-3">
 				{{ form_widget(form.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
 				{{ form_label(form.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}

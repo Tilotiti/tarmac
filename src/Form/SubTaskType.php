@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\SubTask;
+use App\Form\Type\SpecialisationTagType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -68,13 +69,24 @@ class SubTaskType extends AbstractType
                 'attr' => ['class' => 'form-check-input'],
             ])
         ;
+
+        if ($options['can_manage_specialisations'] ?? false) {
+            $builder->add('specialisations', SpecialisationTagType::class, [
+                'label' => 'specialisations',
+                'club' => $options['club'],
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => SubTask::class,
+            'club' => null,
+            'can_manage_specialisations' => false,
         ]);
+        $resolver->setAllowedTypes('club', ['null', \App\Entity\Club::class]);
+        $resolver->setAllowedTypes('can_manage_specialisations', 'bool');
     }
 }
 

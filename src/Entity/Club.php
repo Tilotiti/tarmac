@@ -53,6 +53,12 @@ class Club
     #[ORM\OneToMany(targetEntity: Equipment::class, mappedBy: 'club', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'EXTRA_LAZY')]
     private Collection $equipments;
 
+    /**
+     * @var Collection<int, Specialisation>
+     */
+    #[ORM\OneToMany(targetEntity: Specialisation::class, mappedBy: 'club', cascade: ['persist', 'remove'], orphanRemoval: true, fetch: 'EXTRA_LAZY')]
+    private Collection $specialisations;
+
     public function __construct()
     {
         $this->active = true;
@@ -60,6 +66,7 @@ class Club
         $this->memberships = new ArrayCollection();
         $this->invitations = new ArrayCollection();
         $this->equipments = new ArrayCollection();
+        $this->specialisations = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -248,6 +255,35 @@ class Club
             // set the owning side to null (unless already changed)
             if ($equipment->getClub() === $this) {
                 $equipment->setClub(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Specialisation>
+     */
+    public function getSpecialisations(): Collection
+    {
+        return $this->specialisations;
+    }
+
+    public function addSpecialisation(Specialisation $specialisation): static
+    {
+        if (!$this->specialisations->contains($specialisation)) {
+            $this->specialisations->add($specialisation);
+            $specialisation->setClub($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSpecialisation(Specialisation $specialisation): static
+    {
+        if ($this->specialisations->removeElement($specialisation)) {
+            if ($specialisation->getClub() === $this) {
+                $specialisation->setClub(null);
             }
         }
 

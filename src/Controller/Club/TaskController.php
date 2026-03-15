@@ -103,6 +103,7 @@ class TaskController extends ExtendedController
             'include_subtasks' => true,
             'user' => $this->getUser(),
             'club' => $club,
+            'can_manage_specialisations' => $this->isGranted('MANAGE', $club),
         ]);
         $form->handleRequest($request);
 
@@ -250,6 +251,7 @@ class TaskController extends ExtendedController
             'user' => $this->getUser(),
             'club' => $club,
             'is_edit' => true,
+            'can_manage_specialisations' => $this->isGranted('MANAGE', $club),
         ]);
         $form->handleRequest($request);
 

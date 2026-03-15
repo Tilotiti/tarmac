@@ -292,6 +292,14 @@
         <source>search</source>
         <target>Rechercher</target>
       </trans-unit>
+      <trans-unit id="65a" resname="taskName">
+        <source>taskName</source>
+        <target>Nom de la tâche</target>
+      </trans-unit>
+      <trans-unit id="65b" resname="searchByTaskName">
+        <source>searchByTaskName</source>
+        <target>Rechercher par nom...</target>
+      </trans-unit>
       <trans-unit id="66" resname="allTypes">
         <source>allTypes</source>
         <target>Tous les types</target>
@@ -303,6 +311,10 @@
       <trans-unit id="68" resname="searchMember">
         <source>searchMember</source>
         <target>Nom, prénom ou e-mail</target>
+      </trans-unit>
+      <trans-unit id="68b" resname="searchSpecialisation">
+        <source>searchSpecialisation</source>
+        <target>Rechercher une spécialisation</target>
       </trans-unit>
       <trans-unit id="69" resname="allRoles">
         <source>allRoles</source>
@@ -704,6 +716,10 @@
         <source>searchByNameOrEmail</source>
         <target>Rechercher par nom ou e-mail</target>
       </trans-unit>
+      <trans-unit id="121b" resname="searchByNameOrDescription">
+        <source>searchByNameOrDescription</source>
+        <target>Rechercher par nom ou description</target>
+      </trans-unit>
 
       <!-- Maintenance System -->
       <!-- Flash Messages: Tasks -->
@@ -974,6 +990,78 @@
       <trans-unit id="139aa" resname="planSpreadsheet.header.requiresInspection">
         <source>planSpreadsheet.header.requiresInspection</source>
         <target>Validation requise</target>
+      </trans-unit>
+      <trans-unit id="139ab" resname="planSpreadsheet.header.subtaskSpecialisations">
+        <source>planSpreadsheet.header.subtaskSpecialisations</source>
+        <target>Spécialisations</target>
+      </trans-unit>
+      <trans-unit id="139ac" resname="clubManagement">
+        <source>clubManagement</source>
+        <target>Gérer le club</target>
+      </trans-unit>
+      <trans-unit id="139ad" resname="maintenancePlans">
+        <source>maintenancePlans</source>
+        <target>Plans de maintenance</target>
+      </trans-unit>
+      <trans-unit id="139ae" resname="specialisations">
+        <source>specialisations</source>
+        <target>Spécialisations</target>
+      </trans-unit>
+      <trans-unit id="139af" resname="newSpecialisation">
+        <source>newSpecialisation</source>
+        <target>Nouvelle spécialisation</target>
+      </trans-unit>
+      <trans-unit id="139ag" resname="editSpecialisation">
+        <source>editSpecialisation</source>
+        <target>Modifier la spécialisation</target>
+      </trans-unit>
+      <trans-unit id="139ah" resname="mergeSpecialisation">
+        <source>mergeSpecialisation</source>
+        <target>Fusionner la spécialisation</target>
+      </trans-unit>
+      <trans-unit id="139ah1" resname="merge">
+        <source>merge</source>
+        <target>Fusionner</target>
+      </trans-unit>
+      <trans-unit id="139ai" resname="mergeTargetSpecialisation">
+        <source>mergeTargetSpecialisation</source>
+        <target>Spécialisation cible</target>
+      </trans-unit>
+      <trans-unit id="139aj" resname="mergeSpecialisationHelp">
+        <source>mergeSpecialisationHelp</source>
+        <target>Fusionner « {name} » avec une autre spécialisation. Les sous-tâches et modèles de plan concernés seront mis à jour.</target>
+      </trans-unit>
+      <trans-unit id="139ak" resname="specialisationCreated">
+        <source>specialisationCreated</source>
+        <target>Spécialisation créée.</target>
+      </trans-unit>
+      <trans-unit id="139al" resname="specialisationUpdated">
+        <source>specialisationUpdated</source>
+        <target>Spécialisation mise à jour.</target>
+      </trans-unit>
+      <trans-unit id="139am" resname="specialisationDeleted">
+        <source>specialisationDeleted</source>
+        <target>Spécialisation supprimée.</target>
+      </trans-unit>
+      <trans-unit id="139an" resname="specialisationMerged">
+        <source>specialisationMerged</source>
+        <target>Spécialisation fusionnée.</target>
+      </trans-unit>
+      <trans-unit id="139ao" resname="noOtherSpecialisationToMerge">
+        <source>noOtherSpecialisationToMerge</source>
+        <target>Il n'y a pas d'autre spécialisation avec laquelle fusionner.</target>
+      </trans-unit>
+      <trans-unit id="139ap" resname="noSpecialisationsYet">
+        <source>noSpecialisationsYet</source>
+        <target>Aucune spécialisation pour l'instant.</target>
+      </trans-unit>
+      <trans-unit id="139aq" resname="confirmDeleteSpecialisation">
+        <source>confirmDeleteSpecialisation</source>
+        <target>Supprimer cette spécialisation ?</target>
+      </trans-unit>
+      <trans-unit id="139ar" resname="specialisationNameUniqueForClub">
+        <source>specialisationNameUniqueForClub</source>
+        <target>Une spécialisation avec ce nom existe déjà pour ce club.</target>
       </trans-unit>
       <trans-unit id="140" resname="noPlansAvailable">
         <source>noPlansAvailable</source>
@@ -1544,6 +1632,10 @@
       <trans-unit id="246" resname="infrastructureType">
         <source>infrastructureType</source>
         <target>Autre</target>
+      </trans-unit>
+      <trans-unit id="246a" resname="facilityType">
+        <source>facilityType</source>
+        <target>Installations</target>
       </trans-unit>
       <trans-unit id="247" resname="searchPlans">
         <source>searchPlans</source>

@@ -28,18 +28,6 @@
 				</span>
 			</a>
 		</div>
-		{% if is_granted('MANAGE', club) or is_granted('INSPECT', club) %}
-			<div class="nav-item {{ app.request.get('_route') starts with 'club_equipment' ? 'active' : '' }}">
-				<a href="{{ path('club_equipments') }}" class="nav-link">
-					<span class="nav-link-icon d-md-none d-lg-inline-block">
-						<i class="ti ti-plane"></i>
-					</span>
-					<span class="nav-link-title">
-						{{ 'equipments'|trans }}
-					</span>
-				</a>
-			</div>
-		{% endif %}
 		<div class="nav-item {{ app.request.get('_route') starts with 'club_purchase' ? 'active' : '' }}">
 			<a href="{{ path('club_purchases') }}" class="nav-link">
 				<span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -50,30 +38,36 @@
 				</span>
 			</a>
 		</div>
-		{% if is_granted('MANAGE', club) or is_granted('INSPECT', club) %}
-			<div class="nav-item {{ app.request.get('_route') starts with 'club_plan' ? 'active' : '' }}">
-				<a href="{{ path('club_plans') }}" class="nav-link">
-					<span class="nav-link-icon d-md-none d-lg-inline-block">
-						<i class="ti ti-file-check"></i>
-					</span>
-					<span class="nav-link-title">
-						{{ 'plans'|trans }}
-					</span>
+		<div class="nav-item dropdown {{ app.request.get('_route') starts with 'club_member' or app.request.get('_route') starts with 'club_invitation' or app.request.get('_route') starts with 'club_equipment' or app.request.get('_route') starts with 'club_plan' or app.request.get('_route') starts with 'club_specialisation' ? 'active' : '' }}" data-controller="dropdown">
+			<a href="#" class="nav-link dropdown-toggle d-flex align-items-center px-2" data-dropdown-target="toggle" aria-expanded="false" aria-haspopup="true">
+				<span class="nav-link-icon d-md-none d-lg-inline-block">
+					<i class="ti ti-home"></i>
+				</span>
+				<span class="nav-link-title">
+					{{ 'club'|trans }}
+				</span>
+			</a>
+			<div class="dropdown-menu dropdown-menu-arrow" data-dropdown-target="menu">
+				<a href="{{ path('club_members') }}" class="dropdown-item {{ app.request.get('_route') starts with 'club_member' or app.request.get('_route') starts with 'club_invitation' ? 'active' : '' }}">
+					<i class="ti ti-users me-2"></i>
+					{{ 'members'|trans }}
 				</a>
-			</div>
-		{% endif %}
-		{% if is_granted('MANAGE', club) %}
-			<div class="nav-item {{ app.request.get('_route') starts with 'club_member' or app.request.get('_route') starts with 'club_invitation' ? 'active' : '' }}">
-				<a href="{{ path('club_members') }}" class="nav-link">
-					<span class="nav-link-icon d-md-none d-lg-inline-block">
-						<i class="ti ti-users"></i>
-					</span>
-					<span class="nav-link-title">
-						{{ 'members'|trans }}
-					</span>
+				<a href="{{ path('club_equipments') }}" class="dropdown-item {{ app.request.get('_route') starts with 'club_equipment' ? 'active' : '' }}">
+					<i class="ti ti-plane me-2"></i>
+					{{ 'equipments'|trans }}
 				</a>
+				{% if is_granted('MANAGE', club) %}
+					<a href="{{ path('club_plans') }}" class="dropdown-item {{ app.request.get('_route') starts with 'club_plan' ? 'active' : '' }}">
+						<i class="ti ti-file-check me-2"></i>
+						{{ 'maintenancePlans'|trans }}
+					</a>
+					<a href="{{ path('club_specialisations') }}" class="dropdown-item {{ app.request.get('_route') starts with 'club_specialisation' ? 'active' : '' }}">
+						<i class="ti ti-tag me-2"></i>
+						{{ 'specialisations'|trans }}
+					</a>
+				{% endif %}
 			</div>
-		{% endif %}
+		</div>
 	</div>
 {% endblock %}
 

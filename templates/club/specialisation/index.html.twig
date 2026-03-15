@@ -1,0 +1,66 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'specialisations'|trans }}
+{% endblock %}
+
+{% block page_actions %}
+	<a href="{{ path('club_specialisation_new') }}" class="btn btn-primary" style="min-height: 44px;">
+		<i class="ti ti-plus me-2"></i>
+		{{ 'newSpecialisation'|trans }}
+	</a>
+{% endblock %}
+
+{% block page_content %}
+	{% include 'component/filters.html.twig' with { form: filters } %}
+
+	{% if specialisations is not empty %}
+		<div class="row g-3">
+			{% for spec in specialisations %}
+				<div class="col-12">
+					<div class="card">
+						<div class="card-body d-flex flex-row align-items-center justify-content-between gap-3">
+							<div class="flex-grow-1 min-w-0">
+								<h3 class="card-title h5 mb-1">{{ spec.name }}</h3>
+								{% if spec.description %}
+									<p class="card-text text-secondary small mb-0">{{ spec.description }}</p>
+								{% endif %}
+							</div>
+							<div class="btn-list d-flex align-items-center gap-1 flex-shrink-0">
+								<a href="{{ path('club_specialisation_edit', {id: spec.id}) }}" class="btn btn-outline-primary btn-sm flex-shrink-0" style="width: 2.25rem; height: 2.25rem; padding: 0; display: inline-flex; align-items: center; justify-content: center;" title="{{ 'edit'|trans }}">
+									<i class="ti ti-edit"></i>
+								</a>
+								{% if specialisations|length > 1 %}
+									<a href="{{ path('club_specialisation_merge', {id: spec.id}) }}" class="btn btn-outline-secondary btn-sm flex-shrink-0" style="width: 2.25rem; height: 2.25rem; padding: 0; display: inline-flex; align-items: center; justify-content: center;" title="{{ 'merge'|trans }}">
+										<i class="ti ti-git-merge"></i>
+									</a>
+								{% endif %}
+								<form method="post" action="{{ path('club_specialisation_delete', {id: spec.id}) }}" class="d-inline flex-shrink-0" onsubmit="return confirm('{{ 'confirmDeleteSpecialisation'|trans|e('js') }}');">
+									<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ spec.id) }}">
+									<button type="submit" class="btn btn-outline-danger btn-sm" style="width: 2.25rem; height: 2.25rem; padding: 0; display: inline-flex; align-items: center; justify-content: center;" title="{{ 'delete'|trans }}">
+										<i class="ti ti-trash"></i>
+									</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+
+		<div class="d-flex justify-content-center mt-4">
+			{{ pagination(specialisations) }}
+		</div>
+	{% else %}
+		<div class="card">
+			<div class="card-body text-center text-secondary py-5">
+				<i class="ti ti-tag-off mb-3" style="font-size: 3rem; opacity: 0.5;"></i>
+				<p class="mb-0">{{ 'noSpecialisationsYet'|trans }}</p>
+				<a href="{{ path('club_specialisation_new') }}" class="btn btn-primary mt-3">
+					<i class="ti ti-plus me-2"></i>
+					{{ 'newSpecialisation'|trans }}
+				</a>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}

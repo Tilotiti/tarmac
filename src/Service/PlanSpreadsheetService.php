@@ -5,6 +5,10 @@ namespace App\Service;
 use App\Entity\Plan;
 use App\Entity\PlanSubTask;
 use App\Entity\PlanTask;
+use App\Entity\Specialisation;
+use App\Repository\SpecialisationRepository;
+use App\Service\Maintenance\SpecialisationSyncService;
+use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -28,10 +32,14 @@ class PlanSpreadsheetService
         'subtaskDocumentation',
         'difficulty',
         'requiresInspection',
+        'subtaskSpecialisations',
     ];
 
     public function __construct(
         private readonly TranslatorInterface $translator,
+        private readonly SpecialisationRepository $specialisationRepository,
+        private readonly SpecialisationSyncService $specialisationSyncService,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -61,12 +69,19 @@ class PlanSpreadsheetService
                     null,
                     null,
                     null,
+                    null,
                     null
                 );
                 continue;
             }
 
             foreach ($subTasks as $subTask) {
+                $specialisationNames = array_map(
+                    static fn (Specialisation $s) => $s->getName(),
+                    $subTask->getSpecialisations()->toArray()
+                );
+                $subtaskSpecialisations = implode(', ', $specialisationNames);
+
                 $rowIndex = $this->writeRow(
                     $sheet,
                     $rowIndex,
@@ -79,13 +94,14 @@ class PlanSpreadsheetService
                     $subTask->getDescription(),
                     $subTask->getDocumentation(),
                     $subTask->getDifficulty(),
-                    $subTask->requiresInspection()
+                    $subTask->requiresInspection(),
+                    $subtaskSpecialisations
                 );
             }
         }
 
         // Auto-size columns for readability.
-        foreach (range('A', 'J') as $column) {
+        foreach (range('A', 'K') as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
 
@@ -186,6 +202,8 @@ class PlanSpreadsheetService
             }
 
             $requiresInspection = $this->parseBoolean($requiresInspectionRaw);
+            $subtaskSpecialisationsRaw = $this->extractString($row, $columnMap['subtaskSpecialisations'] ?? null);
+
             $subtask = new PlanSubTask();
             $subtask->setTitle($subtaskTitle);
             $subtask->setDescription($subtaskDescription !== '' ? $subtaskDescription : null);
@@ -195,6 +213,24 @@ class PlanSpreadsheetService
 
             if (is_numeric($subtaskPositionRaw)) {
                 $subtask->setPosition((int) $subtaskPositionRaw);
+            }
+
+            $club = $plan->getClub();
+            if ($club !== null && $subtaskSpecialisationsRaw !== '') {
+                $names = array_map('trim', explode(',', $subtaskSpecialisationsRaw));
+                foreach ($names as $name) {
+                    if ($name === '') {
+                        continue;
+                    }
+                    $specialisation = $this->specialisationRepository->findOneByClubAndName($club, $name);
+                    if ($specialisation === null) {
+                        $specialisation = new Specialisation();
+                        $specialisation->setClub($club);
+                        $specialisation->setName($name);
+                        $this->entityManager->persist($specialisation);
+                    }
+                    $subtask->addSpecialisation($specialisation);
+                }
             }
 
             $task->addSubTaskTemplate($subtask);
@@ -238,6 +274,13 @@ class PlanSpreadsheetService
             $result->incrementTaskCount();
         }
 
+        // Sync specialisations to already-applied SubTasks (by plan + task title + subtask title).
+        foreach ($plan->getTaskTemplates() as $planTask) {
+            foreach ($planTask->getSubTaskTemplates() as $planSubTask) {
+                $this->specialisationSyncService->syncSpecialisationsToAppliedSubTasksNoFlush($planSubTask);
+            }
+        }
+
         return $result;
     }
 
@@ -270,7 +313,8 @@ class PlanSpreadsheetService
         ?string $subtaskDescription,
         ?string $subtaskDocumentation,
         ?int $difficulty,
-        ?bool $requiresInspection = null
+        ?bool $requiresInspection = null,
+        ?string $subtaskSpecialisations = null
     ): int {
         $sheet->setCellValue("A{$rowIndex}", $taskPosition !== null ? $taskPosition : '');
         $sheet->setCellValue("B{$rowIndex}", $taskTitle ?? '');
@@ -282,6 +326,7 @@ class PlanSpreadsheetService
         $sheet->setCellValue("H{$rowIndex}", $subtaskDocumentation ?? '');
         $sheet->setCellValue("I{$rowIndex}", $difficulty ?? '');
         $sheet->setCellValue("J{$rowIndex}", $requiresInspection === null ? '' : ($requiresInspection ? '1' : '0'));
+        $sheet->setCellValue("K{$rowIndex}", $subtaskSpecialisations ?? '');
 
         return $rowIndex + 1;
     }

@@ -60,6 +60,11 @@ class EquipmentController extends ExtendedController
         // Hide disabled equipments for all users
         $params['active'] = true;
 
+        // Non-managers only see club equipments + private equipments they own
+        if (!$this->isGranted('MANAGE', $club)) {
+            $params['visible_to_user'] = $this->getUser();
+        }
+
         // Get equipments with pagination
         $equipments = Paginator::paginate(
             $this->equipmentRepository->queryByFilters($params),
@@ -149,6 +154,11 @@ class EquipmentController extends ExtendedController
         // Ensure equipment belongs to this club
         if ($equipment->getClub() !== $club) {
             throw $this->createNotFoundException();
+        }
+
+        // Non-managers can only view club equipment or private equipment they own
+        if (!$this->isGranted('MANAGE', $club) && $equipment->isPrivate() && !$equipment->getOwners()->contains($user)) {
+            throw $this->createAccessDeniedException();
         }
 
         // Get maintenance plan applications for this equipment

@@ -1,0 +1,19 @@
+{% block specialisation_tag_widget %}
+	<div class="position-relative" data-controller="tag-manager">
+		{{ form_widget(form, {
+			attr: form.vars.attr|default({})|merge({
+				'data-tag-manager-target': 'select'
+			})
+		}) }}
+		<div data-tag-manager-target="tagsContainer" class="d-flex flex-wrap align-items-center mb-2 min-h-38"></div>
+		<input type="text"
+			class="form-control"
+			data-tag-manager-target="input"
+			placeholder="{{ 'searchSpecialisation'|trans }}..."
+			autocomplete="off"
+			aria-label="{{ 'searchSpecialisation'|trans }}">
+		<div data-tag-manager-target="dropdown"
+			class="list-group position-absolute start-0 end-0 mt-1 d-none border rounded shadow overflow-auto bg-white"
+			style="max-height: 14rem; min-height: 2.5rem; z-index: 1050;"></div>
+	</div>
+{% endblock %}

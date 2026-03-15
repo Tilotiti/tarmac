@@ -8,6 +8,7 @@ use App\Entity\Enum\EquipmentType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -23,6 +24,13 @@ class TaskFilterType extends AbstractFilterType
         $club = $options['club'];
 
         $builder
+            ->add('name', TextType::class, [
+                'label' => 'taskName',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'searchByTaskName',
+                ],
+            ])
             ->add('equipment', EntityType::class, [
                 'class' => Equipment::class,
                 'choice_label' => 'name',

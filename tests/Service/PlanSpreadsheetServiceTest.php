@@ -5,7 +5,10 @@ namespace App\Tests\Service;
 use App\Entity\Plan;
 use App\Entity\PlanSubTask;
 use App\Entity\PlanTask;
+use App\Repository\SpecialisationRepository;
+use App\Service\Maintenance\SpecialisationSyncService;
 use App\Service\PlanSpreadsheetService;
+use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PHPUnit\Framework\TestCase;
@@ -15,10 +18,24 @@ use Symfony\Component\Translation\Translator;
 
 class PlanSpreadsheetServiceTest extends TestCase
 {
+    private function createPlanSpreadsheetService(Translator $translator): PlanSpreadsheetService
+    {
+        $specialisationRepo = $this->createMock(SpecialisationRepository::class);
+        $specialisationRepo->method('findOneByClubAndName')->willReturn(null);
+        $specialisationRepo->method('findByClub')->willReturn([]);
+
+        $syncService = $this->createMock(SpecialisationSyncService::class);
+        $syncService->method('syncSpecialisationsToAppliedSubTasksNoFlush')->willReturnCallback(static function (): void {});
+
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        return new PlanSpreadsheetService($translator, $specialisationRepo, $syncService, $em);
+    }
+
     public function testExportAndImportReplacesExistingTasks(): void
     {
         $translator = $this->createTranslator();
-        $service = new PlanSpreadsheetService($translator);
+        $service = $this->createPlanSpreadsheetService($translator);
 
         $sourcePlan = $this->createSamplePlan();
         $spreadsheet = $service->generateSpreadsheet($sourcePlan);
@@ -76,7 +93,7 @@ class PlanSpreadsheetServiceTest extends TestCase
     public function testImportProvidesWarningsAndDefaults(): void
     {
         $translator = $this->createTranslator();
-        $service = new PlanSpreadsheetService($translator);
+        $service = $this->createPlanSpreadsheetService($translator);
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -86,12 +103,12 @@ class PlanSpreadsheetServiceTest extends TestCase
         );
         $sheet->fromArray($headerLabels, null, 'A1');
         $sheet->fromArray(
-            [0, 'Contrôle moteur', 'Vérifications générales', 0, 'Vidange', 'Huile 15W50', '5', 'yes'],
+            [0, 'Contrôle moteur', 'Vérifications générales', '', 0, 'Vidange', 'Huile 15W50', '', '5', 'yes', ''],
             null,
             'A2'
         );
         $sheet->fromArray(
-            [0, 'Contrôle moteur', '', 1, '', '', '2', 'no'],
+            [0, 'Contrôle moteur', '', '', 1, '', '', '', '2', 'no', ''],
             null,
             'A3'
         );
@@ -194,11 +211,14 @@ class PlanSpreadsheetServiceTest extends TestCase
             'planSpreadsheet.header.taskPosition' => 'Position tâche',
             'planSpreadsheet.header.taskTitle' => 'Titre de la tâche',
             'planSpreadsheet.header.taskDescription' => 'Description de la tâche',
+            'planSpreadsheet.header.taskDocumentation' => 'Documentation tâche',
             'planSpreadsheet.header.subtaskPosition' => 'Position sous-tâche',
             'planSpreadsheet.header.subtaskTitle' => 'Titre de la sous-tâche',
             'planSpreadsheet.header.subtaskDescription' => 'Description de la sous-tâche',
+            'planSpreadsheet.header.subtaskDocumentation' => 'Documentation sous-tâche',
             'planSpreadsheet.header.difficulty' => 'Difficulté',
             'planSpreadsheet.header.requiresInspection' => 'Inspection requise',
+            'planSpreadsheet.header.subtaskSpecialisations' => 'Spécialisations',
         ], 'fr');
 
         return $translator;
