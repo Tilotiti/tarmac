@@ -42,5 +42,8 @@ export default class extends Controller {
 
     onHidden() {
         document.querySelectorAll('.offcanvas-backdrop').forEach((el) => el.remove());
+        // Restore body scroll (Bootstrap sometimes leaves overflow:hidden)
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
     }
 }
