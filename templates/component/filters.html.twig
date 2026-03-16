@@ -71,7 +71,7 @@
 	{% endif %}
 {% endfor %}
 
-<div class="filters {% if style == 'default' %}mb-3{% endif %} {% if style == 'small' %}d-block w-100{% endif %}">
+<div class="filters {% if style == 'default' %}mb-3{% endif %} {% if style == 'small' %}d-block w-100{% endif %}" data-controller="filter-offcanvas">
 	<div class="row align-items-center">
 		<div class="col d-none d-sm-block">
 			{% for filter in form %}
