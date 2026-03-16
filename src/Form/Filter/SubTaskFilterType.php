@@ -2,7 +2,7 @@
 
 namespace App\Form\Filter;
 
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use App\Form\Type\StatusTagType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -18,15 +18,16 @@ class SubTaskFilterType extends AbstractFilterType
                     'placeholder' => 'search',
                 ],
             ])
-            ->add('status', ChoiceType::class, [
+            ->add('status', StatusTagType::class, [
                 'label' => 'status',
                 'required' => false,
-                'placeholder' => 'all',
                 'choices' => [
-                    'open' => 'open',
-                    'closed' => 'closed',
-                    'cancelled' => 'cancelled',
+                    'statusOpenLabel' => 'open',
+                    'statusDonePendingLabel' => 'done',
+                    'statusClosedLabel' => 'closed',
+                    'statusCancelledLabel' => 'cancelled',
                 ],
+                'help' => 'logbookStatusHelp',
             ])
         ;
     }

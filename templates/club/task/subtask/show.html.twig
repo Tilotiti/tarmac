@@ -266,117 +266,27 @@
 		</div>
 	{% endif %}
 
-	{# Complete Form Card #}
+	{# Complete Form Card - même partial que modale bulk close #}
 	{% if completeForm is defined and completeForm is not null %}
-		{% set contributionPrototype %}
-		<div class="card border mb-2 shadow-sm" data-collection-type-target="item">
-			<div class="card-body p-3">
-				<div class="row g-2 align-items-center">
-					<div class="col-12 col-lg-5">
-						{{ form_widget(completeForm.contributions.vars.prototype.membership) }}
-						{{ form_errors(completeForm.contributions.vars.prototype.membership) }}
-					</div>
-					<div class="col-12 col-lg-5">
-						{{ form_widget(completeForm.contributions.vars.prototype.timeSpent) }}
-						{{ form_errors(completeForm.contributions.vars.prototype.timeSpent) }}
-					</div>
-					<div class="col-12 col-lg-2">
-						<button type="button" class="btn btn-outline-danger w-100" data-action="click->collection-type#removeItem click->contribution-total#refresh">
-							<i class="ti ti-trash me-1"></i>
-							{{ 'remove'|trans }}
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		{% endset %}
 		<div class="card mb-3">
 			<div class="card-header">
 				<h3 class="card-title">{{ 'completeSubTask'|trans }}</h3>
 			</div>
 			<div class="card-body">
 				{{ form_start(completeForm, {'action': path('club_subtask_complete', {taskId: task.id, id: subTask.id})}) }}
-
-				{# Who did the task - only show for managers #}
-				{% if is_granted('MANAGE') %}
-					<fieldset class="form-fieldset mb-3 pt-1" data-controller="user-list-filter" data-user-list-filter-type-value="doneBy">
-						{{ form_label(completeForm.doneBy) }}
-						<div class="mb-3">
-							<input type="text" class="form-control" placeholder="{{ 'searchMember'|trans }}..." data-user-list-filter-target="search" data-action="input->user-list-filter#filter">
-						</div>
-						<div class="d-flex flex-column border rounded p-0" style="max-height: 250px; overflow-y: auto; background-color: #fff;">
-							{% for child in completeForm.doneBy %}
-								<label class="d-flex align-items-center m-0 p-2 border-bottom" data-user-list-filter-target="item" style="cursor: pointer;">
-									<input type="radio" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}" class="form-check-input me-2 m-0" {% if child.vars.checked %} checked {% endif %} required>
-									<span class="mb-0">{{ child.vars.label }}</span>
-								</label>
-							{% endfor %}
-							<div class="text-center text-secondary py-3 d-none" data-user-list-filter-target="empty">
-								<em>{{ 'noMemberFound'|trans }}</em>
-							</div>
-						</div>
-						{{ form_errors(completeForm.doneBy) }}
-					</fieldset>
-					{% do completeForm.doneBy.setRendered %}
-				{% else %}
-					<div style="display: none;">
-						{{ form_row(completeForm.doneBy) }}
+					{% include 'component/subtask_complete_form_body.html.twig' with {
+						completeForm: completeForm,
+						contributionUsedMembershipIds: contributionUsedMembershipIds|default([]),
+						contributionAllMembershipIds: contributionAllMembershipIds|default([]),
+						showDoneByFilter: is_granted('MANAGE'),
+						subTaskForTotal: subTask
+					} %}
+					<div class="form-footer">
+						<button type="submit" class="btn btn-success w-100 w-md-auto" style="min-height: 44px;">
+							<i class="ti ti-check me-2"></i>
+							{{ 'markAsDone'|trans }}
+						</button>
 					</div>
-				{% endif %}
-
-				{# Contributions list #}
-				<div class="mb-3"
-					{{ stimulus_controller('collection-type')|stimulus_controller('contribution-members-filter')|stimulus_controller('contribution-total') }}
-					data-contribution-members-filter-all-membership-ids-value="{{ contributionAllMembershipIds|default([])|json_encode|e('html_attr') }}"
-					data-contribution-members-filter-initial-used-membership-ids-value="{{ contributionUsedMembershipIds|default([])|json_encode|e('html_attr') }}"
-					data-prototype="{{ contributionPrototype|e('html_attr') }}">
-					{{ form_label(completeForm.contributions) }}
-					<div data-collection-type-target="container" data-contribution-members-filter-target="container" data-contribution-total-target="container" data-initial-used-ids="{{ contributionUsedMembershipIds|default([])|join(',') }}">
-						<div class="empty text-center text-secondary border rounded py-3 mb-2">
-							<em>{{ 'noContributionInCompleteForm'|trans }}</em>
-						</div>
-						{% for contributionForm in completeForm.contributions %}
-							<div class="card border mb-2 shadow-sm" data-collection-type-target="item">
-								<div class="card-body p-3">
-									<div class="row g-2 align-items-center">
-										<div class="col-12 col-lg-5">
-											{{ form_widget(contributionForm.membership) }}
-											{{ form_errors(contributionForm.membership) }}
-										</div>
-										<div class="col-12 col-lg-5">
-											{{ form_widget(contributionForm.timeSpent) }}
-											{{ form_errors(contributionForm.timeSpent) }}
-										</div>
-										<div class="col-12 col-lg-2">
-											<button type="button" class="btn btn-outline-danger w-100" data-action="click->collection-type#removeItem click->contribution-total#refresh">
-												<i class="ti ti-trash me-1"></i>
-												{{ 'remove'|trans }}
-											</button>
-										</div>
-									</div>
-								</div>
-							</div>
-						{% endfor %}
-					</div>
-					<button type="button" class="btn btn-outline-primary btn-sm mt-2" data-action="click->collection-type#addItem click->contribution-members-filter#refresh click->contribution-total#refresh" data-contribution-members-filter-target="addButton">
-						<i class="ti ti-plus me-1"></i>
-						{{ 'addContribution'|trans }}
-					</button>
-					{{ form_errors(completeForm.contributions) }}
-
-					{# Total time (calculated from contributions) #}
-					<div class="mt-3">
-						<span class="text-secondary">{{ 'totalTime'|trans }}:</span>
-						<strong data-contribution-total-target="total">{{ subTask.totalTimeSpent|format_time_spent }}</strong>
-					</div>
-				</div>
-
-				<div class="form-footer">
-					<button type="submit" class="btn btn-success w-100 w-md-auto" style="min-height: 44px;">
-						<i class="ti ti-check me-2"></i>
-						{{ 'markAsDone'|trans }}
-					</button>
-				</div>
 				{{ form_end(completeForm) }}
 			</div>
 		</div>

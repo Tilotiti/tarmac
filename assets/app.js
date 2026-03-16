@@ -7,7 +7,12 @@ import './bootstrap.js';
  */
 import './styles/app.css';
 import '@tabler/core';
+import * as bootstrap from 'bootstrap';
 import { Modal, Tooltip } from 'bootstrap';
+
+// Expose Bootstrap globally for Stimulus controllers using window.bootstrap
+// (e.g. subtask bulk selection modals).
+window.bootstrap = bootstrap;
 
 console.log('Tarmac with Tabler.io - Ready! 🚀');
 

@@ -618,3 +618,62 @@
         min-height: 280px;
     }
 }
+
+/* Bulk selection for subtasks */
+.subtask-bulk-item-wrapper {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.subtask-bulk-item-wrapper.is-selectable .card {
+    box-shadow: 0 0.5rem 1rem rgba(15, 23, 42, 0.06);
+}
+
+/* Colonne pour la checkbox : largeur 0 hors sélection, largeur fixe en mode sélection */
+.subtask-bulk-checkbox {
+    width: 0;
+    flex: 0 0 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: hidden;
+    transition: width 0.15s ease, flex-basis 0.15s ease;
+}
+
+.subtask-bulk-checkbox .form-check-input {
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.subtask-bulk-checkbox--visible {
+    width: 3rem;            /* largeur fixe identique pour toutes les cartes */
+    flex: 0 0 3rem;
+}
+
+.subtask-bulk-checkbox--visible .form-check-input {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.subtask-bulk-actions {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 1030;
+    max-width: 100%;
+}
+
+.subtask-bulk-actions--visible {
+    animation: subtask-bulk-actions-in 0.18s ease-out forwards;
+}
+
+@keyframes subtask-bulk-actions-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

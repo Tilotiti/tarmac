@@ -9,8 +9,11 @@ use App\Entity\Task;
 use App\Entity\Activity;
 use App\Form\Filter\SubTaskFilterType;
 use App\Form\Filter\TaskFilterType;
-use App\Form\ActivityFormType;
 use App\Form\TaskType;
+use App\Form\ActivityFormType;
+use App\Form\ContributionAddFormType;
+use App\Form\SubTaskCompleteFormType;
+use App\Repository\MembershipRepository;
 use App\Repository\Paginator;
 use App\Repository\TaskRepository;
 use App\Security\Voter\TaskVoter;
@@ -34,6 +37,7 @@ class TaskController extends ExtendedController
     public function __construct(
         SubdomainService $subdomainService,
         private readonly ClubResolver $clubResolver,
+        private readonly MembershipRepository $membershipRepository,
         private readonly TaskRepository $taskRepository,
         private readonly TaskStatusService $taskStatusService,
         private readonly EntityManagerInterface $entityManager,
@@ -53,7 +57,7 @@ class TaskController extends ExtendedController
         $club = $this->clubResolver->resolve();
 
         // Handle filters with default status 'open'
-        $filters = $this->createFilter(TaskFilterType::class, ['status' => 'open'], [
+        $filters = $this->createFilter(TaskFilterType::class, ['status' => ['open']], [
             'club' => $club,
         ]);
         $filters->handleRequest($request);
@@ -164,7 +168,7 @@ class TaskController extends ExtendedController
         $club = $this->clubResolver->resolve();
 
         // SubTask filters (status default: open)
-        $subTaskFilters = $this->createFilter(SubTaskFilterType::class, ['status' => 'open']);
+        $subTaskFilters = $this->createFilter(SubTaskFilterType::class, ['status' => ['open']]);
         $subTaskFilters->handleRequest($request);
         $filterData = $this->getFilterData($subTaskFilters);
 
@@ -179,6 +183,40 @@ class TaskController extends ExtendedController
             ]);
         }
 
+        // Bulk contribution form (time spent only) - reuse ContributionAddFormType
+        $bulkContributionForm = $this->createForm(ContributionAddFormType::class);
+
+        // Bulk close form - reuse SubTaskCompleteFormType (même UI que sous-tâche unitaire)
+        $bulkCloseForm = null;
+        $bulkCloseContributionUsedMembershipIds = [];
+        $bulkCloseContributionAllMembershipIds = [];
+        if ($task->getSubTasks()->count() > 0) {
+            $user = $this->getUser();
+            $currentMembership = $user && $club
+                ? $this->membershipRepository->findOneBy(['user' => $user, 'club' => $club])
+                : null;
+            $placeholderSubTask = new SubTask();
+            $placeholderSubTask->setTask($task);
+            $placeholderSubTask->setTitle('-'); // Titre requis pour validation, non utilisé en bulk close
+            $placeholderSubTask->setPosition(0);
+            $placeholderSubTask->setDoneBy($user);
+            $bulkCloseContributionAllMembershipIds = array_map(
+                fn ($m) => $m->getId(),
+                $this->membershipRepository->findBy(['club' => $club], ['id' => 'ASC'])
+            );
+            $bulkCloseForm = $this->createForm(SubTaskCompleteFormType::class, $placeholderSubTask, [
+                'subtask' => $placeholderSubTask,
+                'initial_done_by' => $user,
+            ]);
+        }
+
+        // Bulk cancel form (cancellationReason, optional) - ActivityFormType
+        $bulkCancelForm = $this->createForm(ActivityFormType::class, null, [
+            'label' => 'cancellationReason',
+            'required' => false,
+            'placeholder' => 'optionalReason',
+        ]);
+
         return $this->render('club/task/show.html.twig', [
             'club' => $club,
             'task' => $task,
@@ -186,6 +224,11 @@ class TaskController extends ExtendedController
             'filters' => $subTaskFilters->createView(),
             'commentForm' => $commentForm,
             'taskStatusService' => $this->taskStatusService,
+            'bulkContributionForm' => $bulkContributionForm->createView(),
+            'bulkCloseForm' => $bulkCloseForm?->createView(),
+            'bulkCloseContributionUsedMembershipIds' => $bulkCloseContributionUsedMembershipIds ?? [],
+            'bulkCloseContributionAllMembershipIds' => $bulkCloseContributionAllMembershipIds ?? [],
+            'bulkCancelForm' => $bulkCancelForm->createView(),
         ]);
     }
 
@@ -199,18 +242,14 @@ class TaskController extends ExtendedController
     private function filterSubTasks(iterable $subTasks, array $filterData): array
     {
         $search = isset($filterData['search']) ? mb_strtolower(trim($filterData['search'])) : null;
-        $status = $filterData['status'] ?? null;
+        $statuses = $filterData['status'] ?? null;
+        $statusList = is_iterable($statuses) ? array_values((array) $statuses) : ($statuses !== null && $statuses !== '' ? [$statuses] : []);
 
         $result = [];
         foreach ($subTasks as $subTask) {
-            // Status filter: open = open, done or waitingForApproval
-            if ($status === 'open') {
-                $statusMatch = \in_array($subTask->getStatus(), ['open', 'done'], true)
-                    || $subTask->isWaitingForApproval();
-            } elseif ($status === 'closed') {
-                $statusMatch = $subTask->getStatus() === 'closed';
-            } elseif ($status === 'cancelled') {
-                $statusMatch = $subTask->getStatus() === 'cancelled';
+            // Status filter: support single or multiple statuses
+            if (!empty($statusList)) {
+                $statusMatch = \in_array($subTask->getStatus(), $statusList, true);
             } else {
                 $statusMatch = true;
             }

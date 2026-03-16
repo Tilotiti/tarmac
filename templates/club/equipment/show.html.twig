@@ -277,16 +277,19 @@
 							</div>
 						</div>
 
-						{# Progress bar for subtasks #}
+						{# Progress bar for subtasks - cancelled subtasks excluded from total #}
 						{% if task.subTasks|length > 0 %}
-							{% set progress = 0 %}
+							{% set totalSubTasks = 0 %}
 							{% set closed = 0 %}
 							{% for subtask in task.subTasks %}
-								{% if subtask.status == 'closed' %}
-									{% set closed = closed + 1 %}
+								{% if subtask.status != 'cancelled' %}
+									{% set totalSubTasks = totalSubTasks + 1 %}
+									{% if subtask.status == 'closed' %}
+										{% set closed = closed + 1 %}
+									{% endif %}
 								{% endif %}
 							{% endfor %}
-							{% set progress = (closed / task.subTasks|length * 100)|round %}
+							{% set progress = totalSubTasks > 0 ? (closed / totalSubTasks * 100)|round : 100 %}
 							<div class="progress progress-sm mb-1">
 								<div class="progress-bar bg-{{ progress == 100 ? 'success' : 'primary' }}" style="width: {{ progress }}%">
 									<span class="visually-hidden">{{ progress }}%</span>
@@ -295,7 +298,7 @@
 							<div class="text-secondary small">
 								{{ closed }}
 								/
-								{{ task.subTasks|length }}
+								{{ totalSubTasks }}
 								{{ 'subTasks'|trans|lower }}
 							</div>
 						{% endif %}

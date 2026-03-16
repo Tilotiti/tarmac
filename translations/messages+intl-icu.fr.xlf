@@ -118,6 +118,27 @@
         <source>cannotRemoveLastManager</source>
         <target>Vous ne pouvez pas retirer vos droits de manager, vous êtes le dernier manager du club.</target>
       </trans-unit>
+      <!-- Bulk subtasks selection -->
+      <trans-unit id="bulk_1" resname="selectSubTasks">
+        <source>selectSubTasks</source>
+        <target>Sélectionner des sous-tâches</target>
+      </trans-unit>
+      <trans-unit id="bulk_2" resname="cancelSelection">
+        <source>cancelSelection</source>
+        <target>Annuler la sélection</target>
+      </trans-unit>
+      <trans-unit id="bulk_3" resname="enterTotalTimeMinutes">
+        <source>enterTotalTimeMinutes</source>
+        <target>Temps total en minutes</target>
+      </trans-unit>
+      <trans-unit id="bulk_4" resname="closeSubTasks">
+        <source>closeSubTasks</source>
+        <target>Clore les sous-tâches</target>
+      </trans-unit>
+      <trans-unit id="bulk_5" resname="cancelSubTasks">
+        <source>cancelSubTasks</source>
+        <target>Annuler les sous-tâches</target>
+      </trans-unit>
       <trans-unit id="26" resname="rolesUpdated">
         <source>rolesUpdated</source>
         <target>Les rôles ont été mis à jour avec succès.</target>
@@ -579,6 +600,10 @@
       <trans-unit id="95" resname="cancel">
         <source>cancel</source>
         <target>Annuler</target>
+      </trans-unit>
+      <trans-unit id="95a" resname="confirm">
+        <source>confirm</source>
+        <target>Confirmer</target>
       </trans-unit>
       <trans-unit id="96" resname="addEquipment">
         <source>addEquipment</source>
@@ -1071,6 +1096,10 @@
         <source>invalidRequest</source>
         <target>Requête invalide.</target>
       </trans-unit>
+      <trans-unit id="141a1" resname="noSubTaskIdsSelected">
+        <source>noSubTaskIdsSelected</source>
+        <target>Aucune sous-tâche sélectionnée. Réessayez en mode sélection.</target>
+      </trans-unit>
       <trans-unit id="141a" resname="invalidContribution">
         <source>invalidContribution</source>
         <target>La contribution est invalide. Vérifiez le temps saisi.</target>
@@ -1081,7 +1110,7 @@
       </trans-unit>
       <trans-unit id="141c" resname="minutes">
         <source>minutes</source>
-        <target>Minutes</target>
+        <target>minutes</target>
       </trans-unit>
       <trans-unit id="141d" resname="timeSpentTooHigh">
         <source>timeSpentTooHigh</source>
@@ -1927,11 +1956,23 @@
         <source>totalTime</source>
         <target>Temps total</target>
       </trans-unit>
+      <trans-unit id="339a" resname="bulkContributionAdded">
+        <source>bulkContributionAdded</source>
+        <target>Les contributions ont été ajoutées aux sous-tâches sélectionnées.</target>
+      </trans-unit>
+      <trans-unit id="339a1" resname="bulkSubTasksClosed">
+        <source>bulkSubTasksClosed</source>
+        <target>Les sous-tâches sélectionnées ont été clôturées.</target>
+      </trans-unit>
+      <trans-unit id="339a2" resname="bulkSubTasksCancelled">
+        <source>bulkSubTasksCancelled</source>
+        <target>Les sous-tâches sélectionnées ont été annulées.</target>
+      </trans-unit>
       <trans-unit id="339b" resname="timeTracking">
         <source>timeTracking</source>
         <target>Suivi du temps</target>
       </trans-unit>
-      <trans-unit id="339a" resname="totalTimeSpent">
+      <trans-unit id="339c" resname="totalTimeSpent">
         <source>totalTimeSpent</source>
         <target>Temps total passé</target>
       </trans-unit>
@@ -2535,7 +2576,7 @@
       </trans-unit>
       <trans-unit id="815" resname="hours">
         <source>hours</source>
-        <target>h</target>
+        <target>heures</target>
       </trans-unit>
       <trans-unit id="816" resname="exportPdf">
         <source>exportPdf</source>
@@ -2600,6 +2641,10 @@
       <trans-unit id="831" resname="logbookStatusHelp">
         <source>logbookStatusHelp</source>
         <target>« Terminé (en attente) » = travail fait mais pas encore validé. « Clôturé » = travail validé et complètement bouclé.</target>
+      </trans-unit>
+      <trans-unit id="831a" resname="taskStatusHelp">
+        <source>taskStatusHelp</source>
+        <target>« En attente d'inspection » = tâches avec des sous-tâches terminées mais non validées.</target>
       </trans-unit>
       <trans-unit id="832" resname="validatedOn">
         <source>validatedOn</source>

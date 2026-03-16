@@ -27,22 +27,27 @@ class TaskStatusService
     }
 
     /**
-     * Get task progress (percentage of closed subtasks)
+     * Get task progress (percentage of closed subtasks).
+     * Cancelled subtasks are excluded from the total.
      */
     public function getTaskProgress(Task $task): float
     {
         $subTasks = $task->getSubTasks();
-        $total = count($subTasks);
-
-        if ($total === 0) {
-            return 0.0;
-        }
-
+        $total = 0;
         $closed = 0;
+
         foreach ($subTasks as $subTask) {
+            if ($this->getSubTaskState($subTask) === 'cancelled') {
+                continue;
+            }
+            $total++;
             if ($this->getSubTaskState($subTask) === 'closed') {
                 $closed++;
             }
+        }
+
+        if ($total === 0) {
+            return 100.0; // All subtasks cancelled = task effectively done
         }
 
         return round(($closed / $total) * 100, 1);

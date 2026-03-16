@@ -104,16 +104,40 @@ class TaskRepository extends ServiceEntityRepository
             ->setParameter('facilityType', EquipmentType::FACILITY);
     }
 
-    public function filterByStatus(QueryBuilder $qb, string $status): QueryBuilder
+    /**
+     * @param string|array<string> $status Single status or array of statuses (multi-select)
+     */
+    public function filterByStatus(QueryBuilder $qb, string|array $status): QueryBuilder
     {
-        // Handle "awaitingInspection" as a computed status
-        if ($status === 'awaitingInspection') {
-            return $this->filterByAwaitingInspection($qb);
+        $statuses = is_iterable($status) ? array_values((array) $status) : [$status];
+        $hasAwaitingInspection = in_array('awaitingInspection', $statuses, true);
+        $regularStatuses = array_values(array_filter($statuses, fn (string $s) => $s !== 'awaitingInspection'));
+
+        $conditions = [];
+
+        if (!empty($regularStatuses)) {
+            $conditions[] = 'task.status IN (:statuses)';
+            $qb->setParameter('statuses', $regularStatuses);
         }
 
-        return $qb
-            ->andWhere('task.status = :status')
-            ->setParameter('status', $status);
+        if ($hasAwaitingInspection) {
+            $subQuery = $this->createQueryBuilder('task_inspection')
+                ->select('1')
+                ->join('task_inspection.subTasks', 'subtask_inspection')
+                ->where('subtask_inspection.status = :done')
+                ->andWhere('subtask_inspection.requiresInspection = true')
+                ->andWhere('subtask_inspection.inspectedBy IS NULL')
+                ->andWhere('task_inspection.id = task.id')
+                ->getDQL();
+            $conditions[] = 'EXISTS (' . $subQuery . ')';
+            $qb->setParameter('done', 'done');
+        }
+
+        if (!empty($conditions)) {
+            $qb->andWhere(implode(' OR ', $conditions));
+        }
+
+        return $qb;
     }
 
     public function filterByDueDate(QueryBuilder $qb, string $filter): QueryBuilder

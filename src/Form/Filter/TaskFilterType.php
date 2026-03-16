@@ -5,6 +5,7 @@ namespace App\Form\Filter;
 use App\Entity\Club;
 use App\Entity\Equipment;
 use App\Entity\Enum\EquipmentType;
+use App\Form\Type\StatusTagType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -54,16 +55,16 @@ class TaskFilterType extends AbstractFilterType
                 'required' => false,
                 'placeholder' => 'all',
             ])
-            ->add('status', ChoiceType::class, [
+            ->add('status', StatusTagType::class, [
                 'label' => 'status',
+                'required' => false,
                 'choices' => [
-                    'all' => '',
-                    'open' => 'open',
+                    'statusOpenLabel' => 'open',
                     'awaitingInspection' => 'awaitingInspection',
-                    'closed' => 'closed',
-                    'cancelled' => 'cancelled',
+                    'statusClosedLabel' => 'closed',
+                    'statusCancelledLabel' => 'cancelled',
                 ],
-                'required' => false
+                'help' => 'taskStatusHelp',
             ])
             ->add('dueDate', ChoiceType::class, [
                 'label' => 'dueDate',
