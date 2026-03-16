@@ -5,6 +5,7 @@ namespace App\Security\Voter;
 use App\Entity\Enum\EquipmentType;
 use App\Entity\SubTask;
 use App\Entity\User;
+use App\Repository\MembershipRepository;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -21,7 +22,8 @@ class SubTaskVoter extends Voter
     public const REOPEN = 'SUBTASK_REOPEN';
 
     public function __construct(
-        private readonly Security $security
+        private readonly Security $security,
+        private readonly MembershipRepository $membershipRepository,
     ) {
     }
 
@@ -47,8 +49,8 @@ class SubTaskVoter extends Voter
             return false;
         }
 
-        // Admins have access to everything except inspection and edit (which have business logic)
-        if ($user->isAdmin() && $attribute !== self::INSPECT && $attribute !== self::EDIT) {
+        // Admins have access to most actions, but some actions keep business rules.
+        if ($user->isAdmin() && $attribute !== self::INSPECT && $attribute !== self::EDIT && $attribute !== self::DO) {
             return true;
         }
 
@@ -155,10 +157,20 @@ class SubTaskVoter extends Voter
 
         // Check pilot rules for aircraft equipment
         if ($equipment->getType()->isAircraft()) {
-            // Non-pilotes cannot work on aircraft tasks (unless manager or inspector)
-            if (!$isPilote && !$isManager && !$isInspector) {
+            if ($isPilote) {
+                return true;
+            }
+
+            // Non-pilots can only complete aircraft subtasks if at least one pilot exists in the club.
+            // This lets managers/inspectors assign completion to an actual pilot when available.
+            if (!$isManager && !$isInspector) {
                 return false;
             }
+
+            return $this->membershipRepository->count([
+                'club' => $task->getClub(),
+                'isPilote' => true,
+            ]) > 0;
         }
 
         // Any club member can mark open subtasks as done (with pilot rules above)

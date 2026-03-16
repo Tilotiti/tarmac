@@ -185,20 +185,35 @@ class SubTaskController extends ExtendedController
 
         // Complete form (if user can do the subtask)
         $completeForm = null;
+        $completeFormBlockedReason = null;
         $contributionUsedMembershipIds = [];
         $contributionAllMembershipIds = [];
-        if ($this->isGranted(SubTaskVoter::DO , $subTask) && !$subTask->isDone() && $subTask->getStatus() === 'open') {
-            $contributions = $subTask->getContributions()->toArray();
-            $initialDoneBy = $subTask->getDoneBy();
-            if ($initialDoneBy === null && $user instanceof \App\Entity\User) {
-                $initialDoneBy = $user;
+        if (!$subTask->isDone() && $subTask->getStatus() === 'open') {
+            if ($this->isGranted(SubTaskVoter::DO, $subTask)) {
+                $contributions = $subTask->getContributions()->toArray();
+                $initialDoneBy = $subTask->getDoneBy();
+                if ($initialDoneBy === null && $user instanceof \App\Entity\User) {
+                    $initialDoneBy = $user;
+                }
+                $completeForm = $this->createForm(SubTaskCompleteFormType::class, $subTask, [
+                    'subtask' => $subTask,
+                    'initial_done_by' => $initialDoneBy,
+                ]);
+                $contributionUsedMembershipIds = array_map(fn ($c) => $c->getMembership()->getId(), $contributions);
+                $contributionAllMembershipIds = array_map(fn ($m) => $m->getId(), $this->membershipRepository->findBy(['club' => $club], ['id' => 'ASC']));
+            } else {
+                if ($task->getEquipment()->getType()->isAircraft()) {
+                    $pilotCount = $this->membershipRepository->count([
+                        'club' => $club,
+                        'isPilote' => true,
+                    ]);
+                    $completeFormBlockedReason = $pilotCount === 0
+                        ? 'noPilotAvailableForAircraftSubtaskCompletion'
+                        : 'accessDenied';
+                } else {
+                    $completeFormBlockedReason = 'accessDenied';
+                }
             }
-            $completeForm = $this->createForm(SubTaskCompleteFormType::class, $subTask, [
-                'subtask' => $subTask,
-                'initial_done_by' => $initialDoneBy,
-            ]);
-            $contributionUsedMembershipIds = array_map(fn ($c) => $c->getMembership()->getId(), $contributions);
-            $contributionAllMembershipIds = array_map(fn ($m) => $m->getId(), $this->membershipRepository->findBy(['club' => $club], ['id' => 'ASC']));
         }
 
         // Contribution form (add contribution without closing)
@@ -254,6 +269,7 @@ class SubTaskController extends ExtendedController
             'task' => $task,
             'subTask' => $subTask,
             'completeForm' => $completeForm?->createView(),
+            'completeFormBlockedReason' => $completeFormBlockedReason,
             'contributionForm' => $contributionForm?->createView(),
             'contributionAlreadyExistsForCurrentUser' => $contributionAlreadyExistsForCurrentUser,
             'commentForm' => $commentForm?->createView(),
@@ -284,10 +300,6 @@ class SubTaskController extends ExtendedController
             /** @var SubTask $subTask */
             $subTask = $form->getData();
             $doneByUser = $subTask->getDoneBy();
-            // Fallback: si doneBy n'a pas été soumis (ex: champ masqué pour non-managers), utiliser l'utilisateur connecté
-            if ($doneByUser === null && $user instanceof \App\Entity\User) {
-                $doneByUser = $user;
-            }
             if ($doneByUser === null) {
                 $this->addFlash('error', 'invalidRequest');
                 return $this->redirectToRoute('club_subtask_show', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
@@ -295,6 +307,11 @@ class SubTaskController extends ExtendedController
             $doneByMembership = $doneByUser
                 ? $this->membershipRepository->findOneBy(['user' => $doneByUser, 'club' => $club])
                 : null;
+
+            if ($task->getEquipment()->getType()->isAircraft() && (!($doneByMembership instanceof Membership) || !$doneByMembership->isPilote())) {
+                $this->addFlash('error', 'pilotRequiredForAircraftSubtaskCompletion');
+                return $this->redirectToRoute('club_subtask_show', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
+            }
 
             // If no contributions, auto-create one for doneBy
             if ($subTask->getContributions()->isEmpty() && $doneByMembership instanceof Membership) {

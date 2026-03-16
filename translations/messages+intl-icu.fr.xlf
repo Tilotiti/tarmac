@@ -824,6 +824,14 @@
         <source>pilotRequiredForAircraftTasks</source>
         <target>Vous devez être pilote propriétaire pour créer des tâches sur des avions.</target>
       </trans-unit>
+      <trans-unit id="128ba" resname="pilotRequiredForAircraftSubtaskCompletion">
+        <source>pilotRequiredForAircraftSubtaskCompletion</source>
+        <target>Impossible de clôturer cette sous-tâche: un pilote propriétaire du club doit être sélectionné.</target>
+      </trans-unit>
+      <trans-unit id="128bb" resname="noPilotAvailableForAircraftSubtaskCompletion">
+        <source>noPilotAvailableForAircraftSubtaskCompletion</source>
+        <target>Impossible de clôturer cette sous-tâche: aucun pilote propriétaire n'est disponible dans le club.</target>
+      </trans-unit>
 
       <!-- Task/SubTask Labels -->
       <trans-unit id="128c" resname="doneBy">
