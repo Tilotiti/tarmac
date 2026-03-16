@@ -270,8 +270,13 @@ class SubTaskController extends ExtendedController
         $task = $subTask->getTask();
         $user = $this->getUser();
 
+        $initialDoneBy = $subTask->getDoneBy();
+        if ($initialDoneBy === null && $user instanceof \App\Entity\User) {
+            $initialDoneBy = $user;
+        }
         $form = $this->createForm(SubTaskCompleteFormType::class, $subTask, [
             'subtask' => $subTask,
+            'initial_done_by' => $initialDoneBy,
         ]);
         $form->handleRequest($request);
 
@@ -279,6 +284,14 @@ class SubTaskController extends ExtendedController
             /** @var SubTask $subTask */
             $subTask = $form->getData();
             $doneByUser = $subTask->getDoneBy();
+            // Fallback: si doneBy n'a pas été soumis (ex: champ masqué pour non-managers), utiliser l'utilisateur connecté
+            if ($doneByUser === null && $user instanceof \App\Entity\User) {
+                $doneByUser = $user;
+            }
+            if ($doneByUser === null) {
+                $this->addFlash('error', 'invalidRequest');
+                return $this->redirectToRoute('club_subtask_show', ['taskId' => $task->getId(), 'id' => $subTask->getId()]);
+            }
             $doneByMembership = $doneByUser
                 ? $this->membershipRepository->findOneBy(['user' => $doneByUser, 'club' => $club])
                 : null;
