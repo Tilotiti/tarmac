@@ -29,17 +29,17 @@ class PurchasePurchasedType extends AbstractType
                 'upload' => 'purchase',
                 'attr' => ['class' => 'form-control', 'accept' => 'image/*,.pdf,application/pdf'],
                 'constraints' => [
-                    new Assert\File([
-                        'maxSize' => '10M',
-                        'mimeTypes' => [
+                    new Assert\File(
+                        maxSize: '10M',
+                        mimeTypes: [
                             'image/jpeg',
                             'image/png',
                             'image/gif',
                             'image/webp',
                             'application/pdf',
                         ],
-                        'mimeTypesMessage' => 'invalidFileFormat',
-                    ]),
+                        mimeTypesMessage: 'invalidFileFormat',
+                    ),
                 ],
             ])
             ->add('billImage', FileType::class, [
@@ -49,17 +49,17 @@ class PurchasePurchasedType extends AbstractType
                 'upload' => 'bill',
                 'attr' => ['class' => 'form-control', 'accept' => 'image/*,.pdf,application/pdf'],
                 'constraints' => [
-                    new Assert\File([
-                        'maxSize' => '10M',
-                        'mimeTypes' => [
+                    new Assert\File(
+                        maxSize: '10M',
+                        mimeTypes: [
                             'image/jpeg',
                             'image/png',
                             'image/gif',
                             'image/webp',
                             'application/pdf',
                         ],
-                        'mimeTypesMessage' => 'invalidFileFormat',
-                    ]),
+                        mimeTypesMessage: 'invalidFileFormat',
+                    ),
                 ],
             ])
         ;

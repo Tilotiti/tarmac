@@ -109,10 +109,10 @@
 											<div class="fw-bold">{{ membership.club.name }}</div>
 											<div class="text-secondary small">
 												{% if membership.isManager %}
-													<span class="badge bg-blue-lt me-1">Manager</span>
+													<span class="badge bg-blue-lt me-1">Gestionnaire</span>
 												{% endif %}
 												{% if membership.isInspector %}
-													<span class="badge bg-green-lt">Inspecteur</span>
+													<span class="badge bg-green-lt">Qualifié</span>
 												{% endif %}
 												{% if not membership.isManager and not membership.isInspector %}
 													<span class="text-muted">Membre</span>

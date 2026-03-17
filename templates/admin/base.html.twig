@@ -14,7 +14,7 @@
 {% block navbar_menu %}
 	<div class="navbar-nav">
 		{% if is_granted('ROLE_ADMIN') %}
-			<div class="nav-item {{ app.request.get('_route') starts with 'admin_club' ? 'active' : '' }}">
+			<div class="nav-item {{ app.request.attributes.get('_route') starts with 'admin_club' ? 'active' : '' }}">
 				<a class="nav-link" href="{{ path('admin_club_index') }}">
 					<span class="nav-link-icon d-md-none d-lg-inline-block">
 						<i class="ti ti-windsock"></i>
@@ -27,7 +27,7 @@
 		{% endif %}
 
 		{% if is_granted('ROLE_ADMIN') %}
-			<div class="nav-item {{ app.request.get('_route') starts with 'admin_user' ? 'active' : '' }}">
+			<div class="nav-item {{ app.request.attributes.get('_route') starts with 'admin_user' ? 'active' : '' }}">
 				<a class="nav-link" href="{{ path('admin_user_index') }}">
 					<span class="nav-link-icon d-md-none d-lg-inline-block">
 						<i class="ti ti-users"></i>

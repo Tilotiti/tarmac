@@ -112,11 +112,11 @@
       </trans-unit>
       <trans-unit id="24" resname="cannotLeaveLastManager">
         <source>cannotLeaveLastManager</source>
-        <target>Vous ne pouvez pas vous retirer, vous êtes le dernier manager du club.</target>
+        <target>Vous ne pouvez pas vous retirer, vous êtes le dernier gestionnaire du club.</target>
       </trans-unit>
       <trans-unit id="25" resname="cannotRemoveLastManager">
         <source>cannotRemoveLastManager</source>
-        <target>Vous ne pouvez pas retirer vos droits de manager, vous êtes le dernier manager du club.</target>
+        <target>Vous ne pouvez pas retirer vos droits de gestionnaire, vous êtes le dernier gestionnaire du club.</target>
       </trans-unit>
       <!-- Bulk subtasks selection -->
       <trans-unit id="bulk_1" resname="selectSubTasks">
@@ -2014,7 +2014,7 @@
       </trans-unit>
       <trans-unit id="345a" resname="timeSpentZeroRequiresClosed">
         <source>timeSpentZeroRequiresClosed</source>
-        <target>Si le temps passé est 0, la sous-tâche doit être clôturée (car elle n'a pas eu besoin d'être réalisée). Cette sous-tâche nécessite une inspection, vous devez être inspecteur pour utiliser 0.</target>
+        <target>Si le temps passé est 0, la sous-tâche doit être clôturée (car elle n'a pas eu besoin d'être réalisée). Cette sous-tâche nécessite une inspection, vous devez être qualifié pour utiliser 0.</target>
       </trans-unit>
       <trans-unit id="346" resname="planApplication">
         <source>planApplication</source>

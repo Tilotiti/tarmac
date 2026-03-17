@@ -26,7 +26,7 @@
 
 {% block navbar_menu %}
 	<div class="navbar-nav flex-md-row order-md-last">
-		<div class="nav-item {{ app.request.get('_route') starts with 'club_task' ? 'active' : '' }}">
+		<div class="nav-item {{ app.request.attributes.get('_route') starts with 'club_task' ? 'active' : '' }}">
 			<a href="{{ path('club_tasks') }}" class="nav-link">
 				<span class="nav-link-icon d-md-none d-lg-inline-block">
 					<i class="ti ti-checklist"></i>
@@ -36,7 +36,7 @@
 				</span>
 			</a>
 		</div>
-		<div class="nav-item {{ app.request.get('_route') starts with 'club_purchase' ? 'active' : '' }}">
+		<div class="nav-item {{ app.request.attributes.get('_route') starts with 'club_purchase' ? 'active' : '' }}">
 			<a href="{{ path('club_purchases') }}" class="nav-link">
 				<span class="nav-link-icon d-md-none d-lg-inline-block">
 					<i class="ti ti-shopping-cart"></i>
@@ -46,7 +46,7 @@
 				</span>
 			</a>
 		</div>
-		<div class="nav-item {{ app.request.get('_route') starts with 'club_logbook' or app.request.get('_route') starts with 'club_member_logbook' ? 'active' : '' }}">
+		<div class="nav-item {{ app.request.attributes.get('_route') starts with 'club_logbook' or app.request.attributes.get('_route') starts with 'club_member_logbook' ? 'active' : '' }}">
 			<a href="{{ path('club_logbook') }}" class="nav-link">
 				<span class="nav-link-icon d-md-none d-lg-inline-block">
 					<i class="ti ti-notebook"></i>
@@ -56,7 +56,7 @@
 				</span>
 			</a>
 		</div>
-		<div class="nav-item dropdown {{ (app.request.get('_route') starts with 'club_member' and not (app.request.get('_route') starts with 'club_member_logbook')) or app.request.get('_route') starts with 'club_invitation' or app.request.get('_route') starts with 'club_equipment' or app.request.get('_route') starts with 'club_plan' or app.request.get('_route') starts with 'club_specialisation' ? 'active' : '' }}" data-controller="dropdown">
+		<div class="nav-item dropdown {{ (app.request.attributes.get('_route') starts with 'club_member' and not (app.request.attributes.get('_route') starts with 'club_member_logbook')) or app.request.attributes.get('_route') starts with 'club_invitation' or app.request.attributes.get('_route') starts with 'club_equipment' or app.request.attributes.get('_route') starts with 'club_plan' or app.request.attributes.get('_route') starts with 'club_specialisation' ? 'active' : '' }}" data-controller="dropdown">
 			<a href="#" class="nav-link dropdown-toggle d-flex align-items-center px-2" data-dropdown-target="toggle" aria-expanded="false" aria-haspopup="true">
 				<span class="nav-link-icon d-md-none d-lg-inline-block">
 					<i class="ti ti-home"></i>
@@ -66,20 +66,20 @@
 				</span>
 			</a>
 			<div class="dropdown-menu dropdown-menu-arrow" data-dropdown-target="menu">
-				<a href="{{ path('club_members') }}" class="dropdown-item {{ (app.request.get('_route') starts with 'club_member' and not (app.request.get('_route') starts with 'club_member_logbook')) or app.request.get('_route') starts with 'club_invitation' ? 'active' : '' }}">
+				<a href="{{ path('club_members') }}" class="dropdown-item {{ (app.request.attributes.get('_route') starts with 'club_member' and not (app.request.attributes.get('_route') starts with 'club_member_logbook')) or app.request.attributes.get('_route') starts with 'club_invitation' ? 'active' : '' }}">
 					<i class="ti ti-users me-2"></i>
 					{{ 'members'|trans }}
 				</a>
-				<a href="{{ path('club_equipments') }}" class="dropdown-item {{ app.request.get('_route') starts with 'club_equipment' ? 'active' : '' }}">
+				<a href="{{ path('club_equipments') }}" class="dropdown-item {{ app.request.attributes.get('_route') starts with 'club_equipment' ? 'active' : '' }}">
 					<i class="ti ti-plane me-2"></i>
 					{{ 'equipments'|trans }}
 				</a>
 				{% if is_granted('MANAGE', club) %}
-					<a href="{{ path('club_plans') }}" class="dropdown-item {{ app.request.get('_route') starts with 'club_plan' ? 'active' : '' }}">
+					<a href="{{ path('club_plans') }}" class="dropdown-item {{ app.request.attributes.get('_route') starts with 'club_plan' ? 'active' : '' }}">
 						<i class="ti ti-file-check me-2"></i>
 						{{ 'maintenancePlans'|trans }}
 					</a>
-					<a href="{{ path('club_specialisations') }}" class="dropdown-item {{ app.request.get('_route') starts with 'club_specialisation' ? 'active' : '' }}">
+					<a href="{{ path('club_specialisations') }}" class="dropdown-item {{ app.request.attributes.get('_route') starts with 'club_specialisation' ? 'active' : '' }}">
 						<i class="ti ti-tag me-2"></i>
 						{{ 'specialisations'|trans }}
 					</a>

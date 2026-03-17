@@ -26,14 +26,12 @@ class ChangePasswordFormType extends AbstractType
                 ],
                 'first_options' => [
                     'constraints' => [
-                        new NotBlank([
-                            'message' => 'passwordRequired',
-                        ]),
-                        new Length([
-                            'min' => 6,
-                            'minMessage' => 'passwordMinLength',
-                            'max' => 4096,
-                        ]),
+                        new NotBlank(message: 'passwordRequired'),
+                        new Length(
+                            min: 6,
+                            minMessage: 'passwordMinLength',
+                            max: 4096,
+                        ),
                     ],
                     'label' => 'newPassword',
                 ],

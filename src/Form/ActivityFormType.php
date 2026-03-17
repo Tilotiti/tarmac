@@ -15,7 +15,7 @@ class ActivityFormType extends AbstractType
         $constraints = [];
         
         if ($options['required']) {
-            $constraints[] = new Assert\NotBlank(['message' => 'messageRequired']);
+            $constraints[] = new Assert\NotBlank(message: 'messageRequired');
         }
 
         $builder

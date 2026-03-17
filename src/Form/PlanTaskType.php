@@ -37,17 +37,17 @@ class PlanTaskType extends AbstractType
                     'accept' => 'image/*,.pdf,application/pdf',
                 ],
                 'constraints' => [
-                    new Assert\File([
-                        'maxSize' => '10M',
-                        'mimeTypes' => [
+                    new Assert\File(
+                        maxSize: '10M',
+                        mimeTypes: [
                             'image/jpeg',
                             'image/png',
                             'image/gif',
                             'image/webp',
                             'application/pdf',
                         ],
-                        'mimeTypesMessage' => 'invalidFileFormat',
-                    ]),
+                        mimeTypesMessage: 'invalidFileFormat',
+                    ),
                 ],
             ])
             ->add('subTaskTemplates', CollectionType::class, [

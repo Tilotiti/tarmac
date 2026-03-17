@@ -24,15 +24,13 @@ class ProfileType extends AbstractType
                     'class' => 'form-control',
                 ],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'firstnameRequired',
-                    ]),
-                    new Length([
-                        'min' => 2,
-                        'max' => 50,
-                        'minMessage' => 'firstnameMinLength',
-                        'maxMessage' => 'firstnameMaxLength',
-                    ]),
+                    new NotBlank(message: 'firstnameRequired'),
+                    new Length(
+                        min: 2,
+                        max: 50,
+                        minMessage: 'firstnameMinLength',
+                        maxMessage: 'firstnameMaxLength',
+                    ),
                 ],
             ])
             ->add('lastname', TextType::class, [
@@ -42,15 +40,13 @@ class ProfileType extends AbstractType
                     'class' => 'form-control',
                 ],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'lastnameRequired',
-                    ]),
-                    new Length([
-                        'min' => 2,
-                        'max' => 50,
-                        'minMessage' => 'lastnameMinLength',
-                        'maxMessage' => 'lastnameMaxLength',
-                    ]),
+                    new NotBlank(message: 'lastnameRequired'),
+                    new Length(
+                        min: 2,
+                        max: 50,
+                        minMessage: 'lastnameMinLength',
+                        maxMessage: 'lastnameMaxLength',
+                    ),
                 ],
             ])
             ->add('email', EmailType::class, [
@@ -60,12 +56,8 @@ class ProfileType extends AbstractType
                     'class' => 'form-control',
                 ],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'emailRequired',
-                    ]),
-                    new Email([
-                        'message' => 'emailInvalid',
-                    ]),
+                    new NotBlank(message: 'emailRequired'),
+                    new Email(message: 'emailInvalid'),
                 ],
             ])
         ;

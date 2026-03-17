@@ -69,8 +69,8 @@ symfony console translation:extract --force --format=xlf fr
 - Equipment → FR: Équipement
 - Glider → FR: Planeur
 - Member → FR: Membre
-- Manager → FR: Manager
-- Inspector → FR: Inspecteur
+- Manager → FR: Gestionnaire
+- Inspector → FR: Qualifié
 
 ## Handling dynamic translation keys
 

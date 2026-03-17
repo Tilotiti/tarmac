@@ -22,17 +22,15 @@ class PlanImportType extends AbstractType
                 'class' => 'form-control',
             ],
             'constraints' => [
-                new NotNull([
-                    'message' => 'planImportFileRequired',
-                ]),
-                new File([
-                    'maxSize' => '4M',
-                    'mimeTypes' => [
+                new NotNull(message: 'planImportFileRequired'),
+                new File(
+                    maxSize: '4M',
+                    mimeTypes: [
                         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                         'application/octet-stream',
                     ],
-                    'mimeTypesMessage' => 'planImportInvalidMime',
-                ]),
+                    mimeTypesMessage: 'planImportInvalidMime',
+                ),
             ],
         ]);
     }

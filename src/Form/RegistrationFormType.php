@@ -48,17 +48,13 @@ class RegistrationFormType extends AbstractType
                 ],
                 'first_options' => [
                     'constraints' => [
-                        new NotBlank([
-                            'message' => 'passwordRequired',
-                        ]),
-                        new Length([
-                            'min' => 6,
-                            'minMessage' => 'passwordMinLength',
-                            'max' => 4096,
-                        ]),
-                        new PasswordStrength([
-                            'minScore' => PasswordStrength::STRENGTH_WEAK,
-                        ]),
+                        new NotBlank(message: 'passwordRequired'),
+                        new Length(
+                            min: 6,
+                            minMessage: 'passwordMinLength',
+                            max: 4096,
+                        ),
+                        new PasswordStrength(minScore: PasswordStrength::STRENGTH_WEAK),
                         new NotCompromisedPassword(),
                     ],
                     'label' => 'password',

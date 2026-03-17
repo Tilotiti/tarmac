@@ -23,9 +23,7 @@ class UserPasswordType extends AbstractType
                     'class' => 'form-control',
                 ],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'currentPasswordRequired',
-                    ]),
+                    new NotBlank(message: 'currentPasswordRequired'),
                 ],
             ])
             ->add('plainPassword', RepeatedType::class, [
@@ -38,14 +36,12 @@ class UserPasswordType extends AbstractType
                 ],
                 'first_options' => [
                     'constraints' => [
-                        new NotBlank([
-                            'message' => 'passwordRequired',
-                        ]),
-                        new Length([
-                            'min' => 6,
-                            'minMessage' => 'passwordMinLength',
-                            'max' => 4096,
-                        ]),
+                        new NotBlank(message: 'passwordRequired'),
+                        new Length(
+                            min: 6,
+                            minMessage: 'passwordMinLength',
+                            max: 4096,
+                        ),
                     ],
                     'label' => 'newPassword',
                 ],
