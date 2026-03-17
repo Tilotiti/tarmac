@@ -77,7 +77,7 @@ class MemberController extends ExtendedController
         $user = $this->getUser();
         if ($membership->getUser() === $user && $membership->isManager()) {
             $managerCount = $this->membershipRepository->queryByClubAndFilters($club, ['role' => 'manager'])
-                ->select('COUNT(m.id)')
+                ->select('COUNT(membership.id)')
                 ->getQuery()
                 ->getSingleScalarResult();
 
@@ -131,7 +131,7 @@ class MemberController extends ExtendedController
             $user = $this->getUser();
             if ($membership->getUser() === $user && !$membership->isManager()) {
                 $managerCount = $this->membershipRepository->queryByClubAndFilters($club, ['role' => 'manager'])
-                    ->select('COUNT(m.id)')
+                    ->select('COUNT(membership.id)')
                     ->getQuery()
                     ->getSingleScalarResult();
 
