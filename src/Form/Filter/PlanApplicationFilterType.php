@@ -11,9 +11,15 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PlanApplicationFilterType extends AbstractFilterType
 {
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $club = $options['club'];
@@ -35,7 +41,11 @@ class PlanApplicationFilterType extends AbstractFilterType
             ])
             ->add('equipment', EntityType::class, [
                 'class' => Equipment::class,
-                'choice_label' => 'name',
+                'choice_label' => fn (Equipment $equipment): string => sprintf(
+                    '%s (%s)',
+                    (string) $equipment->getName(),
+                    $this->translator->trans($equipment->isPrivate() ? 'private' : 'club')
+                ),
                 'label' => 'equipment',
                 'required' => false,
                 'placeholder' => 'all',

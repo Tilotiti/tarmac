@@ -11,9 +11,15 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PlanApplyType extends AbstractType
 {
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $equipmentType = $options['equipment_type'] ?? null;
@@ -22,7 +28,11 @@ class PlanApplyType extends AbstractType
         $builder
             ->add('equipment', EntityType::class, [
                 'class' => Equipment::class,
-                'choice_label' => 'name',
+                'choice_label' => fn (Equipment $equipment): string => sprintf(
+                    '%s (%s)',
+                    (string) $equipment->getName(),
+                    $this->translator->trans($equipment->isPrivate() ? 'private' : 'club')
+                ),
                 'label' => 'equipment',
                 'required' => true,
                 'placeholder' => 'selectEquipment',
