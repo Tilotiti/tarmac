@@ -96,6 +96,7 @@ class LogbookController extends ExtendedController
         $filterForm = $this->createFilter(LogbookFilterType::class, [
             'periodStart' => $today->modify('-365 days'),
             'periodEnd' => $today,
+            'status' => ['open', 'done', 'closed'],
         ], [
             'club' => $club,
             'logbook_owner_user' => $membership->getUser(),
@@ -153,6 +154,7 @@ class LogbookController extends ExtendedController
         $filterForm = $this->createFilter(LogbookFilterType::class, [
             'periodStart' => $today->modify('-365 days'),
             'periodEnd' => $today,
+            'status' => ['open', 'done', 'closed'],
         ], [
             'club' => $club,
             'logbook_owner_user' => $membership->getUser(),
