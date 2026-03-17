@@ -830,7 +830,7 @@
       </trans-unit>
       <trans-unit id="128ba" resname="pilotRequiredForAircraftSubtaskCompletion">
         <source>pilotRequiredForAircraftSubtaskCompletion</source>
-        <target>Accès refusé : vous êtes membre, mais non pilote-prioritaire. Seul un pilote-prioritaire peut clore une tâche sur un planeur ou un avion.</target>
+        <target>Vous êtes membre, mais non pilote-prioritaire. Seul un pilote-prioritaire peut clore une tâche sur un planeur ou un avion.</target>
       </trans-unit>
       <trans-unit id="128bb" resname="noPilotAvailableForAircraftSubtaskCompletion">
         <source>noPilotAvailableForAircraftSubtaskCompletion</source>
