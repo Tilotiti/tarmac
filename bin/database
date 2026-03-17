@@ -95,7 +95,7 @@ update_db() {
   psql -U "$DB_USER" -c "CREATE DATABASE \"${CURRENT_DB}\" WITH TEMPLATE \"${LATEST_DB}\";"
 
   log_info "Running Doctrine migrations"
-  symfony console doctrine:migration:migrate --no-interaction --no-debug
+  symfony console doctrine:migration:migrate --no-interaction
 
   log_success "Database updated: ${CURRENT_DB}"
 }
