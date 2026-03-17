@@ -83,6 +83,10 @@ class PlanApplier
                 $subTask->setPosition($subTaskPosition++);
                 // Copy plan position to preserve ordering from the maintenance plan
                 $subTask->setPlanPosition($subTaskTemplate->getPosition());
+                // Copy linked specialisations from plan subtask template
+                foreach ($subTaskTemplate->getSpecialisations() as $specialisation) {
+                    $subTask->addSpecialisation($specialisation);
+                }
 
                 $this->entityManager->persist($subTask);
                 $task->addSubTask($subTask);
