@@ -244,6 +244,9 @@ class TaskController extends ExtendedController
         $search = isset($filterData['search']) ? mb_strtolower(trim($filterData['search'])) : null;
         $statuses = $filterData['status'] ?? null;
         $statusList = is_iterable($statuses) ? array_values((array) $statuses) : ($statuses !== null && $statuses !== '' ? [$statuses] : []);
+        $difficulty = isset($filterData['difficulty']) && $filterData['difficulty'] !== ''
+            ? (int) $filterData['difficulty']
+            : null;
 
         $result = [];
         foreach ($subTasks as $subTask) {
@@ -255,6 +258,11 @@ class TaskController extends ExtendedController
             }
 
             if (!$statusMatch) {
+                continue;
+            }
+
+            // Difficulty filter
+            if ($difficulty !== null && $subTask->getDifficulty() !== $difficulty) {
                 continue;
             }
 

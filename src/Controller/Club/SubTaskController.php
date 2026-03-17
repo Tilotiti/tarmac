@@ -209,7 +209,7 @@ class SubTaskController extends ExtendedController
                     ]);
                     $completeFormBlockedReason = $pilotCount === 0
                         ? 'noPilotAvailableForAircraftSubtaskCompletion'
-                        : 'accessDenied';
+                        : 'pilotRequiredForAircraftSubtaskCompletion';
                 } else {
                     $completeFormBlockedReason = 'accessDenied';
                 }

@@ -826,7 +826,7 @@
       </trans-unit>
       <trans-unit id="128ba" resname="pilotRequiredForAircraftSubtaskCompletion">
         <source>pilotRequiredForAircraftSubtaskCompletion</source>
-        <target>Impossible de clôturer cette sous-tâche: un pilote propriétaire du club doit être sélectionné.</target>
+        <target>Accès refusé : vous êtes membre, mais non pilote-prioritaire. Seul un pilote-prioritaire peut clore une tâche sur un planeur ou un avion.</target>
       </trans-unit>
       <trans-unit id="128bb" resname="noPilotAvailableForAircraftSubtaskCompletion">
         <source>noPilotAvailableForAircraftSubtaskCompletion</source>
@@ -1297,6 +1297,10 @@
       <trans-unit id="422c17" resname="accessClub">
         <source>accessClub</source>
         <target>Accéder au club</target>
+      </trans-unit>
+      <trans-unit id="422c18" resname="accessDenied">
+        <source>accessDenied</source>
+        <target>Accès refusé : vous n'avez pas les droits nécessaires pour cette action</target>
       </trans-unit>
       <trans-unit id="422b1" resname="pendingSubTasks">
         <source>pendingSubTasks</source>

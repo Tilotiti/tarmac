@@ -3,6 +3,7 @@
 namespace App\Form\Filter;
 
 use App\Form\Type\StatusTagType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -28,6 +29,16 @@ class SubTaskFilterType extends AbstractFilterType
                     'statusCancelledLabel' => 'cancelled',
                 ],
                 'help' => 'logbookStatusHelp',
+            ])
+            ->add('difficulty', ChoiceType::class, [
+                'label' => 'difficulty',
+                'choices' => [
+                    'all' => '',
+                    'debutant' => 1,
+                    'experimente' => 2,
+                    'expert' => 3,
+                ],
+                'required' => false,
             ])
         ;
     }
