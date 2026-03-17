@@ -48,12 +48,16 @@ class SpecialisationRepository extends ServiceEntityRepository
 
     public function findOneByClubAndName(Club $club, string $name): ?Specialisation
     {
-        return $this->createQueryBuilder('s')
+        $results = $this->createQueryBuilder('s')
             ->andWhere('s.club = :club')
             ->andWhere('LOWER(s.name) = LOWER(:name)')
             ->setParameter('club', $club)
             ->setParameter('name', trim($name))
+            ->orderBy('s.id', 'ASC')
+            ->setMaxResults(1)
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
+
+        return $results[0] ?? null;
     }
 }

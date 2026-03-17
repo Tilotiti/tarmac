@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Club;
 use App\Entity\Plan;
 use App\Entity\PlanSubTask;
 use App\Entity\PlanTask;
@@ -144,6 +145,14 @@ class PlanSpreadsheetService
 
         $tasks = [];
         $taskOrder = [];
+        $club = $plan->getClub();
+        $specialisationCache = [];
+
+        if ($club !== null) {
+            foreach ($this->specialisationRepository->findByClub($club) as $existingSpecialisation) {
+                $specialisationCache[$this->normalizeSpecialisationName($existingSpecialisation->getName())] = $existingSpecialisation;
+            }
+        }
 
         foreach ($rows as $index => $row) {
             $rowNumber = $index + 2; // account for header row
@@ -215,20 +224,13 @@ class PlanSpreadsheetService
                 $subtask->setPosition((int) $subtaskPositionRaw);
             }
 
-            $club = $plan->getClub();
             if ($club !== null && $subtaskSpecialisationsRaw !== '') {
                 $names = array_map('trim', explode(',', $subtaskSpecialisationsRaw));
                 foreach ($names as $name) {
                     if ($name === '') {
                         continue;
                     }
-                    $specialisation = $this->specialisationRepository->findOneByClubAndName($club, $name);
-                    if ($specialisation === null) {
-                        $specialisation = new Specialisation();
-                        $specialisation->setClub($club);
-                        $specialisation->setName($name);
-                        $this->entityManager->persist($specialisation);
-                    }
+                    $specialisation = $this->getOrCreateCachedSpecialisation($club, $name, $specialisationCache);
                     $subtask->addSpecialisation($specialisation);
                 }
             }
@@ -433,6 +435,31 @@ class PlanSpreadsheetService
     private function normalizeHeader(string $value): string
     {
         return mb_strtolower(trim($value));
+    }
+
+    private function getOrCreateCachedSpecialisation(Club $club, string $name, array &$cache): Specialisation
+    {
+        $normalizedName = $this->normalizeSpecialisationName($name);
+        if (isset($cache[$normalizedName])) {
+            return $cache[$normalizedName];
+        }
+
+        $specialisation = $this->specialisationRepository->findOneByClubAndName($club, $name);
+        if ($specialisation === null) {
+            $specialisation = new Specialisation();
+            $specialisation->setClub($club);
+            $specialisation->setName(trim($name));
+            $this->entityManager->persist($specialisation);
+        }
+
+        $cache[$normalizedName] = $specialisation;
+
+        return $specialisation;
+    }
+
+    private function normalizeSpecialisationName(string $name): string
+    {
+        return mb_strtolower(trim($name));
     }
 }
 
