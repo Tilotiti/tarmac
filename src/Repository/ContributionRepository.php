@@ -95,9 +95,13 @@ class ContributionRepository extends ServiceEntityRepository
         }
 
         if (!empty($filters['periodEnd']) && $filters['periodEnd'] instanceof \DateTimeInterface) {
+            $periodEnd = $filters['periodEnd'];
+            $periodEndInclusive = ($periodEnd instanceof \DateTimeImmutable ? $periodEnd : (clone $periodEnd))
+                ->setTime(23, 59, 59);
+
             $qb
                 ->andWhere('contribution.createdAt <= :periodEnd')
-                ->setParameter('periodEnd', $filters['periodEnd']);
+                ->setParameter('periodEnd', $periodEndInclusive);
         }
 
         if (!empty($filters['signedOnly'])) {

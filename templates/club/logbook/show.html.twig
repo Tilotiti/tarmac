@@ -160,107 +160,109 @@
 					{% set task = subTask.task %}
 					{% set statusColor = subTask.status == 'closed' ? 'success' : (subTask.status == 'cancelled' ? 'danger' : (subTask.isWaitingForApproval ? 'warning' : 'info')) %}
 					<div class="col-12 mb-2">
-						<div class="card card-link" style="cursor: pointer;">
-							<div class="card-status-start bg-{{ statusColor }}"></div>
-							<div class="card-body">
-								<div class="d-flex align-items-start">
-									<div class="me-3 d-none d-sm-block">
-										<span class="avatar avatar-lg bg-{{ task.equipment.type.color }}-lt">
-											<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}"></i>
-										</span>
-									</div>
-									<div class="flex-fill">
-										<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-1">
-											<div>
-												<div class="text-secondary small">
-													{{ task.equipment.name }}
-												</div>
-												<div class="fw-bold">
-													{{ task.title }}
-												</div>
-												<div class="text-secondary small">
-													{{ subTask.title }}
-												</div>
-											</div>
-											<div class="text-end">
-												<div class="fw-bold">
-													<i class="ti ti-clock-hour-5 me-1"></i>
-													{{ contribution.timeSpent|number_format(2, ',', ' ') }}
-													<span class="text-muted small">{{ 'hours'|trans }}</span>
-												</div>
-												<div class="text-secondary small">
-													<i class="ti ti-calendar-time me-1"></i>
-													{{ contribution.createdAt|date('d/m/Y H:i') }}
-												</div>
-											</div>
+						<a href="{{ path('club_subtask_show', {taskId: task.id, id: subTask.id}) }}" class="text-decoration-none">
+							<div class="card card-link" style="cursor: pointer;">
+								<div class="card-status-start bg-{{ statusColor }}"></div>
+								<div class="card-body">
+									<div class="d-flex align-items-start">
+										<div class="me-3 d-none d-sm-block">
+											<span class="avatar avatar-lg bg-{{ task.equipment.type.color }}-lt">
+												<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}"></i>
+											</span>
 										</div>
-
-										<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2">
-											<div class="d-flex flex-wrap gap-1 align-items-center">
-												{% if subTask.specialisations|length > 0 %}
-													{% for specialisation in subTask.specialisations %}
-														<span class="badge bg-blue-lt text-blue">
-															{{ specialisation.name }}
-														</span>
-													{% endfor %}
-												{% else %}
-													<span class="text-secondary small">
-														{{ 'noSpecialisation'|trans }}
-													</span>
-												{% endif %}
+										<div class="flex-fill">
+											<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-1">
+												<div>
+													<div class="text-secondary small">
+														{{ task.equipment.name }}
+													</div>
+													<div class="fw-bold">
+														{{ task.title }}
+													</div>
+													<div class="text-secondary small">
+														{{ subTask.title }}
+													</div>
+												</div>
+												<div class="text-end">
+													<div class="fw-bold">
+														<i class="ti ti-clock-hour-5 me-1"></i>
+														{{ contribution.timeSpent|number_format(2, ',', ' ') }}
+														<span class="text-muted small">{{ 'hours'|trans }}</span>
+													</div>
+													<div class="text-secondary small">
+														<i class="ti ti-calendar-time me-1"></i>
+														{{ contribution.createdAt|date('d/m/Y H:i') }}
+													</div>
+												</div>
 											</div>
-											<div
-												class="d-flex flex-column text-end">
-												{# Statut & inspection #}
-												<div class="mb-1">
-													{% if subTask.isWaitingForApproval %}
-														<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'waitingForApproval'|trans }}">
-															<i class="ti ti-clock-check me-1"></i>
-															{{ 'statusDonePendingLabel'|trans }}
-														</span>
-													{% elseif subTask.status == 'closed' %}
-														<span class="badge bg-success-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'statusClosedTooltip'|trans }}">
-															<i class="ti ti-circle-check me-1"></i>
-															{{ 'statusClosedLabel'|trans }}
-														</span>
-													{% elseif subTask.status == 'open' %}
-														<span class="badge bg-info-lt text-white">
-															<i class="ti ti-circle-dashed me-1"></i>
-															{{ 'statusOpenLabel'|trans }}
-														</span>
-													{% elseif subTask.status == 'cancelled' %}
-														<span class="badge bg-danger-lt text-white">
-															<i class="ti ti-x me-1"></i>
-															{{ 'statusCancelledLabel'|trans }}
+
+											<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2">
+												<div class="d-flex flex-wrap gap-1 align-items-center">
+													{% if subTask.specialisations|length > 0 %}
+														{% for specialisation in subTask.specialisations %}
+															<span class="badge bg-blue-lt text-blue">
+																{{ specialisation.name }}
+															</span>
+														{% endfor %}
+													{% else %}
+														<span class="text-secondary small">
+															{{ 'noSpecialisation'|trans }}
 														</span>
 													{% endif %}
 												</div>
-												{% if subTask.completedBy %}
-													<span class="badge bg-green-lt text-green align-self-end mb-1">
-														<i class="ti ti-signature me-1"></i>
-														{{ 'signedBy'|trans }}
-													</span>
-													<span class="text-secondary small">
-														{{ subTask.completedBy.fullName ?? subTask.completedBy.email }}
-													</span>
-													{% if subTask.status == 'closed' and subTask.doneAt %}
+												<div
+													class="d-flex flex-column text-end">
+													{# Statut & inspection #}
+													<div class="mb-1">
+														{% if subTask.isWaitingForApproval %}
+															<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'waitingForApproval'|trans }}">
+																<i class="ti ti-clock-check me-1"></i>
+																{{ 'statusDonePendingLabel'|trans }}
+															</span>
+														{% elseif subTask.status == 'closed' %}
+															<span class="badge bg-success-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'statusClosedTooltip'|trans }}">
+																<i class="ti ti-circle-check me-1"></i>
+																{{ 'statusClosedLabel'|trans }}
+															</span>
+														{% elseif subTask.status == 'open' %}
+															<span class="badge bg-info-lt text-white">
+																<i class="ti ti-circle-dashed me-1"></i>
+																{{ 'statusOpenLabel'|trans }}
+															</span>
+														{% elseif subTask.status == 'cancelled' %}
+															<span class="badge bg-danger-lt text-white">
+																<i class="ti ti-x me-1"></i>
+																{{ 'statusCancelledLabel'|trans }}
+															</span>
+														{% endif %}
+													</div>
+													{% if subTask.completedBy %}
+														<span class="badge bg-green-lt text-green align-self-end mb-1">
+															<i class="ti ti-signature me-1"></i>
+															{{ 'signedBy'|trans }}
+														</span>
 														<span class="text-secondary small">
-															{{ 'validatedOn'|trans }}
-															{{ subTask.doneAt|date('d/m/Y') }}
+															{{ subTask.completedBy.fullName ?? subTask.completedBy.email }}
+														</span>
+														{% if subTask.status == 'closed' and subTask.doneAt %}
+															<span class="text-secondary small">
+																{{ 'validatedOn'|trans }}
+																{{ subTask.doneAt|date('d/m/Y') }}
+															</span>
+														{% endif %}
+													{% else %}
+														<span class="badge bg-secondary-lt text-secondary align-self-end mb-1">
+															<i class="ti ti-signature-off me-1"></i>
+															{{ 'notSigned'|trans }}
 														</span>
 													{% endif %}
-												{% else %}
-													<span class="badge bg-secondary-lt text-secondary align-self-end mb-1">
-														<i class="ti ti-signature-off me-1"></i>
-														{{ 'notSigned'|trans }}
-													</span>
-												{% endif %}
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+						</a>
 					</div>
 				{% endfor %}
 			</div>
