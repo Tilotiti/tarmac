@@ -175,5 +175,14 @@ export default class extends Controller {
             placeholder.style.display = tasks.length === 0 ? 'block' : 'none';
         }
     }
+
+    scrollToBottom(event) {
+        event.preventDefault();
+
+        window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+        });
+    }
 }
 

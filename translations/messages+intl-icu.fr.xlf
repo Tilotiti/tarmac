@@ -593,6 +593,10 @@
         <source>save</source>
         <target>Enregistrer</target>
       </trans-unit>
+      <trans-unit id="94b" resname="goToBottom">
+        <source>goToBottom</source>
+        <target>Aller tout en bas</target>
+      </trans-unit>
       <trans-unit id="94a" resname="create">
         <source>create</source>
         <target>Créer</target>
