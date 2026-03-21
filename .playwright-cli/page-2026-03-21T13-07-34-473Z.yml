@@ -1,0 +1,90 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e7]:
+        - link "Tarmac" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - img "Tarmac" [ref=e10]
+        - generic [ref=e12]:
+          - heading "Connexion à votre compte" [level=2] [ref=e13]
+          - generic [ref=e14]:
+            - generic [ref=e15]:
+              - generic [ref=e16]: E-mail
+              - textbox "votre@email.fr" [ref=e17]
+            - generic [ref=e18]:
+              - generic [ref=e19]:
+                - text: Mot de passe
+                - link "Mot de passe oublié ?" [ref=e21] [cursor=pointer]:
+                  - /url: /reset-password
+              - textbox "Votre mot de passe" [ref=e22]
+            - generic [ref=e24]:
+              - checkbox "Se souvenir de moi" [ref=e25]
+              - generic [ref=e26]: Se souvenir de moi
+            - button " Se connecter" [ref=e28] [cursor=pointer]:
+              - generic [ref=e29]: 
+              - text: Se connecter
+          - generic [ref=e30]: ou
+          - link " Retour à l'accueil" [ref=e32] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e33]: 
+            - text: Retour à l'accueil
+    - contentinfo [ref=e34]:
+      - list [ref=e38]:
+        - listitem [ref=e39]: © 2025 Thibault HENRY
+        - listitem [ref=e40]:
+          - text: ·
+          - link "欄 Besoin d'aide ?" [ref=e41] [cursor=pointer]:
+            - /url: mailto:contact@tarmac.center
+            - generic [ref=e42]:
+              - generic [ref=e43]: 欄
+              - text: Besoin d'aide ?
+  - region "Symfony Web Debug Toolbar" [ref=e44]:
+    - generic [ref=e47]:
+      - link "200 @ public_login" [ref=e49] [cursor=pointer]:
+        - /url: https://www.tarmac.wip/_profiler/cd31c9?panel=request
+        - generic [ref=e50]:
+          - generic [ref=e51]: "200"
+          - generic [ref=e52]: "@"
+          - generic [ref=e53]: public_login
+      - link "27 ms" [ref=e55] [cursor=pointer]:
+        - /url: https://www.tarmac.wip/_profiler/cd31c9?panel=time
+        - generic [ref=e56]:
+          - generic [ref=e57]: "27"
+          - generic [ref=e58]: ms
+      - link "6.0 MiB" [ref=e60] [cursor=pointer]:
+        - /url: https://www.tarmac.wip/_profiler/cd31c9?panel=time
+        - generic [ref=e61]:
+          - generic [ref=e62]: "6.0"
+          - generic [ref=e63]: MiB
+      - link "Logger 4963" [ref=e65] [cursor=pointer]:
+        - /url: https://www.tarmac.wip/_profiler/cd31c9?panel=logger
+        - generic [ref=e66]:
+          - img "Logger" [ref=e67]
+          - generic [ref=e71]: "4963"
+      - link "1" [ref=e73] [cursor=pointer]:
+        - /url: https://www.tarmac.wip/_profiler/cd31c9?panel=translation
+        - generic [ref=e74]:
+          - img [ref=e75]
+          - generic [ref=e80]: "1"
+      - link "Security n/a" [ref=e82] [cursor=pointer]:
+        - /url: https://www.tarmac.wip/_profiler/cd31c9?panel=security
+        - generic [ref=e83]:
+          - img "Security" [ref=e84]
+          - generic [ref=e88]: n/a
+      - link "Twig 4 ms" [ref=e90] [cursor=pointer]:
+        - /url: https://www.tarmac.wip/_profiler/cd31c9?panel=twig
+        - generic [ref=e91]:
+          - img "Twig" [ref=e92]
+          - generic [ref=e96]: "4"
+          - generic [ref=e97]: ms
+      - link "Symfony 7.4.7" [ref=e99] [cursor=pointer]:
+        - /url: https://www.tarmac.wip/_profiler/cd31c9?panel=config
+        - generic [ref=e100]:
+          - img "Symfony" [ref=e102]
+          - generic [ref=e104]: 7.4.7
+      - generic [ref=e106]:
+        - img [ref=e108]
+        - generic [ref=e111]: Server
+      - button [expanded] [ref=e112] [cursor=pointer]:
+        - generic "Close Toolbar" [ref=e113]:
+          - img [ref=e114]

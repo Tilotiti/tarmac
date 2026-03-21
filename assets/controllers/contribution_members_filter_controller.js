@@ -132,6 +132,10 @@ export default class extends Controller {
             if (selectedValue && usedByOthers.has(selectedValue)) {
                 select.value = firstAvailable ?? '';
             }
+
+            if (select.tomselect) {
+                select.tomselect.refreshOptions(false);
+            }
         });
     }
 

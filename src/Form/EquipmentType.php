@@ -10,14 +10,19 @@ use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EquipmentType extends AbstractType
 {
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Club|null $club */
@@ -57,14 +62,15 @@ class EquipmentType extends AbstractType
                         ->orderBy('u.firstname', 'ASC')
                         ->addOrderBy('u.lastname', 'ASC');
                 },
-                'choice_label' => function (User $user) {
-                    return $user->getFullName() ?: $user->getEmail();
-                },
+                'choice_label' => fn (User $user) => $user->getMemberChoiceLabel(),
                 'label' => 'responsible',
                 'required' => false,
                 'placeholder' => 'selectResponsible',
                 'attr' => [
-                    'class' => 'form-select',
+                    'class' => 'member-select form-select',
+                    'data-controller' => 'member-select',
+                    'data-member-select-placeholder-value' => $this->translator->trans('searchMember'),
+                    'data-member-select-clearable-value' => 'true',
                 ],
             ])
             ->add('owners', EntityType::class, [
@@ -77,15 +83,16 @@ class EquipmentType extends AbstractType
                         ->orderBy('u.firstname', 'ASC')
                         ->addOrderBy('u.lastname', 'ASC');
                 },
-                'choice_label' => function (User $user) {
-                    return $user->getFullName() ?: $user->getEmail();
-                },
+                'choice_label' => fn (User $user) => $user->getMemberChoiceLabel(),
                 'label' => 'owners',
                 'multiple' => true,
-                'expanded' => true,
                 'required' => false,
                 'attr' => [
-                    'class' => 'owners-list',
+                    'class' => 'member-select form-select',
+                    'data-controller' => 'member-select',
+                    'data-member-select-placeholder-value' => $this->translator->trans('searchMember'),
+                    'data-member-select-multiple-value' => 'true',
+                    'data-action' => 'change->equipment-privacy#updateCounter',
                 ],
             ])
         ;

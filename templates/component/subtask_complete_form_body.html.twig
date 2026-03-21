@@ -3,7 +3,7 @@
 <div class="card border mb-2 shadow-sm" data-collection-type-target="item">
 	<div class="card-body p-3">
 		<div class="row g-2 align-items-center">
-			<div class="col-12 col-lg-4">
+			<div class="col-12 col-lg-5 min-w-0">
 				{{ form_widget(completeForm.contributions.vars.prototype.membership) }}
 				{{ form_errors(completeForm.contributions.vars.prototype.membership) }}
 			</div>
@@ -23,25 +23,9 @@
 
 {# Who did the task - only show for managers (or always in modal via showDoneByFilter) #}
 {% if showDoneByFilter|default(is_granted('MANAGE')) %}
-	<fieldset class="form-fieldset mb-3 pt-1" data-controller="user-list-filter" data-user-list-filter-type-value="doneBy">
-		{{ form_label(completeForm.doneBy) }}
-		<div class="mb-3">
-			<input type="text" class="form-control" placeholder="{{ 'searchMember'|trans }}..." data-user-list-filter-target="search" data-action="input->user-list-filter#filter">
-		</div>
-		<div class="d-flex flex-column border rounded p-0" style="max-height: 250px; overflow-y: auto; background-color: #fff;">
-			{% for child in completeForm.doneBy %}
-				<label class="d-flex align-items-center m-0 p-2 border-bottom" data-user-list-filter-target="item" style="cursor: pointer;">
-					<input type="radio" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}" class="form-check-input me-2 m-0" {% if child.vars.checked %} checked {% endif %} required>
-					<span class="mb-0">{{ child.vars.label }}</span>
-				</label>
-			{% endfor %}
-			<div class="text-center text-secondary py-3 d-none" data-user-list-filter-target="empty">
-				<em>{{ 'noMemberFound'|trans }}</em>
-			</div>
-		</div>
-		{{ form_errors(completeForm.doneBy) }}
-	</fieldset>
-	{% do completeForm.doneBy.setRendered %}
+	<div class="mb-3">
+		{{ form_row(completeForm.doneBy) }}
+	</div>
 {% else %}
 	<div style="display: none;">
 		{{ form_row(completeForm.doneBy) }}
@@ -63,7 +47,7 @@
 			<div class="card border mb-2 shadow-sm" data-collection-type-target="item">
 				<div class="card-body p-3">
 					<div class="row g-2 align-items-center">
-						<div class="col-12 col-lg-4">
+						<div class="col-12 col-lg-5 min-w-0">
 							{{ form_widget(contributionForm.membership) }}
 							{{ form_errors(contributionForm.membership) }}
 						</div>

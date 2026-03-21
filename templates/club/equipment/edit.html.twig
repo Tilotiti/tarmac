@@ -35,27 +35,9 @@
 
 			<div class="mb-3 {% if not equipment.isPrivate %}d-none{% endif %}" data-equipment-privacy-target="ownersContainer">
 				{{ form_label(form.owners) }}
-
-				{# Filter input #}
-				<div class="mb-2">
-					<input type="text" class="form-control" placeholder="Filtrer par nom..." data-equipment-privacy-target="filterInput" data-action="input->equipment-privacy#filterUsers">
-				</div>
-
-				{# Scrollable user list #}
-				<div class="owners-list-container">
-					{{ form_widget(form.owners, {
-								attr: {
-									'data-action': 'change->equipment-privacy#updateCounter'
-								}
-							}) }}
-					<div class="text-center text-secondary py-3 d-none" data-equipment-privacy-target="noResults">
-						<i class="ti ti-search-off mb-2" style="font-size: 2rem; opacity: 0.5;"></i>
-						<p class="mb-0">Aucun utilisateur trouvé</p>
-					</div>
-				</div>
+				{{ form_widget(form.owners) }}
 				{{ form_errors(form.owners) }}
 
-				{# Selection counter #}
 				<small class="form-hint" data-equipment-privacy-target="counter">
 					Aucun utilisateur sélectionné
 				</small>

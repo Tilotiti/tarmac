@@ -99,6 +99,9 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "assets:compile": [
+            "php bin/console asset-map:compile"
         ]
     },
     "conflict": {

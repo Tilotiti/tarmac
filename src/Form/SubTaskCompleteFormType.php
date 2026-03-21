@@ -13,6 +13,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SubTaskCompleteFormType extends AbstractType
 {
@@ -20,6 +21,7 @@ class SubTaskCompleteFormType extends AbstractType
         private readonly ClubResolver $clubResolver,
         private readonly MembershipRepository $membershipRepository,
         private readonly Security $security,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -40,13 +42,21 @@ class SubTaskCompleteFormType extends AbstractType
             ->add('doneBy', EntityType::class, [
                 'class' => User::class,
                 'data' => $options['initial_done_by'],
-                'query_builder' => function (UserRepository $er) use ($club, $currentMembership, $isManager, $requiresPilot) {
+                'query_builder' => function (UserRepository $er) use ($club, $currentMembership, $isManager, $requiresPilot, $user) {
                     $qb = $er->createQueryBuilder('u')
                         ->join('u.memberships', 'm')
                         ->where('m.club = :club')
-                        ->setParameter('club', $club)
-                        ->orderBy('u.lastname', 'ASC')
-                        ->addOrderBy('u.firstname', 'ASC');
+                        ->setParameter('club', $club);
+
+                    if ($isManager && $user instanceof User) {
+                        $qb->orderBy('CASE WHEN u.id = :doneBySortCurrentUser THEN 0 ELSE 1 END', 'ASC')
+                            ->setParameter('doneBySortCurrentUser', $user->getId())
+                            ->addOrderBy('u.lastname', 'ASC')
+                            ->addOrderBy('u.firstname', 'ASC');
+                    } else {
+                        $qb->orderBy('u.lastname', 'ASC')
+                            ->addOrderBy('u.firstname', 'ASC');
+                    }
 
                     if ($requiresPilot) {
                         $qb->andWhere('m.isPilote = :true')
@@ -60,12 +70,13 @@ class SubTaskCompleteFormType extends AbstractType
 
                     return $qb;
                 },
-                'choice_label' => fn (User $user) => $user->getLastname() . ' ' . $user->getFirstname() . ' (' . $user->getEmail() . ')',
+                'choice_label' => fn (User $user) => $user->getMemberChoiceLabel(),
                 'label' => 'whoDidTask',
                 'required' => true,
-                'expanded' => true,
                 'attr' => [
-                    'class' => 'form-check-input',
+                    'class' => 'member-select form-select',
+                    'data-controller' => 'member-select',
+                    'data-member-select-placeholder-value' => $this->translator->trans('searchMember'),
                 ],
             ])
             ->add('contributions', CollectionType::class, [

@@ -187,6 +187,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->firstname ?? $this->lastname;
     }
 
+    /**
+     * Libellé unifié pour les listes membre/utilisateur : « Prénom Nom (email) ».
+     */
+    public function getMemberChoiceLabel(): string
+    {
+        $first = trim((string) $this->firstname);
+        $last = trim((string) $this->lastname);
+        $name = trim($first.' '.$last);
+        $email = (string) ($this->email ?? '');
+
+        if ($name !== '' && $email !== '') {
+            return sprintf('%s (%s)', $name, $email);
+        }
+
+        if ($name !== '') {
+            return $name;
+        }
+
+        return $email;
+    }
+
     public function isActive(): ?bool
     {
         return $this->active;

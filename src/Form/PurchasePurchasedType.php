@@ -12,9 +12,15 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PurchasePurchasedType extends AbstractType
 {
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $club = $options['club'];
@@ -76,17 +82,15 @@ class PurchasePurchasedType extends AbstractType
                         ->orderBy('u.firstname', 'ASC')
                         ->addOrderBy('u.lastname', 'ASC');
                 },
-                'choice_label' => function (Membership $membership) {
-                    $user = $membership->getUser();
-                    return $user->getFullName() ?: $user->getEmail();
-                },
+                'choice_label' => fn (Membership $membership) => $membership->getUser()->getMemberChoiceLabel(),
                 'label' => 'purchasedBy',
                 'required' => true,
-                'expanded' => true,
                 'mapped' => false,
                 'data' => $currentMembership,
                 'attr' => [
-                    'class' => 'form-check-input',
+                    'class' => 'member-select form-select',
+                    'data-controller' => 'member-select',
+                    'data-member-select-placeholder-value' => $this->translator->trans('searchMember'),
                 ],
             ]);
         }

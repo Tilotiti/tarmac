@@ -13,9 +13,15 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContributionItemType extends AbstractType
 {
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Club $club */
@@ -44,13 +50,12 @@ class ContributionItemType extends AbstractType
 
                 return $qb;
             },
-            'choice_label' => function (Membership $membership) {
-                $user = $membership->getUser();
-                return $user->getLastname() . ' ' . $user->getFirstname();
-            },
+            'choice_label' => fn (Membership $membership) => $membership->getUser()->getMemberChoiceLabel(),
             'label' => false,
             'attr' => [
-                'class' => 'form-select',
+                'class' => 'member-select form-select',
+                'data-controller' => 'member-select',
+                'data-member-select-placeholder-value' => $this->translator->trans('searchMember'),
             ],
         ];
         $builder
