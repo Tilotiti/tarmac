@@ -322,6 +322,30 @@ class SubTaskController extends ExtendedController
                 );
             }
 
+            // Deduplicate contributions by membership (merge time spent, prefer existing)
+            $byMembership = [];
+            foreach ($subTask->getContributions()->toArray() as $contribution) {
+                $membership = $contribution->getMembership();
+                if (!$membership) {
+                    continue;
+                }
+                $mid = $membership->getId();
+                if (!isset($byMembership[$mid])) {
+                    $byMembership[$mid] = $contribution;
+                } else {
+                    $existing = $byMembership[$mid];
+                    $toRemove = $contribution;
+                    if ($contribution->getId() !== null && $existing->getId() === null) {
+                        $existing = $contribution;
+                        $toRemove = $byMembership[$mid];
+                        $byMembership[$mid] = $contribution;
+                    }
+                    $mergedTime = (float) ($existing->getTimeSpent() ?? 0) + (float) ($toRemove->getTimeSpent() ?? 0);
+                    $existing->setTimeSpent((string) round($mergedTime, 2));
+                    $subTask->removeContribution($toRemove);
+                }
+            }
+
             $totalTimeSpent = 0.0;
             foreach ($subTask->getContributions() as $contribution) {
                 $totalTimeSpent += (float) ($contribution->getTimeSpent() ?? 0);
