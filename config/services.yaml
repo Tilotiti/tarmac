@@ -53,9 +53,8 @@ services:
         tags:
             - { name: "monolog.processor" }
 
-    # Monolog: Web request processor
-    monolog.processor.web:
-        class: Monolog\Processor\WebProcessor
+    # Monolog: Web request processor (uses RequestStack for reliable URL detection)
+    App\Service\Logging\WebRequestLogProcessor:
         tags:
             - { name: "monolog.processor" }
 

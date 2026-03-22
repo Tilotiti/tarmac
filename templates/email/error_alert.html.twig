@@ -195,10 +195,18 @@
 						{{ helper.safe(exception.line) }}
 					</div>
 				</div>
-				{% if exception.trace is defined %}
+				{% if exception.trace is defined and exception.trace %}
+					{% set traceLines = exception.trace is iterable ? exception.trace : exception.trace|split("\n") %}
 					<div style="background: #f9fafb; padding: 12px; border-radius: 4px; border: 1px solid #e8ebee;">
 						<strong style="color: #066FD1;">Stack Trace</strong>
-						<pre style="margin: 8px 0 0 0; padding: 12px; background: #fff; border-radius: 4px; overflow-x: auto; font-size: 11px; line-height: 1.5; color: #333;">{{ helper.safe(exception.trace) }}</pre>
+						<div style="margin: 8px 0 0 0; padding: 12px; background: #fff; border-radius: 4px; font-size: 11px; line-height: 1.6; color: #333; word-wrap: break-word; word-break: break-all; max-width: 100%; overflow-wrap: break-word; font-family: monospace;">
+							{% for line in traceLines|slice(0, 30) %}
+								<span style="display: block; margin-bottom: 2px;">{{ line }}</span>
+							{% endfor %}
+							{% if traceLines|length > 30 %}
+								<span style="display: block; color: #888; margin-top: 8px;">… ({{ traceLines|length - 30 }} lignes supplémentaires)</span>
+							{% endif %}
+						</div>
 					</div>
 				{% endif %}
 			</div>
