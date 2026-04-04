@@ -593,10 +593,6 @@
         <source>save</source>
         <target>Enregistrer</target>
       </trans-unit>
-      <trans-unit id="94b" resname="goToBottom">
-        <source>goToBottom</source>
-        <target>Aller tout en bas</target>
-      </trans-unit>
       <trans-unit id="94a" resname="create">
         <source>create</source>
         <target>Créer</target>
@@ -924,6 +920,14 @@
         <source>importPlanFromXlsx</source>
         <target>Importer depuis un fichier XLSX</target>
       </trans-unit>
+      <trans-unit id="139cIntro" resname="planImportModalIntro">
+        <source>planImportModalIntro</source>
+        <target>Remplissez le fichier XLSX en respectant les règles ci-dessous, puis sélectionnez-le pour l’importer. Commencez par télécharger le modèle vierge : il contient uniquement la ligne d’en-têtes attendue (ne la modifiez pas).</target>
+      </trans-unit>
+      <trans-unit id="139cTpl" resname="planImportTemplateHint">
+        <source>planImportTemplateHint</source>
+        <target>Ajoutez vos lignes sous les en-têtes : une ligne par sous-tâche (voir les règles ci-dessous).</target>
+      </trans-unit>
       <trans-unit id="139d" resname="planImportWarningTitle">
         <source>planImportWarningTitle</source>
         <target>Attention, cette action est destructive.</target>
@@ -934,7 +938,7 @@
       </trans-unit>
       <trans-unit id="139f" resname="planImportHint">
         <source>planImportHint</source>
-        <target>Utilisez le fichier XLSX exporté ou respectez les colonnes du modèle.</target>
+        <target>Vous pouvez aussi exporter un plan existant pour vous aider. Les en-têtes de colonnes ne doivent pas être modifiés.</target>
       </trans-unit>
       <trans-unit id="139g" resname="planExportFailed">
         <source>planExportFailed</source>
@@ -987,6 +991,46 @@
       <trans-unit id="139s" resname="planImportFile">
         <source>planImportFile</source>
         <target>Fichier XLSX</target>
+      </trans-unit>
+      <trans-unit id="139sDl" resname="downloadPlanImportTemplate">
+        <source>downloadPlanImportTemplate</source>
+        <target>Télécharger le modèle vierge (XLSX)</target>
+      </trans-unit>
+      <trans-unit id="139sRules" resname="planImportRulesTitle">
+        <source>planImportRulesTitle</source>
+        <target>Règles et fonctionnement</target>
+      </trans-unit>
+      <trans-unit id="139sRu1" resname="planImportRuleHeaders">
+        <source>planImportRuleHeaders</source>
+        <target>La première ligne contient les en-têtes obligatoires : elles doivent correspondre exactement au modèle (libellés en français comme dans le fichier téléchargé).</target>
+      </trans-unit>
+      <trans-unit id="139sRu2" resname="planImportRuleOneRowPerSubtask">
+        <source>planImportRuleOneRowPerSubtask</source>
+        <target>Chaque ligne du fichier correspond à une sous-tâche ; les colonnes de la tâche parente sont répétées sur chaque ligne de sous-tâches de cette tâche.</target>
+      </trans-unit>
+      <trans-unit id="139sRu3" resname="planImportRuleTaskRepeat">
+        <source>planImportRuleTaskRepeat</source>
+        <target>Pour regrouper des sous-tâches sous la même tâche, répétez le même titre (et idéalement la même position) de tâche sur les lignes concernées.</target>
+      </trans-unit>
+      <trans-unit id="139sRu4" resname="planImportRuleDifficulty">
+        <source>planImportRuleDifficulty</source>
+        <target>Difficulté : nombre de 1 à 3, ou libellés débutant / expérimenté / expert (ou équivalents anglais).</target>
+      </trans-unit>
+      <trans-unit id="139sRu5" resname="planImportRuleRequiresInspection">
+        <source>planImportRuleRequiresInspection</source>
+        <target>Contrôle requis : 1, oui, true, x, etc. pour activer ; laissez vide pour non.</target>
+      </trans-unit>
+      <trans-unit id="139sRu6" resname="planImportRuleSpecialisations">
+        <source>planImportRuleSpecialisations</source>
+        <target>Spécialisations : noms séparés par des virgules ; elles seront créées pour le club si besoin.</target>
+      </trans-unit>
+      <trans-unit id="139sRu7" resname="planImportRuleReplaceAll">
+        <source>planImportRuleReplaceAll</source>
+        <target>L’import remplace entièrement la liste des tâches et sous-tâches du plan (voir l’avertissement ci-dessus).</target>
+      </trans-unit>
+      <trans-unit id="139sNew" resname="newPlanTasksOptionalHint">
+        <source>newPlanTasksOptionalHint</source>
+        <target>Les tâches et sous-tâches sont facultatives : vous pouvez enregistrer le plan tel quel, ou les renseigner maintenant avec les boutons ci-dessous. Vous pourrez toujours compléter ou modifier le plan plus tard (édition du plan ou import XLSX depuis la fiche).</target>
       </trans-unit>
       <trans-unit id="139t" resname="planSpreadsheet.header.taskPosition">
         <source>planSpreadsheet.header.taskPosition</source>
