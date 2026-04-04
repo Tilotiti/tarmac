@@ -93,12 +93,12 @@ class Club
 
     public function getSubdomain(): ?string
     {
-        return $this->subdomain;
+        return $this->subdomain !== null ? mb_strtolower($this->subdomain, 'UTF-8') : null;
     }
 
     public function setSubdomain(string $subdomain): static
     {
-        $this->subdomain = $subdomain;
+        $this->subdomain = mb_strtolower($subdomain, 'UTF-8');
 
         return $this;
     }

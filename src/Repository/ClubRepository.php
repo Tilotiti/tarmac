@@ -21,7 +21,10 @@ class ClubRepository extends ServiceEntityRepository
      */
     public function findBySubdomain(string $subdomain): ?Club
     {
-        return $this->findOneBy(['subdomain' => $subdomain, 'active' => true]);
+        return $this->findOneBy([
+            'subdomain' => mb_strtolower($subdomain, 'UTF-8'),
+            'active' => true,
+        ]);
     }
 
     /**
