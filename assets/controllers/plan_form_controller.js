@@ -9,6 +9,7 @@ export default class extends Controller {
 
         // Count existing tasks on page load
         this.updateTaskCount();
+        this.updatePlaceholder();
     }
 
     updateTaskCount() {
@@ -52,9 +53,6 @@ export default class extends Controller {
 
         // Hide placeholder if exists
         this.updatePlaceholder();
-
-        // Automatically create the first subtask for this new task
-        this.addSubTaskToTask(taskIndex);
     }
 
     addSubTaskToTask(taskIndex) {
@@ -176,13 +174,5 @@ export default class extends Controller {
         }
     }
 
-    scrollToBottom(event) {
-        event.preventDefault();
-
-        window.scrollTo({
-            top: document.documentElement.scrollHeight,
-            behavior: 'smooth',
-        });
-    }
 }
 

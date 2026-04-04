@@ -1,0 +1,37 @@
+{# Expects: importForm (FormView) #}
+<p class="text-secondary small mb-3 mb-md-4">{{ 'planImportModalIntro'|trans }}</p>
+
+<div class="mb-3">
+	<a href="{{ path('club_plan_import_template') }}" class="btn btn-outline-primary w-100 w-sm-auto">
+		<i class="ti ti-download me-2"></i>
+		{{ 'downloadPlanImportTemplate'|trans }}
+	</a>
+	<p class="text-secondary small mt-2 mb-0">{{ 'planImportTemplateHint'|trans }}</p>
+</div>
+
+<div class="alert alert-warning d-flex align-items-start gap-2 mb-3">
+	<i class="ti ti-alert-triangle mt-1 flex-shrink-0"></i>
+	<div>
+		<div class="fw-semibold">{{ 'planImportWarningTitle'|trans }}</div>
+		<div class="small text-muted">{{ 'planImportWarningMessage'|trans }}</div>
+	</div>
+</div>
+
+<div class="mb-3">
+	<div class="fw-semibold small mb-2">{{ 'planImportRulesTitle'|trans }}</div>
+	<ul class="small text-secondary mb-0 ps-3">
+		<li>{{ 'planImportRuleHeaders'|trans }}</li>
+		<li>{{ 'planImportRuleOneRowPerSubtask'|trans }}</li>
+		<li>{{ 'planImportRuleTaskRepeat'|trans }}</li>
+		<li>{{ 'planImportRuleDifficulty'|trans }}</li>
+		<li>{{ 'planImportRuleRequiresInspection'|trans }}</li>
+		<li>{{ 'planImportRuleSpecialisations'|trans }}</li>
+		<li>{{ 'planImportRuleReplaceAll'|trans }}</li>
+	</ul>
+</div>
+
+<div class="mb-3">
+	{{ form_row(importForm.file) }}
+</div>
+
+<p class="text-secondary small mb-0">{{ 'planImportHint'|trans }}</p>

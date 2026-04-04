@@ -188,7 +188,7 @@
 			</div>
 			{% if importForm is defined and importForm %}
 				<div class="modal fade" id="plan-import-modal" tabindex="-1" aria-labelledby="plan-import-modal-label" aria-hidden="true">
-					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
 						<div class="modal-content">
 							<div class="modal-header">
 								<h5 class="modal-title" id="plan-import-modal-label">{{ 'importPlanFromXlsx'|trans }}</h5>
@@ -199,17 +199,7 @@
 								attr: {'enctype': 'multipart/form-data'}
 							}) }}
 							<div class="modal-body">
-								<div class="alert alert-warning d-flex align-items-start gap-2">
-									<i class="ti ti-alert-triangle mt-1"></i>
-									<div>
-										<div class="fw-semibold">{{ 'planImportWarningTitle'|trans }}</div>
-										<div class="small text-muted">{{ 'planImportWarningMessage'|trans }}</div>
-									</div>
-								</div>
-								<div class="mb-3">
-									{{ form_row(importForm.file) }}
-								</div>
-								<div class="text-secondary small">{{ 'planImportHint'|trans }}</div>
+								{% include 'club/plan/_import_xlsx_panel.html.twig' %}
 							</div>
 							<div class="modal-footer d-flex flex-column flex-sm-row gap-2">
 								<button type="submit" class="btn btn-primary w-100 w-sm-auto">

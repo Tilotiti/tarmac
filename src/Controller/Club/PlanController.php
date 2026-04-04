@@ -3,8 +3,6 @@
 namespace App\Controller\Club;
 
 use App\Entity\Plan;
-use App\Entity\PlanTask;
-use App\Entity\PlanSubTask;
 use App\Form\PlanImportType;
 use App\Form\PlanType;
 use App\Entity\Equipment;
@@ -90,33 +88,13 @@ class PlanController extends ExtendedController
         $plan->setClub($club);
         $plan->setCreatedBy($this->getUser());
 
-        // Force creation of first task and its first subtask
-        if ($plan->getTaskTemplates()->count() === 0) {
-            $firstTask = new PlanTask();
-            $firstTask->setTitle('');
-            $firstTask->setDescription('');
-            $firstTask->setPosition(0);
-            $plan->addTaskTemplate($firstTask);
-
-            $firstSubTask = new PlanSubTask();
-            $firstSubTask->setTitle('');
-            $firstSubTask->setDescription('');
-            $firstSubTask->setDifficulty(3);
-            $firstSubTask->setRequiresInspection(false);
-            $firstSubTask->setPosition(0);
-            $firstTask->addSubTaskTemplate($firstSubTask);
-        }
-
         $form = $this->createForm(PlanType::class, $plan, ['club' => $club]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Set positions for task templates
             $position = 0;
             foreach ($plan->getTaskTemplates() as $taskTemplate) {
                 $taskTemplate->setPosition($position++);
-
-                // Set positions for subtask templates
                 $subPosition = 0;
                 foreach ($taskTemplate->getSubTaskTemplates() as $subTaskTemplate) {
                     $subTaskTemplate->setPosition($subPosition++);
@@ -136,6 +114,37 @@ class PlanController extends ExtendedController
             'plan' => $plan,
             'form' => $form,
         ]);
+    }
+
+    #[Route('/import-template', name: 'club_plan_import_template', methods: ['GET'])]
+    #[IsGranted('MANAGE')]
+    public function importTemplate(): Response
+    {
+        $spreadsheet = $this->planSpreadsheetService->generateSpreadsheet(new Plan());
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+        $tempBase = tempnam(sys_get_temp_dir(), 'plan_template_');
+        if ($tempBase === false) {
+            $this->addFlash('error', 'planExportFailed');
+
+            return $this->redirectToRoute('club_plans');
+        }
+
+        $tempFile = $tempBase . '.xlsx';
+
+        try {
+            $writer->save($tempFile);
+        } catch (\Throwable) {
+            $this->addFlash('error', 'planExportFailed');
+            @unlink($tempBase);
+
+            return $this->redirectToRoute('club_plans');
+        }
+
+        @unlink($tempBase);
+
+        return $this->file($tempFile, 'plan-modele.xlsx', ResponseHeaderBag::DISPOSITION_ATTACHMENT)
+            ->deleteFileAfterSend(true);
     }
 
     #[Route('/{id}', name: 'club_plan_show', requirements: ['id' => '\d+'])]
