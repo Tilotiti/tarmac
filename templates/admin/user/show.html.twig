@@ -22,6 +22,13 @@
 					<span class="d-inline d-sm-none">Se connecter</span>
 				</a>
 			{% endif %}
+			<form method="post" action="{{ path('admin_user_reset_password_link', {id: user.id}) }}" class="d-inline" onsubmit="return confirm('Générer un nouveau lien de réinitialisation ? Tout lien précédemment envoyé à cet utilisateur sera invalidé.');">
+				<button type="submit" class="btn btn-outline-secondary" style="min-height: 44px;">
+					<i class="ti ti-key me-2"></i>
+					<span class="d-none d-sm-inline">Lien de réinitialisation</span>
+					<span class="d-inline d-sm-none">Lien reset</span>
+				</button>
+			</form>
 			{% if user.active %}
 				<form method="post" action="{{ path('admin_user_disable', {id: user.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver cet utilisateur ?');">
 					<button type="submit" class="btn btn-outline-warning" style="min-height: 44px;">
@@ -49,6 +56,28 @@
 {% endblock %}
 
 {% block page_content %}
+	{% if resetPasswordLink %}
+		<div class="card mb-3">
+			<div class="card-status-start bg-success"></div>
+			<div class="card-body">
+				<div class="d-flex align-items-center mb-3">
+					<span class="avatar bg-success-lt me-3">
+						<i class="ti ti-key"></i>
+					</span>
+					<div>
+						<div class="fw-bold">Lien de réinitialisation généré</div>
+						<div class="text-secondary small">À transmettre à l'utilisateur par un canal sûr — usage unique.</div>
+					</div>
+				</div>
+				<div class="input-group">
+					<input type="text" class="form-control font-monospace" value="{{ resetPasswordLink }}" readonly onclick="this.select();">
+					<button type="button" class="btn btn-primary" onclick="navigator.clipboard.writeText(this.previousElementSibling.value); this.innerHTML = '<i class=\'ti ti-check me-1\'></i>Copié';">
+						<i class="ti ti-copy me-1"></i>Copier
+					</button>
+				</div>
+			</div>
+		</div>
+	{% endif %}
 	<div
 		class="row">
 		{# User Information #}

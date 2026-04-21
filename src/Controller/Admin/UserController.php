@@ -6,6 +6,7 @@ use App\Controller\ExtendedController;
 use App\Entity\User;
 use App\Form\UserEditType;
 use App\Repository\Paginator;
+use App\Repository\ResetPasswordRequestRepository;
 use App\Repository\UserRepository;
 use App\Form\Filter\UserFilterType;
 use App\Service\SubdomainService;
@@ -14,7 +15,10 @@ use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 #[Route('/admin/users', host: 'www.%domain%')]
 #[IsGranted('ROLE_ADMIN')]
@@ -54,11 +58,41 @@ class UserController extends ExtendedController
         ['label' => 'Utilisateurs', 'route' => 'admin_user_index'],
         ['label' => '$user.fullname'],
     ])]
-    public function show(User $user): Response
+    public function show(User $user, Request $request): Response
     {
+        $resetLinkFlashes = $request->getSession()->getFlashBag()->get('reset_password_link');
+
         return $this->render('admin/user/show.html.twig', [
             'user' => $user,
+            'resetPasswordLink' => $resetLinkFlashes[0] ?? null,
         ]);
+    }
+
+    #[Route('/{id}/reset-password-link', name: 'admin_user_reset_password_link', methods: ['POST'])]
+    public function generateResetPasswordLink(
+        User $user,
+        ResetPasswordHelperInterface $resetPasswordHelper,
+        ResetPasswordRequestRepository $resetPasswordRequestRepository,
+        UrlGeneratorInterface $urlGenerator,
+    ): Response {
+        $resetPasswordRequestRepository->removeRequests($user);
+
+        try {
+            $resetToken = $resetPasswordHelper->generateResetToken($user);
+        } catch (ResetPasswordExceptionInterface $e) {
+            $this->addFlash('danger', sprintf('Impossible de générer le lien : %s', $e->getReason()));
+            return $this->redirectToRoute('admin_user_show', ['id' => $user->getId()]);
+        }
+
+        $url = $urlGenerator->generate(
+            'public_reset_password',
+            ['token' => $resetToken->getToken()],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+
+        $this->addFlash('reset_password_link', $url);
+
+        return $this->redirectToRoute('admin_user_show', ['id' => $user->getId()]);
     }
 
     #[Route('/{id}/edit', name: 'admin_user_edit')]
