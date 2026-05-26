@@ -2798,6 +2798,114 @@
         <source>readUserGuide</source>
         <target>Lire le guide utilisateur</target>
       </trans-unit>
+      <trans-unit id="848" resname="landingEyebrow">
+        <source>landingEyebrow</source>
+        <target>Logiciel libre pour clubs aéronautiques</target>
+      </trans-unit>
+      <trans-unit id="849" resname="landingHeroTitle">
+        <source>landingHeroTitle</source>
+        <target><![CDATA[Une <span class="accent">feuille volante</span><br>ne fera pas voler votre planeur.]]></target>
+      </trans-unit>
+      <trans-unit id="850" resname="landingHeroLead">
+        <source>landingHeroLead</source>
+        <target>Tarmac centralise vos plans d'entretien, vos tâches et votre carnet mécanicien. Pensé pour les clubs aéronautiques, par des passionnés, en open source.</target>
+      </trans-unit>
+      <trans-unit id="851" resname="landingValueOpenSource">
+        <source>landingValueOpenSource</source>
+        <target>Open source</target>
+      </trans-unit>
+      <trans-unit id="852" resname="landingValueOpenSourceBody">
+        <source>landingValueOpenSourceBody</source>
+        <target>Le code est libre. Auditez-le, contribuez, hébergez votre instance.</target>
+      </trans-unit>
+      <trans-unit id="853" resname="landingValueVolunteer">
+        <source>landingValueVolunteer</source>
+        <target>Bénévole</target>
+      </trans-unit>
+      <trans-unit id="854" resname="landingValueVolunteerBody">
+        <source>landingValueVolunteerBody</source>
+        <target>Construit sur le temps libre d'un pilote, pour aider d'autres clubs.</target>
+      </trans-unit>
+      <trans-unit id="855" resname="landingValueNoAds">
+        <source>landingValueNoAds</source>
+        <target>Sans pub, sans tracking</target>
+      </trans-unit>
+      <trans-unit id="856" resname="landingValueNoAdsBody">
+        <source>landingValueNoAdsBody</source>
+        <target>Vos données restent les vôtres. Aucune télémétrie commerciale.</target>
+      </trans-unit>
+      <trans-unit id="857" resname="landingHowItWorksTitle">
+        <source>landingHowItWorksTitle</source>
+        <target>Du plan d'entretien à la signature</target>
+      </trans-unit>
+      <trans-unit id="858" resname="landingHowItWorksLead">
+        <source>landingHowItWorksLead</source>
+        <target>Quatre étapes, et tout le club sait où on en est.</target>
+      </trans-unit>
+      <trans-unit id="859" resname="landingStep1Title">
+        <source>landingStep1Title</source>
+        <target>Déclarez vos matériels</target>
+      </trans-unit>
+      <trans-unit id="860" resname="landingStep1Body">
+        <source>landingStep1Body</source>
+        <target>Planeurs, avions, treuils, remorques — tout ce qui demande de l'entretien.</target>
+      </trans-unit>
+      <trans-unit id="861" resname="landingStep2Title">
+        <source>landingStep2Title</source>
+        <target>Construisez vos plans</target>
+      </trans-unit>
+      <trans-unit id="862" resname="landingStep2Body">
+        <source>landingStep2Body</source>
+        <target>Les opérations récurrentes, par type de matériel. Une fois pour toutes.</target>
+      </trans-unit>
+      <trans-unit id="863" resname="landingStep3Title">
+        <source>landingStep3Title</source>
+        <target>Appliquez, déléguez</target>
+      </trans-unit>
+      <trans-unit id="864" resname="landingStep3Body">
+        <source>landingStep3Body</source>
+        <target>Tarmac génère les tâches. Chaque membre contribue, commente, signale.</target>
+      </trans-unit>
+      <trans-unit id="865" resname="landingStep4Title">
+        <source>landingStep4Title</source>
+        <target>Inspectez, signez</target>
+      </trans-unit>
+      <trans-unit id="866" resname="landingStep4Body">
+        <source>landingStep4Body</source>
+        <target>Les qualifiés valident. Le carnet mécanicien se remplit tout seul.</target>
+      </trans-unit>
+      <trans-unit id="867" resname="landingFinalCtaTitle">
+        <source>landingFinalCtaTitle</source>
+        <target>Prêt à décoller ?</target>
+      </trans-unit>
+      <trans-unit id="868" resname="landingFinalCtaBody">
+        <source>landingFinalCtaBody</source>
+        <target>Tarmac fonctionne sur invitation. Demandez à votre club de vous ajouter, ou explorez le guide pour comprendre comment ça marche.</target>
+      </trans-unit>
+      <trans-unit id="869" resname="landingMadeWith">
+        <source>landingMadeWith</source>
+        <target>Fait avec passion, quelque part entre deux vols.</target>
+      </trans-unit>
+      <trans-unit id="870" resname="exploreGuide">
+        <source>exploreGuide</source>
+        <target>Explorer le guide</target>
+      </trans-unit>
+      <trans-unit id="871" resname="landingContactEyebrow">
+        <source>landingContactEyebrow</source>
+        <target>Vous présidez ou gérez un club ?</target>
+      </trans-unit>
+      <trans-unit id="872" resname="landingContactTitle">
+        <source>landingContactTitle</source>
+        <target>Mettons votre club sur Tarmac.</target>
+      </trans-unit>
+      <trans-unit id="873" resname="landingContactBody">
+        <source>landingContactBody</source>
+        <target>Envoyez-moi un mot, on configure votre instance ensemble. C'est gratuit, sans engagement, et je vous accompagne pour démarrer.</target>
+      </trans-unit>
+      <trans-unit id="874" resname="landingContactCta">
+        <source>landingContactCta</source>
+        <target>Écrire à contact@tarmac.center</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

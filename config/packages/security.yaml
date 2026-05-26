@@ -45,6 +45,7 @@ security:
         - { path: ^/login, roles: [] }
         - { path: ^/reset-password, roles: [] }
         - { path: ^/invitation, roles: [] }
+        - { path: ^/guide, roles: [] }
         - { path: ^/$, roles: [] }
 
         # Admin routes on www subdomain

@@ -2,97 +2,747 @@
 
 {% block title %}{{ 'home'|trans }}{% endblock %}
 
+{% block header %}{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		/* ===== Landing page — scoped styles ===== */
+		.landing {
+			--landing-deep: #0b1d2e;
+			--landing-mid: #345b7c;
+			--landing-glow: #f4a261;
+			--landing-cream: #f4ecd8;
+		}
+
+		.landing-bleed {
+			margin-left: calc(-1 * var(--bs-gutter-x, 0.75rem));
+			margin-right: calc(-1 * var(--bs-gutter-x, 0.75rem));
+		}
+
+		/* ===== Hero — editorial, dark, asymmetric ===== */
+		.landing-hero {
+			position: relative;
+			overflow: hidden;
+			color: #fff;
+			padding: 4rem 1rem 5rem;
+			background: radial-gradient(ellipse 80% 60% at 80% 0%, rgba(244, 162, 97, 0.18) 0%, transparent 60%),
+						radial-gradient(ellipse 70% 60% at 0% 100%, rgba(52, 91, 124, 0.35) 0%, transparent 60%),
+						#0b1d2e;
+		}
+
+		@media (min-width: 768px) {
+			.landing-hero { padding: 6rem 2rem 7rem; }
+		}
+
+		/* Subtle grid backdrop */
+		.landing-hero::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background-image:
+				linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+			background-size: 56px 56px;
+			mask-image: linear-gradient(180deg, rgba(0,0,0,0.6), transparent 75%);
+			pointer-events: none;
+		}
+
+		.landing-hero-grid {
+			position: relative;
+			display: grid;
+			gap: 3rem;
+			grid-template-columns: 1fr;
+			align-items: center;
+		}
+
+		@media (min-width: 992px) {
+			.landing-hero-grid {
+				grid-template-columns: 1.1fr 0.9fr;
+				gap: 4rem;
+			}
+		}
+
+		.landing-wordmark {
+			display: flex;
+			width: fit-content;
+			align-items: center;
+			gap: 0.75rem;
+			color: #fff;
+			font-weight: 800;
+			font-size: 1.25rem;
+			letter-spacing: 0.22em;
+			text-transform: uppercase;
+			margin-bottom: 2.5rem;
+		}
+
+		.landing-wordmark img {
+			height: 40px;
+			width: auto;
+			display: block;
+		}
+
+		.landing-eyebrow {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.55rem;
+			padding: 0.4rem 0.9rem;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.06);
+			border: 1px solid rgba(255, 255, 255, 0.18);
+			font-size: 0.85rem;
+			font-weight: 500;
+			letter-spacing: 0.01em;
+			color: rgba(255, 255, 255, 0.9);
+			margin-bottom: 1.75rem;
+		}
+
+		.landing-eyebrow .dot {
+			width: 7px; height: 7px;
+			border-radius: 50%;
+			background: #7ee787;
+			box-shadow: 0 0 10px #7ee787;
+		}
+
+		.landing-title {
+			font-size: clamp(2.4rem, 5.5vw, 4.25rem);
+			font-weight: 800;
+			line-height: 1.02;
+			letter-spacing: -0.025em;
+			margin-bottom: 1.5rem;
+		}
+
+		.landing-title .accent {
+			color: var(--landing-glow);
+			position: relative;
+			white-space: nowrap;
+		}
+
+		.landing-title .accent::after {
+			content: "";
+			position: absolute;
+			left: 0; right: 0; bottom: 0.05em;
+			height: 0.18em;
+			background: rgba(244, 162, 97, 0.22);
+			z-index: -1;
+			border-radius: 2px;
+		}
+
+		.landing-lead {
+			font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+			line-height: 1.6;
+			color: rgba(255, 255, 255, 0.75);
+			max-width: 540px;
+			margin-bottom: 2rem;
+		}
+
+		.landing-cta-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.75rem;
+		}
+
+		.landing-btn,
+		.landing-btn:hover,
+		.landing-btn:focus,
+		.landing-btn:active {
+			text-decoration: none;
+		}
+
+		.landing-btn {
+			min-height: 48px;
+			padding: 0.75rem 1.5rem;
+			border-radius: 10px;
+			font-weight: 600;
+			font-size: 1rem;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+		}
+
+		.landing-btn-primary {
+			background: #fff;
+			color: var(--landing-deep);
+			border: 0;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+		}
+
+		.landing-btn-primary:hover {
+			background: var(--landing-cream);
+			color: var(--landing-deep);
+			transform: translateY(-2px);
+			box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+		}
+
+		.landing-btn-ghost {
+			background: rgba(255, 255, 255, 0.06);
+			color: #fff;
+			border: 1px solid rgba(255, 255, 255, 0.25);
+		}
+
+		.landing-btn-ghost:hover {
+			background: rgba(255, 255, 255, 0.14);
+			color: #fff;
+			transform: translateY(-2px);
+		}
+
+		/* ---- Hero mockup stack ---- */
+		.landing-mockup {
+			position: relative;
+			height: 380px;
+			perspective: 1200px;
+		}
+
+		@media (max-width: 991.98px) {
+			.landing-mockup { height: 320px; max-width: 420px; margin: 0 auto; }
+		}
+
+		.mockup-card {
+			position: absolute;
+			background: #fff;
+			color: var(--landing-deep);
+			border-radius: 14px;
+			padding: 1rem 1.15rem;
+			box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5), 0 18px 36px -18px rgba(0, 0, 0, 0.35);
+			width: 88%;
+			max-width: 360px;
+			border: 1px solid rgba(255, 255, 255, 0.6);
+		}
+
+		.mockup-card-1 {
+			top: 0; left: 0;
+			transform: rotate(-3deg);
+			z-index: 2;
+		}
+
+		.mockup-card-2 {
+			top: 130px; right: 0;
+			transform: rotate(2.5deg);
+			z-index: 3;
+		}
+
+		.mockup-card-3 {
+			bottom: 0; left: 6%;
+			transform: rotate(-1deg);
+			z-index: 1;
+			opacity: 0.95;
+		}
+
+		.mockup-eyebrow {
+			font-size: 0.7rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			color: #8898a8;
+			margin-bottom: 0.3rem;
+		}
+
+		.mockup-title {
+			font-size: 1rem;
+			font-weight: 700;
+			margin-bottom: 0.6rem;
+			line-height: 1.3;
+		}
+
+		.mockup-meta {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.5rem;
+		}
+
+		.mockup-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.3rem;
+			padding: 0.2rem 0.55rem;
+			border-radius: 999px;
+			font-size: 0.72rem;
+			font-weight: 600;
+		}
+
+		.mockup-badge.b-progress { background: rgba(52, 91, 124, 0.12); color: var(--landing-mid); }
+		.mockup-badge.b-inspect  { background: rgba(244, 162, 97, 0.18); color: #b66525; }
+		.mockup-badge.b-done     { background: rgba(126, 231, 135, 0.2); color: #2f8c3a; }
+
+		.mockup-avatars {
+			display: inline-flex;
+		}
+		.mockup-avatars .av {
+			width: 24px; height: 24px;
+			border-radius: 50%;
+			background: linear-gradient(135deg, #345b7c, #6a8caf);
+			border: 2px solid #fff;
+			color: #fff;
+			font-size: 0.62rem;
+			font-weight: 700;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			margin-left: -8px;
+		}
+		.mockup-avatars .av:first-child { margin-left: 0; }
+		.mockup-avatars .av:nth-child(2) { background: linear-gradient(135deg, #b66525, #f4a261); }
+		.mockup-avatars .av:nth-child(3) { background: linear-gradient(135deg, #2f8c3a, #7ee787); color: #0b1d2e; }
+
+		.mockup-progress {
+			height: 4px;
+			background: #eef2f7;
+			border-radius: 2px;
+			overflow: hidden;
+			margin-top: 0.6rem;
+		}
+		.mockup-progress > span {
+			display: block;
+			height: 100%;
+			background: linear-gradient(90deg, var(--landing-mid), var(--landing-glow));
+		}
+
+		/* ===== Section base ===== */
+		.landing-section {
+			padding: 5rem 1rem;
+		}
+
+		.landing-section-title {
+			font-size: clamp(1.7rem, 3vw, 2.4rem);
+			font-weight: 800;
+			letter-spacing: -0.015em;
+			color: var(--landing-deep);
+			margin-bottom: 0.75rem;
+		}
+
+		.landing-section-lead {
+			color: #5a6878;
+			font-size: 1.1rem;
+			margin-bottom: 3rem;
+		}
+
+		/* ===== Steps ===== */
+		.landing-step {
+			position: relative;
+			padding: 1.5rem;
+			background: #fff;
+			border-radius: 16px;
+			border: 1px solid #e6ecf3;
+			height: 100%;
+			transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+		}
+
+		.landing-step:hover {
+			transform: translateY(-4px);
+			box-shadow: 0 16px 40px rgba(11, 29, 46, 0.08);
+			border-color: var(--landing-mid);
+		}
+
+		.landing-step-num {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			background: var(--landing-deep);
+			color: #fff;
+			font-weight: 700;
+			font-family: 'JetBrains Mono', ui-monospace, monospace;
+			margin-bottom: 1rem;
+			font-size: 0.95rem;
+		}
+
+		.landing-step h3 {
+			font-size: 1.15rem;
+			font-weight: 700;
+			color: var(--landing-deep);
+			margin-bottom: 0.5rem;
+		}
+
+		.landing-step p {
+			color: #5a6878;
+			font-size: 0.95rem;
+			margin: 0;
+			line-height: 1.55;
+		}
+
+		@media (min-width: 992px) {
+			.landing-steps-row > [class*="col-"]:not(:last-child) .landing-step::after {
+				content: "";
+				position: absolute;
+				top: 34px;
+				right: -2rem;
+				width: 2rem;
+				border-top: 2px dashed #c9d4e0;
+			}
+		}
+
+		/* ===== Features ===== */
+		.landing-feature {
+			padding: 2rem;
+			border-radius: 18px;
+			background: linear-gradient(180deg, #fff 0%, #fafbfd 100%);
+			border: 1px solid #e6ecf3;
+			height: 100%;
+			transition: transform 0.2s ease, box-shadow 0.2s ease;
+		}
+
+		.landing-feature:hover {
+			transform: translateY(-4px);
+			box-shadow: 0 20px 50px rgba(11, 29, 46, 0.08);
+		}
+
+		.landing-feature-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 56px;
+			height: 56px;
+			border-radius: 14px;
+			font-size: 1.6rem;
+			margin-bottom: 1rem;
+		}
+
+		.landing-feature-icon.icon-plans   { background: rgba(52, 91, 124, 0.12); color: var(--landing-mid); }
+		.landing-feature-icon.icon-collab  { background: rgba(126, 231, 135, 0.15); color: #2f8c3a; }
+		.landing-feature-icon.icon-history { background: rgba(244, 162, 97, 0.18); color: #c97339; }
+
+		.landing-feature h3 {
+			font-size: 1.2rem;
+			font-weight: 700;
+			color: var(--landing-deep);
+			margin-bottom: 0.5rem;
+		}
+
+		.landing-feature p {
+			color: #5a6878;
+			line-height: 1.6;
+			margin: 0;
+		}
+
+		/* ===== Contact ===== */
+		.landing-contact {
+			position: relative;
+			overflow: hidden;
+			border-radius: 24px;
+			padding: 3.5rem 2rem;
+			background: #fff;
+			border: 1px solid #e6ecf3;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			gap: 1.25rem;
+		}
+
+		.landing-contact::before {
+			content: "";
+			position: absolute;
+			top: -60px; right: -60px;
+			width: 220px; height: 220px;
+			border-radius: 50%;
+			background: radial-gradient(circle, rgba(244, 162, 97, 0.22) 0%, transparent 70%);
+			pointer-events: none;
+		}
+
+		.landing-contact::after {
+			content: "";
+			position: absolute;
+			bottom: -80px; left: -80px;
+			width: 260px; height: 260px;
+			border-radius: 50%;
+			background: radial-gradient(circle, rgba(52, 91, 124, 0.15) 0%, transparent 70%);
+			pointer-events: none;
+		}
+
+		.landing-contact-eyebrow {
+			color: var(--landing-mid);
+			font-weight: 600;
+			font-size: 0.95rem;
+			letter-spacing: 0.02em;
+			text-transform: uppercase;
+		}
+
+		.landing-contact h2 {
+			font-size: clamp(1.7rem, 3vw, 2.4rem);
+			font-weight: 800;
+			color: var(--landing-deep);
+			letter-spacing: -0.015em;
+			margin: 0;
+		}
+
+		.landing-contact p {
+			color: #5a6878;
+			max-width: 560px;
+			font-size: 1.05rem;
+			line-height: 1.6;
+			margin: 0;
+		}
+
+		.landing-contact-btn,
+		.landing-contact-btn:hover,
+		.landing-contact-btn:focus,
+		.landing-contact-btn:active {
+			text-decoration: none;
+		}
+
+		.landing-contact-btn {
+			min-height: 52px;
+			padding: 0.85rem 1.75rem;
+			border-radius: 12px;
+			font-weight: 700;
+			font-size: 1.05rem;
+			color: #fff;
+			background: linear-gradient(135deg, var(--landing-deep) 0%, var(--landing-mid) 100%);
+			display: inline-flex;
+			align-items: center;
+			gap: 0.6rem;
+			box-shadow: 0 12px 30px rgba(11, 29, 46, 0.25);
+			transition: transform 0.15s ease, box-shadow 0.2s ease;
+			position: relative;
+			z-index: 1;
+		}
+
+		.landing-contact-btn:hover {
+			color: #fff;
+			transform: translateY(-2px);
+			box-shadow: 0 16px 36px rgba(11, 29, 46, 0.35);
+		}
+
+		/* ===== Final CTA ===== */
+		.landing-final {
+			position: relative;
+			overflow: hidden;
+			border-radius: 24px;
+			padding: 4rem 2rem;
+			color: #fff;
+			text-align: center;
+			background: radial-gradient(circle at 20% 30%, rgba(244, 162, 97, 0.35) 0%, transparent 50%),
+						linear-gradient(135deg, #0b1d2e 0%, #345b7c 100%);
+		}
+
+		.landing-final h2 {
+			font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+			font-weight: 800;
+			margin-bottom: 1rem;
+		}
+
+		.landing-final p {
+			color: rgba(255, 255, 255, 0.85);
+			font-size: 1.1rem;
+			max-width: 560px;
+			margin: 0 auto 2rem;
+		}
+
+		/* ===== Footnote ===== */
+		.landing-footnote {
+			text-align: center;
+			color: #8898a8;
+			font-size: 0.9rem;
+			padding: 2rem 1rem 1rem;
+			font-style: italic;
+		}
+	</style>
+{% endblock %}
+
 {% block body %}
-	<div class="container-xl py-4 py-md-6">
-		{# Hero #}
-		<div class="row align-items-center g-4 mb-5">
-			<div class="col-12 col-md-7">
-				<div class="d-flex align-items-center mb-3">
-					<img src="{{ asset('logo.svg') }}" height="48" alt="Tarmac" class="me-3">
-				</div>
-				<h1 class="display-6 fw-bold mb-3">
-					{{ 'landingHeadline'|trans }}
-				</h1>
-				<p class="text-secondary fs-3 mb-4">
-					{{ 'landingSubheadline'|trans|raw }}
-				</p>
-				<div class="d-flex flex-column flex-sm-row gap-2">
-					<a href="{{ path('public_login') }}" class="btn btn-primary btn-lg" style="min-height: 44px;">
-						<i class="ti ti-login me-2"></i>
-						{{ 'signIn'|trans }}
-					</a>
-					<a href="{{ path('public_guide') }}" class="btn btn-outline-primary btn-lg" style="min-height: 44px;">
-						<i class="ti ti-book-2 me-2"></i>
-						{{ 'discoverGuide'|trans }}
-					</a>
-				</div>
-			</div>
-			<div class="col-12 col-md-5 text-center d-none d-md-block">
-				<img src="{{ asset('glider.svg') }}" alt="" class="img-fluid" style="max-height: 280px;">
-			</div>
-		</div>
+	<div class="landing landing-bleed">
 
-		{# Features #}
-		<div class="row g-3 mb-5">
-			<div class="col-12 col-md-4">
-				<div class="card card-sm h-100">
-					<div class="card-body">
-						<div class="d-flex align-items-center mb-2">
-							<span class="avatar bg-primary-lt me-2">
-								<i class="ti ti-checklist fs-2"></i>
-							</span>
-							<h3 class="card-title mb-0">{{ 'landingFeaturePlansTitle'|trans }}</h3>
-						</div>
-						<p class="text-secondary mb-0">
-							{{ 'landingFeaturePlansBody'|trans }}
-						</p>
-					</div>
-				</div>
-			</div>
-			<div class="col-12 col-md-4">
-				<div class="card card-sm h-100">
-					<div class="card-body">
-						<div class="d-flex align-items-center mb-2">
-							<span class="avatar bg-green-lt me-2">
-								<i class="ti ti-users fs-2"></i>
-							</span>
-							<h3 class="card-title mb-0">{{ 'landingFeatureCollabTitle'|trans }}</h3>
-						</div>
-						<p class="text-secondary mb-0">
-							{{ 'landingFeatureCollabBody'|trans }}
-						</p>
-					</div>
-				</div>
-			</div>
-			<div class="col-12 col-md-4">
-				<div class="card card-sm h-100">
-					<div class="card-body">
-						<div class="d-flex align-items-center mb-2">
-							<span class="avatar bg-azure-lt me-2">
-								<i class="ti ti-history fs-2"></i>
-							</span>
-							<h3 class="card-title mb-0">{{ 'landingFeatureHistoryTitle'|trans }}</h3>
-						</div>
-						<p class="text-secondary mb-0">
-							{{ 'landingFeatureHistoryBody'|trans }}
-						</p>
-					</div>
-				</div>
-			</div>
-		</div>
+		{# ========== HERO ========== #}
+		<section class="landing-hero">
+			<div class="container-xl">
+				<div class="landing-hero-grid">
 
-		{# Secondary CTA #}
-		<div class="card card-md bg-primary-lt border-0">
-			<div class="card-body text-center py-4">
-				<h2 class="mb-2">{{ 'landingCtaTitle'|trans }}</h2>
-				<p class="text-secondary mb-3">
-					{{ 'landingCtaBody'|trans }}
-				</p>
-				<a href="{{ path('public_guide') }}" class="btn btn-primary" style="min-height: 44px;">
-					<i class="ti ti-book-2 me-2"></i>
-					{{ 'readUserGuide'|trans }}
-				</a>
+					<div>
+						<div class="landing-wordmark">
+							<img src="{{ asset('glider.svg') }}" alt="Tarmac">
+							Tarmac
+						</div>
+						<div class="landing-eyebrow">
+							<span class="dot"></span>
+							{{ 'landingEyebrow'|trans }}
+						</div>
+						<h1 class="landing-title">{{ 'landingHeroTitle'|trans|raw }}</h1>
+						<p class="landing-lead">{{ 'landingHeroLead'|trans }}</p>
+						<div class="landing-cta-row">
+							{% if app.user %}
+								<a href="{{ path('public_clubs') }}" class="landing-btn landing-btn-primary">
+									<i class="ti ti-building-community"></i>
+									{{ 'myClubs'|trans }}
+								</a>
+							{% else %}
+								<a href="{{ path('public_login') }}" class="landing-btn landing-btn-primary">
+									<i class="ti ti-login"></i>
+									{{ 'signIn'|trans }}
+								</a>
+							{% endif %}
+							<a href="{{ path('public_guide') }}" class="landing-btn landing-btn-ghost">
+								<i class="ti ti-book-2"></i>
+								{{ 'exploreGuide'|trans }}
+							</a>
+						</div>
+					</div>
+
+					{# Stacked task-card mockups #}
+					<div class="landing-mockup" aria-hidden="true">
+						<div class="mockup-card mockup-card-1">
+							<div class="mockup-eyebrow">F-CGAB · Planeur</div>
+							<div class="mockup-title">Visite annuelle 100h</div>
+							<div class="mockup-meta">
+								<span class="mockup-badge b-progress">
+									<i class="ti ti-progress"></i> En cours
+								</span>
+								<span class="mockup-avatars">
+									<span class="av">TH</span>
+									<span class="av">JM</span>
+									<span class="av">PL</span>
+								</span>
+							</div>
+							<div class="mockup-progress"><span style="width: 62%;"></span></div>
+						</div>
+
+						<div class="mockup-card mockup-card-2">
+							<div class="mockup-eyebrow">Sous-tâche critique</div>
+							<div class="mockup-title">Vérification ouverture verrière</div>
+							<div class="mockup-meta">
+								<span class="mockup-badge b-inspect">
+									<i class="ti ti-eye-check"></i> À inspecter
+								</span>
+								<span style="font-size: 0.78rem; color: #8898a8;">il y a 2 h</span>
+							</div>
+						</div>
+
+						<div class="mockup-card mockup-card-3">
+							<div class="mockup-eyebrow">Treuil n°2</div>
+							<div class="mockup-title">Graissage câble + poulies</div>
+							<div class="mockup-meta">
+								<span class="mockup-badge b-done">
+									<i class="ti ti-check"></i> Clôturé
+								</span>
+								<span style="font-size: 0.78rem; color: #8898a8;">25 mai</span>
+							</div>
+						</div>
+					</div>
+
+				</div>
 			</div>
-		</div>
+		</section>
+
+		{# ========== FEATURES ========== #}
+		<section class="landing-section">
+			<div class="container-xl">
+				<div class="row g-4">
+					<div class="col-12 col-md-4">
+						<div class="landing-feature">
+							<div class="landing-feature-icon icon-plans">
+								<i class="ti ti-checklist"></i>
+							</div>
+							<h3>{{ 'landingFeaturePlansTitle'|trans }}</h3>
+							<p>{{ 'landingFeaturePlansBody'|trans }}</p>
+						</div>
+					</div>
+					<div class="col-12 col-md-4">
+						<div class="landing-feature">
+							<div class="landing-feature-icon icon-collab">
+								<i class="ti ti-users-group"></i>
+							</div>
+							<h3>{{ 'landingFeatureCollabTitle'|trans }}</h3>
+							<p>{{ 'landingFeatureCollabBody'|trans }}</p>
+						</div>
+					</div>
+					<div class="col-12 col-md-4">
+						<div class="landing-feature">
+							<div class="landing-feature-icon icon-history">
+								<i class="ti ti-history-toggle"></i>
+							</div>
+							<h3>{{ 'landingFeatureHistoryTitle'|trans }}</h3>
+							<p>{{ 'landingFeatureHistoryBody'|trans }}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{# ========== HOW IT WORKS ========== #}
+		<section class="landing-section" style="background: #fafbfd;">
+			<div class="container-xl">
+				<div class="text-center mb-4">
+					<h2 class="landing-section-title">{{ 'landingHowItWorksTitle'|trans }}</h2>
+					<p class="landing-section-lead">{{ 'landingHowItWorksLead'|trans }}</p>
+				</div>
+				<div class="row g-4 landing-steps-row">
+					<div class="col-12 col-md-6 col-lg-3">
+						<div class="landing-step">
+							<div class="landing-step-num">01</div>
+							<h3>{{ 'landingStep1Title'|trans }}</h3>
+							<p>{{ 'landingStep1Body'|trans }}</p>
+						</div>
+					</div>
+					<div class="col-12 col-md-6 col-lg-3">
+						<div class="landing-step">
+							<div class="landing-step-num">02</div>
+							<h3>{{ 'landingStep2Title'|trans }}</h3>
+							<p>{{ 'landingStep2Body'|trans }}</p>
+						</div>
+					</div>
+					<div class="col-12 col-md-6 col-lg-3">
+						<div class="landing-step">
+							<div class="landing-step-num">03</div>
+							<h3>{{ 'landingStep3Title'|trans }}</h3>
+							<p>{{ 'landingStep3Body'|trans }}</p>
+						</div>
+					</div>
+					<div class="col-12 col-md-6 col-lg-3">
+						<div class="landing-step">
+							<div class="landing-step-num">04</div>
+							<h3>{{ 'landingStep4Title'|trans }}</h3>
+							<p>{{ 'landingStep4Body'|trans }}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{# ========== CONTACT ========== #}
+		<section class="landing-section" style="padding-bottom: 0;">
+			<div class="container-xl">
+				<div class="landing-contact">
+					<span class="landing-contact-eyebrow">{{ 'landingContactEyebrow'|trans|raw }}</span>
+					<h2>{{ 'landingContactTitle'|trans }}</h2>
+					<p>{{ 'landingContactBody'|trans }}</p>
+					<a href="mailto:contact@tarmac.center?subject=Mettre%20mon%20club%20sur%20Tarmac" class="landing-contact-btn">
+						<i class="ti ti-mail"></i>
+						{{ 'landingContactCta'|trans }}
+					</a>
+				</div>
+			</div>
+		</section>
+
+		{# ========== FINAL CTA ========== #}
+		<section class="landing-section">
+			<div class="container-xl">
+				<div class="landing-final">
+					<h2>{{ 'landingFinalCtaTitle'|trans|raw }}</h2>
+					<p>{{ 'landingFinalCtaBody'|trans }}</p>
+					<div class="landing-cta-row justify-content-center">
+						<a href="{{ path('public_guide') }}" class="landing-btn landing-btn-primary">
+							<i class="ti ti-book-2"></i>
+							{{ 'readUserGuide'|trans }}
+						</a>
+						{% if app.user %}
+							<a href="{{ path('public_clubs') }}" class="landing-btn landing-btn-ghost">
+								<i class="ti ti-building-community"></i>
+								{{ 'myClubs'|trans }}
+							</a>
+						{% else %}
+							<a href="{{ path('public_login') }}" class="landing-btn landing-btn-ghost">
+								<i class="ti ti-login"></i>
+								{{ 'signIn'|trans }}
+							</a>
+						{% endif %}
+					</div>
+				</div>
+				<p class="landing-footnote">{{ 'landingMadeWith'|trans }}</p>
+			</div>
+		</section>
+
 	</div>
 {% endblock %}

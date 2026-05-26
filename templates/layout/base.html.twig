@@ -24,6 +24,7 @@
 	</head>
 	<body data-controller="confirm">
 		<div class="page">
+			{% block header %}
 			{% if app.user %}
 				<header class="navbar navbar-expand-md d-print-none" style="min-height: 3rem;">
 					<div class="container-xl">
@@ -83,6 +84,7 @@
 						</div>
 					</header>
 				{% endif %}
+				{% endblock %}
 
 				<main class="page-wrapper">
 					<div class="page-body">
