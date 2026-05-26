@@ -786,3 +786,56 @@ div.member-select-dropdown .optgroup-header {
 body.modal-open .ts-dropdown.member-select-dropdown {
     z-index: 1065;
 }
+
+/* ===== Contributor Avatars (stack) ===== */
+.contributor-avatars {
+    display: inline-flex;
+    align-items: center;
+}
+
+.contributor-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.72rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-left: -8px;
+    box-shadow: 0 1px 3px rgba(11, 29, 46, 0.12);
+    cursor: default;
+    user-select: none;
+}
+
+.contributor-avatar:first-child {
+    margin-left: 0;
+}
+
+.contributor-avatars--sm .contributor-avatar {
+    width: 28px;
+    height: 28px;
+}
+
+.contributor-avatars--md .contributor-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 0.82rem;
+}
+
+/* Deterministic 8-color palette (by user id modulo 8) */
+.contributor-avatar--c0 { background: linear-gradient(135deg, #345b7c 0%, #6a8caf 100%); }
+.contributor-avatar--c1 { background: linear-gradient(135deg, #b66525 0%, #f4a261 100%); }
+.contributor-avatar--c2 { background: linear-gradient(135deg, #2f8c3a 0%, #7ee787 100%); color: #0b1d2e; }
+.contributor-avatar--c3 { background: linear-gradient(135deg, #5b21b6 0%, #a78bfa 100%); }
+.contributor-avatar--c4 { background: linear-gradient(135deg, #075985 0%, #0891b2 100%); }
+.contributor-avatar--c5 { background: linear-gradient(135deg, #9d174d 0%, #db2777 100%); }
+.contributor-avatar--c6 { background: linear-gradient(135deg, #134e4a 0%, #14b8a6 100%); }
+.contributor-avatar--c7 { background: linear-gradient(135deg, #991b1b 0%, #ef4444 100%); }
+
+.contributor-avatar--more {
+    background: #e9ecef;
+    color: #495057;
+}
