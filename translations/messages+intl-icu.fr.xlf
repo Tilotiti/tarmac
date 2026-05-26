@@ -2868,11 +2868,11 @@
       </trans-unit>
       <trans-unit id="865" resname="landingStep4Title">
         <source>landingStep4Title</source>
-        <target>Inspectez, signez</target>
+        <target>Signez, ou faites signer</target>
       </trans-unit>
       <trans-unit id="866" resname="landingStep4Body">
         <source>landingStep4Body</source>
-        <target>Les qualifiés valident. Le carnet mécanicien se remplit tout seul.</target>
+        <target>Des tâches classiques aux tâches critiques, le carnet mécanicien se remplit tout seul.</target>
       </trans-unit>
       <trans-unit id="867" resname="landingFinalCtaTitle">
         <source>landingFinalCtaTitle</source>
