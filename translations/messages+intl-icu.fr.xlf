@@ -1740,7 +1740,7 @@
       </trans-unit>
       <trans-unit id="246a" resname="facilityType">
         <source>facilityType</source>
-        <target>Installations</target>
+        <target>Autres</target>
       </trans-unit>
       <trans-unit id="247" resname="searchPlans">
         <source>searchPlans</source>
