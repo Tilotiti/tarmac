@@ -260,6 +260,11 @@
 									être prises en charge. L'historique des applications de plan est consultable et une
 									application peut être annulée par un gestionnaire si elle a été faite par erreur.
 								</p>
+								<p>
+									Depuis la fiche d'une application de plan, vous pouvez <strong>imprimer la carte de
+									travail</strong> en PDF&nbsp;: c'est la version papier de la checklist, prête à
+									emporter en atelier ou en hangar pour cocher les opérations au fur et à mesure.
+								</p>
 							</section>
 
 							<hr>
@@ -335,8 +340,8 @@
 										faire à sa place&nbsp;; sinon, c'est bloqué pour préserver la traçabilité.</li>
 								</ul>
 								<p>
-									Si la sous-tâche <strong>requiert une inspection</strong>, elle passe en
-									<em>terminée (en attente d'inspection)</em>. Sinon, elle est directement
+									Si la sous-tâche est <strong>critique</strong> et requiert une inspection, elle passe
+									en <em>terminée (en attente d'inspection)</em>. Sinon, elle est directement
 									<em>clôturée</em>.
 								</p>
 								<p>
@@ -350,12 +355,13 @@
 							<section id="inspection">
 								<h2>10. Inspection &amp; clôture</h2>
 								<p>
-									Quand une sous-tâche est <em>terminée (en attente d'inspection)</em>, un membre
-									<strong>qualifié</strong> doit la passer en revue. Il a deux choix&nbsp;:
+									Quand une sous-tâche <strong>critique</strong> est <em>terminée (en attente
+									d'inspection)</em>, un membre <strong>qualifié</strong> doit la passer en revue. Il
+									a deux choix&nbsp;:
 								</p>
 								<ul>
 									<li><strong>Valider</strong>&nbsp;: la sous-tâche passe en <em>clôturée</em>. C'est
-										l'équivalent d'une signature mécanicien.</li>
+										l'équivalent d'une signature de validation d'inspection.</li>
 									<li><strong>Rejeter</strong>&nbsp;: le travail n'est pas conforme. La sous-tâche
 										retourne en <em>ouverte</em>, avec un message expliquant ce qui doit être repris.</li>
 								</ul>
@@ -370,19 +376,20 @@
 							<section id="carnet">
 								<h2>11. Carnet mécanicien</h2>
 								<p>
-									Le <strong>carnet mécanicien</strong> (menu <strong>Carnet</strong>) est l'historique
-									chronologique de tout ce qui s'est passé&nbsp;: créations, contributions, commentaires,
-									sous-tâches terminées, inspections, annulations, applications de plans…
+									Le <strong>carnet mécanicien</strong> (menu <strong>Carnet</strong>) est la liste de
+									<strong>vos contributions</strong> (temps passé sur des sous-tâches), filtrable par
+									période et par statut, avec des <strong>statistiques regroupées par
+										spécialisation</strong>&nbsp;: vous voyez d'un coup d'œil combien d'heures vous avez
+									passées sur chaque domaine technique (moteur, composite, avionique…).
 								</p>
-								<p>C'est l'outil de traçabilité. On l'utilise pour&nbsp;:</p>
-								<ul>
-									<li>Préparer une visite réglementaire (savoir ce qui a été fait, par qui, quand).</li>
-									<li>Retrouver l'historique d'une intervention spécifique.</li>
-								</ul>
 								<p>
-									Chaque membre dispose aussi de son <strong>carnet personnel</strong> (depuis sa fiche
-									dans <em>Club → Membres</em>), qui récapitule ses propres actions et peut être exporté
-									en PDF.
+									Le carnet est accessible depuis le menu <strong>Carnet</strong> (le vôtre) ou depuis la
+									fiche d'un membre (<em>Club → Membres → choisir un membre</em>) si vous êtes
+									gestionnaire ou qualifié.
+								</p>
+								<p>
+									Le carnet peut être <strong>exporté en PDF</strong> (utile pour justifier de votre
+									activité de maintenance auprès de l'autorité ou pour vos archives personnelles).
 								</p>
 							</section>
 
