@@ -258,7 +258,7 @@ class LoadDemoFixturesCommand extends Command
         $officeTask->setClub($club);
         $officeTask->setEquipment($infrastructure1);
         $officeTask->setTitle('Entretien annuel bureau');
-        $officeTask->setDescription('Nettoyage et organisation du bureau, vérification des équipements administratifs');
+        $officeTask->setDescription('Nettoyage et organisation du bureau, vérification des matériels administratifs');
         $officeTask->setDueAt(new \DateTimeImmutable('+2 weeks'));
         $officeTask->setCreatedBy($users['manager']);
         $this->entityManager->persist($officeTask);
@@ -274,7 +274,7 @@ class LoadDemoFixturesCommand extends Command
 
         $officeSubTask2 = new SubTask();
         $officeSubTask2->setTask($officeTask);
-        $officeSubTask2->setTitle('Vérifier les équipements informatiques');
+        $officeSubTask2->setTitle('Vérifier les matériels informatiques');
         $officeSubTask2->setDescription('Test imprimante, ordinateur, connexion internet, mise à jour logiciels');
         $officeSubTask2->setDifficulty(2);
         $officeSubTask2->setRequiresInspection(false);
@@ -295,7 +295,7 @@ class LoadDemoFixturesCommand extends Command
         $kitchenTask->setClub($club);
         $kitchenTask->setEquipment($infrastructure2);
         $kitchenTask->setTitle('Contrôle hygiène cuisine');
-        $kitchenTask->setDescription('Vérification hygiène et sécurité alimentaire, entretien des équipements de cuisine');
+        $kitchenTask->setDescription('Vérification hygiène et sécurité alimentaire, entretien des matériels de cuisine');
         $kitchenTask->setDueAt(new \DateTimeImmutable('+1 week'));
         $kitchenTask->setCreatedBy($users['manager']);
         $this->entityManager->persist($kitchenTask);
@@ -320,7 +320,7 @@ class LoadDemoFixturesCommand extends Command
 
         $kitchenSubTask3 = new SubTask();
         $kitchenSubTask3->setTask($kitchenTask);
-        $kitchenSubTask3->setTitle('Contrôler les équipements de cuisine');
+        $kitchenSubTask3->setTitle('Contrôler les matériels de cuisine');
         $kitchenSubTask3->setDescription('Test four, micro-ondes, cafetière, vérification état vaisselle');
         $kitchenSubTask3->setDifficulty(2);
         $kitchenSubTask3->setRequiresInspection(false);

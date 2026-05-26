@@ -109,8 +109,8 @@ class EquipmentController extends ExtendedController
     #[IsGranted('MANAGE')]
     #[Breadcrumb([
         ['label' => 'home', 'route' => 'club_dashboard'],
-        ['label' => 'Équipements', 'route' => 'club_equipments'],
-        ['label' => 'Ajouter'],
+        ['label' => 'equipments', 'route' => 'club_equipments'],
+        ['label' => 'add'],
     ])]
     public function new(Request $request): Response
     {
@@ -143,7 +143,7 @@ class EquipmentController extends ExtendedController
     #[Route('/{id}', name: 'club_equipment_show')]
     #[Breadcrumb([
         ['label' => 'home', 'route' => 'club_dashboard'],
-        ['label' => 'Équipements', 'route' => 'club_equipments'],
+        ['label' => 'equipments', 'route' => 'club_equipments'],
         ['label' => '$equipment.name'],
     ])]
     public function show(Equipment $equipment): Response
@@ -184,9 +184,9 @@ class EquipmentController extends ExtendedController
     #[IsGranted('MANAGE')]
     #[Breadcrumb([
         ['label' => 'home', 'route' => 'club_dashboard'],
-        ['label' => 'Équipements', 'route' => 'club_equipments'],
+        ['label' => 'equipments', 'route' => 'club_equipments'],
         ['label' => '$equipment.name', 'route' => 'club_equipment_show', 'parameters' => ['id' => '$equipment.id']],
-        ['label' => 'Modifier'],
+        ['label' => 'edit'],
     ])]
     public function edit(Request $request, Equipment $equipment): Response
     {
@@ -259,7 +259,7 @@ class EquipmentController extends ExtendedController
     #[IsGranted('MANAGE')]
     #[Breadcrumb([
         ['label' => 'home', 'route' => 'club_dashboard'],
-        ['label' => 'Équipements', 'route' => 'club_equipments'],
+        ['label' => 'equipments', 'route' => 'club_equipments'],
         ['label' => '$equipment.name', 'route' => 'club_equipment_show', 'parameters' => ['id' => '$equipment.id']],
         ['label' => 'applyPlan'],
     ])]

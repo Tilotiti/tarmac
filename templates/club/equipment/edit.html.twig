@@ -1,12 +1,13 @@
 {% extends 'club/base.html.twig' %}
 
-{% block page_title %}Modifier un équipement
+{% block page_title %}
+	{{ 'editEquipment'|trans }}
 {% endblock %}
 
 {% block page_content %}
 	<div class="card">
 		<div class="card-header">
-			<h3 class="card-title">Modifier l'équipement</h3>
+			<h3 class="card-title">{{ 'editEquipment'|trans }}</h3>
 		</div>
 		<div class="card-body" data-controller="equipment-privacy">
 			{{ form_start(form) }}
@@ -29,7 +30,7 @@
 				</div>
 				{{ form_errors(form.owner) }}
 				<small class="form-hint">
-					Équipement du club (propriété collective) ou privé (propriété d'un ou plusieurs membres)
+					{{ 'equipmentOwnershipHint'|trans }}
 				</small>
 			</div>
 
@@ -48,7 +49,7 @@
 				{{ form_widget(form.responsible) }}
 				{{ form_errors(form.responsible) }}
 				<small class="form-hint">
-					Personne responsable de cet équipement (optionnel)
+					{{ 'equipmentResponsibleHint'|trans }}
 				</small>
 			</div>
 

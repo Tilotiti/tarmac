@@ -52,19 +52,19 @@
       <!-- Flash Messages: Equipment -->
       <trans-unit id="11" resname="equipmentCreated">
         <source>equipmentCreated</source>
-        <target>L'équipement a été créé avec succès.</target>
+        <target>Le matériel a été créé avec succès.</target>
       </trans-unit>
       <trans-unit id="12" resname="equipmentUpdated">
         <source>equipmentUpdated</source>
-        <target>L'équipement a été modifié avec succès.</target>
+        <target>Le matériel a été modifié avec succès.</target>
       </trans-unit>
       <trans-unit id="13" resname="equipmentDisabled">
         <source>equipmentDisabled</source>
-        <target>L'équipement a été désactivé.</target>
+        <target>Le matériel a été désactivé.</target>
       </trans-unit>
       <trans-unit id="14" resname="equipmentEnabled">
         <source>equipmentEnabled</source>
-        <target>L'équipement a été réactivé.</target>
+        <target>Le matériel a été réactivé.</target>
       </trans-unit>
 
       <!-- Flash Messages: Invitation -->
@@ -307,7 +307,7 @@
       </trans-unit>
       <trans-unit id="64" resname="equipmentName">
         <source>equipmentName</source>
-        <target>Nom de l'équipement</target>
+        <target>Nom de le matériel</target>
       </trans-unit>
       <trans-unit id="65" resname="search">
         <source>search</source>
@@ -425,7 +425,7 @@
       </trans-unit>
       <trans-unit id="86" resname="equipments">
         <source>equipments</source>
-        <target>Équipements</target>
+        <target>Matériels</target>
       </trans-unit>
       <trans-unit id="87" resname="members">
         <source>members</source>
@@ -581,7 +581,7 @@
       </trans-unit>
       <trans-unit id="92" resname="equipment">
         <source>equipment</source>
-        <target>Équipements</target>
+        <target>Matériel</target>
       </trans-unit>
 
       <!-- Buttons -->
@@ -607,11 +607,27 @@
       </trans-unit>
       <trans-unit id="96" resname="addEquipment">
         <source>addEquipment</source>
-        <target>Ajouter un équipement</target>
+        <target>Ajouter un matériel</target>
+      </trans-unit>
+      <trans-unit id="96a" resname="newEquipment">
+        <source>newEquipment</source>
+        <target>Nouveau matériel</target>
+      </trans-unit>
+      <trans-unit id="96b" resname="editEquipment">
+        <source>editEquipment</source>
+        <target>Modifier le matériel</target>
+      </trans-unit>
+      <trans-unit id="96c" resname="equipmentOwnershipHint">
+        <source>equipmentOwnershipHint</source>
+        <target>Matériel du club (propriété collective) ou privé (propriété d'un ou plusieurs membres)</target>
+      </trans-unit>
+      <trans-unit id="96d" resname="equipmentResponsibleHint">
+        <source>equipmentResponsibleHint</source>
+        <target>Personne responsable de ce matériel (optionnel)</target>
       </trans-unit>
       <trans-unit id="97" resname="noEquipmentFound">
         <source>noEquipmentFound</source>
-        <target>Aucun équipement trouvé</target>
+        <target>Aucun matériel trouvé</target>
       </trans-unit>
       <trans-unit id="98" resname="disable">
         <source>disable</source>
@@ -639,7 +655,7 @@
       </trans-unit>
       <trans-unit id="102" resname="confirmDisableEquipment">
         <source>confirmDisableEquipment</source>
-        <target>Voulez-vous vraiment désactiver cet équipement ?</target>
+        <target>Voulez-vous vraiment désactiver ce matériel ?</target>
       </trans-unit>
 
       <!-- Form Help Text -->
@@ -902,7 +918,7 @@
       </trans-unit>
       <trans-unit id="138" resname="planApplied">
         <source>planApplied</source>
-        <target>Le plan de maintenance a été appliqué à l'équipement.</target>
+        <target>Le plan de maintenance a été appliqué à le matériel.</target>
       </trans-unit>
       <trans-unit id="139" resname="planApplicationCancelled">
         <source>planApplicationCancelled</source>
@@ -1146,7 +1162,7 @@
       </trans-unit>
       <trans-unit id="140" resname="noPlansAvailable">
         <source>noPlansAvailable</source>
-        <target>Aucun plan de maintenance disponible pour ce type d'équipement.</target>
+        <target>Aucun plan de maintenance disponible pour ce type de matériel.</target>
       </trans-unit>
       <trans-unit id="141" resname="invalidRequest">
         <source>invalidRequest</source>
@@ -1426,7 +1442,7 @@
       </trans-unit>
       <trans-unit id="176" resname="noPlansDescription">
         <source>noPlansDescription</source>
-        <target>Créez un plan de maintenance pour automatiser les tâches récurrentes sur vos équipements.</target>
+        <target>Créez un plan de maintenance pour automatiser les tâches récurrentes sur vos matériels.</target>
       </trans-unit>
       <trans-unit id="177" resname="applications">
         <source>applications</source>
@@ -1442,7 +1458,7 @@
       </trans-unit>
       <trans-unit id="180" resname="selectEquipment">
         <source>selectEquipment</source>
-        <target>Sélectionner un équipement</target>
+        <target>Sélectionner un matériel</target>
       </trans-unit>
       <trans-unit id="181" resname="dueDateHelp">
         <source>dueDateHelp</source>
@@ -1462,7 +1478,7 @@
       </trans-unit>
       <trans-unit id="185" resname="equipmentType">
         <source>equipmentType</source>
-        <target>Type d'équipement</target>
+        <target>Type de matériel</target>
       </trans-unit>
       <trans-unit id="186" resname="maintenancePlan">
         <source>maintenancePlan</source>
@@ -1482,7 +1498,7 @@
       </trans-unit>
       <trans-unit id="190" resname="equipmentRequired">
         <source>equipmentRequired</source>
-        <target>L'équipement est obligatoire</target>
+        <target>Le matériel est obligatoire</target>
       </trans-unit>
       <trans-unit id="191" resname="titleRequired">
         <source>titleRequired</source>
@@ -1498,7 +1514,7 @@
       </trans-unit>
       <trans-unit id="194" resname="equipmentTypeRequired">
         <source>equipmentTypeRequired</source>
-        <target>Le type d'équipement est obligatoire</target>
+        <target>Le type de matériel est obligatoire</target>
       </trans-unit>
       <trans-unit id="195" resname="messageRequired">
         <source>messageRequired</source>
@@ -1732,7 +1748,7 @@
       </trans-unit>
       <trans-unit id="248" resname="allEquipmentTypes">
         <source>allEquipmentTypes</source>
-        <target>Tous les types d'équipement</target>
+        <target>Tous les types de matériel</target>
       </trans-unit>
       <trans-unit id="249" resname="filter">
         <source>filter</source>
@@ -2090,7 +2106,7 @@
       </trans-unit>
       <trans-unit id="350" resname="noMaintenancePlansDescription">
         <source>noMaintenancePlansDescription</source>
-        <target>Aucun plan de maintenance n'a été appliqué à cet équipement. Commencez par en appliquer un pour organiser la maintenance.</target>
+        <target>Aucun plan de maintenance n'a été appliqué à ce matériel. Commencez par en appliquer un pour organiser la maintenance.</target>
       </trans-unit>
       <trans-unit id="351" resname="confirmCancelApplication">
         <source>confirmCancelApplication</source>
@@ -2102,7 +2118,7 @@
       </trans-unit>
       <trans-unit id="353" resname="viewEquipment">
         <source>viewEquipment</source>
-        <target>Voir l'équipement</target>
+        <target>Voir le matériel</target>
       </trans-unit>
       <trans-unit id="354" resname="noTasksForApplication">
         <source>noTasksForApplication</source>
