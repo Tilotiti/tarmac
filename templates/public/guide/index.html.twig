@@ -13,6 +13,18 @@
 						Guide utilisateur
 					</h2>
 				</div>
+				{% if not app.user %}
+					<div class="col-auto">
+						<a href="{{ path('public_landing') }}" class="btn btn-outline-primary" style="min-height: 44px;">
+							<i class="ti ti-arrow-left me-2"></i>
+							{{ 'backToHome'|trans }}
+						</a>
+						<a href="{{ path('public_login') }}" class="btn btn-primary ms-2" style="min-height: 44px;">
+							<i class="ti ti-login me-2"></i>
+							{{ 'signIn'|trans }}
+						</a>
+					</div>
+				{% endif %}
 			</div>
 		</div>
 	</div>
@@ -174,6 +186,10 @@
 
 							<section id="materiels">
 								<h2>4. Les matériels</h2>
+								<p class="text-secondary">
+									Consultation libre&nbsp;; création, modification et désactivation réservées aux
+									<strong>gestionnaires</strong>.
+								</p>
 								<p>
 									Un <strong>matériel</strong> est tout objet du club qui demande un suivi d'entretien.
 									Ils sont accessibles depuis le menu <strong>Club → Matériels</strong>.
@@ -190,19 +206,13 @@
 									gestionnaires et les qualifiés. Un matériel <strong>club</strong> est visible par
 									tous les membres.
 								</p>
-								<div class="alert alert-warning d-flex align-items-start gap-2">
-									<i class="ti ti-alert-triangle mt-1 flex-shrink-0"></i>
-									<div>
-										Créer, modifier ou désactiver un matériel est réservé aux
-										<strong>gestionnaires</strong>.
-									</div>
-								</div>
 							</section>
 
 							<hr>
 
 							<section id="plans">
 								<h2>5. Plans d'entretien</h2>
+								<p class="text-secondary">Réservé aux <strong>gestionnaires</strong>.</p>
 								<p>
 									Un <strong>plan d'entretien</strong> est un modèle réutilisable. Il décrit la liste des
 									opérations à effectuer pour entretenir un type de matériel donné&nbsp;: par exemple, une
@@ -236,7 +246,6 @@
 										Il reste une bibliothèque réutilisable.
 									</div>
 								</div>
-								<p class="text-secondary">Réservé aux <strong>gestionnaires</strong>.</p>
 							</section>
 
 							<hr>
@@ -297,9 +306,9 @@
 							<section id="contribuer">
 								<h2>8. Contribuer &amp; commenter</h2>
 								<p>
-									Contribuer, c'est <strong>déclarer du temps passé</strong> sur une sous-tâche. C'est
-									la base du suivi&nbsp;: ça permet de savoir combien d'heures ont été investies et par
-									qui.
+									Contribuer, c'est <strong>signaler que vous avez avancé</strong> sur une sous-tâche.
+									C'est le geste qui matérialise l'avancement collectif et permet à chacun de voir où
+									en est le travail.
 								</p>
 								<ol>
 									<li>Ouvrez le menu <strong>Tâches</strong>, puis la sous-tâche qui vous intéresse.</li>
@@ -445,6 +454,7 @@
 
 							<section id="specialisations">
 								<h2>14. Spécialisations</h2>
+								<p class="text-secondary">Réservé aux <strong>gestionnaires</strong>.</p>
 								<p>
 									Les <strong>spécialisations</strong> (menu <strong>Club → Spécialisations</strong>)
 									décrivent les compétences techniques&nbsp;: « moteur », « composite », « avionique »…
@@ -454,7 +464,6 @@
 									dans les tâches générées) pour indiquer quelle compétence est requise. Cela aide à
 									repérer immédiatement quelles sous-tâches relèvent de quel domaine.
 								</p>
-								<p class="text-secondary">Réservé aux <strong>gestionnaires</strong>.</p>
 							</section>
 
 							<hr>

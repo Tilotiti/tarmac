@@ -12,11 +12,6 @@ class LandingController extends AbstractController
     #[Route('', name: 'public_landing')]
     public function index(): Response
     {
-        // If user is already logged in, redirect to clubs page
-        if ($this->getUser()) {
-            return $this->redirectToRoute('public_clubs');
-        }
-
         return $this->render('public/landing.html.twig');
     }
 }

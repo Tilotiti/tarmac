@@ -2742,6 +2742,62 @@
         <source>userGuide</source>
         <target>Guide utilisateur</target>
       </trans-unit>
+      <trans-unit id="834" resname="signIn">
+        <source>signIn</source>
+        <target>Se connecter</target>
+      </trans-unit>
+      <trans-unit id="835" resname="backToHome">
+        <source>backToHome</source>
+        <target>Retour à l'accueil</target>
+      </trans-unit>
+      <trans-unit id="836" resname="landingHeadline">
+        <source>landingHeadline</source>
+        <target>La maintenance de votre club, enfin sous contrôle.</target>
+      </trans-unit>
+      <trans-unit id="837" resname="landingSubheadline">
+        <source>landingSubheadline</source>
+        <target><![CDATA[<strong>T</strong>âches de <strong>R</strong>éparation et <strong>MA</strong>intenance du <strong>C</strong>lub. Suivez vos matériels, planifiez les entretiens, et gardez l'historique complet — du planeur au treuil.]]></target>
+      </trans-unit>
+      <trans-unit id="838" resname="discoverGuide">
+        <source>discoverGuide</source>
+        <target>Découvrir le guide</target>
+      </trans-unit>
+      <trans-unit id="839" resname="landingFeaturePlansTitle">
+        <source>landingFeaturePlansTitle</source>
+        <target>Plans d'entretien</target>
+      </trans-unit>
+      <trans-unit id="840" resname="landingFeaturePlansBody">
+        <source>landingFeaturePlansBody</source>
+        <target>Définissez vos plans une fois, appliquez-les à chaque matériel. Les tâches récurrentes se génèrent toutes seules.</target>
+      </trans-unit>
+      <trans-unit id="841" resname="landingFeatureCollabTitle">
+        <source>landingFeatureCollabTitle</source>
+        <target>Tout le club contribue</target>
+      </trans-unit>
+      <trans-unit id="842" resname="landingFeatureCollabBody">
+        <source>landingFeatureCollabBody</source>
+        <target>Chaque membre saisit son temps, commente, signale. Les gestionnaires valident, les qualifiés inspectent.</target>
+      </trans-unit>
+      <trans-unit id="843" resname="landingFeatureHistoryTitle">
+        <source>landingFeatureHistoryTitle</source>
+        <target>Historique complet</target>
+      </trans-unit>
+      <trans-unit id="844" resname="landingFeatureHistoryBody">
+        <source>landingFeatureHistoryBody</source>
+        <target>Carnet mécanicien, contributions, achats : tout reste tracé, exportable, imprimable.</target>
+      </trans-unit>
+      <trans-unit id="845" resname="landingCtaTitle">
+        <source>landingCtaTitle</source>
+        <target>Pas encore membre ?</target>
+      </trans-unit>
+      <trans-unit id="846" resname="landingCtaBody">
+        <source>landingCtaBody</source>
+        <target>Tarmac fonctionne sur invitation. Demandez à votre club de vous ajouter, ou explorez le guide pour comprendre comment ça marche.</target>
+      </trans-unit>
+      <trans-unit id="847" resname="readUserGuide">
+        <source>readUserGuide</source>
+        <target>Lire le guide utilisateur</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

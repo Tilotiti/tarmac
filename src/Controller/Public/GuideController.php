@@ -5,10 +5,8 @@ namespace App\Controller\Public;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/guide', host: 'www.%domain%')]
-#[IsGranted('ROLE_USER')]
 class GuideController extends AbstractController
 {
     #[Route('', name: 'public_guide')]
