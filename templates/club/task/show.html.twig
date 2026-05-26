@@ -241,6 +241,7 @@
 		data-subtask-bulk-selection-bulk-add-contribution-url-value="{{ path('club_subtasks_bulk_add_contribution', {taskId: task.id}) }}"
 		data-subtask-bulk-selection-bulk-close-url-value="{{ path('club_subtasks_bulk_close', {taskId: task.id}) }}"
 		data-subtask-bulk-selection-bulk-cancel-url-value="{{ path('club_subtasks_bulk_cancel', {taskId: task.id}) }}"
+		{% if is_granted('MANAGE') %}data-subtask-bulk-selection-bulk-toggle-priority-url-value="{{ path('club_subtasks_bulk_toggle_priority', {taskId: task.id}) }}"{% endif %}
 		data-subtask-bulk-selection-enterTotalTimeMinutes-value="{{ 'enterTotalTimeMinutes'|trans }}"
 		data-subtask-bulk-selection-enterCancellationReason-value="{{ 'cancellationReason'|trans }}"
 		data-subtask-bulk-selection-bulkSelectionStart-value="{{ 'selectSubTasks'|trans }}"
@@ -406,6 +407,17 @@
 							{{ 'closeSubTasks'|trans }}
 						</button>
 
+						{% if is_granted('MANAGE') %}
+							<button
+								type="button"
+								class="btn btn-warning btn-sm"
+								data-action="click->subtask-bulk-selection#submitBulkTogglePriority"
+							>
+								<i class="ti ti-flag me-1"></i>
+								{{ 'togglePriority'|trans }}
+							</button>
+						{% endif %}
+
 						<button
 							type="button"
 							class="btn btn-outline-danger btn-sm"
@@ -531,6 +543,19 @@
 			</div>
 		</div>
 	</div>
+
+	{% if is_granted('MANAGE') %}
+		<form
+			id="bulkTogglePriorityForm"
+			method="post"
+			action="{{ path('club_subtasks_bulk_toggle_priority', {taskId: task.id}) }}"
+			data-turbo="false"
+			data-action="submit->subtask-bulk-selection#prepareBulkTogglePriority"
+			class="d-none"
+		>
+			<input type="hidden" name="_token" value="{{ csrf_token('bulk_toggle_priority_subtasks_' ~ task.id) }}">
+		</form>
+	{% endif %}
 
 	{# Activity Timeline #}
 	<div class="card">

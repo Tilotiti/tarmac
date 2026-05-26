@@ -2044,6 +2044,18 @@
         <source>bulkSubTasksCancelled</source>
         <target>Les sous-tâches sélectionnées ont été annulées.</target>
       </trans-unit>
+      <trans-unit id="339a3" resname="bulkSubTasksPrioritized">
+        <source>bulkSubTasksPrioritized</source>
+        <target>Les sous-tâches sélectionnées ont été marquées comme prioritaires.</target>
+      </trans-unit>
+      <trans-unit id="339a4" resname="bulkSubTasksUnprioritized">
+        <source>bulkSubTasksUnprioritized</source>
+        <target>La priorité a été retirée des sous-tâches sélectionnées.</target>
+      </trans-unit>
+      <trans-unit id="339a5" resname="togglePriority">
+        <source>togglePriority</source>
+        <target>Basculer la priorité</target>
+      </trans-unit>
       <trans-unit id="339b" resname="timeTracking">
         <source>timeTracking</source>
         <target>Suivi du temps</target>

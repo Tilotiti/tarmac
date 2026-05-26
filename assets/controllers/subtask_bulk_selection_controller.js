@@ -20,9 +20,11 @@ export default class extends Controller {
         bulkAddContributionUrl: String,
         bulkCloseUrl: String,
         bulkCancelUrl: String,
+        bulkTogglePriorityUrl: String,
         hasBulkAddContribution: Boolean,
         hasBulkClose: Boolean,
         hasBulkCancel: Boolean,
+        hasBulkTogglePriority: Boolean,
     };
 
     connect() {
@@ -55,6 +57,57 @@ export default class extends Controller {
             this.prepareBulkCancel(event);
             return;
         }
+        if (form?.id === 'bulkTogglePriorityForm') {
+            this.prepareBulkTogglePriority(event);
+            return;
+        }
+    }
+
+    submitBulkTogglePriority() {
+        if (!this.hasBulkTogglePriorityUrlValue || this.selectedIds.size === 0) {
+            return;
+        }
+
+        const form = document.getElementById('bulkTogglePriorityForm');
+        if (!form) return;
+
+        form.dataset.selectedSubTaskIds = JSON.stringify(Array.from(this.selectedIds));
+        form.requestSubmit();
+    }
+
+    prepareBulkTogglePriority(event) {
+        const form = event?.target?.id === 'bulkTogglePriorityForm' ? event.target : document.getElementById('bulkTogglePriorityForm');
+        if (!form) {
+            event?.preventDefault?.();
+            return;
+        }
+
+        let idsToAdd = [];
+        try {
+            const stored = form.dataset.selectedSubTaskIds;
+            if (stored) {
+                idsToAdd = JSON.parse(stored);
+            }
+        } catch {
+            // ignore
+        }
+        if (idsToAdd.length === 0 && this.selectedIds?.size > 0) {
+            idsToAdd = Array.from(this.selectedIds);
+        }
+
+        if (!this.hasBulkTogglePriorityUrlValue || idsToAdd.length === 0) {
+            event?.preventDefault?.();
+            return;
+        }
+
+        [...form.querySelectorAll('input[name="subTaskIds[]"]')].forEach((el) => el.remove());
+        idsToAdd.forEach((id) => {
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'subTaskIds[]';
+            hidden.value = String(id);
+            form.appendChild(hidden);
+        });
     }
 
     enterSelectionMode() {

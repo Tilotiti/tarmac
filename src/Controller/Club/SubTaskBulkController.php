@@ -399,6 +399,76 @@ class SubTaskBulkController extends ExtendedController
     }
 
     /**
+     * Basculer la priorité de plusieurs sous-tâches.
+     *
+     * Si toutes les sous-tâches éligibles sont déjà prioritaires, on retire la priorité.
+     * Sinon, on marque toutes les sous-tâches éligibles comme prioritaires.
+     * Réservé aux gestionnaires (MANAGE). Les sous-tâches non ouvertes sont ignorées.
+     */
+    #[Route('/toggle-priority', name: 'club_subtasks_bulk_toggle_priority', methods: ['POST'])]
+    #[IsGranted('MANAGE')]
+    public function togglePriority(
+        #[MapEntity(id: 'taskId')] Task $task,
+        Request $request,
+    ): Response {
+        $token = $request->request->get('_token');
+        if (!is_string($token) || !$this->isCsrfTokenValid('bulk_toggle_priority_subtasks_' . $task->getId(), $token)) {
+            $this->addFlash('error', 'invalidRequest');
+            return $this->redirectBackToTask($task, $request);
+        }
+
+        $club = $this->clubResolver->resolve();
+        if ($task->getClub() !== $club) {
+            $this->addFlash('error', 'accessDenied');
+            return $this->redirectBackToTask($task, $request);
+        }
+
+        $subTaskIds = $this->getIdsFromRequest($request);
+        if (empty($subTaskIds)) {
+            $this->addFlash('error', 'noSubTaskIdsSelected');
+            return $this->redirectBackToTask($task, $request);
+        }
+
+        /** @var SubTask[] $eligible */
+        $eligible = [];
+        foreach ($task->getSubTasks() as $subTask) {
+            if (!in_array($subTask->getId(), $subTaskIds, true)) {
+                continue;
+            }
+
+            if ($subTask->getStatus() !== 'open') {
+                continue;
+            }
+
+            $eligible[] = $subTask;
+        }
+
+        if ($eligible === []) {
+            $this->addFlash('error', 'noEligibleSubTasks');
+            return $this->redirectBackToTask($task, $request);
+        }
+
+        $allPriority = true;
+        foreach ($eligible as $subTask) {
+            if (!$subTask->isPriority()) {
+                $allPriority = false;
+                break;
+            }
+        }
+
+        $newPriority = !$allPriority;
+        foreach ($eligible as $subTask) {
+            $subTask->setPriority($newPriority);
+        }
+
+        $this->entityManager->flush();
+
+        $this->addFlash('success', $newPriority ? 'bulkSubTasksPrioritized' : 'bulkSubTasksUnprioritized');
+
+        return $this->redirectBackToTask($task, $request);
+    }
+
+    /**
      * Extrait un tableau d'IDs de sous-tâches depuis la requête (formulaire classique).
      */
     private function getIdsFromRequest(Request $request): array
