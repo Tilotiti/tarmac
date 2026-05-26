@@ -62,11 +62,16 @@
 									<li>Pour chaque type de matériel, on définit un ou plusieurs <strong>plans
 											d'entretien</strong> (la liste des opérations à mener).</li>
 									<li>On <strong>applique</strong> un plan à un matériel. Tarmac génère alors toutes les
-										<strong>tâches</strong> à réaliser sur ce matériel.</li>
+										<strong>tâches</strong> et <strong>sous-tâches</strong> à réaliser sur ce
+										matériel.</li>
 									<li>Les membres <strong>contribuent</strong> en y consacrant du temps, puis marquent les
 										sous-tâches comme <strong>terminées</strong>.</li>
-									<li>Un membre <strong>qualifié</strong> (inspecteur) <strong>valide</strong> ou
+									<li>Pour les sous-tâches <strong>critiques</strong> (qui nécessitent une inspection),
+										un membre <strong>qualifié</strong> <strong>valide</strong> ou
 										<strong>rejette</strong> le travail réalisé.</li>
+									<li>En parallèle, Tarmac gère les <strong>achats</strong> et l'approvisionnement&nbsp;:
+										les membres signalent les pièces ou consommables à commander, les gestionnaires
+										valident, suivent la livraison et le remboursement éventuel.</li>
 								</ul>
 								<p class="text-secondary">
 									L'objectif&nbsp;: que tout le monde sache à tout moment ce qui reste à faire, qui s'en
@@ -95,14 +100,16 @@
 											</tr>
 											<tr>
 												<td><span class="badge bg-cyan-lt text-cyan">Pilote</span></td>
-												<td>Sur les aéronefs (planeurs, avions), seul un pilote peut
-													<strong>marquer une sous-tâche comme terminée</strong>. C'est lui qui
-													clôt le travail côté exécution avant inspection.</td>
+												<td>Sur les aéronefs (planeurs, avions), seul un <strong>pilote
+														propriétaire</strong> peut <strong>marquer une sous-tâche comme
+														terminée</strong>. C'est lui qui clôt le travail côté exécution
+													(et déclenche l'inspection si la sous-tâche est critique).</td>
 											</tr>
 											<tr>
 												<td><span class="badge bg-yellow-lt text-yellow">Qualifié</span></td>
-												<td>Peut <strong>inspecter</strong> une sous-tâche terminée pour la
-													<strong>valider</strong> ou la <strong>rejeter</strong>. C'est la
+												<td>Pour les sous-tâches <strong>critiques</strong>, peut
+													<strong>inspecter</strong> le travail terminé pour le
+													<strong>valider</strong> ou le <strong>rejeter</strong>. C'est la
 													signature qui clôt définitivement la sous-tâche.</td>
 											</tr>
 											<tr>
@@ -117,8 +124,10 @@
 								<div class="alert alert-info d-flex align-items-start gap-2">
 									<i class="ti ti-info-circle mt-1 flex-shrink-0"></i>
 									<div>
-										Les rôles se cumulent. Un gestionnaire est souvent aussi qualifié&nbsp;; un qualifié
-										est aussi un membre.
+										Tout le monde est <strong>membre</strong> par défaut&nbsp;; les autres rôles
+										(pilote propriétaire, qualifié, gestionnaire) s'ajoutent par-dessus et se cumulent.
+										Un gestionnaire peut aussi être qualifié, un qualifié peut aussi être pilote
+										propriétaire, etc.
 									</div>
 								</div>
 							</section>
@@ -306,10 +315,10 @@
 								</p>
 								<ul>
 									<li>Sur les <strong>installations</strong>, n'importe quel membre peut le faire.</li>
-									<li>Sur les <strong>aéronefs</strong> (planeurs, avions), seul un <strong>pilote</strong>
-										peut marquer le travail comme terminé. Si le club ne compte aucun pilote, un
-										gestionnaire ou un qualifié peut le faire à sa place&nbsp;; sinon, c'est bloqué pour
-										préserver la traçabilité.</li>
+									<li>Sur les <strong>aéronefs</strong> (planeurs, avions), seul un
+										<strong>pilote propriétaire</strong> peut marquer le travail comme terminé. Si le
+										club ne compte aucun pilote propriétaire, un gestionnaire ou un qualifié peut le
+										faire à sa place&nbsp;; sinon, c'est bloqué pour préserver la traçabilité.</li>
 								</ul>
 								<p>
 									Si la sous-tâche <strong>requiert une inspection</strong>, elle passe en
@@ -395,7 +404,8 @@
 								<h2>13. Membres &amp; invitations</h2>
 								<p>
 									La liste des membres est accessible via <strong>Club → Membres</strong>. On y voit
-									pour chacun ses rôles (membre, pilote, qualifié, gestionnaire) et son carnet personnel.
+									pour chacun ses rôles (membre, pilote propriétaire, qualifié, gestionnaire) et son
+									carnet personnel.
 								</p>
 								<p>Pour ajouter un nouveau membre, un gestionnaire peut&nbsp;:</p>
 								<ul>
@@ -462,8 +472,9 @@
 
 								<h4>Pourquoi je ne peux pas marquer une sous-tâche d'avion comme terminée&nbsp;?</h4>
 								<p>
-									Sur les aéronefs, seuls les <strong>pilotes</strong> peuvent marquer le travail comme
-									terminé. Si vous n'avez pas ce rôle, demandez à un pilote du club de le faire à votre
+									Sur les aéronefs, seuls les <strong>pilotes propriétaires</strong> peuvent marquer le
+									travail comme terminé. Si vous n'avez pas ce rôle, demandez à un pilote propriétaire
+									du club de le faire à votre
 									place une fois l'opération réalisée.
 								</p>
 
