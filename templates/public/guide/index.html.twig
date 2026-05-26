@@ -1,0 +1,483 @@
+{% extends 'layout/base.html.twig' %}
+
+{% block title %}Guide utilisateur{% endblock %}
+
+{% block body %}
+	<div class="page-header d-print-none">
+		<div class="container-xl">
+			<div class="row g-2 align-items-center">
+				<div class="col">
+					<div class="page-pretitle">Aide</div>
+					<h2 class="page-title">
+						<i class="ti ti-book-2 me-2"></i>
+						Guide utilisateur
+					</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="page-body">
+		<div class="container-xl">
+			<div class="row g-4">
+				{# Table des matières (sticky sur desktop) #}
+				<aside class="col-12 col-lg-3 d-print-none">
+					<div class="card" style="position: sticky; top: 1rem;">
+						<div class="card-header">
+							<h3 class="card-title">Sommaire</h3>
+						</div>
+						<nav class="list-group list-group-flush">
+							<a href="#intro" class="list-group-item list-group-item-action">1. À quoi sert Tarmac&nbsp;?</a>
+							<a href="#roles" class="list-group-item list-group-item-action">2. Rôles &amp; permissions</a>
+							<a href="#premier-pas" class="list-group-item list-group-item-action">3. Premiers pas</a>
+							<a href="#materiels" class="list-group-item list-group-item-action">4. Les matériels</a>
+							<a href="#plans" class="list-group-item list-group-item-action">5. Plans d'entretien</a>
+							<a href="#application" class="list-group-item list-group-item-action">6. Appliquer un plan</a>
+							<a href="#taches" class="list-group-item list-group-item-action">7. Tâches &amp; sous-tâches</a>
+							<a href="#contribuer" class="list-group-item list-group-item-action">8. Contribuer &amp; commenter</a>
+							<a href="#terminer" class="list-group-item list-group-item-action">9. Marquer comme terminé</a>
+							<a href="#inspection" class="list-group-item list-group-item-action">10. Inspection &amp; clôture</a>
+							<a href="#carnet" class="list-group-item list-group-item-action">11. Carnet mécanicien</a>
+							<a href="#achats" class="list-group-item list-group-item-action">12. Achats</a>
+							<a href="#membres" class="list-group-item list-group-item-action">13. Membres &amp; invitations</a>
+							<a href="#specialisations" class="list-group-item list-group-item-action">14. Spécialisations</a>
+							<a href="#faq" class="list-group-item list-group-item-action">15. Questions fréquentes</a>
+						</nav>
+					</div>
+				</aside>
+
+				{# Contenu du guide #}
+				<div class="col-12 col-lg-9">
+					<div class="card">
+						<div class="card-body" style="font-size: 1rem; line-height: 1.6;">
+
+							<section id="intro">
+								<h2>1. À quoi sert Tarmac&nbsp;?</h2>
+								<p>
+									Tarmac est l'application qui aide votre club à organiser l'entretien et la maintenance
+									de son matériel&nbsp;: planeurs, avions, installations. L'idée tient en cinq étapes&nbsp;:
+								</p>
+								<ul>
+									<li>Le club déclare ses <strong>matériels</strong>.</li>
+									<li>Pour chaque type de matériel, on définit un ou plusieurs <strong>plans
+											d'entretien</strong> (la liste des opérations à mener).</li>
+									<li>On <strong>applique</strong> un plan à un matériel. Tarmac génère alors toutes les
+										<strong>tâches</strong> à réaliser sur ce matériel.</li>
+									<li>Les membres <strong>contribuent</strong> en y consacrant du temps, puis marquent les
+										sous-tâches comme <strong>terminées</strong>.</li>
+									<li>Un membre <strong>qualifié</strong> (inspecteur) <strong>valide</strong> ou
+										<strong>rejette</strong> le travail réalisé.</li>
+								</ul>
+								<p class="text-secondary">
+									L'objectif&nbsp;: que tout le monde sache à tout moment ce qui reste à faire, qui s'en
+									occupe, et où on en est.
+								</p>
+							</section>
+
+							<hr>
+
+							<section id="roles">
+								<h2>2. Rôles &amp; permissions</h2>
+								<p>Dans un club, chaque membre peut cumuler un ou plusieurs rôles&nbsp;:</p>
+								<div class="table-responsive">
+									<table class="table table-vcenter">
+										<thead>
+											<tr>
+												<th>Rôle</th>
+												<th>Ce qu'il peut faire</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td><span class="badge bg-blue-lt text-blue">Membre</span></td>
+												<td>Voit les matériels du club, consulte les tâches, contribue (saisit du
+													temps), commente, peut demander un achat.</td>
+											</tr>
+											<tr>
+												<td><span class="badge bg-cyan-lt text-cyan">Pilote</span></td>
+												<td>Sur les aéronefs (planeurs, avions), seul un pilote peut
+													<strong>marquer une sous-tâche comme terminée</strong>. C'est lui qui
+													clôt le travail côté exécution avant inspection.</td>
+											</tr>
+											<tr>
+												<td><span class="badge bg-yellow-lt text-yellow">Qualifié</span></td>
+												<td>Peut <strong>inspecter</strong> une sous-tâche terminée pour la
+													<strong>valider</strong> ou la <strong>rejeter</strong>. C'est la
+													signature qui clôt définitivement la sous-tâche.</td>
+											</tr>
+											<tr>
+												<td><span class="badge bg-red-lt text-red">Gestionnaire</span></td>
+												<td>Administre le club&nbsp;: invite des membres, gère les matériels, crée les
+													plans d'entretien et les spécialisations, applique les plans, ferme ou
+													annule les tâches.</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="alert alert-info d-flex align-items-start gap-2">
+									<i class="ti ti-info-circle mt-1 flex-shrink-0"></i>
+									<div>
+										Les rôles se cumulent. Un gestionnaire est souvent aussi qualifié&nbsp;; un qualifié
+										est aussi un membre.
+									</div>
+								</div>
+							</section>
+
+							<hr>
+
+							<section id="premier-pas">
+								<h2>3. Premiers pas</h2>
+								<ol>
+									<li>Vous recevez une <strong>invitation par e-mail</strong> de votre club.</li>
+									<li>Cliquez sur le lien, choisissez votre mot de passe.</li>
+									<li>Vous arrivez sur le tableau de bord de votre club, à l'adresse
+										<code>https://&lt;nom-du-club&gt;.tarmac.center</code>.</li>
+									<li>En haut à droite, votre <strong>avatar</strong> donne accès à votre profil, à ce
+										guide, à la liste de vos clubs (si vous en avez plusieurs), et à la déconnexion.</li>
+									<li>Le menu principal contient&nbsp;:
+										<ul>
+											<li><strong>Tâches</strong>&nbsp;: ce qu'il y a à faire sur le matériel du club.</li>
+											<li><strong>Achats</strong>&nbsp;: pièces, consommables, outillage demandés ou en
+												cours de commande.</li>
+											<li><strong>Carnet mécanicien</strong>&nbsp;: l'historique des actions réalisées.</li>
+											<li><strong>Club</strong>&nbsp;: membres, matériels, et (pour les gestionnaires)
+												plans d'entretien et spécialisations.</li>
+										</ul>
+									</li>
+								</ol>
+							</section>
+
+							<hr>
+
+							<section id="materiels">
+								<h2>4. Les matériels</h2>
+								<p>
+									Un <strong>matériel</strong> est tout objet du club qui demande un suivi d'entretien.
+									Ils sont accessibles depuis le menu <strong>Club → Matériels</strong>.
+								</p>
+								<p>Chaque matériel a&nbsp;:</p>
+								<ul>
+									<li>Un <strong>nom</strong>.</li>
+									<li>Un <strong>type</strong>&nbsp;: planeur, avion ou installation.</li>
+									<li>Un <strong>propriétaire</strong>&nbsp;: club, ou privé.</li>
+									<li>Éventuellement un <strong>responsable</strong> désigné parmi les membres.</li>
+								</ul>
+								<p>
+									Un matériel <strong>privé</strong> n'est visible que par ses propriétaires, les
+									gestionnaires et les qualifiés. Un matériel <strong>club</strong> est visible par
+									tous les membres.
+								</p>
+								<div class="alert alert-warning d-flex align-items-start gap-2">
+									<i class="ti ti-alert-triangle mt-1 flex-shrink-0"></i>
+									<div>
+										Créer, modifier ou désactiver un matériel est réservé aux
+										<strong>gestionnaires</strong>.
+									</div>
+								</div>
+							</section>
+
+							<hr>
+
+							<section id="plans">
+								<h2>5. Plans d'entretien</h2>
+								<p>
+									Un <strong>plan d'entretien</strong> est un modèle réutilisable. Il décrit la liste des
+									opérations à effectuer pour entretenir un type de matériel donné&nbsp;: par exemple, une
+									« visite annuelle planeur » ou un « contrôle pré-saison hangar ».
+								</p>
+								<p>Un plan est composé&nbsp;:</p>
+								<ul>
+									<li>D'un <strong>nom</strong>, d'une <strong>description</strong>, et d'un
+										<strong>type de matériel cible</strong> (planeur, avion, installation).</li>
+									<li>De <strong>tâches</strong> (les grands chapitres&nbsp;: voilure, cellule, train,
+										instruments…).</li>
+									<li>Chaque tâche contient des <strong>sous-tâches</strong>, les opérations concrètes&nbsp;:
+										titre, description, documentation, difficulté, et le drapeau
+										<em>nécessite une inspection</em>.</li>
+									<li>Une sous-tâche peut porter une ou plusieurs <strong>spécialisations</strong>
+										(compétences techniques requises&nbsp;: moteur, composite, avionique…).</li>
+								</ul>
+								<h4 class="mt-3">Créer un plan&nbsp;: deux options</h4>
+								<ol>
+									<li><strong>À la main</strong>&nbsp;: menu <em>Club → Plans d'entretien →
+											Nouveau plan</em>. Vous pouvez créer le plan sans tâches dans un premier temps,
+										puis les ajouter ensuite&nbsp;; rien n'est obligatoire au moment de la création.</li>
+									<li><strong>Par import XLSX</strong>&nbsp;: si vous avez votre programme d'entretien
+										dans un tableur, vous pouvez l'importer. Le format attendu est documenté sur la
+										page d'import.</li>
+								</ol>
+								<div class="alert alert-info d-flex align-items-start gap-2">
+									<i class="ti ti-bulb mt-1 flex-shrink-0"></i>
+									<div>
+										Un plan ne fait rien tant qu'il n'est pas <strong>appliqué</strong> à un matériel.
+										Il reste une bibliothèque réutilisable.
+									</div>
+								</div>
+								<p class="text-secondary">Réservé aux <strong>gestionnaires</strong>.</p>
+							</section>
+
+							<hr>
+
+							<section id="application">
+								<h2>6. Appliquer un plan à un matériel</h2>
+								<p>
+									Appliquer un plan, c'est créer concrètement toutes les tâches sur un matériel donné, à
+									partir du modèle. On ne peut appliquer un plan que sur un matériel dont le
+									<strong>type correspond</strong> au type cible du plan.
+								</p>
+								<p>Comment faire&nbsp;:</p>
+								<ol>
+									<li>Allez sur la fiche d'un matériel (<em>Club → Matériels → choisir un matériel</em>).</li>
+									<li>Cliquez sur <strong>Appliquer un plan</strong>.</li>
+									<li>Choisissez le plan voulu et, éventuellement, une <strong>date d'échéance</strong>.</li>
+									<li>Validez&nbsp;: Tarmac génère toutes les tâches et sous-tâches sur ce matériel.</li>
+								</ol>
+								<p>
+									Les tâches apparaissent immédiatement dans le menu <strong>Tâches</strong>, prêtes à
+									être prises en charge. L'historique des applications de plan est consultable et une
+									application peut être annulée par un gestionnaire si elle a été faite par erreur.
+								</p>
+							</section>
+
+							<hr>
+
+							<section id="taches">
+								<h2>7. Tâches &amp; sous-tâches</h2>
+								<p>
+									Une <strong>tâche</strong> est un regroupement (par exemple « Voilure » sur un matériel
+									donné). Elle contient une ou plusieurs <strong>sous-tâches</strong>, qui sont les
+									opérations concrètes.
+								</p>
+								<p>Une sous-tâche peut être&nbsp;:</p>
+								<ul>
+									<li><span class="badge bg-secondary-lt text-secondary">Ouverte</span> — pas encore terminée. Des
+										contributions peuvent y avoir été ajoutées.</li>
+									<li><span class="badge bg-yellow-lt text-yellow">Terminée (en attente d'inspection)</span> — quelqu'un
+										l'a marquée comme terminée et elle requiert une validation.</li>
+									<li><span class="badge bg-green-lt text-green">Clôturée</span> — terminée et validée (ou terminée sans
+										inspection requise).</li>
+									<li><span class="badge bg-red-lt text-red">Annulée</span> — la sous-tâche n'est plus pertinente.</li>
+								</ul>
+								<p>
+									Une sous-tâche peut aussi être marquée <strong>prioritaire</strong> pour la faire
+									remonter dans les listes.
+								</p>
+							</section>
+
+							<hr>
+
+							<section id="contribuer">
+								<h2>8. Contribuer &amp; commenter</h2>
+								<p>
+									Contribuer, c'est <strong>déclarer du temps passé</strong> sur une sous-tâche. C'est
+									la base du suivi&nbsp;: ça permet de savoir combien d'heures ont été investies et par
+									qui.
+								</p>
+								<ol>
+									<li>Ouvrez le menu <strong>Tâches</strong>, puis la sous-tâche qui vous intéresse.</li>
+									<li>Cliquez sur <strong>Contribuer</strong> et indiquez le temps passé.</li>
+									<li>Validez. Votre contribution apparaît dans l'historique de la sous-tâche.</li>
+								</ol>
+								<p>
+									Vous pouvez aussi <strong>commenter</strong> une sous-tâche (ou la tâche parente) pour
+									expliquer ce que vous avez fait, ce qu'il reste à faire, les pièces utilisées, etc.
+									Le commentaire est un geste distinct de la contribution.
+								</p>
+								<p>
+									Une contribution peut être <strong>supprimée</strong> si elle a été saisie par erreur.
+								</p>
+								<div class="alert alert-success d-flex align-items-start gap-2">
+									<i class="ti ti-bulb mt-1 flex-shrink-0"></i>
+									<div>
+										<strong>Astuce&nbsp;:</strong> n'hésitez pas à contribuer même pour un travail
+										partiel, avec un commentaire. C'est ce qui permet à un autre membre de prendre le
+										relais intelligemment.
+									</div>
+								</div>
+							</section>
+
+							<hr>
+
+							<section id="terminer">
+								<h2>9. Marquer comme terminé</h2>
+								<p>
+									Quand le travail est entièrement réalisé, on clique sur
+									<strong>Marquer comme terminé</strong> sur la sous-tâche.
+								</p>
+								<ul>
+									<li>Sur les <strong>installations</strong>, n'importe quel membre peut le faire.</li>
+									<li>Sur les <strong>aéronefs</strong> (planeurs, avions), seul un <strong>pilote</strong>
+										peut marquer le travail comme terminé. Si le club ne compte aucun pilote, un
+										gestionnaire ou un qualifié peut le faire à sa place&nbsp;; sinon, c'est bloqué pour
+										préserver la traçabilité.</li>
+								</ul>
+								<p>
+									Si la sous-tâche <strong>requiert une inspection</strong>, elle passe en
+									<em>terminée (en attente d'inspection)</em>. Sinon, elle est directement
+									<em>clôturée</em>.
+								</p>
+								<p>
+									Une sous-tâche peut être <strong>rouverte</strong> si on s'aperçoit qu'il manque
+									quelque chose, ou <strong>annulée</strong> si elle ne s'applique plus.
+								</p>
+							</section>
+
+							<hr>
+
+							<section id="inspection">
+								<h2>10. Inspection &amp; clôture</h2>
+								<p>
+									Quand une sous-tâche est <em>terminée (en attente d'inspection)</em>, un membre
+									<strong>qualifié</strong> doit la passer en revue. Il a deux choix&nbsp;:
+								</p>
+								<ul>
+									<li><strong>Valider</strong>&nbsp;: la sous-tâche passe en <em>clôturée</em>. C'est
+										l'équivalent d'une signature mécanicien.</li>
+									<li><strong>Rejeter</strong>&nbsp;: le travail n'est pas conforme. La sous-tâche
+										retourne en <em>ouverte</em>, avec un message expliquant ce qui doit être repris.</li>
+								</ul>
+								<p>
+									Une tâche peut être <strong>fermée</strong> par un gestionnaire quand toutes ses
+									sous-tâches sont traitées, ou <strong>annulée</strong> si elle n'a plus lieu d'être.
+								</p>
+							</section>
+
+							<hr>
+
+							<section id="carnet">
+								<h2>11. Carnet mécanicien</h2>
+								<p>
+									Le <strong>carnet mécanicien</strong> (menu <strong>Carnet</strong>) est l'historique
+									chronologique de tout ce qui s'est passé&nbsp;: créations, contributions, commentaires,
+									sous-tâches terminées, inspections, annulations, applications de plans…
+								</p>
+								<p>C'est l'outil de traçabilité. On l'utilise pour&nbsp;:</p>
+								<ul>
+									<li>Préparer une visite réglementaire (savoir ce qui a été fait, par qui, quand).</li>
+									<li>Retrouver l'historique d'une intervention spécifique.</li>
+								</ul>
+								<p>
+									Chaque membre dispose aussi de son <strong>carnet personnel</strong> (depuis sa fiche
+									dans <em>Club → Membres</em>), qui récapitule ses propres actions et peut être exporté
+									en PDF.
+								</p>
+							</section>
+
+							<hr>
+
+							<section id="achats">
+								<h2>12. Achats</h2>
+								<p>
+									Le menu <strong>Achats</strong> centralise tout ce qu'il faut commander pour
+									l'entretien&nbsp;: pièces, consommables, outillage, fournitures. Chaque achat porte un
+									nom, une quantité, une description, et passe par une succession de statuts.
+								</p>
+								<p>Les statuts disponibles sont&nbsp;:</p>
+								<ul>
+									<li><strong>Demandé</strong> — un membre exprime le besoin.</li>
+									<li><strong>En attente de validation</strong> — un gestionnaire doit donner son accord.</li>
+									<li><strong>Approuvé</strong> — la commande peut être passée.</li>
+									<li><strong>Acheté</strong> — la commande est partie.</li>
+									<li><strong>Livré</strong> — la pièce est arrivée au club.</li>
+									<li><strong>Terminé</strong> — l'achat est soldé.</li>
+									<li><strong>Remboursé</strong> — le membre qui avait avancé les frais a été remboursé.</li>
+									<li><strong>Annulé</strong> — l'achat est abandonné.</li>
+								</ul>
+								<p>
+									Un achat peut être lié à une sous-tâche, ce qui permet de savoir quelle pièce est
+									destinée à quelle opération.
+								</p>
+							</section>
+
+							<hr>
+
+							<section id="membres">
+								<h2>13. Membres &amp; invitations</h2>
+								<p>
+									La liste des membres est accessible via <strong>Club → Membres</strong>. On y voit
+									pour chacun ses rôles (membre, pilote, qualifié, gestionnaire) et son carnet personnel.
+								</p>
+								<p>Pour ajouter un nouveau membre, un gestionnaire peut&nbsp;:</p>
+								<ul>
+									<li><strong>Inviter une personne par e-mail</strong>&nbsp;: elle recevra un lien pour
+										créer son compte et rejoindre le club.</li>
+									<li><strong>Importer en masse</strong> à partir d'un fichier (utile en début de saison).</li>
+								</ul>
+								<p>
+									Une invitation reste en attente tant que la personne n'a pas terminé son inscription.
+									Le gestionnaire peut la <strong>renvoyer</strong> ou la <strong>supprimer</strong>.
+								</p>
+							</section>
+
+							<hr>
+
+							<section id="specialisations">
+								<h2>14. Spécialisations</h2>
+								<p>
+									Les <strong>spécialisations</strong> (menu <strong>Club → Spécialisations</strong>)
+									décrivent les compétences techniques&nbsp;: « moteur », « composite », « avionique »…
+								</p>
+								<p>
+									Elles sont attachées aux <strong>sous-tâches</strong> (dans les plans d'entretien et
+									dans les tâches générées) pour indiquer quelle compétence est requise. Cela aide à
+									repérer immédiatement quelles sous-tâches relèvent de quel domaine.
+								</p>
+								<p class="text-secondary">Réservé aux <strong>gestionnaires</strong>.</p>
+							</section>
+
+							<hr>
+
+							<section id="faq">
+								<h2>15. Questions fréquentes</h2>
+
+								<h4>Je suis sur un téléphone, c'est dur à utiliser&nbsp;?</h4>
+								<p>
+									Tarmac est conçu <strong>mobile-first</strong>&nbsp;: l'application est faite pour être
+									utilisée en atelier, sur smartphone. Si quelque chose n'est pas pratique, signalez-le à
+									votre gestionnaire.
+								</p>
+
+								<h4>J'ai oublié mon mot de passe.</h4>
+								<p>
+									Depuis la page de connexion, cliquez sur <em>Mot de passe oublié&nbsp;?</em>. Vous
+									recevrez un lien par e-mail.
+								</p>
+
+								<h4>Je suis dans plusieurs clubs, comment je change&nbsp;?</h4>
+								<p>
+									Via votre menu utilisateur en haut à droite&nbsp;: <em>Mes clubs</em>. Chaque club a son
+									propre sous-domaine (par exemple <code>nom-du-club.tarmac.center</code>).
+								</p>
+
+								<h4>J'ai contribué par erreur, comment annuler&nbsp;?</h4>
+								<p>
+									Retrouvez votre contribution sur la sous-tâche concernée et supprimez-la.
+								</p>
+
+								<h4>Je ne vois pas le menu « Plans d'entretien ».</h4>
+								<p>
+									C'est normal&nbsp;: il est réservé aux <strong>gestionnaires</strong> du club. Demandez
+									à un gestionnaire de vous accorder ce rôle si vous en avez besoin.
+								</p>
+
+								<h4>Pourquoi je ne peux pas marquer une sous-tâche d'avion comme terminée&nbsp;?</h4>
+								<p>
+									Sur les aéronefs, seuls les <strong>pilotes</strong> peuvent marquer le travail comme
+									terminé. Si vous n'avez pas ce rôle, demandez à un pilote du club de le faire à votre
+									place une fois l'opération réalisée.
+								</p>
+
+								<h4>Un bug, une suggestion&nbsp;?</h4>
+								<p>
+									Utilisez le lien <em>Besoin d'aide&nbsp;?</em> en bas de page pour contacter le support,
+									ou parlez-en directement à votre gestionnaire de club.
+								</p>
+							</section>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

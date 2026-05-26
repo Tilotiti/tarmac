@@ -101,6 +101,10 @@
 		<i class="ti ti-user"></i>
 		{{ 'myProfile'|trans }}
 	</a>
+	<a href="{{ url('public_guide') }}" class="dropdown-item">
+		<i class="ti ti-book-2"></i>
+		{{ 'userGuide'|trans }}
+	</a>
 	{% if app.user.isAdmin() or app.user.getMemberships.count() > 1 %}
 		<div class="dropdown-divider"></div>
 		<a href="{{ path('public_clubs') }}" class="dropdown-item">

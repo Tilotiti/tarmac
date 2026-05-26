@@ -2726,6 +2726,10 @@
         <source>validatedOn</source>
         <target>Validé le</target>
       </trans-unit>
+      <trans-unit id="833" resname="userGuide">
+        <source>userGuide</source>
+        <target>Guide utilisateur</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

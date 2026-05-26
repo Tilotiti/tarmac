@@ -55,6 +55,10 @@
 												<i class="ti ti-user"></i>
 												{{ 'myProfile'|trans }}
 											</a>
+											<a href="{{ path('public_guide') }}" class="dropdown-item">
+												<i class="ti ti-book-2"></i>
+												{{ 'userGuide'|trans }}
+											</a>
 											{% if is_granted('ROLE_ADMIN') %}
 												<div class="dropdown-divider"></div>
 												<a href="{{ path('admin_dashboard') }}" class="dropdown-item">
