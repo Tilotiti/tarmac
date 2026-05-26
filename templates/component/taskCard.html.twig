@@ -126,11 +126,14 @@
 							<span class="visually-hidden">{{ progress }}%</span>
 						</div>
 					</div>
-					<div class="text-secondary small">
-						{{ closed }}
-						/
-						{{ totalSubTasks }}
-						{{ 'subTasks'|trans|lower }}
+					<div class="d-flex align-items-center gap-2">
+						<div class="text-secondary small flex-grow-1">
+							{{ closed }}
+							/
+							{{ totalSubTasks }}
+							{{ 'subTasks'|trans|lower }}
+						</div>
+						{% include 'component/contributorAvatars.html.twig' with {'contributors': task.contributors} only %}
 					</div>
 				{% endif %}
 			</div>

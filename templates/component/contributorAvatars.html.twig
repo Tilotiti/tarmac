@@ -1,0 +1,36 @@
+{#
+    Contributor Avatars Component
+
+    Renders a tight, overlapping stack of contributor avatars (Tabler avatar-list-stacked).
+    Each avatar shows the user initials and a deterministic colour; hovering reveals the
+    full name. Past `max`, contributors are summarised with a "+N" badge.
+
+    Parameters:
+    - contributors: User[] — distinct list of users to display
+    - max: int (default 4) — maximum avatars shown before "+N"
+    - size: string (default "sm") — Tabler avatar size suffix (xs, sm, md, lg, xl)
+#}
+{% set max = max|default(4) %}
+{% set size = size|default('sm') %}
+{% set palette = ['blue', 'orange', 'green', 'purple', 'cyan', 'pink', 'yellow', 'red'] %}
+
+{% if contributors|length > 0 %}
+	<div class="avatar-list avatar-list-stacked" role="list" aria-label="{{ 'contributors'|trans }}">
+		{% for user in contributors|slice(0, max) %}
+			{% set color = palette[user.id % palette|length] %}
+			<span class="avatar avatar-{{ size }} bg-{{ color }}-lt text-{{ color }}" role="listitem" title="{{ user.fullName|default(user.email) }}">
+				{{ user.firstname|default('')|slice(0, 1)|upper }}{{ user.lastname|default('')|slice(0, 1)|upper }}
+			</span>
+		{% endfor %}
+		{% if contributors|length > max %}
+			{% set rest = contributors|slice(max) %}
+			{% set restNames = [] %}
+			{% for user in rest %}
+				{% set restNames = restNames|merge([user.fullName|default(user.email)]) %}
+			{% endfor %}
+			<span class="avatar avatar-{{ size }} bg-secondary-lt text-secondary" title="{{ restNames|join(', ') }}">
+				+{{ contributors|length - max }}
+			</span>
+		{% endif %}
+	</div>
+{% endif %}

@@ -2784,7 +2784,7 @@
       </trans-unit>
       <trans-unit id="844" resname="landingFeatureHistoryBody">
         <source>landingFeatureHistoryBody</source>
-        <target>Carnet mécanicien, contributions, achats : tout reste tracé, exportable, imprimable.</target>
+        <target>Carnet mécanicien, contributions, achats&#160;: tout reste tracé, exportable, imprimable.</target>
       </trans-unit>
       <trans-unit id="845" resname="landingCtaTitle">
         <source>landingCtaTitle</source>

@@ -469,6 +469,23 @@ class SubTask
     }
 
     /**
+     * Unique list of users who contributed to this subtask.
+     *
+     * @return User[]
+     */
+    public function getContributors(): array
+    {
+        $contributors = [];
+        foreach ($this->contributions as $contribution) {
+            $user = $contribution->getMembership()?->getUser();
+            if ($user !== null && !isset($contributors[$user->getId()])) {
+                $contributors[$user->getId()] = $user;
+            }
+        }
+        return array_values($contributors);
+    }
+
+    /**
      * Get total time spent on this subtask (sum of all contributions)
      */
     public function getTotalTimeSpent(): float

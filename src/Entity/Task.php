@@ -510,6 +510,24 @@ class Task
         return $total;
     }
 
+    /**
+     * Unique list of users who contributed to any subtask of this task.
+     *
+     * @return User[]
+     */
+    public function getContributors(): array
+    {
+        $contributors = [];
+        foreach ($this->subTasks as $subTask) {
+            foreach ($subTask->getContributors() as $user) {
+                if (!isset($contributors[$user->getId()])) {
+                    $contributors[$user->getId()] = $user;
+                }
+            }
+        }
+        return array_values($contributors);
+    }
+
     public function isPriority(): bool
     {
         return $this->priority;

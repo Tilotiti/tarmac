@@ -107,6 +107,13 @@
 						</span>
 					{% endfor %}
 				</div>
+
+				{% set subContributors = subTask.contributors %}
+				{% if subContributors|length > 0 %}
+					<div class="d-flex justify-content-end">
+						{% include 'component/contributorAvatars.html.twig' with {'contributors': subContributors} only %}
+					</div>
+				{% endif %}
 			</div>
 		</div>
 	</a>
