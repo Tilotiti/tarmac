@@ -351,8 +351,9 @@
 										{% endif %}
 									</div>
 
-									<div class="ms-3">
+									<div class="ms-3 d-flex flex-column align-items-end gap-2">
 										<i class="ti ti-chevron-right text-secondary"></i>
+										{% include 'component/contributorAvatars.html.twig' with {'contributors': subtask.contributors} only %}
 									</div>
 								</div>
 							</div>

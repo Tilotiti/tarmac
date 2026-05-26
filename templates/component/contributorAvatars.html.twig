@@ -15,7 +15,7 @@
 {% if contributors|length > 0 %}
 	<div class="contributor-avatars contributor-avatars--{{ size }}" role="list" aria-label="{{ 'contributors'|trans }}">
 		{% for user in contributors|slice(0, max) %}
-			<span class="contributor-avatar contributor-avatar--c{{ user.id % 8 }}" role="listitem" title="{{ user.fullName|default(user.email) }}">
+			<span class="contributor-avatar contributor-avatar--c{{ user.id % 8 }}" role="listitem" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ user.fullName|default(user.email) }}">
 				{{ user.firstname|default('')|slice(0, 1)|upper }}{{ user.lastname|default('')|slice(0, 1)|upper }}
 			</span>
 		{% endfor %}
@@ -25,7 +25,7 @@
 			{% for user in rest %}
 				{% set restNames = restNames|merge([user.fullName|default(user.email)]) %}
 			{% endfor %}
-			<span class="contributor-avatar contributor-avatar--more" title="{{ restNames|join(', ') }}">
+			<span class="contributor-avatar contributor-avatar--more" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ restNames|join(', ') }}">
 				+{{ contributors|length - max }}
 			</span>
 		{% endif %}
