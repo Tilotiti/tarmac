@@ -1,243 +1,124 @@
 {% extends 'club/base.html.twig' %}
 
 {% block page_title %}
-	{{ task.equipment.name }}
-	-
 	{{ task.title }}
+{% endblock %}
+
+{% block page_pretitle %}
+	<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="tarmac-page-eyebrow">
+		<span class="tarmac-eqv tarmac-eqv--{{ task.equipment.type.color }}">
+			<i class="ti {{ task.equipment.type.icon }}"></i>
+		</span>
+		{{ task.equipment.name }}
+	</a>
 {% endblock %}
 
 {% block page_actions %}
 	<div class="btn-list">
-		{% if task.planApplication %}
-			<a href="{{ path('club_plan_application_show', {id: task.planApplication.id}) }}" class="btn btn-outline-secondary" style="min-height: 44px;" title="{{ 'viewMaintenancePlan'|trans }}">
-				<i class="ti ti-file-check me-2"></i>
-				<span class="d-none d-sm-inline">{{ 'viewMaintenancePlan'|trans }}</span>
-			</a>
-		{% endif %}
 		{% if is_granted('MANAGE') %}
 			<form method="post" action="{{ path('club_task_toggle_priority', {id: task.id}) }}" class="d-inline">
 				<input type="hidden" name="_token" value="{{ csrf_token('toggle_priority_task' ~ task.id) }}">
-				<button type="submit" class="btn {{ task.isPriority() ? 'btn-warning' : 'btn-outline-secondary' }}" style="min-height: 44px;" title="{{ task.isPriority() ? 'removePriority'|trans : 'markAsPriority'|trans }}">
-					<i class="ti ti-flag"></i>
+				<button type="submit"
+					class="btn {{ task.isPriority() ? 'btn-warning' : 'btn-outline-secondary' }}"
+					data-bs-toggle="tooltip"
+					data-bs-placement="bottom"
+					title="{{ task.isPriority() ? 'removePriority'|trans : 'markAsPriority'|trans }}">
+					<i class="ti ti-flag me-2"></i>
+					<span class="d-none d-sm-inline">{{ task.isPriority() ? 'priority'|trans : 'markAsPriority'|trans }}</span>
 				</button>
 			</form>
-		{% endif %}
-
-		{% if is_granted('TASK_EDIT', task) %}
-			<a href="{{ path('club_task_edit', {id: task.id}) }}" class="btn btn-secondary" style="min-height: 44px;">
-				<i class="ti ti-edit me-2"></i>
-				<span class="d-none d-sm-inline">{{ 'edit'|trans }}</span>
-			</a>
 		{% endif %}
 
 		{# Close task button - voter handles all validation (status, subtasks, permissions, etc.) #}
 		{% if is_granted('TASK_CLOSE', task) %}
 			<form method="post" action="{{ path('club_task_close', {id: task.id}) }}" class="d-inline">
-				<button type="submit" class="btn btn-success" style="min-height: 44px;">
+				<button type="submit" class="btn btn-success">
 					<i class="ti ti-check me-2"></i>
 					<span class="d-none d-sm-inline">{{ 'closeTask'|trans }}</span>
 				</button>
 			</form>
 		{% endif %}
 
-		{% if is_granted('TASK_CANCEL', task) %}
-			<button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal" style="min-height: 44px;">
-				<i class="ti ti-ban me-2"></i>
-				<span class="d-none d-sm-inline">{{ 'cancelTask'|trans }}</span>
-			</button>
+		{# Menu kebab : Modifier + Annuler (actions secondaires non-workflow) #}
+		{% set canEdit = is_granted('TASK_EDIT', task) %}
+		{% set canCancel = is_granted('TASK_CANCEL', task) %}
+		{% if canEdit or canCancel %}
+			<div class="dropdown d-inline-block" data-controller="dropdown">
+				<button type="button" class="btn btn-outline-secondary" data-dropdown-target="toggle" aria-haspopup="true" aria-expanded="false" title="{{ 'moreActions'|trans }}">
+					<i class="ti ti-dots-vertical"></i>
+				</button>
+				<div class="dropdown-menu dropdown-menu-end" data-dropdown-target="menu">
+					{% if canEdit %}
+						<a href="{{ path('club_task_edit', {id: task.id}) }}" class="dropdown-item">
+							<i class="ti ti-edit me-2"></i>{{ 'edit'|trans }}
+						</a>
+					{% endif %}
+					{% if canEdit and canCancel %}
+						<div class="dropdown-divider"></div>
+					{% endif %}
+					{% if canCancel %}
+						<button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
+							<i class="ti ti-ban me-2"></i>{{ 'cancelTask'|trans }}
+						</button>
+					{% endif %}
+				</div>
+			</div>
 		{% endif %}
 	</div>
 {% endblock %}
 
 {% block page_content %}
-	{# Equipment-style header card #}
-	<div class="card mb-3">
-		<div class="card-body">
-			<div
-				class="d-flex align-items-center mb-4">
-				{# Equipment Avatar #}
-				<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
-					<span class="avatar avatar-xl me-3 bg-{{ task.equipment.type.color }}-lt">
-						<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 2.5rem;"></i>
-					</span>
-				</a>
-				<div class="flex-fill">
-					<h2 class="mb-1">
-						<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-reset">
-							{{ task.equipment.name }}
-						</a>
-					</h2>
-					<div class="text-secondary h4 mb-0">
-						{{ task.title }}
-					</div>
-				</div>
-			</div>
-
-			<hr
-			class="my-4">
-
-			{# Task details in grid #}
-			<div class="row">
-				<div class="col-12 col-md-6 mb-3">
-					<div class="text-secondary small mb-1">{{ 'status'|trans }}</div>
-					<div>
-						{% if task.isWaitingForApproval %}
-							<span class="badge bg-warning-lt text-white">
-								<i class="ti ti-hourglass me-1"></i>
-								{{ 'waitingForApproval'|trans }}
-							</span>
-						{% else %}
-							<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'cancelled' ? 'danger' : 'info') }}-lt text-white">
-								<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'cancelled' ? 'x' : (task.status == 'done' ? 'check' : 'circle')) }} me-1"></i>
-								{{ task.status|trans }}
-							</span>
-						{% endif %}
-					</div>
-				</div>
-
-				<div class="col-12 col-md-6 mb-3">
-					<div class="text-secondary small mb-1">{{ 'difficulty'|trans }}</div>
-					<div>
-						{% include 'component/difficultyBadge.html.twig' with {'label': task.difficultyLabel, 'color': task.difficultyColor} %}
-					</div>
-				</div>
-
-				{% if task.requiresInspection %}
-					<div class="col-12 col-md-6 mb-3">
-						<div class="text-secondary small mb-1">{{ 'inspection'|trans }}</div>
-						<div>
-							<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
-								<i class="ti ti-shield-check me-1"></i>
-								{{ 'requiresInspection'|trans }}
-							</span>
-						</div>
-					</div>
+	{# Calcule la progression dès maintenant (utilisée à la fois dans le header section et dans la sidebar) #}
+	{% set totalSubTasks = 0 %}
+	{% set closedSubTasks = 0 %}
+	{% if task.subTasks|length > 0 %}
+		{% for subtask in task.subTasks %}
+			{% if subtask.status != 'cancelled' %}
+				{% set totalSubTasks = totalSubTasks + 1 %}
+				{% if subtask.status == 'closed' %}
+					{% set closedSubTasks = closedSubTasks + 1 %}
 				{% endif %}
+			{% endif %}
+		{% endfor %}
+	{% endif %}
+	{% set progress = totalSubTasks > 0 ? (closedSubTasks / totalSubTasks * 100)|round : 100 %}
 
-				{% if task.dueAt %}
-					<div class="col-12 col-md-6 mb-3">
-						<div class="text-secondary small mb-1">{{ 'dueDate'|trans }}</div>
-						<div>
-							<i class="ti ti-calendar me-1"></i>
-							{{ task.dueAt|date('d/m/Y') }}
-						</div>
-					</div>
-				{% endif %}
+	<div class="row g-3">
 
-				{% if task.createdBy %}
-					<div class="col-12 col-md-6 mb-3">
-						<div class="text-secondary small mb-1">{{ 'createdBy'|trans }}</div>
-						<div>{{ task.createdBy.fullName }}</div>
-					</div>
-				{% endif %}
+		{# ========== Colonne principale ========== #}
+		<div class="col-12 col-lg-8">
 
-				<div class="col-12 col-md-6 mb-3">
-					<div class="text-secondary small mb-1">{{ 'createdAt'|trans }}</div>
-					<div>{{ task.createdAt|date('d/m/Y H:i') }}</div>
-				</div>
-
-				{% if task.equipment.responsible %}
-					<div class="col-12 col-md-6 mb-3">
-						<div class="text-secondary small mb-1">{{ 'responsible'|trans }}</div>
-						<div>
-							<i class="ti ti-user-shield me-1"></i>
-							{{ task.equipment.responsible.fullname }}
-						</div>
-					</div>
-				{% endif %}
-
-				{% if task.planApplication %}
-					<div class="col-12 col-md-6 mb-3">
-						<div class="text-secondary small mb-1">{{ 'plan'|trans }}</div>
-						<div>
-							<a href="{{ path('club_plan_application_show', {id: task.planApplication.id}) }}">
-								{{ task.planApplication.plan.name }}
-							</a>
-						</div>
-						{% if task.planApplication.dueAt %}
-							<div class="text-secondary small mt-1">
-								<i class="ti ti-calendar me-1"></i>
-								{{ 'dueAt'|trans }}:
-								{{ task.planApplication.dueAt|date('d/m/Y') }}
-							</div>
-						{% endif %}
-						{% if task.planApplication.appliedBy %}
-							<div class="text-secondary small">
-								<i class="ti ti-user me-1"></i>
-								{{ 'appliedBy'|trans }}:
-								{{ task.planApplication.appliedBy.fullName }}
-							</div>
-						{% endif %}
-					</div>
-				{% endif %}
-
-				{% if task.totalTimeSpent > 0 %}
-					<div class="col-12 col-md-6 mb-3">
-						<div class="text-secondary small mb-1">{{ 'totalTimeSpent'|trans }}</div>
-						<div>
-							<i class="ti ti-clock me-1"></i>
-							{{ task.totalTimeSpent|format_time_spent }}
-						</div>
-					</div>
-				{% endif %}
-			</div>
-
+			{# Description #}
 			{% if task.description %}
-				<hr class="my-4">
-				<div>
-					<div class="text-secondary small mb-2">{{ 'description'|trans }}</div>
-					<div>{{ task.description|nl2br }}</div>
+				<div class="tarmac-panel mb-3">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-align-left"></i>
+						{{ 'description'|trans }}
+					</div>
+					<div style="font-size:0.95rem;line-height:1.6;color:var(--td-ink);">
+						{{ task.description|nl2br }}
+					</div>
 				</div>
 			{% endif %}
 
+			{# Documentation #}
 			{% if task.documentation %}
-				<hr class="my-4">
-				<div>
-					<div class="text-secondary small mb-2">{{ 'documentation'|trans }}</div>
+				<div class="tarmac-panel mb-3">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-paperclip"></i>
+						{{ 'documentation'|trans }}
+					</div>
 					{% include 'component/documentationPreview.html.twig' with {
 						url: task.documentation,
 						lightboxGroup: 'task-documentation-' ~ task.id
 					} %}
 				</div>
 			{% endif %}
-		</div>
-	</div>
 
-	{# Progress Card (if subtasks exist) - cancelled subtasks excluded from total #}
-	{% if task.subTasks|length > 0 %}
-		{% set totalSubTasks = 0 %}
-		{% set closed = 0 %}
-		{% for subtask in task.subTasks %}
-			{% if subtask.status != 'cancelled' %}
-				{% set totalSubTasks = totalSubTasks + 1 %}
-				{% if subtask.status == 'closed' %}
-					{% set closed = closed + 1 %}
-				{% endif %}
-			{% endif %}
-		{% endfor %}
-		{% set progress = totalSubTasks > 0 ? (closed / totalSubTasks * 100)|round : 100 %}
-		<div class="card mb-3">
-			<div class="card-body">
-				<h3 class="card-title mb-3">{{ 'progress'|trans }}</h3>
-				<div class="progress mb-3" style="height: 2rem;">
-					<div class="progress-bar bg-{{ progress == 100 ? 'success' : 'primary' }}" style="width: {{ progress }}%">
-						<span class="text-white fw-bold">{{ progress }}%</span>
-					</div>
-				</div>
-				<div class="text-center h4 mb-0">
-					{{ closed }}
-					/
-					{{ totalSubTasks }}
-					{{ 'subTasks'|trans|lower }}
-				</div>
-			</div>
-		</div>
-	{% endif %}
-
-	{# SubTasks Section - sélection multiple + actions groupées #}
-	<div
-		class="mb-4"
-		data-controller="subtask-bulk-selection"
+			{# SubTasks Section - sélection multiple + actions groupées #}
+			<div
+				class="mb-4"
+				data-controller="subtask-bulk-selection"
 		data-subtask-bulk-selection-bulk-add-contribution-url-value="{{ path('club_subtasks_bulk_add_contribution', {taskId: task.id}) }}"
 		data-subtask-bulk-selection-bulk-close-url-value="{{ path('club_subtasks_bulk_close', {taskId: task.id}) }}"
 		data-subtask-bulk-selection-bulk-cancel-url-value="{{ path('club_subtasks_bulk_cancel', {taskId: task.id}) }}"
@@ -247,30 +128,47 @@
 		data-subtask-bulk-selection-bulkSelectionStart-value="{{ 'selectSubTasks'|trans }}"
 		data-subtask-bulk-selection-bulkSelectionCancel-value="{{ 'cancelSelection'|trans }}"
 	>
-		<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-			<h3 class="card-title mb-0">{{ 'subTasks'|trans }} ({{ filteredSubTasks|length }})</h3>
-			<div class="d-flex align-items-center gap-2">
+		<div class="tarmac-section-bar">
+			<h3 class="tarmac-section-bar__title">
+				<i class="ti ti-list-check"></i>
+				{{ 'subTasks'|trans }}
+				<span class="tarmac-section-bar__count">{{ filteredSubTasks|length }}</span>
+			</h3>
+
+			{# Progression inline — fusionnée avec le header de section #}
+			{% if totalSubTasks > 0 %}
+				<div class="tarmac-section-bar__progress">
+					<div class="tarmac-progress{% if progress == 100 %} tarmac-progress--done{% endif %}">
+						<span style="width: {{ progress }}%"></span>
+					</div>
+					<span class="tarmac-section-bar__progress-text">
+						<strong>{{ closedSubTasks }}</strong> / {{ totalSubTasks }} · {{ progress }} %
+					</span>
+				</div>
+			{% endif %}
+
+			<div class="tarmac-section-bar__actions">
 				{% if filteredSubTasks|length > 0 %}
 					<button
 						type="button"
 						class="btn btn-outline-secondary btn-sm"
-						style="min-height: 44px;"
 						data-subtask-bulk-selection-target="selectToggle"
 						data-action="click->subtask-bulk-selection#toggleSelectionMode"
+						title="{{ 'selectSubTasks'|trans }}"
 					>
 						<i
 							class="ti ti-list-check me-1"
 							data-subtask-bulk-selection-target="selectIcon"
 						></i>
-						<span data-subtask-bulk-selection-target="selectLabel">
+						<span class="btn-text" data-subtask-bulk-selection-target="selectLabel">
 							{{ 'selectSubTasks'|trans }}
 						</span>
 					</button>
 				{% endif %}
 				{% if is_granted('TASK_CREATE_SUBTASK', task) %}
-					<a href="{{ path('club_subtask_new', {taskId: task.id}) }}" class="btn btn-primary btn-sm" style="min-height: 44px;">
-						<i class="ti ti-plus me-2"></i>
-						{{ 'add'|trans }}
+					<a href="{{ path('club_subtask_new', {taskId: task.id}) }}" class="btn btn-primary btn-sm">
+						<i class="ti ti-plus me-1"></i>
+						<span class="btn-text">{{ 'newSubTask'|trans }}</span>
 					</a>
 				{% endif %}
 			</div>
@@ -284,7 +182,6 @@
 
 		<div data-subtask-bulk-selection-target="subtaskList">
 			{% for subtask in filteredSubTasks %}
-				{% set statusColor = subtask.isWaitingForApproval ? 'warning' : (subtask.status == 'closed' ? 'success' : (subtask.status == 'cancelled' ? 'danger' : 'info')) %}
 				<div
 					class="mb-3 subtask-bulk-item-wrapper"
 					data-subtask-bulk-selection-target="item"
@@ -292,72 +189,108 @@
 				>
 					<a
 						href="{{ path('club_subtask_show', {taskId: task.id, id: subtask.id}) }}"
-						class="text-decoration-none"
+						class="tarmac-card{% if subtask.status == 'cancelled' %} tarmac-card--dimmed{% endif %}"
 						data-action="click->subtask-bulk-selection#onItemClick"
+						role="article"
+						aria-label="{{ subtask.title }} - {{ subtask.status|trans }}"
 					>
-						<div class="card card-link" style="cursor: pointer;" title="{{ subtask.status|trans }}" role="article" aria-label="{{ subtask.title }} - {{ subtask.status|trans }}">
-							<div class="card-status-start bg-{{ statusColor }}"></div>
-							<div class="card-body">
-								<div class="d-flex align-items-start justify-content-between">
-									<div class="subtask-bulk-checkbox me-3">
-										<div
-											class="form-check"
-											data-subtask-bulk-selection-target="checkbox"
-										>
-											<input
-												class="form-check-input"
-												type="checkbox"
-												value="{{ subtask.id }}"
-												data-action="click->subtask-bulk-selection#onCheckboxClick"
-											>
-										</div>
-									</div>
-
-									<div class="flex-grow-1">
-										<div class="mb-2">
-											<strong>{{ subtask.title }}</strong>
-											{% if subtask.documentation %}
-												<i class="ti ti-file-description text-secondary ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'documentationAvailable'|trans }}"></i>
-											{% endif %}
-										</div>
-
-										{# Badges (sans statut - représenté par la bordure colorée) #}
-										<div class="mb-2">
-											{% if subtask.status == 'open' and subtask.contributions|length > 0 %}
-												<span class="badge bg-azure-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'started'|trans }}">
-													<i class="ti ti-clock-play me-1"></i>
-													{{ 'started'|trans }}
-												</span>
-											{% endif %}
-											{% if subtask.isPriority %}
-												<span class="badge bg-red-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'priority'|trans }}">
-													<i class="ti ti-flag me-1"></i>
-													{{ 'priority'|trans }}
-												</span>
-											{% endif %}
-											{% if subtask.requiresInspection %}
-												<span class="badge bg-warning-lt text-white me-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
-													<i class="ti ti-shield-check me-1"></i>
-													{{ 'requiresInspection'|trans }}
-												</span>
-											{% endif %}
-											{% include 'component/difficultyBadge.html.twig' with {'difficulty': subtask.difficulty} %}
-										</div>
-
-										{% if subtask.description %}
-											<div class="text-secondary small">
-												{{ subtask.description }}
-											</div>
-										{% endif %}
-									</div>
-
-									<div class="ms-3 d-flex flex-column align-items-end gap-2">
-										<i class="ti ti-chevron-right text-secondary"></i>
-										{% include 'component/contributorAvatars.html.twig' with {'contributors': subtask.contributors} only %}
-									</div>
+						<div class="d-flex align-items-start">
+							<div class="subtask-bulk-checkbox me-3">
+								<div
+									class="form-check"
+									data-subtask-bulk-selection-target="checkbox"
+								>
+									<input
+										class="form-check-input"
+										type="checkbox"
+										value="{{ subtask.id }}"
+										data-action="click->subtask-bulk-selection#onCheckboxClick"
+									>
 								</div>
 							</div>
+
+							<div class="flex-grow-1">
+								<h3 class="tarmac-card__title mb-1">
+									{{ subtask.title }}
+									{% if subtask.documentation %}
+										<i class="ti ti-file-description text-secondary ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'documentationAvailable'|trans }}"></i>
+									{% endif %}
+								</h3>
+
+								{# Status tag explicite + attributs #}
+								<div class="tarmac-card__badges" style="margin-top:0.3rem;">
+									{# Statut — toujours visible, premier badge #}
+									{% if subtask.isWaitingForApproval %}
+										<span class="tarmac-badge tarmac-badge--status-inspection">
+											<i class="ti ti-hourglass"></i>
+											{{ 'waitingForApproval'|trans }}
+										</span>
+									{% elseif subtask.status == 'closed' %}
+										<span class="tarmac-badge tarmac-badge--status-closed">
+											<i class="ti ti-circle-check"></i>
+											{{ subtask.status|trans }}
+										</span>
+									{% elseif subtask.status == 'cancelled' %}
+										<span class="tarmac-badge tarmac-badge--status-cancelled">
+											<i class="ti ti-x"></i>
+											{{ subtask.status|trans }}
+										</span>
+									{% elseif subtask.contributions|length > 0 %}
+										<span class="tarmac-badge tarmac-badge--started">
+											<i class="ti ti-clock-play"></i>
+											{{ 'started'|trans }}
+										</span>
+									{% else %}
+										<span class="tarmac-badge tarmac-badge--status-open">
+											<i class="ti ti-circle"></i>
+											{{ subtask.status|trans }}
+										</span>
+									{% endif %}
+
+									{% if subtask.isPriority %}
+										<span class="tarmac-badge tarmac-badge--priority">
+											<i class="ti ti-flag"></i>
+											{{ 'priority'|trans }}
+										</span>
+									{% endif %}
+
+									{# Qualif. requise — uniquement si encore en open (sinon le statut porte déjà l'info) #}
+									{% if subtask.requiresInspection and subtask.status == 'open' and not subtask.isWaitingForApproval %}
+										<span class="tarmac-badge tarmac-badge--glow" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+											<i class="ti ti-shield-check"></i>
+											{{ 'requiresInspection'|trans }}
+										</span>
+									{% endif %}
+
+									{% include 'component/difficultyBadge.html.twig' with {'difficulty': subtask.difficulty} %}
+
+									{% for spec in subtask.specialisations %}
+										<span class="tarmac-badge tarmac-badge--specialisation" title="{{ spec.description|default('')|e('html_attr') }}">
+											<i class="ti ti-tag"></i>
+											{{ spec.name }}
+										</span>
+									{% endfor %}
+								</div>
+
+								{% if subtask.description %}
+									<div class="tarmac-card__meta mt-2" style="font-size:0.88rem;color:var(--td-ink-2);">
+										{{ subtask.description }}
+									</div>
+								{% endif %}
+							</div>
 						</div>
+
+						{# Footer — contributions + avatars, avec séparateur en pointillés #}
+						{% if subtask.contributions|length > 0 %}
+							<div class="tarmac-card__footer d-flex align-items-center justify-content-between gap-2">
+								<span class="tarmac-card__meta">
+									<i class="ti ti-clock-play"></i>
+									{{ subtask.contributions|length }}
+									{{ (subtask.contributions|length > 1 ? 'contributions' : 'contribution')|trans|lower }}
+								</span>
+								{% include 'component/contributorAvatars.html.twig' with {'contributors': subtask.contributors} only %}
+							</div>
+						{% endif %}
 					</a>
 				</div>
 			{% else %}
@@ -557,64 +490,217 @@
 			<input type="hidden" name="_token" value="{{ csrf_token('bulk_toggle_priority_subtasks_' ~ task.id) }}">
 		</form>
 	{% endif %}
+		</div>{# /subtask-bulk-selection wrapper #}
 
-	{# Activity Timeline #}
-	<div class="card">
-		<div class="card-header">
-			<h3 class="card-title">{{ 'activity'|trans }}</h3>
-		</div>
-		<div class="card-body">
+		{# Activity & comments (panel compact, dans la colonne principale) #}
+		<div class="tarmac-panel">
+			<div class="tarmac-panel__title">
+				<i class="ti ti-history"></i>
+				{{ 'activity'|trans }}
+			</div>
+
 			{% if task.mainActivities|length > 0 %}
-				<ul class="timeline">
+				<ul class="tarmac-timeline">
 					{% for activity in task.mainActivities %}
-						<li class="timeline-event">
-							<div class="timeline-event-icon bg-{{ activity.typeColor }}-lt">
+						{% set iconVariant = activity.typeColor in ['success', 'green'] ? 'success'
+							: activity.typeColor in ['warning', 'orange', 'yellow'] ? 'warning'
+							: activity.typeColor in ['danger', 'red'] ? 'danger'
+							: activity.typeColor in ['azure', 'cyan', 'info'] ? 'azure'
+							: activity.typeColor == 'purple' ? 'purple'
+							: '' %}
+						<li class="tarmac-timeline__item">
+							<span class="tarmac-timeline__icon{% if iconVariant %} tarmac-timeline__icon--{{ iconVariant }}{% endif %}">
 								<i class="ti {{ activity.typeIcon }}"></i>
+							</span>
+							<div class="tarmac-timeline__head">
+								<span class="tarmac-timeline__author">{{ activity.user.fullName }}</span>
+								<span class="tarmac-timeline__action">{{ activity.typeLabel|trans|lower }}</span>
+								<span class="tarmac-timeline__date">{{ activity.createdAt|date('d/m/Y H:i') }}</span>
 							</div>
-							<div class="card timeline-event-card">
-								<div class="card-body">
-									<div class="text-secondary float-end">{{ activity.createdAt|date('d/m/Y H:i') }}</div>
-									<h4>
-										{{ activity.user.fullName }}
-										<span class="text-secondary">•</span>
-										<span class="badge bg-{{ activity.typeColor }}-lt">
-											{{ activity.typeLabel|trans }}
-										</span>
-									</h4>
-									{% if activity.subTask %}
-										<p class="text-secondary mb-1">
-											<small>{{ activity.subTask.title }}</small>
-										</p>
-									{% endif %}
-									{% if activity.message %}
-										<p class="mt-2">{{ activity.message|nl2br }}</p>
-									{% endif %}
+							{% if activity.subTask %}
+								<div class="tarmac-timeline__context">
+									<i class="ti ti-arrow-right me-1"></i>{{ activity.subTask.title }}
 								</div>
-							</div>
+							{% endif %}
+							{% if activity.message %}
+								<div class="tarmac-timeline__body">{{ activity.message|nl2br }}</div>
+							{% endif %}
 						</li>
 					{% endfor %}
 				</ul>
 			{% else %}
-				<p class="text-secondary text-center">
+				<p class="text-secondary" style="margin:0;font-size:0.9rem;">
 					<em>{{ 'noActivityYet'|trans }}</em>
 				</p>
 			{% endif %}
 
-			{# Comment Form #}
+			{# Comment form #}
 			{% if commentForm is defined %}
-				<hr class="my-4">
+				<hr style="border-color: var(--td-border); margin: 1.25rem 0;">
 				{{ form_start(commentForm, {action: path('club_task_comment', {id: task.id})}) }}
-				<div class="mb-3">
-					{{ form_row(commentForm.message) }}
-				</div>
-				<button type="submit" class="btn btn-primary" style="min-height: 44px;">
-					<i class="ti ti-message me-2"></i>
-					{{ 'addComment'|trans }}
-				</button>
+					<label for="{{ commentForm.message.vars.id }}" class="form-label">
+						<i class="ti ti-message me-1"></i>{{ 'addComment'|trans }}
+					</label>
+					<div class="mb-3">
+						{{ form_widget(commentForm.message) }}
+					</div>
+					<button type="submit" class="btn btn-primary btn-sm">
+						<i class="ti ti-send me-1"></i>
+						{{ 'addComment'|trans }}
+					</button>
 				{{ form_end(commentForm) }}
 			{% endif %}
 		</div>
-	</div>
+
+		</div>{# /col-12 col-lg-8 (main) #}
+
+		{# ========== Sidebar — métadonnées de la tâche ========== #}
+		<div class="col-12 col-lg-4">
+			<div class="tarmac-page-sidebar">
+				<div class="tarmac-panel">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-info-circle"></i>
+						{{ 'details'|trans }}
+					</div>
+					<ul class="tarmac-meta-list">
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'status'|trans }}</span>
+							<span class="tarmac-meta-list__value">
+								{% if task.isWaitingForApproval %}
+									<span class="tarmac-badge tarmac-badge--status-inspection">
+										<i class="ti ti-hourglass"></i>
+										{{ 'waitingForApproval'|trans }}
+									</span>
+								{% elseif task.status == 'cancelled' %}
+									<span class="tarmac-badge tarmac-badge--status-cancelled">
+										<i class="ti ti-x"></i>
+										{{ task.status|trans }}
+									</span>
+								{% elseif task.status == 'closed' %}
+									<span class="tarmac-badge tarmac-badge--status-closed">
+										<i class="ti ti-circle-check"></i>
+										{{ task.status|trans }}
+									</span>
+								{% else %}
+									<span class="tarmac-badge tarmac-badge--status-open">
+										<i class="ti ti-circle"></i>
+										{{ task.status|trans }}
+									</span>
+								{% endif %}
+							</span>
+						</li>
+
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'difficulty'|trans }}</span>
+							<span class="tarmac-meta-list__value">
+								{% include 'component/difficultyBadge.html.twig' with {'label': task.difficultyLabel, 'color': task.difficultyColor} %}
+							</span>
+						</li>
+
+						{% if task.requiresInspection %}
+							<li>
+								<span class="tarmac-meta-list__label">{{ 'inspection'|trans }}</span>
+								<span class="tarmac-meta-list__value">
+									<span class="tarmac-badge tarmac-badge--status-inspection" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+										<i class="ti ti-shield-check"></i>
+										{{ 'requiresInspection'|trans }}
+									</span>
+								</span>
+							</li>
+						{% endif %}
+
+						{% if task.dueAt %}
+							<li>
+								<span class="tarmac-meta-list__label">{{ 'dueDate'|trans }}</span>
+								<span class="tarmac-meta-list__value">
+									<i class="ti ti-calendar me-1 text-secondary"></i>{{ task.dueAt|date('d/m/Y') }}
+								</span>
+							</li>
+						{% endif %}
+
+						{% if task.totalTimeSpent > 0 %}
+							<li>
+								<span class="tarmac-meta-list__label">{{ 'totalTimeSpent'|trans }}</span>
+								<span class="tarmac-meta-list__value">
+									<i class="ti ti-clock me-1 text-secondary"></i>{{ task.totalTimeSpent|format_time_spent }}
+								</span>
+							</li>
+						{% endif %}
+
+						{% if task.createdBy %}
+							<li>
+								<span class="tarmac-meta-list__label">{{ 'createdBy'|trans }}</span>
+								<span class="tarmac-meta-list__value">{{ task.createdBy.fullName }}</span>
+							</li>
+						{% endif %}
+
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'createdAt'|trans }}</span>
+							<span class="tarmac-meta-list__value">{{ task.createdAt|date('d/m/Y H:i') }}</span>
+						</li>
+
+						{% if task.equipment.responsible %}
+							<li>
+								<span class="tarmac-meta-list__label">{{ 'responsible'|trans }}</span>
+								<span class="tarmac-meta-list__value">
+									<i class="ti ti-user-shield me-1 text-secondary"></i>{{ task.equipment.responsible.fullname }}
+								</span>
+							</li>
+						{% endif %}
+					</ul>
+				</div>
+
+				{# Contributeurs — qui a travaillé sur cette tâche, et combien de temps #}
+				{% set contributorStats = task.contributorsWithTime %}
+				{% if contributorStats|length > 0 %}
+					<div class="tarmac-panel">
+						<div class="tarmac-panel__title">
+							<i class="ti ti-users"></i>
+							{{ 'contributors'|trans }}
+							<span class="tarmac-section-bar__count" style="margin-left:auto;">{{ contributorStats|length }}</span>
+						</div>
+						<ul class="tarmac-contributors">
+							{% for stat in contributorStats %}
+								<li class="tarmac-contributors__item">
+									<span class="contributor-avatar contributor-avatar--c{{ stat.user.id % 8 }}">
+										{{ stat.user.firstname|default('')|slice(0, 1)|upper }}{{ stat.user.lastname|default('')|slice(0, 1)|upper }}
+									</span>
+									<span class="tarmac-contributors__name">{{ stat.user.fullName|default(stat.user.email) }}</span>
+									<span class="tarmac-contributors__time">
+										<i class="ti ti-clock"></i>
+										{{ stat.timeSpent|format_time_spent }}
+									</span>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+
+				{# Plan de maintenance — panel dédié, mis en valeur #}
+				{% if task.planApplication %}
+					<div class="tarmac-panel">
+						<div class="tarmac-panel__title">
+							<i class="ti ti-file-check"></i>
+							{{ 'plan'|trans }}
+						</div>
+						<a href="{{ path('club_plan_application_show', {id: task.planApplication.id}) }}"
+						   style="font-weight:700;color:var(--td-deep);font-size:1rem;text-decoration:none;display:block;margin-bottom:0.5rem;">
+							{{ task.planApplication.plan.name }}
+						</a>
+						<div class="text-secondary" style="font-size:0.82rem;">
+							{% if task.planApplication.dueAt %}
+								<div><i class="ti ti-calendar me-1"></i>{{ 'dueAt'|trans }} : {{ task.planApplication.dueAt|date('d/m/Y') }}</div>
+							{% endif %}
+							{% if task.planApplication.appliedBy %}
+								<div class="mt-1"><i class="ti ti-user me-1"></i>{{ 'appliedBy'|trans }} : {{ task.planApplication.appliedBy.fullName }}</div>
+							{% endif %}
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+
+	</div>{# /row g-3 #}
 
 	{# Cancel Modal #}
 	<div class="modal fade" id="cancelModal" tabindex="-1">

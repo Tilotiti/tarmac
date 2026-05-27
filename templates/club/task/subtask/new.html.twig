@@ -6,91 +6,54 @@
 	{{ 'newSubTask'|trans }}
 {% endblock %}
 
+{% block page_pretitle %}
+	<a href="{{ path('club_task_show', {id: task.id}) }}" class="tarmac-page-eyebrow">
+		<span class="tarmac-eqv tarmac-eqv--{{ task.equipment.type.color }}">
+			<i class="ti {{ task.equipment.type.icon }}"></i>
+		</span>
+		{{ task.equipment.name }} · {{ task.title }}
+	</a>
+{% endblock %}
+
 {% block page_content %}
-	{# Task Information Card #}
-	<div class="card mb-3">
-		<div class="card-body">
-			<div
-				class="d-flex align-items-center flex-wrap">
-				{# Equipment Avatar #}
-				<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-decoration-none">
-					<span class="avatar avatar-xl me-3 bg-{{ task.equipment.type.color }}-lt">
-						<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 2.5rem;"></i>
-					</span>
-				</a>
-				<div class="flex-fill">
-					<h2 class="mb-1">
-						<a href="{{ path('club_equipment_show', {id: task.equipment.id}) }}" class="text-reset">
-							{{ task.equipment.name }}
-						</a>
-					</h2>
-					<div class="text-secondary h4 mb-0">
-						{{ task.title }}
+	<div class="row g-3">
+		<div class="col-12 col-lg-10 mx-auto">
+			<div class="tarmac-panel">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-plus"></i>{{ 'newSubTask'|trans }}
+				</div>
+				{{ form_start(form) }}
+				{{ form_row(form.title) }}
+				{{ form_row(form.description) }}
+				{% if form.specialisations is defined %}
+					<div class="mb-3">
+						{{ form_row(form.specialisations) }}
+					</div>
+				{% endif %}
+				<div class="row">
+					<div class="col-12 col-md-6 mb-3">
+						{{ form_row(form.difficulty) }}
+					</div>
+					<div class="col-12 col-md-6 mb-3">
+						{{ form_row(form.requiresInspection) }}
 					</div>
 				</div>
-				<div class="ms-auto d-none d-md-block">
-					<span class="badge bg-{{ task.difficultyColor }} text-white" style="font-size: 0.875rem; padding: 0.5rem 0.75rem;">
-						<i class="ti ti-gauge me-1"></i>
-						{{ task.difficultyLabel|trans }}
-					</span>
-				</div>
-			</div>
+				{% include 'component/documentationUploader.html.twig' with {
+					field: form.documentation,
+					existingUrl: null,
+					lightboxGroup: 'subtask-documentation',
+					emptyTextKey: 'clickToUploadDocumentation',
+					deletePath: null
+				} %}
 
-			{# Mobile difficulty badge #}
-			<div class="d-md-none mt-3">
-				<span class="badge bg-{{ task.difficultyColor }} text-white" style="font-size: 0.875rem; padding: 0.5rem 0.75rem;">
-					<i class="ti ti-gauge me-1"></i>
-					{{ task.difficultyLabel|trans }}
-				</span>
+				<div class="d-flex justify-content-end gap-2 mt-3">
+					<a href="{{ path('club_task_show', {id: task.id}) }}" class="btn btn-outline-secondary">{{ 'cancel'|trans }}</a>
+					<button type="submit" class="btn btn-primary">
+						<i class="ti ti-check me-2"></i>{{ 'save'|trans }}
+					</button>
+				</div>
+				{{ form_end(form) }}
 			</div>
-
-			{% if task.description %}
-				<hr class="my-3">
-				<div>
-					<div class="text-secondary small mb-2">{{ 'description'|trans }}</div>
-					<div>{{ task.description|nl2br }}</div>
-				</div>
-			{% endif %}
-		</div>
-	</div>
-
-	{# Subtask Form Card #}
-	<div class="card">
-		<div class="card-header">
-			<h3 class="card-title">{{ 'newSubTask'|trans }}</h3>
-		</div>
-		<div class="card-body">
-			{{ form_start(form) }}
-			{{ form_row(form.title) }}
-			{{ form_row(form.description) }}
-			{% if form.specialisations is defined %}
-				<div class="mb-3">
-					{{ form_row(form.specialisations) }}
-				</div>
-			{% endif %}
-			<div class="row">
-				<div class="col-12 col-md-6 mb-3">
-					{{ form_row(form.difficulty) }}
-				</div>
-				<div class="col-12 col-md-6 mb-3">
-					{{ form_row(form.requiresInspection) }}
-				</div>
-			</div>
-			{% include 'component/documentationUploader.html.twig' with {
-				field: form.documentation,
-				existingUrl: null,
-				lightboxGroup: 'subtask-documentation',
-				emptyTextKey: 'clickToUploadDocumentation',
-				deletePath: null
-			} %}
-
-			<div class="form-footer">
-				<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">
-					<i class="ti ti-check me-2"></i>
-					{{ 'save'|trans }}
-				</button>
-			</div>
-			{{ form_end(form) }}
 		</div>
 	</div>
 {% endblock %}

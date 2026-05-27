@@ -52,9 +52,7 @@
 {# Count active filters #}
 {% set activeFiltersCount = 0 %}
 {% for filter in form %}
-	{# Check if filter has any meaningful data #}
 	{% set hasData = false %}
-	{# Handle enum values explicitly #}
 	{% if filter.vars.data is instanceof('\\UnitEnum') %}
 		{% set hasData = true %}
 	{% elseif filter.vars.data is not empty and filter.vars.data is not iterable %}
@@ -71,88 +69,75 @@
 	{% endif %}
 {% endfor %}
 
-<div class="filters {% if style == 'default' %}mb-3{% endif %} {% if style == 'small' %}d-block w-100{% endif %}" data-controller="filter-offcanvas">
-	<div class="row align-items-center">
-		<div class="col d-none d-sm-block">
-			{% for filter in form %}
-				{# Check if filter has any meaningful data #}
-				{% set hasData = false %}
-				{# Handle enum values explicitly #}
-				{% if filter.vars.data is instanceof('\\UnitEnum') %}
-					{% set hasData = true %}
-				{% elseif filter.vars.data is not empty and filter.vars.data is not iterable %}
-					{% set hasData = true %}
-				{% elseif filter.vars.data is iterable %}
-					{% for child in filter.vars.data %}
-						{% if child is not empty %}
-							{% set hasData = true %}
-						{% endif %}
-					{% endfor %}
-				{% endif %}
+<div class="tarmac-filters{% if style == 'small' %} tarmac-filters--sm{% endif %}" data-controller="filter-offcanvas">
 
-				{% if hasData %}
-					<span class="tag">
-						<strong>{{ filter.vars.name | trans | capitalize }}</strong>
-						:
-						{% if filter.vars.data is instanceof('\\DateTimeInterface') %}
-							{{ filter.vars.data | date('d/m/Y') }}
-						{% elseif filter.vars.data is iterable %}
-							{# Check if it's a simple indexed array (like status[]) #}
-							{% if filter.vars.data|keys|first == 0 %}
-								{# Simple array - display as comma-separated values #}
-								{% set items = [] %}
-								{% for value in filter.vars.data %}
-									{% if value is not empty %}
-										{% set items = items|merge([value|trans]) %}
-									{% endif %}
-								{% endfor %}
-								{{ items|join(', ') }}
-							{# Check if it's a date range (associative array with startAt/endAt) #}
-							{% elseif filter.vars.data.startAt is defined and filter.vars.data.startAt is instanceof('\\DateTimeInterface') and filter.vars.data.endAt is defined and filter.vars.data.endAt is instanceof('\\DateTimeInterface') %}
-								Du
-								{{ filter.vars.data.startAt | date('d/m/Y') }}
-								au
-								{{ filter.vars.data.endAt | date('d/m/Y') }}
-							{% elseif filter.vars.data.endAt is defined and filter.vars.data.endAt is instanceof('\\DateTimeInterface') %}
-								Jusqu'au
-								{{ filter.vars.data.endAt | date('d/m/Y') }}
-							{% elseif filter.vars.data.startAt is defined and filter.vars.data.startAt is instanceof('\\DateTimeInterface') %}
-								À partir du
-								{{ filter.vars.data.startAt | date('d/m/Y') }}
-							{% else %}
-								{# Fallback for other iterable types #}
-								{% set items = [] %}
-								{% for value in filter.vars.data %}
-									{% if value is not empty %}
-										{% set items = items|merge([value|trans]) %}
-									{% endif %}
-								{% endfor %}
-								{{ items|join(', ') }}
-							{% endif %}
-							{# Handle Enum objects (e.g., EquipmentType) #}
-						{% elseif filter.vars.data is instanceof('\\UnitEnum') %}
-							{{ filter.vars.data.getLabel() | trans }}
-							{# Booleans and 1/0 should display as Yes/No (translated) #}
-						{% elseif filter.vars.data is same as(true) %}
-							Oui
-						{% elseif filter.vars.data is same as(false) %}
-							Non
-						{% elseif filter.vars.data is instanceof('string') and (filter.vars.data == '1') %}
-							Oui
-						{% elseif filter.vars.data is instanceof('string') and (filter.vars.data == '0') %}
-							Non
-						{% elseif filter.vars.data is instanceof('string') %}
-							{{ filter.vars.data | trans }}
+	{# Active filter chips (cachés sur mobile pour économiser l'espace) #}
+	<div class="d-none d-sm-flex align-items-center" style="gap:0.5rem;flex-wrap:wrap;flex:1;min-width:0;">
+		{% for filter in form %}
+			{% set hasData = false %}
+			{% if filter.vars.data is instanceof('\\UnitEnum') %}
+				{% set hasData = true %}
+			{% elseif filter.vars.data is not empty and filter.vars.data is not iterable %}
+				{% set hasData = true %}
+			{% elseif filter.vars.data is iterable %}
+				{% for child in filter.vars.data %}
+					{% if child is not empty %}
+						{% set hasData = true %}
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+
+			{% if hasData %}
+				<span class="tarmac-filters__chip">
+					<span><strong>{{ filter.vars.name | trans | capitalize }} :</strong>
+					{% if filter.vars.data is instanceof('\\DateTimeInterface') %}
+						{{ filter.vars.data | date('d/m/Y') }}
+					{% elseif filter.vars.data is iterable %}
+						{% if filter.vars.data|keys|first == 0 %}
+							{% set items = [] %}
+							{% for value in filter.vars.data %}
+								{% if value is not empty %}
+									{% set items = items|merge([value|trans]) %}
+								{% endif %}
+							{% endfor %}
+							{{ items|join(', ') }}
+						{% elseif filter.vars.data.startAt is defined and filter.vars.data.startAt is instanceof('\\DateTimeInterface') and filter.vars.data.endAt is defined and filter.vars.data.endAt is instanceof('\\DateTimeInterface') %}
+							Du {{ filter.vars.data.startAt | date('d/m/Y') }} au {{ filter.vars.data.endAt | date('d/m/Y') }}
+						{% elseif filter.vars.data.endAt is defined and filter.vars.data.endAt is instanceof('\\DateTimeInterface') %}
+							Jusqu'au {{ filter.vars.data.endAt | date('d/m/Y') }}
+						{% elseif filter.vars.data.startAt is defined and filter.vars.data.startAt is instanceof('\\DateTimeInterface') %}
+							À partir du {{ filter.vars.data.startAt | date('d/m/Y') }}
 						{% else %}
-							{{ filter.vars.data }}
+							{% set items = [] %}
+							{% for value in filter.vars.data %}
+								{% if value is not empty %}
+									{% set items = items|merge([value|trans]) %}
+								{% endif %}
+							{% endfor %}
+							{{ items|join(', ') }}
 						{% endif %}
+					{% elseif filter.vars.data is instanceof('\\UnitEnum') %}
+						{{ filter.vars.data.getLabel() | trans }}
+					{% elseif filter.vars.data is same as(true) %}
+						Oui
+					{% elseif filter.vars.data is same as(false) %}
+						Non
+					{% elseif filter.vars.data is instanceof('string') and (filter.vars.data == '1') %}
+						Oui
+					{% elseif filter.vars.data is instanceof('string') and (filter.vars.data == '0') %}
+						Non
+					{% elseif filter.vars.data is instanceof('string') %}
+						{{ filter.vars.data | trans }}
+					{% else %}
+						{{ filter.vars.data }}
+					{% endif %}
+					</span>
 
-					{# Separate route params from query params #}
+					{# Construire l'URL de retrait du filtre #}
 					{% set routeParams = app.request.attributes.get('_route_params') %}
 					{% set queryParams = app.request.query.all %}
 					{% set isArrayFilter = filter.vars.data is iterable and filter.vars.data|keys|first == 0 %}
-					
-					{# Build cleaned route params (convert enums to values) #}
+
 					{% set cleanedRouteParams = {} %}
 					{% for key, value in routeParams %}
 						{% if value is instanceof('\\UnitEnum') %}
@@ -161,52 +146,51 @@
 							{% set cleanedRouteParams = cleanedRouteParams | merge({(key): value}) %}
 						{% endif %}
 					{% endfor %}
-					
-					{# Build cleaned query params (remove the filter we're clearing) #}
+
 					{% set cleanedQueryParams = {} %}
 					{% for key, value in queryParams %}
 						{% if key != filter.vars.name %}
 							{% if value is instanceof('\\UnitEnum') %}
 								{% set cleanedQueryParams = cleanedQueryParams | merge({(key): value.value}) %}
 							{% elseif value is iterable and not (value.id is defined) %}
-								{# Handle arrays - keep them as arrays #}
 								{% set cleanedQueryParams = cleanedQueryParams | merge({(key): value}) %}
 							{% else %}
 								{% set cleanedQueryParams = cleanedQueryParams | merge({(key): value}) %}
 							{% endif %}
 						{% endif %}
 					{% endfor %}
-					
-					{# Build base URL with route params and existing query params #}
+
 					{% set baseUrl = path(app.request.attributes.get('_route'), cleanedRouteParams|merge(cleanedQueryParams)) %}
-					
-					{# Add the empty filter parameter to the query string #}
+					{% set separator = '?' in baseUrl ? '&' : '?' %}
 					{% if isArrayFilter %}
-						{# For array filters, add empty array parameter: filterName[]= #}
-						{% set separator = '?' in baseUrl ? '&' : '?' %}
-						<a href="{{ baseUrl }}{{ separator }}{{ filter.vars.name }}[]=" class="btn-close"></a>
+						<a href="{{ baseUrl }}{{ separator }}{{ filter.vars.name }}[]=" class="tarmac-filters__chip-close" aria-label="Retirer le filtre {{ filter.vars.name | trans }}">
+							<i class="ti ti-x"></i>
+						</a>
 					{% else %}
-						{# For single value filters, add empty string parameter: filterName= #}
-						{% set separator = '?' in baseUrl ? '&' : '?' %}
-						<a href="{{ baseUrl }}{{ separator }}{{ filter.vars.name }}=" class="btn-close"></a>
+						<a href="{{ baseUrl }}{{ separator }}{{ filter.vars.name }}=" class="tarmac-filters__chip-close" aria-label="Retirer le filtre {{ filter.vars.name | trans }}">
+							<i class="ti ti-x"></i>
+						</a>
 					{% endif %}
-					</span>
-				{% endif %}
-			{% endfor %}
-		</div>
-		<div class="ms-auto col-auto">
-			<button class="btn {% if style == 'small' %}btn-sm{% endif %} position-relative" data-bs-toggle="offcanvas" data-bs-target="#offCanvasFilters">
-				<i class="ti ti-filter me-2"></i>
-				Filtrer
-				{% if activeFiltersCount > 0 %}
-					<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary text-white">
-						{{ activeFiltersCount }}
-						<span class="visually-hidden">filtres actifs</span>
-					</span>
-				{% endif %}
-			</button>
-		</div>
+				</span>
+			{% endif %}
+		{% endfor %}
+
+		{% if activeFiltersCount == 0 %}
+			<span class="tarmac-filters__empty">Aucun filtre actif</span>
+		{% endif %}
 	</div>
+
+	<span class="tarmac-filters__spacer d-none d-sm-block"></span>
+
+	<button type="button" class="tarmac-filters__btn ms-auto ms-sm-0" data-bs-toggle="offcanvas" data-bs-target="#offCanvasFilters">
+		<i class="ti ti-filter"></i>
+		Filtrer
+		{% if activeFiltersCount > 0 %}
+			<span class="tarmac-filters__btn-badge">{{ activeFiltersCount }}</span>
+		{% endif %}
+	</button>
+
+	{# Offcanvas — Bootstrap conserve son markup (lié à offcanvas JS) #}
 	<div class="offcanvas offcanvas-end" id="offCanvasFilters" tabindex="-1">
 		<div class="offcanvas-header">
 			<h5 class="offcanvas-title">Filtrer</h5>
@@ -224,9 +208,7 @@
 							Filtrer
 						</button>
 					</div>
-					<div
-						class="col-12 col-md-6">
-						{# Clean route params from any enum values #}
+					<div class="col-12 col-md-6">
 						{% set cleanRouteParams = {} %}
 						{% for key, value in app.request.attributes.get('_route_params') %}
 							{% if value is instanceof('\\UnitEnum') %}

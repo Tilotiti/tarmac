@@ -4,44 +4,99 @@
 	{{ 'dashboard'|trans }}
 {% endblock %}
 
+{% block page_actions %}
+	{% if is_granted('MANAGE') %}
+		<a href="{{ path('club_task_new') }}" class="btn btn-primary">
+			<i class="ti ti-plus me-1"></i>
+			{{ 'newTask'|trans }}
+		</a>
+	{% endif %}
+{% endblock %}
+
 {% block page_content %}
-	{# Welcome Message #}
-	{% if club.welcomeMessage %}
-		<div class="mb-4">
-			<div class="card bg-primary-lt">
-				<div class="card-body">
-					<div class="d-flex align-items-start">
-						<div class="flex-fill">
-							<div class="text-body">
-								{{ club.welcomeMessage|markdown_to_html }}
-							</div>
-						</div>
-						{% if is_granted('MANAGE') %}
-							<a href="{{ path('club_dashboard_edit_welcome_message') }}" class="btn btn-sm btn-outline-primary ms-3">
-								<i class="ti ti-edit me-1"></i>
-								{{ 'edit'|trans }}
-							</a>
-						{% endif %}
-					</div>
-				</div>
+	{# KPI strip — pouls du club #}
+	<div class="row g-2 mb-4">
+		<div class="col-6 col-md-3">
+			<a href="{{ path('club_tasks', {'status': 'open'}) }}" class="tarmac-kpi">
+				<span class="tarmac-kpi__icon"><i class="ti ti-list-check"></i></span>
+				<div class="tarmac-kpi__label">{{ 'openTasks'|trans }}</div>
+				<div class="tarmac-kpi__value">{{ openTasksCount }}</div>
+			</a>
+		</div>
+		<div class="col-6 col-md-3">
+			<a href="{{ path('club_tasks') }}" class="tarmac-kpi tarmac-kpi--danger">
+				<span class="tarmac-kpi__icon"><i class="ti ti-flag"></i></span>
+				<div class="tarmac-kpi__label">{{ 'priorityTasks'|trans }}</div>
+				<div class="tarmac-kpi__value">{{ priorityTasksCount }}</div>
+			</a>
+		</div>
+		{% if isInspector %}
+			<div class="col-6 col-md-3">
+				<a href="{{ path('club_tasks', {'awaitingInspection': '1'}) }}" class="tarmac-kpi tarmac-kpi--glow">
+					<span class="tarmac-kpi__icon"><i class="ti ti-shield-check"></i></span>
+					<div class="tarmac-kpi__label">{{ 'subTasksToValidate'|trans }}</div>
+					<div class="tarmac-kpi__value">{{ awaitingInspectionCount }}</div>
+				</a>
 			</div>
+		{% endif %}
+		<div class="col-6 col-md-3{% if not isInspector %} col-md-6{% endif %}">
+			<a href="{{ path('club_purchases', {'status': 'purchased'}) }}" class="tarmac-kpi tarmac-kpi--purple">
+				<span class="tarmac-kpi__icon"><i class="ti ti-truck"></i></span>
+				<div class="tarmac-kpi__label">{{ 'purchasesWaitingDelivery'|trans }}</div>
+				<div class="tarmac-kpi__value">{{ purchasesWaitingDeliveryCount }}</div>
+			</a>
+		</div>
+	</div>
+
+	{# Welcome Message — « mot du gestionnaire » #}
+	{% if club.welcomeMessage %}
+		<div class="tarmac-welcome mb-4">
+			<span class="tarmac-welcome__kicker">
+				<i class="ti ti-quote me-1"></i>{{ 'welcomeMessageKicker'|trans }}
+			</span>
+			<div class="tarmac-welcome__body text-body">
+				{{ club.welcomeMessage|markdown_to_html }}
+			</div>
+			{% if is_granted('MANAGE') or club.welcomeMessageUpdatedAt %}
+				<div class="tarmac-welcome__footer">
+					<span class="tarmac-welcome__edited">
+						{% if club.welcomeMessageUpdatedAt %}
+							{% set updatedBy = club.welcomeMessageUpdatedBy %}
+							{% if updatedBy %}
+								{{ 'welcomeMessageUpdatedByOn'|trans({
+									name: updatedBy.fullName|default(updatedBy.email),
+									date: club.welcomeMessageUpdatedAt|date('d/m/Y')
+								}) }}
+							{% else %}
+								{{ 'welcomeMessageUpdatedOn'|trans({
+									date: club.welcomeMessageUpdatedAt|date('d/m/Y')
+								}) }}
+							{% endif %}
+						{% endif %}
+					</span>
+					{% if is_granted('MANAGE') %}
+						<a href="{{ path('club_dashboard_edit_welcome_message') }}" class="btn btn-sm btn-outline-secondary">
+							<i class="ti ti-edit me-1"></i>
+							{{ 'edit'|trans }}
+						</a>
+					{% endif %}
+				</div>
+			{% endif %}
 		</div>
 	{% elseif is_granted('MANAGE') %}
-		<div class="mb-4">
-			<div class="card bg-secondary-lt">
-				<div class="card-body">
-					<div class="d-flex align-items-center justify-content-between">
-						<div>
-							<div class="text-body">
-								{{ 'noWelcomeMessage'|trans }}
-							</div>
-						</div>
-						<a href="{{ path('club_dashboard_edit_welcome_message') }}" class="btn btn-sm btn-primary">
-							<i class="ti ti-plus me-1"></i>
-							{{ 'addWelcomeMessage'|trans }}
-						</a>
-					</div>
-				</div>
+		<div class="tarmac-welcome mb-4">
+			<span class="tarmac-welcome__kicker">
+				<i class="ti ti-quote me-1"></i>{{ 'welcomeMessageKicker'|trans }}
+			</span>
+			<div class="tarmac-welcome__body text-body">
+				<p>{{ 'noWelcomeMessage'|trans }}</p>
+			</div>
+			<div class="tarmac-welcome__footer">
+				<span class="tarmac-welcome__edited"></span>
+				<a href="{{ path('club_dashboard_edit_welcome_message') }}" class="btn btn-sm btn-primary">
+					<i class="ti ti-plus me-1"></i>
+					{{ 'addWelcomeMessage'|trans }}
+				</a>
 			</div>
 		</div>
 	{% endif %}
@@ -49,18 +104,19 @@
 	{# SubTasks Awaiting Inspection (Inspector View) #}
 	{% if is_granted('INSPECT') and awaitingInspectionSubTasks is not empty %}
 		<div class="mb-4">
-			<div class="d-flex align-items-center justify-content-between mb-3">
-				<h3 class="mb-0">
+			<div class="tarmac-section-bar">
+				<h3 class="tarmac-section-bar__title">
 					<i class="ti ti-shield-check"></i>
 					{{ 'subTasksToValidate'|trans }}
-					<span class="badge bg-secondary-lt ms-2">{{ awaitingInspectionCount }}</span>
+					<span class="tarmac-section-bar__count">{{ awaitingInspectionCount }}</span>
 				</h3>
-				{% if awaitingInspectionCount > 5 %}
-					<a href="{{ path('club_tasks', {'awaitingInspection': '1'}) }}" class="btn btn-sm btn-outline-warning">
-						{{ 'seeAll'|trans }}
-						<i class="ti ti-arrow-right ms-1"></i>
-					</a>
-				{% endif %}
+				<div class="tarmac-section-bar__actions">
+					{% if awaitingInspectionCount > 5 %}
+						<a href="{{ path('club_tasks', {'awaitingInspection': '1'}) }}" class="btn btn-sm btn-outline-secondary">
+							<i class="ti ti-arrow-right me-1"></i><span class="btn-text">{{ 'seeAll'|trans }}</span>
+						</a>
+					{% endif %}
+				</div>
 			</div>
 			<div class="row">
 				{% for subTask in awaitingInspectionSubTasks %}
@@ -73,23 +129,21 @@
 	{# Priority Tasks #}
 	{% if priorityTasks is not empty %}
 		<div class="mb-4">
-			<div class="d-flex align-items-center justify-content-between mb-3">
-				<h3 class="mb-0">
+			<div class="tarmac-section-bar">
+				<h3 class="tarmac-section-bar__title">
 					<i class="ti ti-flag"></i>
 					{{ 'priorityTasks'|trans }}
-					<span class="badge bg-secondary-lt ms-2">{{ priorityTasksCount }}</span>
+					<span class="tarmac-section-bar__count">{{ priorityTasksCount }}</span>
 				</h3>
-				<div class="d-flex gap-2">
+				<div class="tarmac-section-bar__actions">
 					{% if is_granted('MANAGE') %}
-						<a href="{{ path('club_dashboard_print_priority_subtasks') }}" class="btn btn-sm btn-outline-primary" target="_blank">
-							<i class="ti ti-printer me-1"></i>
-							{{ 'printPrioritySubTasks'|trans }}
+						<a href="{{ path('club_dashboard_print_priority_subtasks') }}" class="btn btn-sm btn-outline-secondary" target="_blank" title="{{ 'printPrioritySubTasks'|trans }}">
+							<i class="ti ti-printer me-1"></i><span class="btn-text">{{ 'printPrioritySubTasks'|trans }}</span>
 						</a>
 					{% endif %}
 					{% if priorityTasksCount > 20 %}
-						<a href="{{ path('club_tasks') }}" class="btn btn-sm btn-outline-primary">
-							{{ 'seeAll'|trans }}
-							<i class="ti ti-arrow-right ms-1"></i>
+						<a href="{{ path('club_tasks') }}" class="btn btn-sm btn-outline-secondary">
+							<i class="ti ti-arrow-right me-1"></i><span class="btn-text">{{ 'seeAll'|trans }}</span>
 						</a>
 					{% endif %}
 				</div>
@@ -229,43 +283,37 @@
 	{# Purchases Waiting for Delivery #}
 	{% if purchasesWaitingDelivery is not empty %}
 		<div class="mb-4">
-			<div class="d-flex align-items-center justify-content-between mb-3">
-				<h3 class="mb-0">
+			<div class="tarmac-section-bar">
+				<h3 class="tarmac-section-bar__title">
 					<i class="ti ti-truck"></i>
 					{{ 'purchasesWaitingDelivery'|trans }}
-					<span class="badge bg-secondary-lt ms-2">{{ purchasesWaitingDeliveryCount }}</span>
+					<span class="tarmac-section-bar__count">{{ purchasesWaitingDeliveryCount }}</span>
 				</h3>
-				{% if purchasesWaitingDeliveryCount > 5 %}
-					<a href="{{ path('club_purchases', {'status': 'purchased'}) }}" class="btn btn-sm btn-outline-info">
-						{{ 'seeAll'|trans }}
-						<i class="ti ti-arrow-right ms-1"></i>
-					</a>
-				{% endif %}
+				<div class="tarmac-section-bar__actions">
+					{% if purchasesWaitingDeliveryCount > 5 %}
+						<a href="{{ path('club_purchases', {'status': 'purchased'}) }}" class="btn btn-sm btn-outline-secondary">
+							<i class="ti ti-arrow-right me-1"></i><span class="btn-text">{{ 'seeAll'|trans }}</span>
+						</a>
+					{% endif %}
+				</div>
 			</div>
 			<div class="row">
 				{% for purchase in purchasesWaitingDelivery %}
-					<div class="col-12 col-md-6 col-lg-4 mb-3">
-						<div class="card">
-							<div class="card-body">
-								<h4 class="card-title mb-2">
-									<a href="{{ path('club_purchase_show', {id: purchase.id}) }}" class="text-reset">
-										{{ purchase.name }}
-									</a>
-								</h4>
-								<div class="text-secondary small">
-									{{ 'purchaseQuantity'|trans }}:
-									{{ purchase.quantity }}
-								</div>
-								{% if purchase.purchasedBy %}
-									<div class="text-secondary small mt-1">
-										{{ 'purchasedBy'|trans }}:
-										{{ purchase.purchasedBy.fullName ?? purchase.purchasedBy.email }}
-										<br>
-										{{ purchase.purchasedAt|date('d/m/Y') }}
-									</div>
-								{% endif %}
+					<div class="col-12 col-md-6 col-lg-4 mb-3 d-flex">
+						<a href="{{ path('club_purchase_show', {id: purchase.id}) }}" class="tarmac-card w-100">
+							<div class="tarmac-card__eyebrow">
+								<i class="ti ti-shopping-cart"></i>
+								{{ 'purchaseQuantity'|trans }} : {{ purchase.quantity }}
 							</div>
-						</div>
+							<h4 class="tarmac-card__title">{{ purchase.name }}</h4>
+							{% if purchase.purchasedBy %}
+								<div class="tarmac-card__meta">
+									<i class="ti ti-user"></i>
+									{{ purchase.purchasedBy.fullName ?? purchase.purchasedBy.email }} ·
+									{{ purchase.purchasedAt|date('d/m/Y') }}
+								</div>
+							{% endif %}
+						</a>
 					</div>
 				{% endfor %}
 			</div>

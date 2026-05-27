@@ -7,85 +7,72 @@
 {% block page_actions %}
 	{% if is_granted('MANAGE', club) %}
 		<a href="{{ path('club_plan_new') }}" class="btn btn-primary">
-			<i class="ti ti-plus"></i>
-			{{ 'newPlan'|trans }}
+			<i class="ti ti-plus me-2"></i>{{ 'newPlan'|trans }}
 		</a>
 	{% endif %}
 {% endblock %}
 
 {% block page_content %}
-	{# Search and Filter #}
 	{% include 'component/filters.html.twig' with {'form': filters} %}
 
-	{# Plans List #}
-	<div class="row row-cards">
-		{% if plans|length > 0 %}
-			{% for plan in plans %}
-				{% set totalSubTasks = 0 %}
-				{% for task in plan.taskTemplates %}
-					{% set totalSubTasks = totalSubTasks + task.subTaskTemplates|length %}
-				{% endfor %}
-
-				<div class="col-12">
-					<a href="{{ path('club_plan_show', {id: plan.id}) }}" class="card card-link">
-						<div class="card-body">
-							<div class="row align-items-center">
-								<div class="col">
-									<h3 class="card-title mb-1">
-										{{ plan.name }}
-										{% if plan.description %}
-											<i class="ti ti-info-circle ms-2 text-muted" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.description }}"></i>
-										{% endif %}
-									</h3>
-									<div class="text-secondary">
-										<span class="badge bg-{{ plan.equipmentType.value == 'glider' ? 'blue' : 'green' }} text-white me-2">
-											<i class="ti ti-{{ plan.equipmentType.value == 'glider' ? 'plane' : 'building' }} me-1"></i>
-											{{ (plan.equipmentType.value ~ 'Type')|trans }}
-										</span>
-										<span class="badge bg-primary text-white me-2">
-											<i class="ti ti-checkbox me-1"></i>
-											{{ plan.taskTemplates|length }}
-											{{ 'tasks'|trans|lower }}
-										</span>
-										{% if totalSubTasks > 0 %}
-											<span class="badge bg-secondary text-white">
-												<i class="ti ti-list-check me-1"></i>
-												{{ totalSubTasks }}
-												{{ 'subTasks'|trans|lower }}
-											</span>
-										{% endif %}
-									</div>
-								</div>
-								<div class="col-auto">
-									<i class="ti ti-chevron-right text-muted"></i>
-								</div>
-							</div>
-						</div>
-					</a>
-				</div>
+	<div class="row">
+		{% for plan in plans %}
+			{% set totalSubTasks = 0 %}
+			{% for task in plan.taskTemplates %}
+				{% set totalSubTasks = totalSubTasks + task.subTaskTemplates|length %}
 			{% endfor %}
-		{% else %}
-			<div class="col-12">
-				<div class="card">
-					<div class="card-body">
-						<div class="empty">
-							<div class="empty-icon">
-								<i class="ti ti-file-check icon-lg"></i>
-							</div>
-							<p class="empty-title">{{ 'noPlans'|trans }}</p>
-							<p class="empty-subtitle text-secondary">
-								{{ 'noPlansDescription'|trans }}
-							</p>
-							<div class="empty-action">
-								<a href="{{ path('club_plan_new') }}" class="btn btn-primary">
-									<i class="ti ti-plus"></i>
-									{{ 'newPlan'|trans }}
-								</a>
-							</div>
+			{% set typeColor = plan.equipmentType.value == 'glider' ? 'blue' : (plan.equipmentType.value == 'airplane' ? 'green' : 'purple') %}
+			{% set typeIcon = plan.equipmentType.value == 'glider' ? 'ti-plane-tilt' : (plan.equipmentType.value == 'airplane' ? 'ti-send' : 'ti-building') %}
+
+			<div class="col-12 col-md-6 col-lg-4 mb-3 d-flex">
+				<a href="{{ path('club_plan_show', {id: plan.id}) }}"
+				   class="tarmac-card w-100"
+				   style="display:flex;flex-direction:column;">
+
+					<div class="tarmac-card__head">
+						<span class="tarmac-eqv tarmac-eqv--{{ typeColor }}">
+							<i class="ti {{ typeIcon }}"></i>
+						</span>
+						<div class="flex-fill" style="min-width:0;">
+							<div class="tarmac-card__eyebrow">{{ (plan.equipmentType.value ~ 'Type')|trans }}</div>
+							<h3 class="tarmac-card__title" style="overflow:hidden;text-overflow:ellipsis;">
+								{{ plan.name }}
+								{% if plan.description %}
+									<i class="ti ti-info-circle text-secondary ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ plan.description }}" style="font-size:0.9rem;"></i>
+								{% endif %}
+							</h3>
 						</div>
 					</div>
+
+					<div class="tarmac-card__footer d-flex align-items-center gap-3" style="margin-top:auto;">
+						<span class="tarmac-card__meta">
+							<i class="ti ti-checkbox"></i>
+							<strong style="color:var(--td-deep);">{{ plan.taskTemplates|length }}</strong>
+							<span style="margin-left:0.2rem;">{{ 'tasks'|trans|lower }}</span>
+						</span>
+						{% if totalSubTasks > 0 %}
+							<span class="tarmac-card__meta">
+								<i class="ti ti-list-check"></i>
+								<strong style="color:var(--td-deep);">{{ totalSubTasks }}</strong>
+								<span style="margin-left:0.2rem;">{{ 'subTasks'|trans|lower }}</span>
+							</span>
+						{% endif %}
+					</div>
+				</a>
+			</div>
+		{% else %}
+			<div class="col-12">
+				<div class="tarmac-panel" style="text-align:center;padding:2.5rem 1.5rem;">
+					<div style="font-size:2.5rem;color:var(--td-ink-3);margin-bottom:0.75rem;"><i class="ti ti-file-check"></i></div>
+					<h3 style="font-size:1.1rem;font-weight:700;margin-bottom:0.4rem;">{{ 'noPlans'|trans }}</h3>
+					<p class="text-secondary" style="margin:0 0 1rem;max-width:480px;margin-left:auto;margin-right:auto;">{{ 'noPlansDescription'|trans }}</p>
+					{% if is_granted('MANAGE', club) %}
+						<a href="{{ path('club_plan_new') }}" class="btn btn-primary">
+							<i class="ti ti-plus me-2"></i>{{ 'newPlan'|trans }}
+						</a>
+					{% endif %}
 				</div>
 			</div>
-		{% endif %}
+		{% endfor %}
 	</div>
 {% endblock %}

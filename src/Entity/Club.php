@@ -35,6 +35,13 @@ class Club
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $welcomeMessage = null;
 
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $welcomeMessageUpdatedAt = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'welcome_message_updated_by_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $welcomeMessageUpdatedBy = null;
+
     /**
      * @var Collection<int, Membership>
      */
@@ -135,6 +142,30 @@ class Club
     public function setWelcomeMessage(?string $welcomeMessage): static
     {
         $this->welcomeMessage = $welcomeMessage;
+
+        return $this;
+    }
+
+    public function getWelcomeMessageUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->welcomeMessageUpdatedAt;
+    }
+
+    public function setWelcomeMessageUpdatedAt(?\DateTimeImmutable $welcomeMessageUpdatedAt): static
+    {
+        $this->welcomeMessageUpdatedAt = $welcomeMessageUpdatedAt;
+
+        return $this;
+    }
+
+    public function getWelcomeMessageUpdatedBy(): ?User
+    {
+        return $this->welcomeMessageUpdatedBy;
+    }
+
+    public function setWelcomeMessageUpdatedBy(?User $welcomeMessageUpdatedBy): static
+    {
+        $this->welcomeMessageUpdatedBy = $welcomeMessageUpdatedBy;
 
         return $this;
     }

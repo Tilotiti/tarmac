@@ -1,12 +1,9 @@
 {% extends 'layout/base.html.twig' %}
 
-{% block title %}Mon profil
-{% endblock %}
+{% block title %}Mon profil{% endblock %}
 
 {% block navbar_brand %}
-	<a href="{{ path('public_clubs') }}">
-		<img src="{{ asset('logo.svg') }}" alt="Tarmac" height="10">
-	</a>
+	{% include 'component/brandMark.html.twig' with {href: path('public_clubs')} %}
 {% endblock %}
 
 {% block body %}
@@ -14,9 +11,10 @@
 		<div class="container-xl">
 			<div class="row g-2 align-items-center">
 				<div class="col">
-					<h2 class="page-title">
-						Mon profil
-					</h2>
+					<span class="tarmac-page-eyebrow" style="cursor:default;">
+						<i class="ti ti-user-cog"></i>{{ 'myAccount'|trans|default('Mon compte') }}
+					</span>
+					<h2 class="page-title">Mon profil</h2>
 				</div>
 			</div>
 		</div>
@@ -24,49 +22,43 @@
 
 	<div class="page-body">
 		<div class="container-xl">
-			<div class="row">
-				<div class="col-12">
-					<div class="card">
-						<div class="card-header">
-							<h3 class="card-title">Informations personnelles</h3>
-						</div>
-						<div class="card-body">
-							{{ form_start(profileForm) }}
-							{{ form_row(profileForm.firstname) }}
-							{{ form_row(profileForm.lastname) }}
-							{{ form_row(profileForm.email) }}
+			<div class="row g-3">
+				<div class="col-12 col-lg-8 mx-auto">
 
-							<div class="form-footer">
-								<button type="submit" class="btn btn-primary w-100 w-md-auto" style="min-height: 44px;">
-									<i class="ti ti-check me-2"></i>
-									Enregistrer
-								</button>
-								<a href="{{ path('public_clubs') }}" class="btn btn-link w-100 w-md-auto mt-2 mt-md-0" style="min-height: 44px;">
-									Retour
-								</a>
-							</div>
-							{{ form_end(profileForm) }}
+					<div class="tarmac-panel mb-3">
+						<div class="tarmac-panel__title">
+							<i class="ti ti-user"></i>Informations personnelles
 						</div>
+						{{ form_start(profileForm) }}
+						{{ form_row(profileForm.firstname) }}
+						{{ form_row(profileForm.lastname) }}
+						{{ form_row(profileForm.email) }}
+
+						<div class="d-flex justify-content-end gap-2 mt-3">
+							<a href="{{ path('public_clubs') }}" class="btn btn-outline-secondary">Retour</a>
+							<button type="submit" class="btn btn-primary">
+								<i class="ti ti-check me-2"></i>Enregistrer
+							</button>
+						</div>
+						{{ form_end(profileForm) }}
 					</div>
 
-					<div class="card mt-3">
-						<div class="card-header">
-							<h3 class="card-title">Sécurité</h3>
+					<div class="tarmac-panel">
+						<div class="tarmac-panel__title">
+							<i class="ti ti-lock"></i>Sécurité
 						</div>
-						<div class="card-body">
-							{{ form_start(passwordForm) }}
-							{{ form_row(passwordForm.oldPassword) }}
-							{{ form_row(passwordForm.plainPassword) }}
+						{{ form_start(passwordForm) }}
+						{{ form_row(passwordForm.oldPassword) }}
+						{{ form_row(passwordForm.plainPassword) }}
 
-							<div class="form-footer">
-								<button type="submit" class="btn btn-primary w-100 w-md-auto" style="min-height: 44px;">
-									<i class="ti ti-key me-2"></i>
-									Modifier mon mot de passe
-								</button>
-							</div>
-							{{ form_end(passwordForm) }}
+						<div class="d-flex justify-content-end mt-3">
+							<button type="submit" class="btn btn-primary">
+								<i class="ti ti-key me-2"></i>Modifier mon mot de passe
+							</button>
 						</div>
+						{{ form_end(passwordForm) }}
 					</div>
+
 				</div>
 			</div>
 		</div>

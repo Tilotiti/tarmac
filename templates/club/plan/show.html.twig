@@ -4,293 +4,243 @@
 	{{ plan.name }}
 {% endblock %}
 
+{% block page_pretitle %}
+	<a href="{{ path('club_plans') }}" class="tarmac-page-eyebrow">
+		<span class="tarmac-eqv" style="background:var(--td-mid-soft);color:var(--td-mid);">
+			<i class="ti ti-file-check"></i>
+		</span>
+		{{ 'maintenancePlans'|trans }}
+	</a>
+{% endblock %}
+
 {% block page_actions %}
 	{% if is_granted('MANAGE', club) %}
 		<div class="btn-list" data-controller="confirm" data-confirm-title-value="{{ 'confirmDelete'|trans }}" data-confirm-yes-value="{{ 'delete'|trans }}" data-confirm-cancel-value="{{ 'cancel'|trans }}">
-			<a href="{{ path('club_plan_export', {id: plan.id}) }}" class="btn">
-				<i class="ti ti-file-spreadsheet me-2"></i>
-				{{ 'exportPlan'|trans }}
-			</a>
-			{% if importForm is defined and importForm %}
-				<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#plan-import-modal">
-					<i class="ti ti-upload me-2"></i>
-					{{ 'importPlan'|trans }}
-				</button>
-			{% endif %}
 			<a href="{{ path('club_plan_apply', {id: plan.id}) }}" class="btn btn-primary">
 				<i class="ti ti-clipboard-check me-2"></i>
-				{{ 'apply'|trans }}
+				<span class="d-none d-sm-inline">{{ 'apply'|trans }}</span>
+				<span class="d-inline d-sm-none">{{ 'apply'|trans }}</span>
 			</a>
-			<a href="{{ path('club_plan_edit', {id: plan.id}) }}" class="btn">
-				<i class="ti ti-edit me-2"></i>
-				{{ 'edit'|trans }}
-			</a>
-			<form method="post" action="{{ path('club_plan_delete', {id: plan.id}) }}" style="display: inline;">
-				<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ plan.id) }}">
-				<button type="submit" class="btn btn-danger" data-confirm="{{ 'confirmDeletePlanMessage'|trans({'{planName}': plan.name}) }}">
-					<i class="ti ti-trash me-2"></i>
-					{{ 'delete'|trans }}
+
+			<div class="dropdown d-inline-block" data-controller="dropdown">
+				<button type="button" class="btn btn-outline-secondary" data-dropdown-target="toggle" aria-haspopup="true" aria-expanded="false" title="{{ 'moreActions'|trans }}">
+					<i class="ti ti-dots-vertical"></i>
 				</button>
-			</form>
+				<div class="dropdown-menu dropdown-menu-end" data-dropdown-target="menu">
+					<a href="{{ path('club_plan_edit', {id: plan.id}) }}" class="dropdown-item">
+						<i class="ti ti-edit me-2"></i>{{ 'edit'|trans }}
+					</a>
+					<a href="{{ path('club_plan_export', {id: plan.id}) }}" class="dropdown-item">
+						<i class="ti ti-file-spreadsheet me-2"></i>{{ 'exportPlan'|trans }}
+					</a>
+					{% if importForm is defined and importForm %}
+						<button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#plan-import-modal">
+							<i class="ti ti-upload me-2"></i>{{ 'importPlan'|trans }}
+						</button>
+					{% endif %}
+					<div class="dropdown-divider"></div>
+					<form method="post" action="{{ path('club_plan_delete', {id: plan.id}) }}" style="display: inline;">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ plan.id) }}">
+						<button type="submit" class="dropdown-item text-danger" data-confirm="{{ 'confirmDeletePlanMessage'|trans({'{planName}': plan.name}) }}">
+							<i class="ti ti-trash me-2"></i>{{ 'delete'|trans }}
+						</button>
+					</form>
+				</div>
+			</div>
 		</div>
 	{% endif %}
 {% endblock %}
 
 {% block page_content %}
-	{# Plan Information Card #}
-	<div class="row row-cards mb-3">
-		<div class="col-12">
-			<div class="card">
-				<div class="card-body">
-					<div class="row align-items-center">
-						<div class="col">
-							<h3 class="card-title mb-2">{{ plan.name }}</h3>
-							<div class="mb-2">
-								<span class="badge bg-{{ plan.equipmentType.value == 'glider' ? 'blue' : 'green' }} text-white me-2">
-									<i class="ti ti-{{ plan.equipmentType.value == 'glider' ? 'plane' : 'building' }} me-1"></i>
-									{{ (plan.equipmentType.value ~ 'Type')|trans }}
-								</span>
-								<span class="badge bg-primary text-white me-2">
-									<i class="ti ti-checkbox me-1"></i>
-									{{ plan.taskTemplates|length }}
-									{{ 'tasks'|trans|lower }}
-								</span>
-								{% set totalSubTasks = 0 %}
-								{% for task in plan.taskTemplates %}
-									{% set totalSubTasks = totalSubTasks + task.subTaskTemplates|length %}
-								{% endfor %}
-								{% if totalSubTasks > 0 %}
-									<span class="badge bg-secondary text-white">
-										<i class="ti ti-list-check me-1"></i>
-										{{ totalSubTasks }}
-										{{ 'subTasks'|trans|lower }}
-									</span>
-								{% endif %}
-							</div>
-							{% if plan.description %}
-								<div class="text-secondary">
-									{{ plan.description }}
-								</div>
-							{% endif %}
-						</div>
+	{% set totalSubTasks = 0 %}
+	{% for task in plan.taskTemplates %}
+		{% set totalSubTasks = totalSubTasks + task.subTaskTemplates|length %}
+	{% endfor %}
+	{% set typeColor = plan.equipmentType.value == 'glider' ? 'blue' : (plan.equipmentType.value == 'airplane' ? 'green' : 'purple') %}
+	{% set typeIcon = plan.equipmentType.value == 'glider' ? 'ti-plane-tilt' : (plan.equipmentType.value == 'airplane' ? 'ti-send' : 'ti-building') %}
+
+	<div class="row g-3">
+
+		{# ========== Colonne principale ========== #}
+		<div class="col-12 col-lg-8">
+
+			{# Description #}
+			{% if plan.description %}
+				<div class="tarmac-panel mb-3">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-align-left"></i>{{ 'description'|trans }}
 					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	{# Tasks List #}
-	<div class="row row-cards">
-		<div class="col-12">
-			<div class="card">
-				<div class="card-header">
-					<h3 class="card-title">{{ 'tasks'|trans }}</h3>
-				</div>
-				<div class="card-body">
-					{% if plan.taskTemplates|length > 0 %}
-						{% for taskTemplate in plan.taskTemplates %}
-							<div class="mb-4 {% if not loop.last %}pb-4 border-bottom{% endif %}">
-								<div class="mb-2">
-									<h4 class="mb-0">
-										<span class="badge badge-outline text-primary me-2">{{ loop.index }}</span>
-										{{ taskTemplate.title }}
-									</h4>
-								</div>
-
-								{% if taskTemplate.description %}
-									<p class="text-secondary mb-2">{{ taskTemplate.description }}</p>
-								{% endif %}
-
-								{% if taskTemplate.documentation %}
-									<div class="mb-3">
-										<div class="text-secondary small mb-1">{{ 'documentation'|trans }}</div>
-										{% include 'component/documentationPreview.html.twig' with {
-											url: taskTemplate.documentation,
-											lightboxGroup: 'plan-task-documentation-' ~ loop.index
-										} %}
-									</div>
-								{% endif %}
-
-								{# Subtasks #}
-								{% if taskTemplate.subTaskTemplates|length > 0 %}
-									<div class="mt-3">
-										<div class="list-group list-group-flush">
-											{% for subTaskTemplate in taskTemplate.subTaskTemplates %}
-												<div class="list-group-item px-0">
-													<div class="d-flex align-items-start justify-content-between">
-														<div class="d-flex align-items-start flex-grow-1">
-															<span class="badge badge-outline text-secondary me-2">{{ loop.parent.loop.index }}.{{ loop.index }}</span>
-															<div class="flex-grow-1">
-																<div class="fw-bold">
-																	{{ subTaskTemplate.title }}
-																	{% if subTaskTemplate.documentation %}
-																		<i class="ti ti-file-description text-secondary ms-2" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'documentationAvailable'|trans }}"></i>
-																	{% endif %}
-																</div>
-																{% if subTaskTemplate.description %}
-																	<div class="text-secondary small">{{ subTaskTemplate.description }}</div>
-																{% endif %}
-
-																{% if subTaskTemplate.documentation %}
-																	<div class="mt-2">
-																		<div class="text-secondary small mb-1">{{ 'documentation'|trans }}</div>
-																		{% include 'component/documentationPreview.html.twig' with {
-																			url: subTaskTemplate.documentation,
-																			lightboxGroup: 'plan-subtask-documentation-' ~ loop.parent.loop.index ~ '-' ~ loop.index
-																		} %}
-																	</div>
-																{% endif %}
-															</div>
-														</div>
-														<div class="d-flex gap-2 align-items-start ms-3 flex-wrap">
-															{% if subTaskTemplate.requiresInspection %}
-																<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
-																	<i class="ti ti-shield-check me-1"></i>
-																	{{ 'requiresInspection'|trans }}
-																</span>
-															{% endif %}
-															{% include 'component/difficultyBadge.html.twig' with {'difficulty': subTaskTemplate.difficulty} %}
-															{% for spec in subTaskTemplate.specialisations %}
-																<span class="badge bg-secondary-lt text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ spec.description|default('')|e('html_attr') }}">
-																	<i class="ti ti-tag me-1"></i>
-																	{{ spec.name }}
-																</span>
-															{% endfor %}
-														</div>
-													</div>
-												</div>
-											{% endfor %}
-										</div>
-									</div>
-								{% endif %}
-							</div>
-						{% endfor %}
-					{% else %}
-						<div class="empty">
-							<div class="empty-icon">
-								<i class="ti ti-checkbox icon-lg"></i>
-							</div>
-							<p class="empty-title">{{ 'noTasksInPlan'|trans }}</p>
-							<p class="empty-subtitle text-secondary">
-								{{ 'noTasksInPlanDescription'|trans }}
-							</p>
-							{% if is_granted('MANAGE', club) %}
-								<div class="empty-action">
-									<a href="{{ path('club_plan_edit', {id: plan.id}) }}" class="btn btn-primary">
-										<i class="ti ti-plus"></i>
-										{{ 'addTasks'|trans }}
-									</a>
-								</div>
-							{% endif %}
-						</div>
-					{% endif %}
-				</div>
-			</div>
-			{% if importForm is defined and importForm %}
-				<div class="modal fade" id="plan-import-modal" tabindex="-1" aria-labelledby="plan-import-modal-label" aria-hidden="true">
-					<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title" id="plan-import-modal-label">{{ 'importPlanFromXlsx'|trans }}</h5>
-								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'cancel'|trans }}"></button>
-							</div>
-							{{ form_start(importForm, {
-								action: path('club_plan_import', {id: plan.id}),
-								attr: {'enctype': 'multipart/form-data'}
-							}) }}
-							<div class="modal-body">
-								{% include 'club/plan/_import_xlsx_panel.html.twig' %}
-							</div>
-							<div class="modal-footer d-flex flex-column flex-sm-row gap-2">
-								<button type="submit" class="btn btn-primary w-100 w-sm-auto">
-									<i class="ti ti-upload me-2"></i>
-									{{ 'importPlan'|trans }}
-								</button>
-							</div>
-							{{ form_rest(importForm) }}
-							{{ form_end(importForm) }}
-						</div>
-					</div>
+					<div style="font-size:0.95rem;line-height:1.6;">{{ plan.description|nl2br }}</div>
 				</div>
 			{% endif %}
+
+			{# Tasks list with subtasks #}
+			<div class="tarmac-panel">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-checkbox"></i>{{ 'tasks'|trans }}
+					<span class="tarmac-section-bar__count" style="margin-left:auto;">{{ plan.taskTemplates|length }}</span>
+				</div>
+				{% if plan.taskTemplates|length > 0 %}
+					{% for taskTemplate in plan.taskTemplates %}
+						<div class="mb-4 {% if not loop.last %}pb-4{% endif %}" {% if not loop.last %}style="border-bottom:1px dashed var(--td-border);"{% endif %}>
+							<div class="d-flex align-items-baseline gap-2 mb-2">
+								<span class="tarmac-badge tarmac-badge--info">{{ loop.index }}</span>
+								<h4 style="font-size:1.05rem;font-weight:700;margin:0;color:var(--td-ink);">{{ taskTemplate.title }}</h4>
+							</div>
+
+							{% if taskTemplate.description %}
+								<p class="text-secondary" style="font-size:0.9rem;margin:0 0 0.6rem;">{{ taskTemplate.description }}</p>
+							{% endif %}
+
+							{% if taskTemplate.documentation %}
+								<div class="mb-3">
+									<div class="tarmac-card__eyebrow" style="margin-bottom:0.3rem;">{{ 'documentation'|trans }}</div>
+									{% include 'component/documentationPreview.html.twig' with {
+										url: taskTemplate.documentation,
+										lightboxGroup: 'plan-task-documentation-' ~ loop.index
+									} %}
+								</div>
+							{% endif %}
+
+							{% if taskTemplate.subTaskTemplates|length > 0 %}
+								<div class="mt-2" style="padding-left:1rem;border-left:2px solid var(--td-border);">
+									{% for subTaskTemplate in taskTemplate.subTaskTemplates %}
+										<div class="d-flex align-items-start gap-2 py-2 {% if not loop.last %}border-bottom{% endif %}" style="{% if not loop.last %}border-bottom:1px dashed var(--td-border) !important;{% endif %}">
+											<span class="tarmac-badge tarmac-badge--secondary" style="font-size:0.65rem;">{{ loop.parent.loop.index }}.{{ loop.index }}</span>
+											<div class="flex-grow-1" style="min-width:0;">
+												<div style="font-weight:600;color:var(--td-ink);font-size:0.92rem;">
+													{{ subTaskTemplate.title }}
+													{% if subTaskTemplate.documentation %}
+														<i class="ti ti-file-description text-secondary ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'documentationAvailable'|trans }}" style="font-size:0.85rem;"></i>
+													{% endif %}
+												</div>
+												{% if subTaskTemplate.description %}
+													<div class="text-secondary" style="font-size:0.85rem;margin-top:0.2rem;">{{ subTaskTemplate.description }}</div>
+												{% endif %}
+												<div class="tarmac-card__badges" style="margin-top:0.35rem;">
+													{% if subTaskTemplate.requiresInspection %}
+														<span class="tarmac-badge tarmac-badge--glow" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+															<i class="ti ti-shield-check"></i>{{ 'requiresInspection'|trans }}
+														</span>
+													{% endif %}
+													{% include 'component/difficultyBadge.html.twig' with {'difficulty': subTaskTemplate.difficulty} %}
+													{% for spec in subTaskTemplate.specialisations %}
+														<span class="tarmac-badge tarmac-badge--specialisation" title="{{ spec.description|default('')|e('html_attr') }}">
+															<i class="ti ti-tag"></i>{{ spec.name }}
+														</span>
+													{% endfor %}
+												</div>
+											</div>
+										</div>
+									{% endfor %}
+								</div>
+							{% endif %}
+						</div>
+					{% endfor %}
+				{% else %}
+					<div style="text-align:center;padding:2rem 1rem;">
+						<div style="font-size:2rem;color:var(--td-ink-3);margin-bottom:0.6rem;"><i class="ti ti-checkbox"></i></div>
+						<h4 style="font-size:1rem;font-weight:700;margin-bottom:0.3rem;">{{ 'noTasksInPlan'|trans }}</h4>
+						<p class="text-secondary" style="margin:0 0 1rem;">{{ 'noTasksInPlanDescription'|trans }}</p>
+						{% if is_granted('MANAGE', club) %}
+							<a href="{{ path('club_plan_edit', {id: plan.id}) }}" class="btn btn-primary btn-sm">
+								<i class="ti ti-plus me-1"></i>{{ 'addTasks'|trans }}
+							</a>
+						{% endif %}
+					</div>
+				{% endif %}
+			</div>
+
+		</div>{# /col-lg-8 (main) #}
+
+		{# ========== Sidebar ========== #}
+		<div class="col-12 col-lg-4">
+			<div class="tarmac-page-sidebar">
+
+				<div class="tarmac-panel">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-info-circle"></i>{{ 'details'|trans }}
+					</div>
+					<ul class="tarmac-meta-list">
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'equipment'|trans }}</span>
+							<span class="tarmac-meta-list__value">
+								<span class="tarmac-badge tarmac-badge--info">
+									<i class="ti {{ typeIcon }}"></i>{{ (plan.equipmentType.value ~ 'Type')|trans }}
+								</span>
+							</span>
+						</li>
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'tasks'|trans }}</span>
+							<span class="tarmac-meta-list__value"><strong>{{ plan.taskTemplates|length }}</strong></span>
+						</li>
+						{% if totalSubTasks > 0 %}
+							<li>
+								<span class="tarmac-meta-list__label">{{ 'subTasks'|trans }}</span>
+								<span class="tarmac-meta-list__value"><strong>{{ totalSubTasks }}</strong></span>
+							</li>
+						{% endif %}
+					</ul>
+				</div>
+
+				{% if applications|length > 0 %}
+					<div class="tarmac-panel">
+						<div class="tarmac-panel__title">
+							<i class="ti ti-history"></i>{{ 'activeApplications'|trans }}
+							<span class="tarmac-section-bar__count" style="margin-left:auto;">{{ applications|length }}</span>
+						</div>
+						<ul class="tarmac-contributors">
+							{% for application in applications %}
+								{% set closed = 0 %}
+								{% for task in application.tasks %}{% if task.status == 'closed' %}{% set closed = closed + 1 %}{% endif %}{% endfor %}
+								{% set progress = application.tasks|length > 0 ? (closed / application.tasks|length * 100)|round : 0 %}
+								<li class="tarmac-contributors__item" style="display:block;">
+									<a href="{{ path('club_plan_application_show', {id: application.id}) }}" style="text-decoration:none;color:var(--td-ink);display:block;">
+										<div style="font-weight:600;font-size:0.9rem;">{{ application.equipment.name }}</div>
+										<div class="text-secondary" style="font-size:0.78rem;margin-bottom:0.3rem;">
+											{{ application.appliedAt|date('d/m/Y') }}
+										</div>
+										<div class="tarmac-progress{% if progress == 100 %} tarmac-progress--done{% endif %}">
+											<span style="width: {{ progress }}%"></span>
+										</div>
+										<div style="font-size:0.75rem;color:var(--td-ink-3);margin-top:0.2rem;">
+											{{ closed }} / {{ application.tasks|length }} {{ 'tasks'|trans|lower }}
+										</div>
+									</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+
+			</div>
 		</div>
+
 	</div>
 
-	{# Applications Section #}
-	{% if applications|length > 0 %}
-		<div class="row row-cards mt-3">
-			<div class="col-12">
-				<div class="card">
-					<div class="card-header">
-						<h3 class="card-title">{{ 'activeApplications'|trans }}</h3>
-						<span class="badge bg-primary text-white ms-2">{{ applications|length }}</span>
+	{# Import modal #}
+	{% if importForm is defined and importForm %}
+		<div class="modal fade" id="plan-import-modal" tabindex="-1" aria-labelledby="plan-import-modal-label" aria-hidden="true">
+			<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="plan-import-modal-label">{{ 'importPlanFromXlsx'|trans }}</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'cancel'|trans }}"></button>
 					</div>
-					<div class="card-body">
-						<div class="list-group list-group-flush">
-							{% for application in applications %}
-								<a href="{{ path('club_plan_application_show', {id: application.id}) }}" class="list-group-item list-group-item-action px-0">
-									<div class="row align-items-center">
-										<div class="col">
-											<div class="fw-bold mb-1">{{ application.equipment.name }}</div>
-											<div class="text-secondary small mb-1">
-												<i class="ti ti-calendar me-1"></i>
-												{{ 'appliedAt'|trans }}:
-												{{ application.appliedAt|date('d/m/Y') }}
-											</div>
-											<div class="text-secondary small">
-												{% if application.dueAt %}
-													<i class="ti ti-calendar-due me-1"></i>
-													{{ 'dueDate'|trans }}:
-													{{ application.dueAt|date('d/m/Y') }}
-												{% else %}
-													<i class="ti ti-calendar-x me-1"></i>
-													{{ 'noDueDate'|trans }}
-												{% endif %}
-											</div>
-										</div>
-										<div class="col-auto">
-											<div class="d-flex gap-2 align-items-center">
-												<span class="badge bg-primary text-white">
-													{{ application.tasks|length }}
-													{{ 'tasks'|trans|lower }}
-												</span>
-												{% if application.isCancelled %}
-													<span class="badge bg-warning-lt text-white">
-														<i class="ti ti-x me-1"></i>
-														{{ 'cancelled'|trans }}
-													</span>
-												{% endif %}
-											</div>
-										</div>
-									</div>
-
-									{# Progress bar for tasks #}
-									{% if application.tasks|length > 0 %}
-										{% set progress = 0 %}
-										{% set closed = 0 %}
-										{% for task in application.tasks %}
-											{% if task.status == 'closed' %}
-												{% set closed = closed + 1 %}
-											{% endif %}
-										{% endfor %}
-										{% set progress = (closed / application.tasks|length * 100)|round %}
-										<div class="progress progress-sm mb-1 mt-2">
-											<div class="progress-bar bg-{{ progress == 100 ? 'success' : 'primary' }}" style="width: {{ progress }}%">
-												<span class="visually-hidden">{{ progress }}%</span>
-											</div>
-										</div>
-										<div class="text-secondary small">
-											{{ closed }}
-											/
-											{{ application.tasks|length }}
-											{{ 'tasks'|trans|lower }}
-											{{ 'completed'|trans|lower }}
-										</div>
-									{% endif %}
-								</a>
-							{% endfor %}
-						</div>
+					{{ form_start(importForm, {
+						action: path('club_plan_import', {id: plan.id}),
+						attr: {'enctype': 'multipart/form-data'}
+					}) }}
+					<div class="modal-body">
+						{% include 'club/plan/_import_xlsx_panel.html.twig' %}
 					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">
+							<i class="ti ti-upload me-2"></i>{{ 'importPlan'|trans }}
+						</button>
+					</div>
+					{{ form_rest(importForm) }}
+					{{ form_end(importForm) }}
 				</div>
 			</div>
 		</div>

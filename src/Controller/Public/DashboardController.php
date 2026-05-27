@@ -3,6 +3,8 @@
 namespace App\Controller\Public;
 
 use App\Entity\User;
+use App\Repository\SubTaskRepository;
+use App\Repository\TaskRepository;
 use App\Service\SubdomainService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -15,7 +17,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class DashboardController extends AbstractController
 {
     public function __construct(
-        private readonly SubdomainService $subdomainService
+        private readonly SubdomainService $subdomainService,
+        private readonly TaskRepository $taskRepository,
+        private readonly SubTaskRepository $subTaskRepository,
     ) {
     }
 
@@ -39,9 +43,21 @@ class DashboardController extends AbstractController
             return new RedirectResponse($clubUrl);
         }
 
+        // Stats par club (tâches ouvertes + sous-tâches à inspecter pour les Qualifiés)
+        $clubStats = [];
+        foreach ($clubs as $club) {
+            $clubStats[$club->getId()] = [
+                'openTasks' => $this->taskRepository->countOpenByClub($club),
+                'awaitingInspection' => $user->isInspectorOfClub($club)
+                    ? $this->subTaskRepository->countAwaitingInspectionByClub($club)
+                    : null,
+            ];
+        }
+
         return $this->render('public/clubs.html.twig', [
             'clubs' => $clubs,
             'subdomainService' => $this->subdomainService,
+            'clubStats' => $clubStats,
         ]);
     }
 }

@@ -4,141 +4,125 @@
 	{{ 'applyPlan'|trans }}
 {% endblock %}
 
+{% block page_pretitle %}
+	<a href="{{ path('club_plan_show', {id: plan.id}) }}" class="tarmac-page-eyebrow">
+		<span class="tarmac-eqv" style="background:var(--td-mid-soft);color:var(--td-mid);">
+			<i class="ti ti-file-check"></i>
+		</span>
+		{{ plan.name }}
+	</a>
+{% endblock %}
+
 {% block page_content %}
 	{{ form_start(form) }}
 
-	{# Plan Information Card #}
-	<div class="card mb-3">
-		<div class="card-header">
-			<h3 class="card-title">{{ plan.name }}</h3>
-		</div>
-		<div class="card-body">
-			<div class="mb-3">
-				<span class="badge bg-{{ plan.equipmentType.value == 'glider' ? 'blue' : 'green' }} text-white me-2">
-					<i class="ti ti-{{ plan.equipmentType.value == 'glider' ? 'plane' : 'building' }} me-1"></i>
-					{{ (plan.equipmentType.value ~ 'Type')|trans }}
-				</span>
-				<span class="badge bg-primary text-white me-2">
-					<i class="ti ti-checkbox me-1"></i>
-					{{ plan.taskTemplates|length }}
-					{{ 'tasks'|trans|lower }}
-				</span>
-				{% set totalSubTasks = 0 %}
-				{% for task in plan.taskTemplates %}
-					{% set totalSubTasks = totalSubTasks + task.subTaskTemplates|length %}
-				{% endfor %}
-				{% if totalSubTasks > 0 %}
-					<span class="badge bg-secondary text-white">
-						<i class="ti ti-list-check me-1"></i>
-						{{ totalSubTasks }}
-						{{ 'subTasks'|trans|lower }}
-					</span>
+	<div class="row g-3">
+		<div class="col-12 col-lg-8">
+
+			<div class="tarmac-panel tarmac-panel--accent mb-3">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-clipboard-check"></i>{{ 'applicationDetails'|trans }}
+				</div>
+				<div class="mb-3">{{ form_row(form.equipment) }}</div>
+				<div class="mb-3">{{ form_row(form.dueAt) }}</div>
+			</div>
+
+			{# Timeline alert #}
+			{% if timeline is defined and timeline|length > 0 %}
+				<div class="tarmac-panel mb-3" style="border-color: rgba(184, 145, 80, 0.3);">
+					<div class="tarmac-panel__title" style="color: var(--td-warning);">
+						<i class="ti ti-alert-triangle"></i>{{ 'maintenanceTimeline'|trans }}
+					</div>
+					<p class="tarmac-form-hint"><strong>{{ 'existingMaintenancePlanned'|trans }}</strong></p>
+					<ul class="tarmac-meta-list">
+						{% for app in timeline %}
+							<li>
+								<span class="tarmac-meta-list__label">{{ app.plan.name }}</span>
+								<span class="tarmac-meta-list__value">
+									<span class="tarmac-badge tarmac-badge--{{ app.isOverdue ? 'danger' : (app.isDueSoon ? 'warning' : 'info') }}">
+										{{ app.dueAt|date('d/m/Y') }} — {{ app.completionPercentage }}%
+									</span>
+								</span>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+
+			{# Tasks preview #}
+			<div class="tarmac-panel mb-3">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-checkbox"></i>{{ 'tasksToBeCreated'|trans }}
+					<span class="tarmac-section-bar__count" style="margin-left:auto;">{{ plan.taskTemplates|length }}</span>
+				</div>
+				{% if plan.taskTemplates|length > 0 %}
+					{% for taskTemplate in plan.taskTemplates %}
+						<div class="d-flex align-items-baseline gap-2 py-2 {% if not loop.last %}border-bottom{% endif %}" style="{% if not loop.last %}border-bottom:1px dashed var(--td-border) !important;{% endif %}">
+							<span class="tarmac-badge tarmac-badge--info">{{ loop.index }}</span>
+							<div class="flex-grow-1" style="min-width:0;">
+								<div style="font-weight:600;color:var(--td-ink);">{{ taskTemplate.title }}</div>
+								{% if taskTemplate.subTaskTemplates|length > 0 %}
+									<div class="text-secondary" style="font-size:0.82rem;margin-top:0.15rem;">
+										<i class="ti ti-list-check me-1"></i>{{ taskTemplate.subTaskTemplates|length }} {{ 'subTasks'|trans|lower }}
+									</div>
+								{% endif %}
+							</div>
+							<div class="d-flex gap-1 align-items-start flex-wrap">
+								{% if taskTemplate.requiresInspection %}
+									<span class="tarmac-badge tarmac-badge--glow" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+										<i class="ti ti-shield-check"></i>
+									</span>
+								{% endif %}
+								{% include 'component/difficultyBadge.html.twig' with {'difficulty': taskTemplate.difficulty, 'size': 'sm'} %}
+							</div>
+						</div>
+					{% endfor %}
 				{% endif %}
 			</div>
-			{% if plan.description %}
-				<p class="text-secondary mb-0">{{ plan.description }}</p>
-			{% endif %}
-		</div>
-	</div>
 
-	{# Application Form Card #}
-	<div class="card mb-3">
-		<div class="card-header">
-			<h3 class="card-title">{{ 'applicationDetails'|trans }}</h3>
-		</div>
-		<div class="card-body">
-			<div class="mb-3">
-				{{ form_row(form.equipment) }}
+			<div class="tarmac-panel sticky-bottom-mobile">
+				<div class="d-flex justify-content-end gap-2">
+					<a href="{{ path('club_plan_show', {id: plan.id}) }}" class="btn btn-outline-secondary">{{ 'cancel'|trans }}</a>
+					<button type="submit" class="btn btn-primary">
+						<i class="ti ti-clipboard-check me-2"></i>{{ 'applyPlan'|trans }}
+					</button>
+				</div>
 			</div>
-			<div class="mb-3">
-				{{ form_row(form.dueAt) }}
-			</div>
-		</div>
-	</div>
 
-	{# Timeline Preview (if equipment and date selected) #}
-	{% if timeline is defined and timeline|length > 0 %}
-		<div class="card mb-3">
-			<div class="card-header">
-				<h3 class="card-title">{{ 'maintenanceTimeline'|trans }}</h3>
-				<span class="badge bg-warning text-white ms-2">
-					<i class="ti ti-alert-triangle me-1"></i>
-					{{ 'existingMaintenancePlanned'|trans }}
-				</span>
-			</div>
-			<div class="card-body">
-				<div class="list-group list-group-flush">
-					{% for app in timeline %}
-						<div class="list-group-item px-0">
-							<div class="d-flex justify-content-between align-items-start">
-								<div>
-									<div class="fw-bold">{{ app.plan.name }}</div>
-									<div class="text-secondary small">
-										{{ 'dueDate'|trans }}:
-										{{ app.dueAt|date('d/m/Y') }}
-									</div>
-								</div>
-								<span class="badge bg-{{ app.isOverdue ? 'danger' : (app.isDueSoon ? 'warning' : 'info') }} text-white">
-									{{ app.completionPercentage }}%
-								</span>
-							</div>
-						</div>
-					{% endfor %}
+		</div>
+
+		{# Sidebar : plan context #}
+		<div class="col-12 col-lg-4">
+			<div class="tarmac-page-sidebar">
+				<div class="tarmac-panel">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-info-circle"></i>{{ 'plan'|trans }}
+					</div>
+					<div style="font-weight:700;color:var(--td-deep);font-size:1.05rem;margin-bottom:0.5rem;">
+						{{ plan.name }}
+					</div>
+					{% if plan.description %}
+						<p class="text-secondary" style="font-size:0.85rem;">{{ plan.description }}</p>
+					{% endif %}
+					<div class="tarmac-card__badges" style="margin-top:0.5rem;">
+						<span class="tarmac-badge tarmac-badge--info">
+							<i class="ti ti-{{ plan.equipmentType.value == 'glider' ? 'plane' : 'building' }}"></i>{{ (plan.equipmentType.value ~ 'Type')|trans }}
+						</span>
+						<span class="tarmac-badge tarmac-badge--secondary">
+							{{ plan.taskTemplates|length }} {{ 'tasks'|trans|lower }}
+						</span>
+						{% set totalSubTasks = 0 %}
+						{% for task in plan.taskTemplates %}{% set totalSubTasks = totalSubTasks + task.subTaskTemplates|length %}{% endfor %}
+						{% if totalSubTasks > 0 %}
+							<span class="tarmac-badge tarmac-badge--secondary">
+								{{ totalSubTasks }} {{ 'subTasks'|trans|lower }}
+							</span>
+						{% endif %}
+					</div>
 				</div>
 			</div>
 		</div>
-	{% endif %}
 
-	{# Tasks Preview #}
-	<div class="card mb-3">
-		<div class="card-header">
-			<h3 class="card-title">{{ 'tasksToBeCreated'|trans }}</h3>
-			<span class="badge bg-primary text-white ms-2">{{ plan.taskTemplates|length }}</span>
-		</div>
-		<div class="card-body">
-			{% if plan.taskTemplates|length > 0 %}
-				<div class="list-group list-group-flush">
-					{% for taskTemplate in plan.taskTemplates %}
-						<div class="list-group-item px-0">
-							<div class="d-flex justify-content-between align-items-start mb-2">
-								<div class="flex-grow-1">
-									<span class="badge badge-outline text-primary me-2">{{ loop.index }}</span>
-									<span class="fw-bold">{{ taskTemplate.title }}</span>
-								</div>
-								<div class="d-flex gap-2">
-									{% if taskTemplate.requiresInspection %}
-										<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
-											<i class="ti ti-shield-check me-1"></i>
-										</span>
-									{% endif %}
-									{% include 'component/difficultyBadge.html.twig' with {'difficulty': taskTemplate.difficulty, 'size': 'sm'} %}
-								</div>
-							</div>
-
-							{# Subtasks count #}
-							{% if taskTemplate.subTaskTemplates|length > 0 %}
-								<div class="text-secondary small ms-4">
-									<i class="ti ti-list-check me-1"></i>
-									{{ taskTemplate.subTaskTemplates|length }}
-									{{ 'subTasks'|trans|lower }}
-								</div>
-							{% endif %}
-						</div>
-					{% endfor %}
-				</div>
-			{% endif %}
-		</div>
 	</div>
-
-	{# Submit Button - Sticky on mobile #}
-	<div class="card sticky-bottom-mobile">
-		<div class="card-body">
-			<button type="submit" class="btn btn-primary w-100">
-				<i class="ti ti-clipboard-check me-2"></i>
-				{{ 'applyPlan'|trans }}
-			</button>
-		</div>
-	</div>
-
 	{{ form_end(form) }}
 {% endblock %}

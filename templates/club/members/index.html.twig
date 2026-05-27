@@ -6,7 +6,7 @@
 
 {% block page_actions %}
 	{% if is_granted('MANAGE', club) %}
-		<a href="{{ path('club_invitations') }}" class="btn btn-outline-primary" style="min-height: 44px;">
+		<a href="{{ path('club_invitations') }}" class="btn btn-outline-secondary">
 			<i class="ti ti-mail me-2"></i>
 			<span class="d-none d-sm-inline">{{ 'invitations'|trans }}</span>
 			<span class="d-inline d-sm-none">{{ 'invitations'|trans }}</span>
@@ -17,85 +17,67 @@
 {% block page_content %}
 	{% include 'component/filters.html.twig' with { form: filters } %}
 
-	{# Member cards - Mobile-first design #}
 	<div class="row">
 		{% for membership in memberships %}
-			<div class="col-12 mb-3">
-				<div class="card card-link {% if not membership.user.active %}border-danger{% endif %}" style="cursor: pointer;">
-					<div class="card-body">
-						<div class="d-flex align-items-center justify-content-between">
-							<div class="d-flex align-items-center flex-fill">
-								<a href="{{ path('club_member_show', {id: membership.id}) }}" class="text-decoration-none text-reset d-flex align-items-center flex-fill">
-									<span class="avatar me-3">{{ membership.user.firstname[:1] }}{{ membership.user.lastname[:1] }}</span>
-									<div class="flex-fill">
-										<div class="font-weight-medium {% if not membership.user.active %}text-danger{% else %}text-dark{% endif %}">
-											{{ membership.user.fullname }}
-										</div>
-										<div class="text-secondary small">
-											<i class="ti ti-mail me-1"></i>
-											{{ membership.user.email }}
-										</div>
-										<div class="text-secondary small mt-1">
-											<i class="ti ti-calendar me-1"></i>
-											{{ 'memberSince'|trans }}
-											{{ membership.joinedAt|date('d/m/Y') }}
-										</div>
-									</div>
-								</a>
-							</div>
+			{% set isInactive = not membership.user.active %}
+			<div class="col-12 col-md-6 col-lg-4 mb-3 d-flex">
+				<a href="{{ path('club_member_show', {id: membership.id}) }}"
+				   class="tarmac-card w-100{% if isInactive %} tarmac-card--dimmed{% endif %}"
+				   style="display:flex;flex-direction:column;">
 
-							{# Badges and actions on the right #}
-							<div class="d-flex flex-column align-items-end ms-3 gap-2">
-								<div class="d-flex flex-wrap gap-2 justify-content-end">
-									{% if membership.isManager %}
-										<span class="badge bg-blue-lt text-white">
-											<i class="ti ti-user-star me-1"></i>
-											{{ 'manager'|trans }}
-										</span>
-									{% endif %}
-									{% if membership.isInspector %}
-										<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'qualifiedTooltip'|trans }}">
-											<i class="ti ti-shield-check me-1"></i>
-											{{ 'inspector'|trans }}
-										</span>
-									{% endif %}
-									{% if membership.isPilote %}
-										<span class="badge bg-purple-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'pilotTooltip'|trans }}">
-											<i class="ti ti-plane me-1"></i>
-											{{ 'pilot'|trans }}
-										</span>
-									{% endif %}
-									{% if not membership.isManager and not membership.isInspector and not membership.isPilote %}
-										<span class="badge bg-secondary-lt text-white">
-											<i class="ti ti-user me-1"></i>
-											{{ 'member'|trans }}
-										</span>
-									{% endif %}
-									{% if not membership.user.active %}
-										<span class="badge bg-danger text-white">
-											<i class="ti ti-ban me-1"></i>
-											{{ 'disabled'|trans }}
-										</span>
-									{% endif %}
-								</div>
-
+					<div class="tarmac-card__head">
+						<span class="contributor-avatar contributor-avatar--c{{ membership.user.id % 8 }}" style="width:48px;height:48px;font-size:1rem;flex-shrink:0;">
+							{{ membership.user.firstname[:1]|upper }}{{ membership.user.lastname[:1]|upper }}
+						</span>
+						<div class="flex-fill" style="min-width:0;">
+							<h3 class="tarmac-card__title" style="overflow:hidden;text-overflow:ellipsis;">
+								{{ membership.user.fullname }}
+							</h3>
+							<div class="tarmac-card__meta" style="overflow:hidden;text-overflow:ellipsis;">
+								<i class="ti ti-mail"></i>{{ membership.user.email }}
 							</div>
 						</div>
 					</div>
-				</div>
+
+					<div class="tarmac-card__badges" style="margin-top:0.5rem;">
+						{% if membership.isManager %}
+							<span class="tarmac-badge tarmac-badge--success"><i class="ti ti-user-star"></i>{{ 'manager'|trans }}</span>
+						{% endif %}
+						{% if membership.isInspector %}
+							<span class="tarmac-badge tarmac-badge--glow" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'qualifiedTooltip'|trans }}">
+								<i class="ti ti-shield-check"></i>{{ 'inspector'|trans }}
+							</span>
+						{% endif %}
+						{% if membership.isPilote %}
+							<span class="tarmac-badge tarmac-badge--info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'pilotTooltip'|trans }}">
+								<i class="ti ti-plane"></i>{{ 'pilot'|trans }}
+							</span>
+						{% endif %}
+						{% if not membership.isManager and not membership.isInspector and not membership.isPilote %}
+							<span class="tarmac-badge tarmac-badge--secondary"><i class="ti ti-user"></i>{{ 'member'|trans }}</span>
+						{% endif %}
+						{% if isInactive %}
+							<span class="tarmac-badge tarmac-badge--status-cancelled"><i class="ti ti-ban"></i>{{ 'disabled'|trans }}</span>
+						{% endif %}
+					</div>
+
+					<div class="tarmac-card__footer" style="margin-top:auto;">
+						<span class="tarmac-card__meta">
+							<i class="ti ti-calendar"></i>{{ 'memberSince'|trans }} {{ membership.joinedAt|date('d/m/Y') }}
+						</span>
+					</div>
+				</a>
 			</div>
 		{% else %}
 			<div class="col-12">
-				<div class="card">
-					<div class="card-body text-center text-secondary">
-						<em>{{ 'noMembersFound'|trans }}</em>
-					</div>
+				<div class="tarmac-panel" style="text-align:center;padding:2.5rem 1.5rem;">
+					<div style="font-size:2.5rem;color:var(--td-ink-3);margin-bottom:0.75rem;"><i class="ti ti-users"></i></div>
+					<p class="text-secondary" style="margin:0;"><em>{{ 'noMembersFound'|trans }}</em></p>
 				</div>
 			</div>
 		{% endfor %}
 	</div>
 
-	{# Pagination #}
 	<div class="d-flex justify-content-center mt-4">
 		{{ pagination(memberships) }}
 	</div>

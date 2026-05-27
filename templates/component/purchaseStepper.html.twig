@@ -1,0 +1,65 @@
+{#
+    Purchase Stepper Component
+    Affiche le workflow d'un achat sous forme d'étapes discrètes.
+
+    Paramètres :
+    - purchase: l'entité Purchase
+    - compact: bool (défaut false) — version sans labels pour les cartes en liste
+#}
+{% set compact = compact ?? false %}
+{% set isCancelled = purchase.status.value == 'cancelled' %}
+
+{# Définition des étapes (clé = id, value = label + icon) #}
+{% set steps = [
+    {key: 'requested',  label: 'stepRequested'|trans,  icon: 'ti-file-text'},
+    {key: 'approved',   label: 'stepApproved'|trans,   icon: 'ti-check'},
+    {key: 'purchased',  label: 'stepPurchased'|trans,  icon: 'ti-shopping-cart'},
+    {key: 'delivered',  label: 'stepDelivered'|trans,  icon: 'ti-truck'},
+    {key: 'complete',   label: 'stepComplete'|trans,   icon: 'ti-package'},
+    {key: 'reimbursed', label: 'stepReimbursed'|trans, icon: 'ti-cash'},
+] %}
+
+{# Index de l'étape actuelle (mapping status → step) #}
+{% set currentIndex = -1 %}
+{% if purchase.status.value == 'requested' or purchase.status.value == 'pending_approval' %}
+    {% set currentIndex = 0 %}
+{% elseif purchase.status.value == 'approved' %}
+    {% set currentIndex = 1 %}
+{% elseif purchase.status.value == 'purchased' %}
+    {% set currentIndex = 2 %}
+{% elseif purchase.status.value == 'delivered' %}
+    {% set currentIndex = 3 %}
+{% elseif purchase.status.value == 'complete' %}
+    {% set currentIndex = 4 %}
+{% elseif purchase.status.value == 'reimbursed' %}
+    {% set currentIndex = 5 %}
+{% endif %}
+
+<ol class="tarmac-stepper{% if compact %} tarmac-stepper--compact{% endif %}{% if isCancelled %} tarmac-stepper--cancelled{% endif %}"
+   role="list"
+   aria-label="{{ 'purchaseWorkflow'|trans }}">
+    {% for i, step in steps %}
+        {% set state = '' %}
+        {% if isCancelled %}
+            {% set state = '' %}
+        {% elseif i < currentIndex %}
+            {% set state = 'is-done' %}
+        {% elseif i == currentIndex %}
+            {% set state = 'is-current' %}
+        {% endif %}
+
+        <li class="tarmac-stepper__step {{ state }}"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="{{ step.label }}">
+            <span class="tarmac-stepper__dot">
+                {% if state == 'is-done' %}
+                    <i class="ti ti-check"></i>
+                {% else %}
+                    <i class="ti {{ step.icon }}"></i>
+                {% endif %}
+            </span>
+            <span class="tarmac-stepper__label">{{ step.label }}</span>
+        </li>
+    {% endfor %}
+</ol>

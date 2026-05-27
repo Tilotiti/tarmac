@@ -624,7 +624,8 @@
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.subtask-bulk-item-wrapper.is-selectable .card {
+.subtask-bulk-item-wrapper.is-selectable .card,
+.subtask-bulk-item-wrapper.is-selectable .tarmac-card {
     box-shadow: 0 0.5rem 1rem rgba(15, 23, 42, 0.06);
 }
 
@@ -839,3 +840,1875 @@ body.modal-open .ts-dropdown.member-select-dropdown {
     background: #e9ecef;
     color: #495057;
 }
+
+/* =================================================================
+   Tarmac Design System — Phase 1
+   Couche additive par-dessus Tabler. NE remplace PAS Tabler.
+   Référence visuelle : /design-lab (templates/public/designLab.html.twig).
+   Tokens et composants partagés (cards de tâche, sous-tâche, badges,
+   vignettes matériel, progress). Ajoutés progressivement, page par page.
+   ================================================================= */
+
+:root {
+    /* ---- Nudges globaux Tabler ----
+       Surcharge ciblée des CSS vars Tabler/Bootstrap pour amener TOUT
+       l'app vers la nouvelle charte sans toucher les templates. */
+    --tblr-border-radius: 0.5rem;          /* 8px (au lieu de 4px) — cards/buttons/inputs/alerts */
+    --tblr-border-radius-sm: 0.375rem;     /* 6px */
+    --tblr-border-radius-lg: 0.75rem;      /* 12px */
+
+    /* Couleurs de marque (primary = navy deep, secondary = mid blue) */
+    --tblr-primary: #0b1d2e;
+    --tblr-primary-rgb: 11, 29, 46;
+    --tblr-primary-fg: #ffffff;
+    --tblr-link-color: #345b7c;
+    --tblr-link-color-rgb: 52, 91, 124;
+    --tblr-link-hover-color: #0b1d2e;
+    --tblr-link-hover-color-rgb: 11, 29, 46;
+
+    /* Fond chaud (canvas) */
+    --tblr-body-bg: #faf8f3;
+    --tblr-body-bg-rgb: 250, 248, 243;
+    --tblr-bg-surface: #ffffff;
+    --tblr-bg-surface-secondary: #f4ecd8;
+    --tblr-bg-surface-tertiary: #f4ecd8;
+
+    /* Encre */
+    --tblr-body-color: #0b1d2e;
+    --tblr-body-color-rgb: 11, 29, 46;
+    --tblr-secondary-color: #5a6878;
+
+    /* Bordures */
+    --tblr-border-color: rgba(11, 29, 46, 0.08);
+    --tblr-border-color-translucent: rgba(11, 29, 46, 0.06);
+
+    /* Palette de base */
+    --td-deep: #0b1d2e;
+    --td-mid: #345b7c;
+    --td-mid-soft: rgba(52, 91, 124, 0.12);
+    --td-glow: #f4a261;
+    --td-glow-soft: rgba(244, 162, 97, 0.18);
+    --td-cream: #f4ecd8;
+    --td-canvas: #faf8f3;
+    --td-paper: #ffffff;
+
+    /* Statuts */
+    --td-success: #2f8c3a;
+    --td-success-soft: rgba(126, 231, 135, 0.22);
+    --td-warning: #b66525;
+    --td-warning-soft: rgba(244, 162, 97, 0.2);
+    --td-danger: #b8364a;
+    --td-danger-soft: rgba(184, 54, 74, 0.12);
+    --td-info: #345b7c;
+    --td-info-soft: rgba(52, 91, 124, 0.12);
+    --td-azure: #2e6ea8;
+    --td-azure-soft: rgba(80, 145, 200, 0.14);
+    --td-neutral: #5a6878;
+    --td-neutral-soft: rgba(90, 104, 120, 0.1);
+    --td-purple: #6b3ea0;
+    --td-purple-soft: rgba(107, 62, 160, 0.14);
+
+    /* Encre */
+    --td-ink: #0b1d2e;
+    --td-ink-2: #5a6878;
+    --td-ink-3: #8898a8;
+
+    /* Bordures */
+    --td-border: rgba(11, 29, 46, 0.08);
+    --td-border-strong: rgba(11, 29, 46, 0.14);
+
+    /* Rayons */
+    --td-radius-sm: 8px;
+    --td-radius: 14px;
+    --td-radius-lg: 20px;
+    --td-radius-pill: 999px;
+
+    /* Ombres */
+    --td-shadow-sm: 0 1px 0 rgba(11, 29, 46, 0.04), 0 4px 12px -8px rgba(11, 29, 46, 0.18);
+    --td-shadow: 0 1px 0 rgba(11, 29, 46, 0.04), 0 12px 30px -18px rgba(11, 29, 46, 0.28);
+}
+
+/* ---------- Card ---------- */
+.tarmac-card {
+    position: relative;
+    background: var(--td-paper);
+    border: 1px solid var(--td-border);
+    border-radius: var(--td-radius);
+    padding: 1.1rem 1.25rem;
+    box-shadow: var(--td-shadow-sm);
+    transition: transform .18s ease, box-shadow .25s ease, border-color .18s ease;
+    overflow: hidden;
+    color: var(--td-ink);
+    text-decoration: none;
+    display: block;
+}
+
+.tarmac-card.is-link,
+a.tarmac-card,
+a > .tarmac-card {
+    cursor: pointer;
+}
+
+a.tarmac-card,
+a.tarmac-card:hover,
+a.tarmac-card:focus,
+a.tarmac-card:active {
+    text-decoration: none;
+}
+
+a.tarmac-card:hover,
+.tarmac-card.is-link:hover,
+a:hover > .tarmac-card {
+    transform: translateY(-2px);
+    box-shadow: var(--td-shadow);
+    border-color: var(--td-border-strong);
+    color: var(--td-ink);
+}
+
+.tarmac-card--dimmed {
+    opacity: 0.75;
+}
+
+/* Left status accent — remplace .card-status-start */
+.tarmac-card[data-accent]::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+}
+.tarmac-card[data-accent="info"]::before     { background: var(--td-info); }
+.tarmac-card[data-accent="success"]::before  { background: var(--td-success); }
+.tarmac-card[data-accent="warning"]::before  { background: var(--td-glow); }
+.tarmac-card[data-accent="danger"]::before   { background: var(--td-danger); }
+.tarmac-card[data-accent="azure"]::before    { background: var(--td-azure); }
+.tarmac-card[data-accent="neutral"]::before  { background: var(--td-neutral); }
+
+.tarmac-card__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+}
+
+.tarmac-card__eyebrow {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--td-ink-3);
+    margin-bottom: 0.15rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.tarmac-card__title {
+    font-size: 1.02rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--td-ink);
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.005em;
+}
+
+.tarmac-card__subtitle {
+    font-size: 0.92rem;
+    color: var(--td-ink-2);
+    margin: 0 0 0.4rem;
+}
+
+.tarmac-card__meta {
+    font-size: 0.82rem;
+    color: var(--td-ink-3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.tarmac-card__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+}
+
+.tarmac-card__badges--right {
+    margin-top: 0;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+
+.tarmac-card__footer {
+    display: block;
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+    border-top: 1px dashed var(--td-border);
+}
+
+/* ---------- Vignette matériel (carrée, replace .avatar.avatar-lg.bg-X-lt) ---------- */
+.tarmac-eqv {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    background: var(--td-mid-soft);
+    color: var(--td-mid);
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+/* Variantes par couleur Tabler (mapping EquipmentType : blue / green / purple) */
+.tarmac-eqv--blue   { background: var(--td-mid-soft);     color: var(--td-mid); }
+.tarmac-eqv--green  { background: var(--td-success-soft); color: var(--td-success); }
+.tarmac-eqv--purple { background: var(--td-purple-soft);  color: var(--td-purple); }
+.tarmac-eqv--orange { background: var(--td-glow-soft);    color: var(--td-warning); }
+.tarmac-eqv--azure  { background: var(--td-azure-soft);   color: var(--td-azure); }
+.tarmac-eqv--red    { background: var(--td-danger-soft);  color: var(--td-danger); }
+.tarmac-eqv--yellow { background: var(--td-glow-soft);    color: var(--td-warning); }
+
+/* ---------- Badges (remplace .badge.bg-X-lt) ---------- */
+.tarmac-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.22rem 0.6rem;
+    border-radius: var(--td-radius-pill);
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+.tarmac-badge i { font-size: 0.85rem; }
+
+.tarmac-badge--status-open        { background: var(--td-info-soft);    color: var(--td-info); }
+.tarmac-badge--status-closed,
+.tarmac-badge--status-done        { background: var(--td-success-soft); color: var(--td-success); }
+.tarmac-badge--status-inspection  { background: var(--td-warning-soft); color: var(--td-warning); }
+.tarmac-badge--status-cancelled   { background: var(--td-danger-soft);  color: var(--td-danger); }
+.tarmac-badge--priority           { background: rgba(184, 54, 74, 0.1); color: var(--td-danger); }
+.tarmac-badge--started            { background: var(--td-azure-soft);   color: var(--td-azure); }
+.tarmac-badge--difficulty-1       { background: var(--td-success-soft); color: var(--td-success); }
+.tarmac-badge--difficulty-2       { background: var(--td-warning-soft); color: var(--td-warning); }
+.tarmac-badge--difficulty-3       { background: var(--td-danger-soft);  color: var(--td-danger); }
+.tarmac-badge--specialisation     { background: var(--td-neutral-soft); color: var(--td-neutral); }
+
+/* Génériques par sémantique de couleur (mapping Tabler) */
+.tarmac-badge--success            { background: var(--td-success-soft); color: var(--td-success); }
+.tarmac-badge--warning            { background: var(--td-warning-soft); color: var(--td-warning); }
+.tarmac-badge--danger             { background: var(--td-danger-soft);  color: var(--td-danger); }
+.tarmac-badge--info               { background: var(--td-info-soft);    color: var(--td-info); }
+.tarmac-badge--azure              { background: var(--td-azure-soft);   color: var(--td-azure); }
+.tarmac-badge--secondary          { background: var(--td-neutral-soft); color: var(--td-neutral); }
+
+.tarmac-badge--sm {
+    font-size: 0.68rem;
+    padding: 0.18rem 0.5rem;
+}
+.tarmac-badge--sm i { font-size: 0.78rem; }
+
+/* ---------- Progress (replace .progress.progress-sm) ---------- */
+.tarmac-progress {
+    height: 5px;
+    background: rgba(11, 29, 46, 0.06);
+    border-radius: 999px;
+    overflow: hidden;
+}
+.tarmac-progress > span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--td-mid), var(--td-glow));
+    border-radius: 999px;
+    transition: width .4s ease;
+}
+.tarmac-progress--done > span {
+    background: linear-gradient(90deg, var(--td-success), #7ee787);
+}
+
+.tarmac-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--td-ink-2);
+}
+.tarmac-progress-meta strong { color: var(--td-ink); font-weight: 700; }
+
+/* ---------- Breadcrumb ---------- */
+.tarmac-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--td-ink-3);
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    flex-wrap: wrap;
+}
+.tarmac-breadcrumb li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.tarmac-breadcrumb a {
+    color: var(--td-ink-3);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: background .15s, color .15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.tarmac-breadcrumb a,
+.tarmac-breadcrumb a:hover,
+.tarmac-breadcrumb a:focus,
+.tarmac-breadcrumb a:active {
+    text-decoration: none;
+}
+.tarmac-breadcrumb a:hover {
+    background: var(--td-mid-soft);
+    color: var(--td-deep);
+}
+.tarmac-breadcrumb li.is-current {
+    color: var(--td-deep);
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+}
+.tarmac-breadcrumb li + li::before {
+    content: "/";
+    color: var(--td-border-strong);
+    margin-left: 0.1rem;
+}
+
+/* ---------- Filters bar (chips + bouton) ---------- */
+.tarmac-filters {
+    background: var(--td-paper);
+    border: 1px solid var(--td-border);
+    border-radius: var(--td-radius);
+    padding: 0.6rem 0.85rem;
+    box-shadow: var(--td-shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.tarmac-filters--sm {
+    padding: 0.4rem 0.6rem;
+    box-shadow: none;
+    margin-bottom: 0;
+}
+.tarmac-filters__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.55rem 0.3rem 0.75rem;
+    background: var(--td-cream);
+    border-radius: var(--td-radius-pill);
+    font-size: 0.82rem;
+    color: var(--td-deep);
+    font-weight: 500;
+    line-height: 1.2;
+}
+.tarmac-filters__chip strong { font-weight: 700; }
+.tarmac-filters__chip-close {
+    border: 0;
+    background: rgba(11, 29, 46, 0.1);
+    color: var(--td-deep);
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.7rem;
+    padding: 0;
+    transition: background .15s, color .15s;
+    text-decoration: none;
+}
+.tarmac-filters__chip-close:hover,
+.tarmac-filters__chip-close:focus,
+.tarmac-filters__chip-close:active {
+    background: var(--td-deep);
+    color: #fff;
+    text-decoration: none;
+}
+.tarmac-filters__chip-close i { font-size: 0.7rem; }
+.tarmac-filters__spacer { flex: 1; }
+
+.tarmac-filters__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 38px;
+    padding: 0.4rem 0.85rem;
+    background: var(--td-paper);
+    color: var(--td-deep);
+    border: 1px solid var(--td-border-strong);
+    border-radius: var(--td-radius-sm);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    position: relative;
+    line-height: 1;
+}
+.tarmac-filters__btn:hover {
+    background: var(--td-cream);
+    border-color: var(--td-deep);
+    color: var(--td-deep);
+}
+.tarmac-filters__btn-badge {
+    background: var(--td-danger);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.1rem 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-left: 0.2rem;
+}
+
+.tarmac-filters__empty {
+    font-size: 0.85rem;
+    color: var(--td-ink-3);
+}
+
+/* =================================================================
+   Tarmac × Tabler — passe sur les composants Tabler eux-mêmes
+   On garde les classes Tabler (btn, form-control, card, alert, navbar…)
+   mais on les restyle pour qu'elles épousent la charte.
+   ================================================================= */
+
+/* ---------- Boutons Tabler ---------- */
+.btn {
+    font-weight: 600;
+    border-radius: 0.625rem;
+    min-height: 40px;
+    padding: 0.45rem 1rem;
+    transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease, color .2s ease;
+    line-height: 1.2;
+}
+.btn,
+.btn:hover,
+.btn:focus,
+.btn:active {
+    text-decoration: none;
+}
+.btn:active { transform: translateY(1px); }
+.btn-sm {
+    min-height: 32px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.82rem;
+    border-radius: 0.5rem;
+}
+.btn-lg {
+    min-height: 48px;
+    padding: 0.7rem 1.4rem;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background-color: var(--td-deep);
+    border-color: var(--td-deep);
+    color: #fff;
+    box-shadow: 0 6px 16px -8px rgba(11, 29, 46, 0.45);
+}
+.btn-primary:hover,
+.btn-primary:focus-visible {
+    background-color: #16334d;
+    border-color: #16334d;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px -10px rgba(11, 29, 46, 0.55);
+}
+.btn-primary:active,
+.btn-primary.active,
+.show > .btn-primary {
+    background-color: #07182b !important;
+    border-color: #07182b !important;
+    color: #fff !important;
+}
+
+.btn-outline-primary {
+    background-color: var(--td-paper);
+    color: var(--td-deep);
+    border-color: var(--td-border-strong);
+}
+.btn-outline-primary:hover,
+.btn-outline-primary:focus-visible {
+    background-color: var(--td-cream);
+    border-color: var(--td-deep);
+    color: var(--td-deep);
+}
+
+.btn-outline-secondary {
+    background-color: var(--td-paper);
+    color: var(--td-ink-2);
+    border-color: var(--td-border-strong);
+}
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus-visible {
+    background-color: var(--td-cream);
+    border-color: var(--td-deep);
+    color: var(--td-deep);
+}
+
+.btn-secondary {
+    background-color: var(--td-cream);
+    color: var(--td-deep);
+    border-color: var(--td-cream);
+}
+.btn-secondary:hover,
+.btn-secondary:focus-visible {
+    background-color: #ecd9b3;
+    color: var(--td-deep);
+    border-color: var(--td-deep);
+}
+
+.btn-success {
+    background-color: var(--td-success);
+    border-color: var(--td-success);
+    color: #fff;
+}
+.btn-success:hover { background-color: #25712f; border-color: #25712f; color: #fff; }
+.btn-outline-success {
+    background-color: var(--td-paper);
+    color: var(--td-success);
+    border-color: rgba(47, 140, 58, 0.4);
+}
+.btn-outline-success:hover {
+    background-color: var(--td-success);
+    color: #fff;
+    border-color: var(--td-success);
+}
+
+.btn-danger {
+    background-color: var(--td-danger);
+    border-color: var(--td-danger);
+    color: #fff;
+}
+.btn-danger:hover { background-color: #962b3c; border-color: #962b3c; color: #fff; }
+.btn-outline-danger {
+    background-color: var(--td-paper);
+    color: var(--td-danger);
+    border-color: rgba(184, 54, 74, 0.4);
+}
+.btn-outline-danger:hover {
+    background-color: var(--td-danger);
+    color: #fff;
+    border-color: var(--td-danger);
+}
+
+.btn-warning {
+    background-color: var(--td-glow);
+    border-color: var(--td-glow);
+    color: var(--td-deep);
+}
+.btn-warning:hover { background-color: #f7b377; border-color: #f7b377; color: var(--td-deep); }
+
+.btn-link {
+    color: var(--td-mid);
+    font-weight: 600;
+}
+.btn-link:hover { color: var(--td-deep); }
+
+/* Bouton glow — variante d'action mise en avant, à appliquer via classe utilitaire */
+.btn-glow {
+    background-color: var(--td-glow);
+    border-color: var(--td-glow);
+    color: var(--td-deep);
+    font-weight: 700;
+    box-shadow: 0 6px 16px -8px rgba(244, 162, 97, 0.6);
+}
+.btn-glow:hover,
+.btn-glow:focus-visible {
+    background-color: #f7b377;
+    border-color: #f7b377;
+    color: var(--td-deep);
+    transform: translateY(-1px);
+}
+
+/* ---------- Form controls ---------- */
+.form-control,
+.form-select {
+    border: 1px solid var(--td-border-strong);
+    background-color: var(--td-paper);
+    border-radius: 0.625rem;
+    padding: 0.6rem 0.85rem;
+    min-height: 42px;
+    color: var(--td-ink);
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+.form-control::placeholder { color: var(--td-ink-3); }
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--td-mid);
+    box-shadow: 0 0 0 4px rgba(52, 91, 124, 0.14);
+    background-color: #fff;
+    color: var(--td-ink);
+}
+.form-control:disabled,
+.form-select:disabled {
+    background-color: #f4ecd84d;
+    color: var(--td-ink-3);
+}
+.form-control-sm,
+.form-select-sm {
+    min-height: 34px;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.85rem;
+    border-radius: 0.5rem;
+}
+textarea.form-control { min-height: 96px; }
+
+.form-label {
+    font-weight: 600;
+    color: var(--td-ink);
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+}
+.form-text { color: var(--td-ink-3); }
+.invalid-feedback { color: var(--td-danger); font-size: 0.8rem; }
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: var(--td-danger);
+    box-shadow: none;
+}
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+    box-shadow: 0 0 0 4px rgba(184, 54, 74, 0.18);
+}
+
+/* Checkbox & radio */
+.form-check-input {
+    width: 1.15rem;
+    height: 1.15rem;
+    border: 1.5px solid var(--td-border-strong);
+    background-color: var(--td-paper);
+    cursor: pointer;
+    margin-top: 0.2rem;
+}
+.form-check-input:focus {
+    border-color: var(--td-mid);
+    box-shadow: 0 0 0 4px rgba(52, 91, 124, 0.14);
+}
+.form-check-input:checked {
+    background-color: var(--td-deep);
+    border-color: var(--td-deep);
+}
+.form-check-label {
+    color: var(--td-ink);
+    padding-left: 0.25rem;
+}
+
+.form-switch .form-check-input {
+    width: 2.25rem;
+    height: 1.25rem;
+    border-radius: 999px;
+}
+
+/* Input-group: harmoniser les bords arrondis */
+.input-group .form-control,
+.input-group .form-select { border-radius: 0; }
+.input-group > :first-child { border-top-left-radius: 0.625rem; border-bottom-left-radius: 0.625rem; }
+.input-group > :last-child { border-top-right-radius: 0.625rem; border-bottom-right-radius: 0.625rem; }
+.input-group-text {
+    background-color: var(--td-cream);
+    border-color: var(--td-border-strong);
+    color: var(--td-ink-2);
+}
+
+/* ---------- Alerts ---------- */
+.alert {
+    border-radius: var(--td-radius);
+    border-width: 1px;
+    padding: 0.85rem 1rem;
+    font-size: 0.92rem;
+}
+.alert-success {
+    background-color: var(--td-success-soft);
+    border-color: rgba(47, 140, 58, 0.25);
+    color: var(--td-success);
+}
+.alert-warning {
+    background-color: var(--td-warning-soft);
+    border-color: rgba(182, 101, 37, 0.25);
+    color: var(--td-warning);
+}
+.alert-danger {
+    background-color: var(--td-danger-soft);
+    border-color: rgba(184, 54, 74, 0.25);
+    color: var(--td-danger);
+}
+.alert-info,
+.alert-primary {
+    background-color: var(--td-info-soft);
+    border-color: rgba(52, 91, 124, 0.25);
+    color: var(--td-info);
+}
+.alert .ti { font-size: 1.1rem; }
+
+/* ---------- Cards Tabler (.card / .card-body) ---------- */
+.card {
+    background-color: var(--td-paper);
+    border: 1px solid var(--td-border);
+    border-radius: var(--td-radius);
+    box-shadow: 0 1px 0 rgba(11, 29, 46, 0.04), 0 4px 12px -8px rgba(11, 29, 46, 0.12);
+}
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--td-border);
+    padding: 1rem 1.25rem;
+}
+.card-title {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--td-ink);
+}
+.card-footer {
+    background-color: transparent;
+    border-top: 1px solid var(--td-border);
+}
+.card.bg-primary-lt {
+    background-color: var(--td-mid-soft) !important;
+    color: var(--td-deep);
+}
+.card.bg-secondary-lt {
+    background-color: var(--td-cream) !important;
+    color: var(--td-deep);
+}
+
+/* Border accent (.card-status-start / .card-status-top) — mappe sur la palette TD */
+.card-status-start {
+    border-top-left-radius: var(--td-radius);
+    border-bottom-left-radius: var(--td-radius);
+}
+
+/* ---------- Badges Tabler legacy (.badge.bg-X-lt) ---------- */
+/* On garde les couleurs visuellement cohérentes avec tarmac-badge */
+.badge.bg-primary-lt { background-color: var(--td-mid-soft) !important; color: var(--td-mid) !important; }
+.badge.bg-success-lt { background-color: var(--td-success-soft) !important; color: var(--td-success) !important; }
+.badge.bg-warning-lt,
+.badge.bg-orange-lt { background-color: var(--td-warning-soft) !important; color: var(--td-warning) !important; }
+.badge.bg-danger-lt,
+.badge.bg-red-lt { background-color: var(--td-danger-soft) !important; color: var(--td-danger) !important; }
+.badge.bg-info-lt,
+.badge.bg-azure-lt { background-color: var(--td-azure-soft) !important; color: var(--td-azure) !important; }
+.badge.bg-secondary-lt { background-color: var(--td-neutral-soft) !important; color: var(--td-neutral) !important; }
+.badge.bg-purple-lt { background-color: var(--td-purple-soft) !important; color: var(--td-purple) !important; }
+.badge.bg-blue-lt   { background-color: var(--td-mid-soft) !important;     color: var(--td-mid) !important; }
+.badge.bg-green-lt  { background-color: var(--td-success-soft) !important; color: var(--td-success) !important; }
+.badge.bg-yellow-lt { background-color: var(--td-warning-soft) !important; color: var(--td-warning) !important; }
+.badge.bg-cyan-lt   { background-color: var(--td-azure-soft) !important;   color: var(--td-azure) !important; }
+
+/* Badges « solides » (sans -lt) : on les remplace par les soft pour rester cohérent.
+   Le `text-white` du markup est neutralisé par notre couleur de marque. */
+.badge.bg-success { background-color: var(--td-success-soft) !important; color: var(--td-success) !important; }
+.badge.bg-warning { background-color: var(--td-warning-soft) !important; color: var(--td-warning) !important; }
+.badge.bg-danger  { background-color: var(--td-danger-soft) !important;  color: var(--td-danger) !important; }
+.badge.bg-info    { background-color: var(--td-info-soft) !important;    color: var(--td-info) !important; }
+.badge.bg-blue    { background-color: var(--td-mid-soft) !important;     color: var(--td-mid) !important; }
+.badge.bg-green   { background-color: var(--td-success-soft) !important; color: var(--td-success) !important; }
+.badge.bg-red     { background-color: var(--td-danger-soft) !important;  color: var(--td-danger) !important; }
+.badge.bg-yellow,
+.badge.bg-orange  { background-color: var(--td-warning-soft) !important; color: var(--td-warning) !important; }
+.badge.bg-purple  { background-color: var(--td-purple-soft) !important;  color: var(--td-purple) !important; }
+.badge.bg-azure   { background-color: var(--td-azure-soft) !important;   color: var(--td-azure) !important; }
+.badge.bg-primary { background-color: var(--td-mid-soft) !important;     color: var(--td-mid) !important; }
+.badge.bg-secondary { background-color: var(--td-neutral-soft) !important; color: var(--td-neutral) !important; }
+.badge.text-white { color: inherit !important; }
+
+/* ---------- Avatars Tabler (.avatar.bg-X-lt) ---------- */
+/* Les vignettes équipement / club / user fond + icône — restylées en soft */
+.avatar {
+    border-radius: 12px;
+    font-weight: 700;
+}
+.avatar.bg-primary-lt,
+.avatar.bg-blue-lt   { background-color: var(--td-mid-soft) !important;     color: var(--td-mid) !important; }
+.avatar.bg-success-lt,
+.avatar.bg-green-lt  { background-color: var(--td-success-soft) !important; color: var(--td-success) !important; }
+.avatar.bg-warning-lt,
+.avatar.bg-orange-lt,
+.avatar.bg-yellow-lt { background-color: var(--td-warning-soft) !important; color: var(--td-warning) !important; }
+.avatar.bg-danger-lt,
+.avatar.bg-red-lt    { background-color: var(--td-danger-soft) !important;  color: var(--td-danger) !important; }
+.avatar.bg-info-lt,
+.avatar.bg-azure-lt,
+.avatar.bg-cyan-lt   { background-color: var(--td-azure-soft) !important;   color: var(--td-azure) !important; }
+.avatar.bg-purple-lt { background-color: var(--td-purple-soft) !important;  color: var(--td-purple) !important; }
+.avatar.bg-secondary-lt { background-color: var(--td-neutral-soft) !important; color: var(--td-neutral) !important; }
+
+/* Et l'icône à l'intérieur (text-blue, text-green, etc.) hérite du parent */
+.avatar.bg-blue-lt .text-blue,
+.avatar.bg-green-lt .text-green,
+.avatar.bg-red-lt .text-red,
+.avatar.bg-yellow-lt .text-yellow,
+.avatar.bg-orange-lt .text-orange,
+.avatar.bg-purple-lt .text-purple,
+.avatar.bg-azure-lt .text-azure,
+.avatar.bg-cyan-lt .text-cyan,
+.avatar.bg-primary-lt .text-primary,
+.avatar.bg-success-lt .text-success,
+.avatar.bg-warning-lt .text-warning,
+.avatar.bg-danger-lt .text-danger,
+.avatar.bg-info-lt .text-info,
+.avatar.bg-secondary-lt .text-secondary { color: inherit !important; }
+
+/* ---------- card-link Tabler — élévation au hover (cohérent avec .tarmac-card) ---------- */
+a.text-decoration-none,
+a.text-decoration-none:hover,
+a.text-decoration-none:focus { text-decoration: none !important; }
+
+.card-link,
+a > .card-link {
+    transition: transform .18s ease, box-shadow .25s ease, border-color .18s ease;
+}
+a:hover > .card-link,
+.card-link:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--td-shadow);
+    border-color: var(--td-border-strong);
+}
+
+/* ---------- .text-secondary cohérent ---------- */
+.text-secondary, .text-muted { color: var(--td-ink-2) !important; }
+
+/* ---------- KPI tile (dashboard) ---------- */
+.tarmac-kpi {
+    background: var(--td-paper);
+    border: 1px solid var(--td-border);
+    border-radius: var(--td-radius);
+    padding: 1rem 1.15rem;
+    box-shadow: var(--td-shadow-sm);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    color: var(--td-ink);
+    transition: transform .18s ease, box-shadow .25s ease, border-color .18s ease;
+    /* Hauteur fixée par la colonne Bootstrap (row = flex stretch) — la valeur reste
+       collée en bas même quand le label fait 2 lignes. */
+    height: 100%;
+    min-height: 100%;
+}
+a.tarmac-kpi,
+a.tarmac-kpi:hover,
+a.tarmac-kpi:focus,
+a.tarmac-kpi:active { text-decoration: none; color: var(--td-ink); }
+a.tarmac-kpi:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--td-shadow);
+    border-color: var(--td-border-strong);
+}
+.tarmac-kpi__icon {
+    position: absolute;
+    top: 0.9rem; right: 0.9rem;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    background: var(--td-mid-soft);
+    color: var(--td-mid);
+}
+.tarmac-kpi__label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--td-ink-3);
+    padding-right: 2.5rem;
+    /* Pousse la valeur en bas — toutes les tuiles alignent leur chiffre
+       même si le label fait 1 ou 2 lignes. */
+    flex: 1 1 auto;
+}
+.tarmac-kpi__value {
+    font-size: 1.85rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0.25rem 0 0.1rem;
+    line-height: 1;
+}
+.tarmac-kpi__hint {
+    font-size: 0.78rem;
+    color: var(--td-ink-2);
+}
+.tarmac-kpi--glow .tarmac-kpi__icon    { background: var(--td-glow-soft);    color: var(--td-warning); }
+.tarmac-kpi--success .tarmac-kpi__icon { background: var(--td-success-soft); color: var(--td-success); }
+.tarmac-kpi--danger .tarmac-kpi__icon  { background: var(--td-danger-soft);  color: var(--td-danger); }
+.tarmac-kpi--purple .tarmac-kpi__icon  { background: var(--td-purple-soft);  color: var(--td-purple); }
+
+/* ---------- Welcome message (« mot du gestionnaire ») ---------- */
+.tarmac-welcome {
+    position: relative;
+    background: var(--td-cream);
+    border: 1px solid rgba(184, 145, 80, 0.18);
+    border-radius: var(--td-radius);
+    padding: 1.4rem 1.6rem;
+    box-shadow: var(--td-shadow-sm);
+    overflow: hidden;
+}
+.tarmac-welcome::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--td-glow);
+}
+.tarmac-welcome__kicker {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--td-warning);
+    margin-bottom: 0.4rem;
+    display: block;
+}
+.tarmac-welcome__body {
+    color: var(--td-ink);
+    font-size: 0.98rem;
+    line-height: 1.6;
+    max-width: 65ch;
+}
+.tarmac-welcome__body > :first-child { margin-top: 0; }
+.tarmac-welcome__body > :last-child { margin-bottom: 0; }
+.tarmac-welcome__body p { margin: 0.5rem 0 0.7rem; }
+.tarmac-welcome__body ul,
+.tarmac-welcome__body ol {
+    margin: 0.4rem 0 0.9rem;
+    padding-left: 1.3rem;
+}
+.tarmac-welcome__body li { margin: 0.15rem 0; }
+.tarmac-welcome__body strong { color: var(--td-deep); }
+.tarmac-welcome__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.1rem;
+    padding-top: 0.85rem;
+    border-top: 1px dashed rgba(184, 145, 80, 0.3);
+}
+.tarmac-welcome__edited {
+    font-size: 0.78rem;
+    color: var(--td-ink-2);
+    font-style: italic;
+}
+
+/* Mobile : bouton modifier en plein largeur sous le footer */
+@media (max-width: 575.98px) {
+    .tarmac-welcome { padding: 1.1rem 1.2rem; }
+    .tarmac-welcome__footer .btn { width: 100%; }
+    .tarmac-welcome__footer { flex-direction: column-reverse; align-items: stretch; }
+    .tarmac-welcome__edited { text-align: center; }
+}
+
+/* ---------- Lecture confortable (max-width 65ch) ---------- */
+.tarmac-prose {
+    max-width: 65ch;
+    line-height: 1.6;
+}
+
+/* ---------- Section title (h2/h3 + count + action) ---------- */
+.tarmac-section-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+.tarmac-section-bar__title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--td-ink);
+}
+.tarmac-section-bar__title i { color: var(--td-warning); font-size: 1.2rem; }
+.tarmac-section-bar__count {
+    background: var(--td-cream);
+    color: var(--td-deep);
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+.tarmac-section-bar__actions {
+    margin-left: auto;
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+/* Mobile : actions icone seule pour économiser l'espace */
+@media (max-width: 575.98px) {
+    .tarmac-section-bar__actions .btn .btn-text {
+        display: none;
+    }
+    .tarmac-section-bar__actions .btn {
+        padding-left: 0.6rem;
+        padding-right: 0.6rem;
+    }
+    .tarmac-section-bar__actions .btn i { margin: 0; }
+}
+
+/* Progression inline (intégrée dans .tarmac-section-bar) */
+.tarmac-section-bar__progress {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 1rem;
+}
+.tarmac-section-bar__progress .tarmac-progress {
+    flex: 1;
+}
+.tarmac-section-bar__progress-text {
+    font-size: 0.82rem;
+    color: var(--td-ink-2);
+    white-space: nowrap;
+}
+.tarmac-section-bar__progress-text strong { color: var(--td-ink); font-weight: 700; }
+
+@media (max-width: 767.98px) {
+    .tarmac-section-bar__progress {
+        order: 99;
+        flex: 1 0 100%;
+        margin: 0.5rem 0 0;
+    }
+}
+
+/* ---------- Page-eyebrow (au-dessus du page-title) ---------- */
+.tarmac-page-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--td-ink-3);
+    margin-bottom: 0.3rem;
+    text-decoration: none;
+}
+.tarmac-page-eyebrow,
+.tarmac-page-eyebrow:hover,
+.tarmac-page-eyebrow:focus,
+.tarmac-page-eyebrow:active { text-decoration: none; }
+.tarmac-page-eyebrow:hover { color: var(--td-deep); }
+.tarmac-page-eyebrow .tarmac-eqv {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    font-size: 1rem;
+}
+
+/* ---------- Sidebar de page (col droite sur lg+) ---------- */
+@media (min-width: 992px) {
+    .tarmac-page-sidebar {
+        position: sticky;
+        top: 1rem;
+    }
+}
+
+/* ---------- Liste de métadonnées (sidebar) ---------- */
+.tarmac-meta-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.tarmac-meta-list > li {
+    padding: 0.7rem 0;
+    border-bottom: 1px dashed var(--td-border);
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+.tarmac-meta-list > li:last-child { border-bottom: 0; }
+.tarmac-meta-list__label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--td-ink-3);
+    flex: 0 0 auto;
+    min-width: 110px;
+}
+.tarmac-meta-list__value {
+    flex: 1;
+    font-size: 0.92rem;
+    color: var(--td-ink);
+    text-align: right;
+    min-width: 0;
+}
+.tarmac-meta-list__value > a { color: var(--td-mid); font-weight: 600; }
+.tarmac-meta-list__value > a:hover { color: var(--td-deep); }
+.tarmac-meta-list__value .tarmac-badge { vertical-align: middle; }
+.tarmac-meta-list__sub {
+    flex: 1 0 100%;
+    text-align: right;
+    font-size: 0.78rem;
+    color: var(--td-ink-3);
+    margin-top: 0.2rem;
+    padding-left: 110px;
+}
+
+/* Sur mobile (sidebar replié sous le contenu), la liste reste alignée gauche pour la lisibilité */
+@media (max-width: 991.98px) {
+    .tarmac-meta-list__value,
+    .tarmac-meta-list__sub { text-align: left; padding-left: 0; }
+}
+
+/* ---------- Card de section (sidebar / encadrés) ---------- */
+.tarmac-panel {
+    background: var(--td-paper);
+    border: 1px solid var(--td-border);
+    border-radius: var(--td-radius);
+    padding: 1.1rem 1.25rem;
+    box-shadow: var(--td-shadow-sm);
+}
+.tarmac-panel + .tarmac-panel { margin-top: 1rem; }
+.tarmac-panel__title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--td-ink-3);
+    margin: 0 0 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+.tarmac-panel__title i { font-size: 0.95rem; color: var(--td-mid); }
+
+/* ---------- Activity timeline (compacte) ---------- */
+.tarmac-timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+.tarmac-timeline::before {
+    content: "";
+    position: absolute;
+    left: 13px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--td-border);
+}
+.tarmac-timeline__item {
+    position: relative;
+    padding: 0.5rem 0 0.85rem 2.25rem;
+}
+.tarmac-timeline__item:last-child { padding-bottom: 0; }
+.tarmac-timeline__icon {
+    position: absolute;
+    left: 0;
+    top: 0.4rem;
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--td-mid-soft);
+    color: var(--td-mid);
+    font-size: 0.95rem;
+    z-index: 1;
+}
+.tarmac-timeline__head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+}
+.tarmac-timeline__author { color: var(--td-ink); font-weight: 600; }
+.tarmac-timeline__action { color: var(--td-ink-2); font-size: 0.85rem; }
+.tarmac-timeline__date {
+    margin-left: auto;
+    font-size: 0.78rem;
+    color: var(--td-ink-3);
+    white-space: nowrap;
+}
+.tarmac-timeline__body {
+    margin-top: 0.35rem;
+    font-size: 0.92rem;
+    color: var(--td-ink);
+    line-height: 1.5;
+}
+.tarmac-timeline__body p { margin: 0.25rem 0; }
+.tarmac-timeline__context {
+    font-size: 0.82rem;
+    color: var(--td-ink-3);
+    margin-top: 0.15rem;
+}
+
+/* Couleurs des icônes selon le type d'activity */
+.tarmac-timeline__icon--success { background: var(--td-success-soft); color: var(--td-success); }
+.tarmac-timeline__icon--warning { background: var(--td-warning-soft); color: var(--td-warning); }
+.tarmac-timeline__icon--danger  { background: var(--td-danger-soft); color: var(--td-danger); }
+.tarmac-timeline__icon--azure   { background: var(--td-azure-soft); color: var(--td-azure); }
+.tarmac-timeline__icon--purple  { background: var(--td-purple-soft); color: var(--td-purple); }
+
+/* ---------- Liste de contributeurs (sidebar) ---------- */
+.tarmac-contributors {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.tarmac-contributors__item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px dashed var(--td-border);
+}
+.tarmac-contributors__item:last-child { border-bottom: 0; }
+.tarmac-contributors__item .contributor-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 0.72rem;
+    flex-shrink: 0;
+}
+.tarmac-contributors__name {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.9rem;
+    color: var(--td-ink);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tarmac-contributors__time {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--td-ink-2);
+    white-space: nowrap;
+}
+.tarmac-contributors__time i {
+    font-size: 0.85rem;
+    color: var(--td-ink-3);
+}
+
+/* ---------- Panel avec accent (action principale) ---------- */
+.tarmac-panel--accent {
+    border-color: rgba(47, 140, 58, 0.25);
+    background: linear-gradient(180deg, rgba(126, 231, 135, 0.06) 0%, var(--td-paper) 50%);
+}
+.tarmac-panel--accent .tarmac-panel__title { color: var(--td-success); }
+.tarmac-panel--accent .tarmac-panel__title i { color: var(--td-success); }
+
+/* ---------- Form hint (sous-titre explicatif sous un titre de panel) ---------- */
+.tarmac-form-hint {
+    font-size: 0.88rem;
+    color: var(--td-ink-2);
+    line-height: 1.5;
+    margin: -0.4rem 0 0.9rem;
+}
+.tarmac-form-hint i { color: var(--td-ink-3); }
+
+/* ---------- Breadcrumb : liens un peu plus contrastés pour qu'on les voie ---------- */
+.tarmac-breadcrumb a:not([aria-label="home"]):not(.is-current) {
+    color: var(--td-mid);
+}
+.tarmac-breadcrumb a:not([aria-label="home"]):not(.is-current):hover {
+    color: var(--td-deep);
+}
+
+/* =================================================================
+   Stepper — fil d'étapes discrètes (workflow d'achat, etc.)
+   Horizontal sur desktop, vertical compact sur mobile.
+   ================================================================= */
+.tarmac-stepper {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    width: 100%;
+}
+
+.tarmac-stepper__step {
+    flex: 1 1 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 0;
+}
+
+/* Cercle de l'étape */
+.tarmac-stepper__dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--td-paper);
+    border: 2px solid var(--td-border-strong);
+    color: var(--td-ink-3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    z-index: 1;
+    transition: all .2s ease;
+    flex-shrink: 0;
+}
+.tarmac-stepper__dot i { font-size: 0.9rem; }
+
+/* Label sous le cercle */
+.tarmac-stepper__label {
+    margin-top: 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--td-ink-3);
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    padding: 0 0.25rem;
+}
+
+/* Connecteur entre les ronds */
+.tarmac-stepper__step::before {
+    content: "";
+    position: absolute;
+    top: 13px;   /* (28px - 2px) / 2 — milieu du rond */
+    left: -50%;
+    right: 50%;
+    height: 2px;
+    background: var(--td-border-strong);
+    z-index: 0;
+}
+.tarmac-stepper__step:first-child::before { display: none; }
+
+/* États : étape franchie */
+.tarmac-stepper__step.is-done .tarmac-stepper__dot {
+    background: var(--td-success);
+    border-color: var(--td-success);
+    color: #fff;
+}
+.tarmac-stepper__step.is-done .tarmac-stepper__label {
+    color: var(--td-ink-2);
+}
+.tarmac-stepper__step.is-done::before {
+    background: var(--td-success);
+}
+
+/* État : étape actuelle */
+.tarmac-stepper__step.is-current .tarmac-stepper__dot {
+    background: var(--td-glow);
+    border-color: var(--td-glow);
+    color: var(--td-deep);
+    box-shadow: 0 0 0 4px var(--td-glow-soft);
+}
+.tarmac-stepper__step.is-current .tarmac-stepper__label {
+    color: var(--td-deep);
+    font-weight: 700;
+}
+
+/* État : étape annulée (toute la chaîne) */
+.tarmac-stepper--cancelled .tarmac-stepper__dot {
+    background: var(--td-danger-soft);
+    border-color: var(--td-danger);
+    color: var(--td-danger);
+}
+.tarmac-stepper--cancelled .tarmac-stepper__label {
+    color: var(--td-danger);
+    text-decoration: line-through;
+}
+.tarmac-stepper--cancelled .tarmac-stepper__step::before {
+    background: var(--td-danger-soft);
+}
+
+/* Variante compacte (mode carte de liste) : pas de label, juste les ronds */
+.tarmac-stepper--compact .tarmac-stepper__dot {
+    width: 20px; height: 20px;
+    font-size: 0.65rem;
+    border-width: 1.5px;
+}
+.tarmac-stepper--compact .tarmac-stepper__dot i { font-size: 0.7rem; }
+.tarmac-stepper--compact .tarmac-stepper__label {
+    display: none;
+}
+.tarmac-stepper--compact .tarmac-stepper__step::before {
+    top: 9px;
+}
+.tarmac-stepper--compact .tarmac-stepper__step.is-current .tarmac-stepper__dot {
+    box-shadow: 0 0 0 3px var(--td-glow-soft);
+}
+
+/* Mobile (full stepper) — labels uniquement sur le dot actif + done compact */
+@media (max-width: 575.98px) {
+    .tarmac-stepper__label {
+        font-size: 0.65rem;
+        max-width: 60px;
+    }
+    .tarmac-stepper__step:not(.is-current) .tarmac-stepper__label {
+        display: none;
+    }
+}
+
+/* ---------- Liste de répartition par spécialisation (sidebar logbook) ---------- */
+.tarmac-spec-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.tarmac-spec-list__item {
+    padding: 0.75rem 0;
+    border-bottom: 1px dashed var(--td-border);
+}
+.tarmac-spec-list__item:first-child { padding-top: 0; }
+.tarmac-spec-list__item:last-child { padding-bottom: 0; border-bottom: 0; }
+.tarmac-spec-list__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+    flex-wrap: wrap;
+}
+.tarmac-spec-list__name {
+    font-weight: 600;
+    color: var(--td-ink);
+    font-size: 0.92rem;
+}
+.tarmac-spec-list__time {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--td-deep);
+    white-space: nowrap;
+}
+.tarmac-spec-list__count {
+    margin-top: 0.3rem;
+    font-size: 0.76rem;
+    color: var(--td-ink-3);
+}
+
+/* =================================================================
+   Tarmac brand mark — pour la navbar (et autres usages)
+   Reprend le langage visuel du hero (gradient navy + icône glider).
+   ================================================================= */
+.tarmac-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--td-deep);
+}
+.tarmac-brand,
+.tarmac-brand:hover,
+.tarmac-brand:focus,
+.tarmac-brand:active { text-decoration: none; color: var(--td-deep); }
+
+.tarmac-brand__mark {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #4a7299 0%, #0b1d2e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow:
+        0 4px 10px rgba(11, 29, 46, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.tarmac-brand__mark::after {
+    content: "";
+    position: absolute;
+    top: -25%;
+    left: -10%;
+    right: -10%;
+    height: 60%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(244, 162, 97, 0.4) 0%, transparent 70%);
+    filter: blur(5px);
+    pointer-events: none;
+    z-index: -1;
+}
+.tarmac-brand__mark i {
+    color: #fff;
+    font-size: 1.1rem;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+}
+.tarmac-brand__mark svg {
+    width: 26px;
+    height: auto;
+    color: #fff;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+}
+
+.tarmac-brand__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+    line-height: 1;
+}
+.tarmac-brand__name {
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--td-deep);
+}
+.tarmac-brand__tagline {
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--td-ink-3);
+}
+
+/* Mobile : on cache le texte, on garde juste le cube */
+@media (max-width: 575.98px) {
+    .tarmac-brand__text { display: none; }
+}
+
+/* ---------- Navbar : nav-item active state + spacing ---------- */
+.navbar .nav-item.active > .nav-link,
+.navbar .nav-link.active {
+    background: var(--td-mid-soft);
+    color: var(--td-deep);
+    font-weight: 600;
+}
+
+.navbar-nav { gap: 0.25rem; }
+
+/* User dropdown compact : avatar + chevron, infos déplacées dans le menu déroulant */
+.tarmac-user-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.55rem 0.3rem 0.4rem;
+    border-radius: 999px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--td-ink);
+    transition: background .15s, border-color .15s;
+    text-decoration: none;
+    min-height: 44px;
+}
+.tarmac-user-toggle:hover,
+.tarmac-user-toggle:focus {
+    background: var(--td-cream);
+    border-color: var(--td-border);
+    color: var(--td-deep);
+    text-decoration: none;
+}
+.tarmac-user-toggle .avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.78rem;
+    flex-shrink: 0;
+}
+.tarmac-user-toggle__chevron {
+    font-size: 0.85rem;
+    color: var(--td-ink-3);
+    transition: transform .15s ease;
+}
+.tarmac-user-toggle[aria-expanded="true"] .tarmac-user-toggle__chevron {
+    transform: rotate(180deg);
+}
+
+/* Sur desktop large, on peut afficher le nom à côté pour les utilisateurs avec navigation à l'aise */
+@media (min-width: 992px) {
+    .tarmac-user-toggle__name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--td-ink);
+        max-width: 140px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+.tarmac-user-toggle__name { display: none; }
+@media (min-width: 992px) { .tarmac-user-toggle__name { display: inline; } }
+
+/* Header dans le menu déroulant : nom + email + club */
+.tarmac-dropdown-header {
+    padding: 0.7rem 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--td-border);
+    margin: -0.4rem -0.4rem 0.4rem;
+    background: var(--td-cream);
+    border-radius: var(--td-radius) var(--td-radius) 0 0;
+}
+.tarmac-dropdown-header__name {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--td-deep);
+    line-height: 1.2;
+}
+.tarmac-dropdown-header__email {
+    font-size: 0.78rem;
+    color: var(--td-ink-2);
+    margin-top: 0.1rem;
+    word-break: break-all;
+}
+.tarmac-dropdown-header__club {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--td-border-strong);
+    font-size: 0.78rem;
+    color: var(--td-ink-2);
+}
+.tarmac-dropdown-header__club strong { color: var(--td-deep); font-weight: 700; }
+
+.badge {
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.74rem;
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+    background-color: var(--td-paper);
+    border-bottom: 1px solid var(--td-border);
+    box-shadow: 0 1px 0 rgba(11, 29, 46, 0.03);
+}
+.navbar .nav-link {
+    color: var(--td-ink-2);
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 0.4rem 0.75rem !important;
+    transition: background .15s, color .15s;
+}
+.navbar .nav-link:hover {
+    background: var(--td-cream);
+    color: var(--td-deep);
+}
+.navbar .nav-link.active {
+    background: var(--td-mid-soft);
+    color: var(--td-deep);
+}
+.navbar .avatar {
+    background: linear-gradient(135deg, var(--td-mid), #6a8caf);
+    color: #fff;
+    font-weight: 700;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    border: 1px solid var(--td-border);
+    border-radius: var(--td-radius);
+    box-shadow: var(--td-shadow);
+    padding: 0.4rem;
+}
+.dropdown-item {
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    color: var(--td-ink);
+    font-weight: 500;
+    transition: background .15s;
+}
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background: var(--td-cream);
+    color: var(--td-deep);
+}
+.dropdown-item.active,
+.dropdown-item:active {
+    background: var(--td-deep);
+    color: #fff;
+}
+.dropdown-divider { border-top-color: var(--td-border); margin: 0.35rem 0; }
+
+/* ---------- Tableaux ---------- */
+.table {
+    --tblr-table-bg: transparent;
+    color: var(--td-ink);
+}
+.table > thead {
+    background-color: var(--td-cream);
+    color: var(--td-deep);
+}
+.table > thead th {
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--td-deep);
+    border-bottom: 1px solid var(--td-border-strong);
+    padding: 0.7rem 0.85rem;
+}
+.table > tbody > tr > td {
+    border-bottom: 1px solid var(--td-border);
+    padding: 0.7rem 0.85rem;
+    vertical-align: middle;
+}
+.table-hover > tbody > tr:hover > * {
+    background-color: var(--td-cream);
+}
+
+/* ---------- Offcanvas ---------- */
+.offcanvas {
+    background-color: var(--td-paper);
+    border-left: 1px solid var(--td-border);
+}
+.offcanvas-header {
+    border-bottom: 1px solid var(--td-border);
+    padding: 1rem 1.25rem;
+}
+.offcanvas-title {
+    font-weight: 700;
+    color: var(--td-ink);
+    letter-spacing: -0.01em;
+}
+
+/* ---------- Modal ---------- */
+.modal-content {
+    border: 1px solid var(--td-border);
+    border-radius: var(--td-radius-lg);
+    box-shadow: var(--td-shadow);
+}
+.modal-header {
+    border-bottom: 1px solid var(--td-border);
+    padding: 1.1rem 1.4rem;
+}
+.modal-title {
+    font-weight: 700;
+    color: var(--td-ink);
+    letter-spacing: -0.01em;
+}
+.modal-footer {
+    border-top: 1px solid var(--td-border);
+}
+
+/* ---------- Tags (anciens) ---------- */
+.tag {
+    background-color: var(--td-cream);
+    color: var(--td-deep);
+    border-radius: 999px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 0;
+}
+.tag .btn-close {
+    margin-left: 0.4rem;
+    opacity: 0.6;
+}
+
+/* ---------- Liens ---------- */
+a {
+    color: var(--td-mid);
+    text-decoration: none;
+}
+a:hover {
+    color: var(--td-deep);
+    text-decoration: none;
+}
+
+/* Reset spécifique pour les boutons-en-form-de-lien qu'on a ailleurs */
+a.btn,
+a.btn:hover,
+a.btn:focus,
+a.btn:active,
+a.tarmac-card,
+a.tarmac-card:hover { text-decoration: none; }
+
+/* ---------- Page wrapper ---------- */
+.page-wrapper { background-color: var(--tblr-body-bg); }
+.page-body { padding-top: 1.5rem; padding-bottom: 2rem; }
+
+/* ---------- Headings ---------- */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    /* color: inherit du body — on évite de forcer pour ne pas casser
+       les contextes sombres (landing hero notamment). */
+}
+h1, .h1 { font-size: 1.7rem; }
+h2, .h2 { font-size: 1.4rem; }
+h3, .h3 { font-size: 1.2rem; }
+
+/* ---------- Page header Tabler (.page-header) ---------- */
+.page-header {
+    padding-top: 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--td-border);
+    margin-bottom: 1.5rem;
+}
+.page-pretitle {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--td-ink-3);
+}
+.page-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--td-ink);
+}
+.page-subtitle {
+    color: var(--td-ink-2);
+    font-size: 0.95rem;
+}
+
+/* ---------- Empty / placeholder ---------- */
+.empty {
+    background-color: var(--td-paper);
+    border: 1px dashed var(--td-border-strong);
+    border-radius: var(--td-radius);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+}
+.empty-icon {
+    color: var(--td-deep);
+    background: var(--td-cream);
+    border-radius: 16px;
+    padding: 0.75rem;
+    width: 56px;
+    height: 56px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+}
+.empty-title { font-weight: 700; letter-spacing: -0.01em; color: var(--td-ink); }
+.empty-subtitle { color: var(--td-ink-2); }
+
+/* ---------- Progress (Tabler) ---------- */
+.progress {
+    background-color: rgba(11, 29, 46, 0.06);
+    border-radius: 999px;
+    height: 8px;
+}
+.progress-sm { height: 5px; }
+.progress-bar {
+    background-color: var(--td-mid);
+    border-radius: 999px;
+}
+.progress-bar.bg-success { background-color: var(--td-success) !important; }
+.progress-bar.bg-warning { background-color: var(--td-glow) !important; }
+.progress-bar.bg-danger { background-color: var(--td-danger) !important; }
+.progress-bar.bg-primary { background: linear-gradient(90deg, var(--td-mid), var(--td-glow)) !important; }
+

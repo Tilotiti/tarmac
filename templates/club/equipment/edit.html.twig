@@ -4,81 +4,87 @@
 	{{ 'editEquipment'|trans }}
 {% endblock %}
 
+{% block page_pretitle %}
+	<a href="{{ path('club_equipment_show', {id: equipment.id}) }}" class="tarmac-page-eyebrow">
+		<span class="tarmac-eqv tarmac-eqv--{{ equipment.type.color }}">
+			<i class="ti {{ equipment.type.icon }}"></i>
+		</span>
+		{{ equipment.name }}
+	</a>
+{% endblock %}
+
 {% block page_content %}
-	<div class="card">
-		<div class="card-header">
-			<h3 class="card-title">{{ 'editEquipment'|trans }}</h3>
-		</div>
-		<div class="card-body" data-controller="equipment-privacy">
-			{{ form_start(form) }}
-			<div class="mb-3">
-				{{ form_label(form.name) }}
-				{{ form_widget(form.name) }}
-				{{ form_errors(form.name) }}
-			</div>
-
-			<div class="mb-3">
-				{{ form_label(form.type) }}
-				{{ form_widget(form.type) }}
-				{{ form_errors(form.type) }}
-			</div>
-
-			<div class="mb-3">
-				{{ form_label(form.owner) }}
-				<div data-action="change->equipment-privacy#toggleOwners">
-					{{ form_widget(form.owner) }}
+	<div class="row g-3">
+		<div class="col-12 col-lg-8">
+			<div class="tarmac-panel">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-edit"></i>{{ 'editEquipment'|trans }}
 				</div>
-				{{ form_errors(form.owner) }}
-				<small class="form-hint">
-					{{ 'equipmentOwnershipHint'|trans }}
-				</small>
-			</div>
-
-			<div class="mb-3 {% if not equipment.isPrivate %}d-none{% endif %}" data-equipment-privacy-target="ownersContainer">
-				{{ form_label(form.owners) }}
-				{{ form_widget(form.owners) }}
-				{{ form_errors(form.owners) }}
-
-				<small class="form-hint" data-equipment-privacy-target="counter">
-					Aucun utilisateur sélectionné
-				</small>
-			</div>
-
-			<div class="mb-3">
-				{{ form_label(form.responsible) }}
-				{{ form_widget(form.responsible) }}
-				{{ form_errors(form.responsible) }}
-				<small class="form-hint">
-					{{ 'equipmentResponsibleHint'|trans }}
-				</small>
-			</div>
-
-			<div>
-				<button type="submit" class="btn btn-primary" style="min-height: 44px;">
-					<i class="ti ti-check me-2"></i>
-					Enregistrer
-				</button>
-			</div>
-			{{ form_end(form) }}
-		</div>
-	</div>
-
-	{# Additional info card #}
-	<div class="card mt-3">
-		<div class="card-body">
-			<div class="text-secondary small">
-				<div class="mb-2">
-					<i class="ti ti-calendar me-1"></i>
-					<strong>Créé le :</strong>
-					{{ equipment.createdAt|date('d/m/Y à H:i') }}
-				</div>
-				{% if equipment.createdBy %}
-					<div class="mb-2">
-						<i class="ti ti-user me-1"></i>
-						<strong>Créé par :</strong>
-						{{ equipment.createdBy.fullname }}
+				<div data-controller="equipment-privacy">
+					{{ form_start(form) }}
+					<div class="mb-3">
+						{{ form_label(form.name) }}
+						{{ form_widget(form.name) }}
+						{{ form_errors(form.name) }}
 					</div>
-				{% endif %}
+
+					<div class="mb-3">
+						{{ form_label(form.type) }}
+						{{ form_widget(form.type) }}
+						{{ form_errors(form.type) }}
+					</div>
+
+					<div class="mb-3">
+						{{ form_label(form.owner) }}
+						<div data-action="change->equipment-privacy#toggleOwners">
+							{{ form_widget(form.owner) }}
+						</div>
+						{{ form_errors(form.owner) }}
+						<small class="form-text">{{ 'equipmentOwnershipHint'|trans }}</small>
+					</div>
+
+					<div class="mb-3 {% if not equipment.isPrivate %}d-none{% endif %}" data-equipment-privacy-target="ownersContainer">
+						{{ form_label(form.owners) }}
+						{{ form_widget(form.owners) }}
+						{{ form_errors(form.owners) }}
+						<small class="form-text" data-equipment-privacy-target="counter">Aucun utilisateur sélectionné</small>
+					</div>
+
+					<div class="mb-3">
+						{{ form_label(form.responsible) }}
+						{{ form_widget(form.responsible) }}
+						{{ form_errors(form.responsible) }}
+						<small class="form-text">{{ 'equipmentResponsibleHint'|trans }}</small>
+					</div>
+
+					<div class="d-flex justify-content-end gap-2 mt-3">
+						<a href="{{ path('club_equipment_show', {id: equipment.id}) }}" class="btn btn-outline-secondary">{{ 'cancel'|trans }}</a>
+						<button type="submit" class="btn btn-primary">
+							<i class="ti ti-check me-2"></i>{{ 'save'|trans }}
+						</button>
+					</div>
+					{{ form_end(form) }}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-12 col-lg-4">
+			<div class="tarmac-panel">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-info-circle"></i>{{ 'details'|trans }}
+				</div>
+				<ul class="tarmac-meta-list">
+					<li>
+						<span class="tarmac-meta-list__label">{{ 'createdAt'|trans }}</span>
+						<span class="tarmac-meta-list__value">{{ equipment.createdAt|date('d/m/Y H:i') }}</span>
+					</li>
+					{% if equipment.createdBy %}
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'createdBy'|trans }}</span>
+							<span class="tarmac-meta-list__value">{{ equipment.createdBy.fullname }}</span>
+						</li>
+					{% endif %}
+				</ul>
 			</div>
 		</div>
 	</div>

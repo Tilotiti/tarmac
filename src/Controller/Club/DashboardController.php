@@ -139,6 +139,25 @@ class DashboardController extends ExtendedController
         $purchasesWaitingDelivery = $purchasesWaitingDeliveryQb->getQuery()->getResult();
         $purchasesWaitingDeliveryCount = $this->purchaseRepository->countPurchasesWaitingDelivery($club);
 
+        // === 5. KPI : nombre total de tâches ouvertes (pour la bande en haut) ===
+        $openTasksQb = $this->taskRepository->createQueryBuilder('task')
+            ->select('COUNT(DISTINCT task.id)')
+            ->join('task.equipment', 'equipment_open')
+            ->where('task.club = :club')
+            ->setParameter('club', $club)
+            ->andWhere('task.status = :open')
+            ->setParameter('open', 'open');
+
+        if (!$isManager) {
+            $openTasksQb->leftJoin('equipment_open.owners', 'owners_open')
+                ->andWhere('equipment_open.owner = :owner_club OR (equipment_open.owner = :owner_private AND owners_open.id = :user)')
+                ->setParameter('owner_club', EquipmentOwner::CLUB)
+                ->setParameter('owner_private', EquipmentOwner::PRIVATE)
+                ->setParameter('user', $user->getId());
+        }
+
+        $openTasksCount = (int) $openTasksQb->getQuery()->getSingleScalarResult();
+
         return $this->render('club/dashboard.html.twig', [
             'club' => $club,
             'priorityTasks' => $priorityTasks,
@@ -147,6 +166,9 @@ class DashboardController extends ExtendedController
             'awaitingInspectionCount' => $awaitingInspectionCount,
             'purchasesWaitingDelivery' => $purchasesWaitingDelivery,
             'purchasesWaitingDeliveryCount' => $purchasesWaitingDeliveryCount,
+            'openTasksCount' => $openTasksCount,
+            'isManager' => $isManager,
+            'isInspector' => $isInspector,
         ]);
     }
 
@@ -274,6 +296,8 @@ class DashboardController extends ExtendedController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $club->setWelcomeMessage($data['welcomeMessage'] ?? null);
+            $club->setWelcomeMessageUpdatedAt(new \DateTimeImmutable());
+            $club->setWelcomeMessageUpdatedBy($this->getUser());
             $this->entityManager->flush();
 
             $this->addFlash('success', 'welcomeMessageUpdated');

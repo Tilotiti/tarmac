@@ -4,181 +4,134 @@
 	{{ 'applyPlan'|trans }}
 {% endblock %}
 
+{% block page_pretitle %}
+	<a href="{{ path('club_equipment_show', {id: equipment.id}) }}" class="tarmac-page-eyebrow">
+		<span class="tarmac-eqv tarmac-eqv--{{ equipment.type.color }}">
+			<i class="ti {{ equipment.type.icon }}"></i>
+		</span>
+		{{ equipment.name }}
+	</a>
+{% endblock %}
+
 {% block page_content %}
 	{{ form_start(form) }}
 
-	{# Equipment Information Card #}
-	<div class="card mb-3">
-		<div class="card-header">
-			<h3 class="card-title">{{ equipment.name }}</h3>
-		</div>
-		<div class="card-body">
-			<div class="mb-3">
-				<span class="badge bg-{{ equipment.type.color }}-lt me-2">
-					<i class="ti {{ equipment.type.icon }} me-1"></i>
-					{{ equipment.type.label|trans }}
-				</span>
-				{% if equipment.active %}
-					<span class="badge bg-success-lt me-2">
-						<i class="ti ti-check me-1"></i>
-						{{ 'active'|trans }}
-					</span>
-				{% else %}
-					<span class="badge bg-secondary-lt me-2">
-						<i class="ti ti-x me-1"></i>
-						{{ 'inactive'|trans }}
-					</span>
-				{% endif %}
-				{% if equipment.isPrivate %}
-					<span class="badge badge-private">
-						<i class="ti ti-user me-1"></i>
-						{{ 'private'|trans }}
-					</span>
-				{% else %}
-					<span class="badge bg-blue-lt">
-						<i class="ti ti-building me-1"></i>
-						{{ 'club'|trans }}
-					</span>
-				{% endif %}
-			</div>
-		</div>
-	</div>
+	<div class="row g-3">
+		<div class="col-12 col-lg-8">
 
-	{# Application Form Card #}
-	<div class="card mb-3">
-		<div class="card-header">
-			<h3 class="card-title">{{ 'applicationDetails'|trans }}</h3>
-		</div>
-		<div class="card-body">
-			<div class="mb-3">
-				{{ form_row(form.plan) }}
-			</div>
-			<div class="mb-3">
-				{{ form_row(form.dueAt) }}
-			</div>
-		</div>
-	</div>
-
-	{# Selected Plan Information (if plan is selected) #}
-	{% set selectedPlan = form.plan.vars.value %}
-	{% if selectedPlan %}
-		<div class="card mb-3">
-			<div class="card-header">
-				<h3 class="card-title">{{ selectedPlan.name }}</h3>
-			</div>
-			<div class="card-body">
-				<div class="mb-3">
-					<span class="badge bg-{{ selectedPlan.equipmentType.value == 'glider' ? 'blue' : 'green' }} text-white me-2">
-						<i class="ti ti-{{ selectedPlan.equipmentType.value == 'glider' ? 'plane' : 'building' }} me-1"></i>
-						{{ (selectedPlan.equipmentType.value ~ 'Type')|trans }}
-					</span>
-					<span class="badge bg-primary text-white me-2">
-						<i class="ti ti-checkbox me-1"></i>
-						{{ selectedPlan.taskTemplates|length }}
-						{{ 'tasks'|trans|lower }}
-					</span>
-					{% set totalSubTasks = 0 %}
-					{% for task in selectedPlan.taskTemplates %}
-						{% set totalSubTasks = totalSubTasks + task.subTaskTemplates|length %}
-					{% endfor %}
-					{% if totalSubTasks > 0 %}
-						<span class="badge bg-secondary text-white">
-							<i class="ti ti-list-check me-1"></i>
-							{{ totalSubTasks }}
-							{{ 'subTasks'|trans|lower }}
-						</span>
-					{% endif %}
+			{# Application Form #}
+			<div class="tarmac-panel tarmac-panel--accent mb-3">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-clipboard-check"></i>{{ 'applicationDetails'|trans }}
 				</div>
-				{% if selectedPlan.description %}
-					<p class="text-secondary mb-0">{{ selectedPlan.description }}</p>
-				{% endif %}
+				<div class="mb-3">{{ form_row(form.plan) }}</div>
+				<div class="mb-3">{{ form_row(form.dueAt) }}</div>
 			</div>
-		</div>
 
-		{# Tasks Preview #}
-		<div class="card mb-3">
-			<div class="card-header">
-				<h3 class="card-title">{{ 'tasksToBeCreated'|trans }}</h3>
-				<span class="badge bg-primary text-white ms-2">{{ selectedPlan.taskTemplates|length }}</span>
-			</div>
-			<div class="card-body">
-				{% if selectedPlan.taskTemplates|length > 0 %}
-					<div class="list-group list-group-flush">
+			{# Selected plan tasks preview #}
+			{% set selectedPlan = form.plan.vars.value %}
+			{% if selectedPlan %}
+				<div class="tarmac-panel mb-3">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-checkbox"></i>{{ 'tasksToBeCreated'|trans }}
+						<span class="tarmac-section-bar__count" style="margin-left:auto;">{{ selectedPlan.taskTemplates|length }}</span>
+					</div>
+
+					{% if selectedPlan.description %}
+						<p class="tarmac-form-hint">{{ selectedPlan.description }}</p>
+					{% endif %}
+
+					{% if selectedPlan.taskTemplates|length > 0 %}
 						{% for taskTemplate in selectedPlan.taskTemplates %}
-							<div class="list-group-item px-0">
-								<div class="d-flex justify-content-between align-items-start mb-2">
-									<div class="flex-grow-1">
-										<span class="badge badge-outline text-primary me-2">{{ loop.index }}</span>
-										<span class="fw-bold">{{ taskTemplate.title }}</span>
-									</div>
-									<div class="d-flex gap-2">
-										{% if taskTemplate.requiresInspection %}
-											<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
-												<i class="ti ti-shield-check me-1"></i>
-											</span>
-										{% endif %}
-										{% include 'component/difficultyBadge.html.twig' with {'difficulty': taskTemplate.difficulty, 'size': 'sm'} %}
-									</div>
+							<div class="d-flex align-items-baseline gap-2 py-2 {% if not loop.last %}border-bottom{% endif %}" style="{% if not loop.last %}border-bottom:1px dashed var(--td-border) !important;{% endif %}">
+								<span class="tarmac-badge tarmac-badge--info">{{ loop.index }}</span>
+								<div class="flex-grow-1" style="min-width:0;">
+									<div style="font-weight:600;color:var(--td-ink);">{{ taskTemplate.title }}</div>
+									{% if taskTemplate.subTaskTemplates|length > 0 %}
+										<div class="text-secondary" style="font-size:0.82rem;margin-top:0.15rem;">
+											<i class="ti ti-list-check me-1"></i>{{ taskTemplate.subTaskTemplates|length }} {{ 'subTasks'|trans|lower }}
+										</div>
+									{% endif %}
 								</div>
-
-								{# Subtasks count #}
-								{% if taskTemplate.subTaskTemplates|length > 0 %}
-									<div class="text-secondary small ms-4">
-										<i class="ti ti-list-check me-1"></i>
-										{{ taskTemplate.subTaskTemplates|length }}
-										{{ 'subTasks'|trans|lower }}
-									</div>
-								{% endif %}
+								<div class="d-flex gap-1 align-items-start flex-wrap">
+									{% if taskTemplate.requiresInspection %}
+										<span class="tarmac-badge tarmac-badge--glow" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'requiresValidationTooltip'|trans }}">
+											<i class="ti ti-shield-check"></i>
+										</span>
+									{% endif %}
+									{% include 'component/difficultyBadge.html.twig' with {'difficulty': taskTemplate.difficulty, 'size': 'sm'} %}
+								</div>
 							</div>
 						{% endfor %}
-					</div>
-				{% endif %}
-			</div>
-		</div>
-	{% endif %}
+					{% endif %}
+				</div>
+			{% endif %}
 
-	{# Timeline Preview (if plan and date selected) #}
-	{% if timeline is defined and timeline|length > 0 %}
-		<div class="card mb-3">
-			<div class="card-header">
-				<h3 class="card-title">{{ 'maintenanceTimeline'|trans }}</h3>
-				<span class="badge bg-warning text-white ms-2">
-					<i class="ti ti-alert-triangle me-1"></i>
-					{{ 'existingMaintenancePlanned'|trans }}
-				</span>
-			</div>
-			<div class="card-body">
-				<div class="list-group list-group-flush">
-					{% for app in timeline %}
-						<div class="list-group-item px-0">
-							<div class="d-flex justify-content-between align-items-start">
-								<div>
-									<div class="fw-bold">{{ app.plan.name }}</div>
-									<div class="text-secondary small">
-										{{ 'dueDate'|trans }}:
-										{{ app.dueAt|date('d/m/Y') }}
-									</div>
-								</div>
-								<span class="badge bg-{{ app.isOverdue ? 'danger' : (app.isDueSoon ? 'warning' : 'info') }} text-white">
-									{{ app.completionPercentage }}%
+			{# Timeline preview if existing plans #}
+			{% if timeline is defined and timeline|length > 0 %}
+				<div class="tarmac-panel mb-3" style="border-color: rgba(184, 145, 80, 0.3);">
+					<div class="tarmac-panel__title" style="color: var(--td-warning);">
+						<i class="ti ti-alert-triangle"></i>{{ 'maintenanceTimeline'|trans }}
+					</div>
+					<p class="tarmac-form-hint"><strong>{{ 'existingMaintenancePlanned'|trans }}</strong></p>
+					<ul class="tarmac-meta-list">
+						{% for app in timeline %}
+							<li>
+								<span class="tarmac-meta-list__label">{{ app.plan.name }}</span>
+								<span class="tarmac-meta-list__value">
+									<span class="tarmac-badge tarmac-badge--{{ app.isOverdue ? 'danger' : (app.isDueSoon ? 'warning' : 'info') }}">
+										{{ app.dueAt|date('d/m/Y') }} — {{ app.completionPercentage }}%
+									</span>
 								</span>
-							</div>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+
+			<div class="tarmac-panel sticky-bottom-mobile">
+				<div class="d-flex justify-content-end gap-2">
+					<a href="{{ path('club_equipment_show', {id: equipment.id}) }}" class="btn btn-outline-secondary">{{ 'cancel'|trans }}</a>
+					<button type="submit" class="btn btn-primary">
+						<i class="ti ti-clipboard-check me-2"></i>{{ 'applyPlan'|trans }}
+					</button>
+				</div>
+			</div>
+
+		</div>
+
+		{# Sidebar : équipement context #}
+		<div class="col-12 col-lg-4">
+			<div class="tarmac-page-sidebar">
+				<div class="tarmac-panel">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-info-circle"></i>{{ 'equipment'|trans }}
+					</div>
+					<div class="d-flex align-items-center gap-3 mb-3">
+						<span class="tarmac-eqv tarmac-eqv--{{ equipment.type.color }}">
+							<i class="ti {{ equipment.type.icon }}"></i>
+						</span>
+						<div>
+							<div style="font-weight:700;color:var(--td-deep);">{{ equipment.name }}</div>
+							<div class="text-secondary" style="font-size:0.85rem;">{{ equipment.type.label|trans }}</div>
 						</div>
-					{% endfor %}
+					</div>
+					<div class="tarmac-card__badges">
+						{% if equipment.active %}
+							<span class="tarmac-badge tarmac-badge--status-closed"><i class="ti ti-check"></i>{{ 'active'|trans }}</span>
+						{% else %}
+							<span class="tarmac-badge tarmac-badge--status-cancelled"><i class="ti ti-x"></i>{{ 'inactive'|trans }}</span>
+						{% endif %}
+						{% if equipment.isPrivate %}
+							<span class="tarmac-badge tarmac-badge--warning"><i class="ti ti-user"></i>{{ 'private'|trans }}</span>
+						{% else %}
+							<span class="tarmac-badge tarmac-badge--info"><i class="ti ti-building"></i>{{ 'club'|trans }}</span>
+						{% endif %}
+					</div>
 				</div>
 			</div>
 		</div>
-	{% endif %}
 
-	{# Submit Button - Sticky on mobile #}
-	<div class="card sticky-bottom-mobile">
-		<div class="card-body">
-			<button type="submit" class="btn btn-primary w-100">
-				<i class="ti ti-clipboard-check me-2"></i>
-				{{ 'applyPlan'|trans }}
-			</button>
-		</div>
 	</div>
-
 	{{ form_end(form) }}
 {% endblock %}

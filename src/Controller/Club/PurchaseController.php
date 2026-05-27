@@ -82,10 +82,20 @@ class PurchaseController extends ExtendedController
             20
         );
 
+        // KPI counts pour la bande en haut
+        $kpi = [
+            'pendingApproval' => $this->purchaseRepository->countByStatus($club, PurchaseStatus::PENDING_APPROVAL),
+            'approved'        => $this->purchaseRepository->countByStatus($club, PurchaseStatus::APPROVED),
+            'purchased'       => $this->purchaseRepository->countByStatus($club, PurchaseStatus::PURCHASED),
+            'delivered'       => $this->purchaseRepository->countByStatus($club, PurchaseStatus::DELIVERED),
+        ];
+
         return $this->render('club/purchase/index.html.twig', [
             'club' => $club,
             'purchases' => $purchases,
             'filters' => $filters->createView(),
+            'kpi' => $kpi,
+            'isManager' => $this->isGranted('MANAGE'),
         ]);
     }
 

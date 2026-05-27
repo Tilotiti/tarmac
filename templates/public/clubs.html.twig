@@ -4,9 +4,7 @@
 {% endblock %}
 
 {% block navbar_brand %}
-	<a href="{{ path('public_clubs') }}">
-		<img src="{{ asset('logo.svg') }}" alt="Tarmac" height="10">
-	</a>
+	{% include 'component/brandMark.html.twig' with {href: path('public_clubs')} %}
 {% endblock %}
 
 {% block body %}
@@ -14,13 +12,15 @@
 		<div class="container-xl">
 			<div class="row g-2 align-items-center">
 				<div class="col">
+					<span class="tarmac-page-eyebrow" style="cursor:default;">
+						<i class="ti ti-home-2"></i>
+						{{ 'myAccount'|trans|default('Mon compte') }}
+					</span>
 					<h2 class="page-title">
-						Mes clubs
+						{{ 'myClubs'|trans }}
 					</h2>
 					<div class="text-secondary mt-1">
-						Bonjour
-						{{ app.user.fullName }}
-						!
+						{{ 'helloUser'|trans({name: app.user.firstname ?: app.user.fullName})|default('Bonjour ' ~ app.user.fullName ~ ' !') }}
 					</div>
 				</div>
 			</div>
@@ -30,94 +30,79 @@
 	<div class="page-body">
 		<div class="container-xl">
 			{% if clubs|length > 0 %}
-				<div class="row">
+				<div class="row g-3">
 					{% for club in clubs %}
-						<div class="col-12 mb-3">
-							<a href="{{ subdomainService.generateClubUrl(club.subdomain, '/') }}" class="text-decoration-none">
-								<div class="card card-link" style="cursor: pointer;">
-									<div class="card-body">
-										<div class="d-flex align-items-start">
-											{# Club Avatar #}
-											<span class="avatar avatar-lg me-3 bg-blue-lt">
-												<i class="ti ti-windsock text-blue" style="font-size: 1.5rem;"></i>
-											</span>
+						{# Palette déterministe : hash du nom → 1 des 6 variantes tarmac-eqv #}
+						{% set palette = ['blue', 'green', 'purple', 'orange', 'azure', 'red'] %}
+						{% set colorIndex = (club.name|length + club.id) % 6 %}
+						{% set color = palette[colorIndex] %}
 
-											{# Main content #}
-											<div class="flex-grow-1">
-												{# Club name (main title) #}
-												<h3 class="card-title mb-1">
-													{{ club.name }}
-												</h3>
+						{% set stats = clubStats[club.id]|default({openTasks: 0, awaitingInspection: null}) %}
 
-												{# Subdomain (subtitle) #}
-												<div class="text-secondary mb-2">
-													<i class="ti ti-world me-1"></i>
-													{{ club.subdomain }}.{{ subdomainService.domain }}
-												</div>
-											</div>
+						<div class="col-12 col-md-6 col-lg-4 d-flex">
+							<a href="{{ subdomainService.generateClubUrl(club.subdomain, '/') }}"
+							   class="tarmac-card w-100"
+							   style="display:flex;flex-direction:column;">
 
-											{# Role badges on desktop - right side #}
-											<div class="ms-3 d-none d-md-flex gap-2 align-items-start">
-												{% if app.user.isManagerOfClub(club) %}
-													<span class="badge bg-success text-white">
-														<i class="ti ti-shield-check me-1"></i>
-														Gestionnaire
-													</span>
-												{% endif %}
-												{% if app.user.isInspectorOfClub(club) %}
-													<span class="badge bg-warning text-white">
-														<i class="ti ti-eye-check me-1"></i>
-														Qualifié
-													</span>
-												{% endif %}
-												{% if not app.user.isManagerOfClub(club) and not app.user.isInspectorOfClub(club) %}
-													<span class="badge bg-blue text-white">
-														<i class="ti ti-user me-1"></i>
-														Membre
-													</span>
-												{% endif %}
-											</div>
+								<div class="tarmac-card__head">
+									<span class="tarmac-eqv tarmac-eqv--{{ color }}">
+										<i class="ti ti-windsock"></i>
+									</span>
+									<div class="flex-fill" style="min-width:0;">
+										<div class="tarmac-card__eyebrow">
+											<i class="ti ti-world"></i>
+											{{ club.subdomain }}.{{ subdomainService.domain }}
 										</div>
-
-										{# Role badges on mobile - full width under content #}
-										<div class="d-flex d-md-none gap-2 flex-wrap mt-3">
-											{% if app.user.isManagerOfClub(club) %}
-												<span class="badge bg-success text-white">
-													<i class="ti ti-shield-check me-1"></i>
-													Gestionnaire
-												</span>
-											{% endif %}
-											{% if app.user.isInspectorOfClub(club) %}
-												<span class="badge bg-warning text-white">
-													<i class="ti ti-eye-check me-1"></i>
-													Qualifié
-												</span>
-											{% endif %}
-											{% if not app.user.isManagerOfClub(club) and not app.user.isInspectorOfClub(club) %}
-												<span class="badge bg-blue text-white">
-													<i class="ti ti-user me-1"></i>
-													Membre
-												</span>
-											{% endif %}
-										</div>
+										<h3 class="tarmac-card__title" style="overflow:hidden;text-overflow:ellipsis;">
+											{{ club.name }}
+										</h3>
 									</div>
 								</div>
+
+								{# Rôles #}
+								<div class="tarmac-card__badges" style="margin-top:0.6rem;">
+									{% if app.user.isManagerOfClub(club) %}
+										<span class="tarmac-badge tarmac-badge--success">
+											<i class="ti ti-shield-check"></i>{{ 'manager'|trans|default('Gestionnaire') }}
+										</span>
+									{% endif %}
+									{% if app.user.isInspectorOfClub(club) %}
+										<span class="tarmac-badge tarmac-badge--glow">
+											<i class="ti ti-eye-check"></i>{{ 'inspector'|trans|default('Qualifié') }}
+										</span>
+									{% endif %}
+									{% if not app.user.isManagerOfClub(club) and not app.user.isInspectorOfClub(club) %}
+										<span class="tarmac-badge tarmac-badge--info">
+											<i class="ti ti-user"></i>{{ 'member'|trans|default('Membre') }}
+										</span>
+									{% endif %}
+								</div>
+
+								{# Footer stats : pulse du club #}
+								<div class="tarmac-card__footer d-flex align-items-center justify-content-between gap-2" style="margin-top:auto;">
+									<span class="tarmac-card__meta" title="{{ 'openTasks'|trans }}">
+										<i class="ti ti-list-check"></i>
+										<strong style="color:var(--td-deep);">{{ stats.openTasks }}</strong>
+										<span style="margin-left:0.2rem;">{{ 'openTasks'|trans|lower }}</span>
+									</span>
+									{% if stats.awaitingInspection is not null and stats.awaitingInspection > 0 %}
+										<span class="tarmac-badge tarmac-badge--status-inspection" title="{{ 'subTasksToValidate'|trans }}">
+											<i class="ti ti-hourglass"></i>{{ stats.awaitingInspection }}
+										</span>
+									{% endif %}
+								</div>
+
 							</a>
 						</div>
 					{% endfor %}
 				</div>
 			{% else %}
-				<div class="empty">
-					<div class="empty-img">
-						<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Ccircle cx='64' cy='64' r='50' fill='none' stroke='%23dae1e7' stroke-width='2'/%3E%3C/svg%3E" alt="" height="128">
+				<div class="tarmac-panel" style="text-align:center;padding:3rem 1.5rem;max-width:560px;margin:0 auto;">
+					<div style="width:64px;height:64px;border-radius:16px;background:var(--td-cream);color:var(--td-deep);display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:1rem;">
+						<i class="ti ti-windsock"></i>
 					</div>
-					<p class="empty-title">Aucun club</p>
-					<p class="empty-subtitle text-secondary">
-						Vous n'avez pas encore accès à un club actif.
-					</p>
-					<p class="empty-subtitle text-secondary">
-						Contactez votre gestionnaire de club pour obtenir une invitation.
-					</p>
+					<h3 style="font-size:1.15rem;font-weight:700;margin-bottom:0.5rem;">{{ 'noClubAvailable'|trans|default('Aucun club') }}</h3>
+					<p class="text-secondary" style="margin:0;">{{ 'noClubDescription'|trans|default("Vous n'avez pas encore accès à un club actif. Contactez votre gestionnaire de club pour obtenir une invitation.") }}</p>
 				</div>
 			{% endif %}
 		</div>

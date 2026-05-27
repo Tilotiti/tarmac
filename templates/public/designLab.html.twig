@@ -1,0 +1,1520 @@
+{% extends 'layout/base.html.twig' %}
+
+{% block title %}Design Lab{% endblock %}
+
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		/* ================================================
+		   Design Lab — proposition de charte « moderne »
+		   Inspirée du hero de la landing page.
+		   Tout est scopé à .td-lab pour ne pas polluer.
+		   ================================================ */
+
+		.td-lab {
+			/* Palette */
+			--td-deep: #0b1d2e;
+			--td-mid: #345b7c;
+			--td-mid-soft: rgba(52, 91, 124, 0.12);
+			--td-glow: #f4a261;
+			--td-glow-soft: rgba(244, 162, 97, 0.18);
+			--td-cream: #f4ecd8;
+			--td-canvas: #faf8f3;
+			--td-paper: #ffffff;
+
+			--td-success: #2f8c3a;
+			--td-success-soft: rgba(126, 231, 135, 0.22);
+			--td-warning: #b66525;
+			--td-warning-soft: rgba(244, 162, 97, 0.2);
+			--td-danger: #b8364a;
+			--td-danger-soft: rgba(184, 54, 74, 0.12);
+			--td-info: #345b7c;
+			--td-info-soft: rgba(52, 91, 124, 0.12);
+			--td-neutral: #5a6878;
+			--td-neutral-soft: rgba(90, 104, 120, 0.1);
+
+			--td-ink: #0b1d2e;
+			--td-ink-2: #5a6878;
+			--td-ink-3: #8898a8;
+
+			--td-border: rgba(11, 29, 46, 0.08);
+			--td-border-strong: rgba(11, 29, 46, 0.14);
+
+			--td-radius-sm: 8px;
+			--td-radius: 14px;
+			--td-radius-lg: 20px;
+			--td-radius-pill: 999px;
+
+			--td-shadow-sm: 0 1px 0 rgba(11, 29, 46, 0.04), 0 4px 12px -8px rgba(11, 29, 46, 0.18);
+			--td-shadow: 0 1px 0 rgba(11, 29, 46, 0.04), 0 12px 30px -18px rgba(11, 29, 46, 0.28);
+			--td-shadow-lg: 0 1px 0 rgba(11, 29, 46, 0.04), 0 30px 60px -28px rgba(11, 29, 46, 0.35);
+
+			background: var(--td-canvas);
+			color: var(--td-ink);
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+			letter-spacing: -0.005em;
+			padding: 2.5rem 0 6rem;
+			min-height: 100vh;
+		}
+
+		/* ---------- Layout ---------- */
+		.td-container {
+			max-width: 1180px;
+			margin: 0 auto;
+			padding: 0 1.25rem;
+		}
+
+		.td-page-header {
+			margin-bottom: 3rem;
+		}
+
+		.td-page-eyebrow {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.35rem 0.75rem;
+			background: var(--td-paper);
+			border: 1px solid var(--td-border);
+			border-radius: var(--td-radius-pill);
+			font-size: 0.72rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.12em;
+			color: var(--td-ink-2);
+			margin-bottom: 1rem;
+		}
+
+		.td-page-eyebrow .dot {
+			width: 7px; height: 7px;
+			border-radius: 50%;
+			background: #7ee787;
+			box-shadow: 0 0 10px #7ee787;
+		}
+
+		.td-page-title {
+			font-size: clamp(2rem, 4vw, 2.75rem);
+			font-weight: 800;
+			letter-spacing: -0.025em;
+			line-height: 1.05;
+			margin: 0 0 0.75rem;
+		}
+
+		.td-page-lead {
+			color: var(--td-ink-2);
+			font-size: 1.05rem;
+			line-height: 1.6;
+			max-width: 720px;
+		}
+
+		.td-section {
+			margin-top: 4rem;
+		}
+
+		.td-section-header {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 1rem;
+			padding-bottom: 1rem;
+			margin-bottom: 1.5rem;
+			border-bottom: 1px solid var(--td-border);
+		}
+
+		.td-section-title {
+			font-size: 1.5rem;
+			font-weight: 700;
+			letter-spacing: -0.02em;
+			margin: 0;
+		}
+
+		.td-section-sub {
+			color: var(--td-ink-3);
+			font-size: 0.85rem;
+			font-weight: 500;
+		}
+
+		.td-grid {
+			display: grid;
+			gap: 1rem;
+		}
+		.td-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+		.td-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+		.td-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+		@media (max-width: 767.98px) {
+			.td-grid-2, .td-grid-3, .td-grid-4 { grid-template-columns: 1fr; }
+		}
+
+		.td-stack { display: flex; flex-direction: column; gap: 1rem; }
+		.td-row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+
+		/* ---------- Palette ---------- */
+		.td-palette {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+			gap: 0.75rem;
+		}
+
+		.td-swatch {
+			background: var(--td-paper);
+			border: 1px solid var(--td-border);
+			border-radius: var(--td-radius);
+			padding: 0.85rem;
+			box-shadow: var(--td-shadow-sm);
+		}
+
+		.td-swatch-chip {
+			height: 60px;
+			border-radius: 10px;
+			margin-bottom: 0.6rem;
+			box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
+		}
+
+		.td-swatch-name {
+			font-size: 0.78rem;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			color: var(--td-ink);
+		}
+
+		.td-swatch-hex {
+			font-family: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+			font-size: 0.72rem;
+			color: var(--td-ink-3);
+		}
+
+		/* ---------- Typography sample ---------- */
+		.td-type-card {
+			background: var(--td-paper);
+			border: 1px solid var(--td-border);
+			border-radius: var(--td-radius);
+			padding: 1.25rem 1.5rem;
+			box-shadow: var(--td-shadow-sm);
+		}
+		.td-type-card + .td-type-card { margin-top: 0.75rem; }
+
+		.td-type-label {
+			font-size: 0.7rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--td-ink-3);
+			margin-bottom: 0.4rem;
+		}
+
+		.td-h-display { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.025em; line-height: 1.05; }
+		.td-h-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.015em; }
+		.td-h-section { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+		.td-body { font-size: 1rem; line-height: 1.55; color: var(--td-ink); }
+		.td-body-muted { font-size: 0.9rem; color: var(--td-ink-2); }
+		.td-eyebrow {
+			font-size: 0.72rem;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--td-ink-3);
+		}
+
+		/* ---------- Buttons ---------- */
+		.td-btn,
+		.td-btn:hover,
+		.td-btn:focus,
+		.td-btn:active {
+			text-decoration: none;
+		}
+
+		.td-btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			min-height: 44px;
+			padding: 0.55rem 1.1rem;
+			border-radius: 10px;
+			font-weight: 600;
+			font-size: 0.95rem;
+			border: 1px solid transparent;
+			transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease, color .2s ease;
+			cursor: pointer;
+			line-height: 1;
+		}
+		.td-btn:active { transform: translateY(1px); }
+		.td-btn i { font-size: 1.05rem; }
+
+		.td-btn-primary {
+			background: var(--td-deep);
+			color: #fff;
+			box-shadow: 0 6px 16px -8px rgba(11, 29, 46, 0.5);
+		}
+		.td-btn-primary:hover {
+			background: #16334d;
+			color: #fff;
+			transform: translateY(-1px);
+			box-shadow: 0 10px 22px -10px rgba(11, 29, 46, 0.55);
+		}
+
+		.td-btn-glow {
+			background: var(--td-glow);
+			color: var(--td-deep);
+			box-shadow: 0 6px 16px -8px rgba(244, 162, 97, 0.55);
+		}
+		.td-btn-glow:hover {
+			background: #f7b377;
+			color: var(--td-deep);
+			transform: translateY(-1px);
+		}
+
+		.td-btn-secondary {
+			background: var(--td-paper);
+			color: var(--td-deep);
+			border-color: var(--td-border-strong);
+		}
+		.td-btn-secondary:hover {
+			background: var(--td-cream);
+			border-color: var(--td-deep);
+			color: var(--td-deep);
+		}
+
+		.td-btn-ghost {
+			background: transparent;
+			color: var(--td-ink-2);
+			border-color: transparent;
+		}
+		.td-btn-ghost:hover {
+			background: var(--td-mid-soft);
+			color: var(--td-deep);
+		}
+
+		.td-btn-danger {
+			background: var(--td-paper);
+			color: var(--td-danger);
+			border-color: var(--td-danger-soft);
+		}
+		.td-btn-danger:hover {
+			background: var(--td-danger);
+			color: #fff;
+			border-color: var(--td-danger);
+		}
+
+		.td-btn-sm { min-height: 36px; padding: 0.4rem 0.85rem; font-size: 0.85rem; border-radius: 8px; }
+		.td-btn-icon { padding: 0.55rem; min-width: 44px; justify-content: center; }
+		.td-btn-icon.td-btn-sm { min-width: 36px; padding: 0.4rem; }
+
+		/* ---------- Badges ---------- */
+		.td-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.3rem;
+			padding: 0.22rem 0.6rem;
+			border-radius: var(--td-radius-pill);
+			font-size: 0.74rem;
+			font-weight: 600;
+			letter-spacing: 0.005em;
+			line-height: 1.2;
+		}
+		.td-badge i { font-size: 0.85rem; }
+		.td-badge-dot {
+			width: 6px; height: 6px;
+			border-radius: 50%;
+			background: currentColor;
+			opacity: 0.7;
+		}
+
+		.td-badge-progress { background: var(--td-info-soft); color: var(--td-info); }
+		.td-badge-done     { background: var(--td-success-soft); color: var(--td-success); }
+		.td-badge-inspect  { background: var(--td-warning-soft); color: var(--td-warning); }
+		.td-badge-danger   { background: var(--td-danger-soft); color: var(--td-danger); }
+		.td-badge-priority { background: rgba(184, 54, 74, 0.1); color: var(--td-danger); }
+		.td-badge-spec     { background: var(--td-neutral-soft); color: var(--td-neutral); }
+		.td-badge-started  { background: rgba(80, 145, 200, 0.14); color: #2e6ea8; }
+		.td-badge-glow     { background: var(--td-glow-soft); color: var(--td-warning); }
+
+		.td-difficulty-1 { background: var(--td-success-soft); color: var(--td-success); }
+		.td-difficulty-2 { background: var(--td-warning-soft); color: var(--td-warning); }
+		.td-difficulty-3 { background: var(--td-danger-soft); color: var(--td-danger); }
+
+		/* ---------- Avatars ---------- */
+		.td-avatar {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 36px; height: 36px;
+			border-radius: 50%;
+			background: linear-gradient(135deg, var(--td-mid), #6a8caf);
+			color: #fff;
+			font-size: 0.78rem;
+			font-weight: 700;
+			letter-spacing: 0;
+			border: 2px solid #fff;
+			box-shadow: 0 2px 6px -2px rgba(11,29,46,0.25);
+		}
+		.td-avatar-sm { width: 26px; height: 26px; font-size: 0.62rem; }
+		.td-avatar-lg { width: 52px; height: 52px; font-size: 1rem; }
+
+		.td-avatar.td-c1 { background: linear-gradient(135deg, var(--td-mid), #6a8caf); }
+		.td-avatar.td-c2 { background: linear-gradient(135deg, #b66525, var(--td-glow)); }
+		.td-avatar.td-c3 { background: linear-gradient(135deg, var(--td-success), #7ee787); color: var(--td-deep); }
+		.td-avatar.td-c4 { background: linear-gradient(135deg, #6b3ea0, #b08ad6); }
+		.td-avatar.td-c5 { background: linear-gradient(135deg, #2b6e8a, #6dc3d8); }
+		.td-avatar.td-c6 { background: linear-gradient(135deg, #b8364a, #e98a98); }
+
+		.td-avatar-stack {
+			display: inline-flex;
+			align-items: center;
+		}
+		.td-avatar-stack > .td-avatar + .td-avatar {
+			margin-left: -10px;
+		}
+		.td-avatar-stack > .td-avatar-more {
+			background: var(--td-cream);
+			color: var(--td-deep);
+		}
+
+		/* ---------- Equipment avatar (square / icon) ---------- */
+		.td-eqv {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 52px; height: 52px;
+			border-radius: 12px;
+			background: var(--td-mid-soft);
+			color: var(--td-mid);
+			font-size: 1.6rem;
+			flex-shrink: 0;
+		}
+		.td-eqv-glow { background: var(--td-glow-soft); color: var(--td-warning); }
+		.td-eqv-cream { background: var(--td-cream); color: var(--td-deep); }
+
+		/* ---------- Cards ---------- */
+		.td-card {
+			position: relative;
+			background: var(--td-paper);
+			border: 1px solid var(--td-border);
+			border-radius: var(--td-radius);
+			padding: 1.1rem 1.25rem;
+			box-shadow: var(--td-shadow-sm);
+			transition: transform .18s ease, box-shadow .25s ease, border-color .18s ease;
+			overflow: hidden;
+		}
+		.td-card.is-link {
+			cursor: pointer;
+		}
+		.td-card.is-link:hover {
+			transform: translateY(-2px);
+			box-shadow: var(--td-shadow);
+			border-color: var(--td-border-strong);
+		}
+
+		/* Left status accent (replaces card-status-start) */
+		.td-card[data-accent]::before {
+			content: "";
+			position: absolute;
+			left: 0; top: 0; bottom: 0;
+			width: 4px;
+			border-radius: var(--td-radius) 0 0 var(--td-radius);
+		}
+		.td-card[data-accent="info"]::before     { background: var(--td-info); }
+		.td-card[data-accent="success"]::before  { background: var(--td-success); }
+		.td-card[data-accent="warning"]::before  { background: var(--td-glow); }
+		.td-card[data-accent="danger"]::before   { background: var(--td-danger); }
+		.td-card[data-accent="neutral"]::before  { background: var(--td-neutral); }
+
+		.td-card-head {
+			display: flex;
+			align-items: flex-start;
+			gap: 0.85rem;
+		}
+
+		.td-card-eyebrow {
+			font-size: 0.7rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.07em;
+			color: var(--td-ink-3);
+			margin-bottom: 0.15rem;
+			display: flex;
+			align-items: center;
+			gap: 0.4rem;
+		}
+
+		.td-card-title {
+			font-size: 1.02rem;
+			font-weight: 700;
+			line-height: 1.3;
+			color: var(--td-ink);
+			margin: 0 0 0.25rem;
+			letter-spacing: -0.005em;
+		}
+
+		.td-card-subtitle {
+			font-size: 0.92rem;
+			color: var(--td-ink-2);
+			margin: 0 0 0.4rem;
+		}
+
+		.td-card-meta {
+			font-size: 0.82rem;
+			color: var(--td-ink-3);
+			display: inline-flex;
+			align-items: center;
+			gap: 0.3rem;
+		}
+
+		.td-card-badges {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.4rem;
+			margin-top: 0.75rem;
+		}
+
+		.td-card-footer {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.75rem;
+			margin-top: 1rem;
+			padding-top: 0.85rem;
+			border-top: 1px dashed var(--td-border);
+		}
+
+		/* ---------- Progress ---------- */
+		.td-progress {
+			height: 5px;
+			background: rgba(11, 29, 46, 0.06);
+			border-radius: 999px;
+			overflow: hidden;
+		}
+		.td-progress > span {
+			display: block;
+			height: 100%;
+			background: linear-gradient(90deg, var(--td-mid), var(--td-glow));
+			border-radius: 999px;
+			transition: width .4s ease;
+		}
+		.td-progress.is-done > span {
+			background: linear-gradient(90deg, var(--td-success), #7ee787);
+		}
+
+		.td-progress-meta {
+			display: flex;
+			justify-content: space-between;
+			align-items: baseline;
+			margin-bottom: 0.35rem;
+			font-size: 0.78rem;
+			color: var(--td-ink-2);
+		}
+		.td-progress-meta strong { color: var(--td-ink); font-weight: 700; }
+
+		/* ---------- KPI cards ---------- */
+		.td-kpi {
+			background: var(--td-paper);
+			border: 1px solid var(--td-border);
+			border-radius: var(--td-radius);
+			padding: 1.1rem 1.25rem;
+			box-shadow: var(--td-shadow-sm);
+			position: relative;
+			overflow: hidden;
+		}
+		.td-kpi-icon {
+			position: absolute;
+			top: 1rem; right: 1rem;
+			width: 38px; height: 38px;
+			border-radius: 10px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.2rem;
+			background: var(--td-mid-soft);
+			color: var(--td-mid);
+		}
+		.td-kpi-label {
+			font-size: 0.78rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+			color: var(--td-ink-3);
+		}
+		.td-kpi-value {
+			font-size: 2rem;
+			font-weight: 800;
+			letter-spacing: -0.02em;
+			margin: 0.3rem 0 0.15rem;
+		}
+		.td-kpi-trend {
+			font-size: 0.82rem;
+			color: var(--td-ink-2);
+			display: inline-flex;
+			align-items: center;
+			gap: 0.3rem;
+		}
+		.td-kpi-trend.is-up { color: var(--td-success); }
+		.td-kpi-trend.is-down { color: var(--td-danger); }
+
+		.td-kpi.accent-glow .td-kpi-icon { background: var(--td-glow-soft); color: var(--td-warning); }
+		.td-kpi.accent-success .td-kpi-icon { background: var(--td-success-soft); color: var(--td-success); }
+		.td-kpi.accent-danger .td-kpi-icon { background: var(--td-danger-soft); color: var(--td-danger); }
+
+		/* ---------- Forms ---------- */
+		.td-field {
+			display: flex;
+			flex-direction: column;
+			gap: 0.4rem;
+		}
+		.td-field + .td-field { margin-top: 0.9rem; }
+
+		.td-label {
+			font-size: 0.82rem;
+			font-weight: 600;
+			color: var(--td-ink);
+			letter-spacing: 0;
+		}
+		.td-label-hint {
+			font-size: 0.78rem;
+			color: var(--td-ink-3);
+			font-weight: 400;
+			margin-left: 0.35rem;
+		}
+
+		.td-input,
+		.td-select,
+		.td-textarea {
+			width: 100%;
+			border: 1px solid var(--td-border-strong);
+			background: var(--td-paper);
+			border-radius: 10px;
+			padding: 0.7rem 0.9rem;
+			font: inherit;
+			font-size: 0.95rem;
+			color: var(--td-ink);
+			transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+			min-height: 44px;
+		}
+		.td-input:focus,
+		.td-select:focus,
+		.td-textarea:focus {
+			outline: 0;
+			border-color: var(--td-mid);
+			box-shadow: 0 0 0 4px rgba(52, 91, 124, 0.12);
+			background: #fff;
+		}
+		.td-input::placeholder, .td-textarea::placeholder { color: var(--td-ink-3); }
+		.td-textarea { min-height: 96px; resize: vertical; }
+
+		.td-input-group {
+			position: relative;
+		}
+		.td-input-group .td-input { padding-left: 2.4rem; }
+		.td-input-group > i {
+			position: absolute;
+			left: 0.9rem; top: 50%;
+			transform: translateY(-50%);
+			color: var(--td-ink-3);
+			font-size: 1.05rem;
+			pointer-events: none;
+		}
+
+		.td-check {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.55rem;
+			cursor: pointer;
+			user-select: none;
+			min-height: 44px;
+		}
+		.td-check input[type="checkbox"],
+		.td-check input[type="radio"] {
+			appearance: none;
+			width: 20px; height: 20px;
+			border: 1.5px solid var(--td-border-strong);
+			background: var(--td-paper);
+			border-radius: 6px;
+			transition: background .15s, border-color .15s;
+			position: relative;
+			cursor: pointer;
+			flex-shrink: 0;
+		}
+		.td-check input[type="radio"] { border-radius: 50%; }
+		.td-check input[type="checkbox"]:checked,
+		.td-check input[type="radio"]:checked {
+			background: var(--td-deep);
+			border-color: var(--td-deep);
+		}
+		.td-check input[type="checkbox"]:checked::after {
+			content: "";
+			position: absolute;
+			left: 5px; top: 1px;
+			width: 6px; height: 11px;
+			border: solid #fff;
+			border-width: 0 2px 2px 0;
+			transform: rotate(45deg);
+		}
+		.td-check input[type="radio"]:checked::after {
+			content: "";
+			position: absolute;
+			inset: 4px;
+			background: #fff;
+			border-radius: 50%;
+		}
+		.td-check span { font-size: 0.95rem; color: var(--td-ink); }
+
+		/* Switch */
+		.td-switch {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.65rem;
+			cursor: pointer;
+			min-height: 44px;
+		}
+		.td-switch input { display: none; }
+		.td-switch-track {
+			width: 38px; height: 22px;
+			border-radius: 999px;
+			background: rgba(11, 29, 46, 0.15);
+			position: relative;
+			transition: background .15s ease;
+			flex-shrink: 0;
+		}
+		.td-switch-track::after {
+			content: "";
+			position: absolute;
+			left: 2px; top: 2px;
+			width: 18px; height: 18px;
+			background: #fff;
+			border-radius: 50%;
+			box-shadow: 0 1px 4px rgba(11,29,46,0.3);
+			transition: left .15s ease;
+		}
+		.td-switch input:checked + .td-switch-track {
+			background: var(--td-deep);
+		}
+		.td-switch input:checked + .td-switch-track::after { left: 18px; }
+
+		/* ---------- Alerts ---------- */
+		.td-alert {
+			display: flex;
+			align-items: flex-start;
+			gap: 0.75rem;
+			padding: 0.85rem 1rem;
+			border-radius: var(--td-radius);
+			border: 1px solid transparent;
+			margin-bottom: 0.75rem;
+		}
+		.td-alert i.td-alert-icon {
+			font-size: 1.25rem;
+			margin-top: 1px;
+			flex-shrink: 0;
+		}
+		.td-alert-content { flex: 1; font-size: 0.92rem; line-height: 1.5; color: var(--td-ink); }
+		.td-alert-content strong { font-weight: 700; }
+
+		.td-alert.is-success { background: var(--td-success-soft); border-color: rgba(47, 140, 58, 0.25); }
+		.td-alert.is-success i { color: var(--td-success); }
+		.td-alert.is-warning { background: var(--td-warning-soft); border-color: rgba(182, 101, 37, 0.25); }
+		.td-alert.is-warning i { color: var(--td-warning); }
+		.td-alert.is-danger  { background: var(--td-danger-soft); border-color: rgba(184, 54, 74, 0.25); }
+		.td-alert.is-danger i { color: var(--td-danger); }
+		.td-alert.is-info    { background: var(--td-info-soft); border-color: rgba(52, 91, 124, 0.25); }
+		.td-alert.is-info i { color: var(--td-info); }
+
+		/* ---------- Filter chips ---------- */
+		.td-filters-bar {
+			background: var(--td-paper);
+			border: 1px solid var(--td-border);
+			border-radius: var(--td-radius);
+			padding: 0.85rem 1rem;
+			box-shadow: var(--td-shadow-sm);
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+			flex-wrap: wrap;
+		}
+		.td-filter-chip {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+			padding: 0.3rem 0.55rem 0.3rem 0.75rem;
+			background: var(--td-cream);
+			border-radius: var(--td-radius-pill);
+			font-size: 0.82rem;
+			color: var(--td-deep);
+			font-weight: 500;
+		}
+		.td-filter-chip strong { font-weight: 700; }
+		.td-filter-chip button {
+			border: 0;
+			background: rgba(11, 29, 46, 0.1);
+			color: var(--td-deep);
+			width: 18px; height: 18px;
+			border-radius: 50%;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			font-size: 0.7rem;
+			transition: background .15s;
+		}
+		.td-filter-chip button:hover { background: var(--td-deep); color: #fff; }
+
+		.td-filters-spacer { flex: 1; }
+
+		/* ---------- Empty state ---------- */
+		.td-empty {
+			background: var(--td-paper);
+			border: 1px dashed var(--td-border-strong);
+			border-radius: var(--td-radius);
+			padding: 3rem 1.5rem;
+			text-align: center;
+		}
+		.td-empty-icon {
+			width: 56px; height: 56px;
+			border-radius: 16px;
+			background: var(--td-cream);
+			color: var(--td-deep);
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.6rem;
+			margin: 0 auto 0.85rem;
+		}
+		.td-empty-title {
+			font-size: 1.15rem;
+			font-weight: 700;
+			margin-bottom: 0.4rem;
+			letter-spacing: -0.01em;
+		}
+		.td-empty-text {
+			color: var(--td-ink-2);
+			font-size: 0.95rem;
+			max-width: 420px;
+			margin: 0 auto 1rem;
+			line-height: 1.5;
+		}
+
+		/* ---------- Breadcrumb ---------- */
+		.td-breadcrumb {
+			display: flex;
+			align-items: center;
+			gap: 0.4rem;
+			font-size: 0.85rem;
+			color: var(--td-ink-3);
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			flex-wrap: wrap;
+		}
+		.td-breadcrumb li { display: inline-flex; align-items: center; gap: 0.4rem; }
+		.td-breadcrumb a {
+			color: var(--td-ink-3);
+			text-decoration: none;
+			padding: 0.25rem 0.5rem;
+			border-radius: 6px;
+			transition: background .15s, color .15s;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.3rem;
+		}
+		.td-breadcrumb a:hover { background: var(--td-mid-soft); color: var(--td-deep); }
+		.td-breadcrumb li.is-current { color: var(--td-deep); font-weight: 600; padding: 0.25rem 0.5rem; }
+		.td-breadcrumb li + li::before {
+			content: "/";
+			color: var(--td-border-strong);
+			margin-left: 0.1rem;
+		}
+
+		/* ---------- Page header (in-app pattern) ---------- */
+		.td-page-bar {
+			background: var(--td-paper);
+			border: 1px solid var(--td-border);
+			border-radius: var(--td-radius);
+			padding: 1.1rem 1.25rem;
+			box-shadow: var(--td-shadow-sm);
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+			flex-wrap: wrap;
+		}
+		.td-page-bar-title {
+			font-size: 1.3rem;
+			font-weight: 700;
+			letter-spacing: -0.015em;
+			margin: 0;
+		}
+		.td-page-bar-sub {
+			font-size: 0.85rem;
+			color: var(--td-ink-3);
+			margin-top: 0.15rem;
+		}
+		.td-page-bar-actions {
+			margin-left: auto;
+			display: flex;
+			gap: 0.5rem;
+			flex-wrap: wrap;
+		}
+
+		/* ---------- Tabs ---------- */
+		.td-tabs {
+			display: flex;
+			gap: 0.25rem;
+			border-bottom: 1px solid var(--td-border);
+			margin-bottom: 1.25rem;
+			flex-wrap: wrap;
+		}
+		.td-tab {
+			padding: 0.65rem 1rem;
+			border: 0;
+			background: transparent;
+			color: var(--td-ink-2);
+			font-weight: 600;
+			font-size: 0.9rem;
+			cursor: pointer;
+			border-bottom: 2px solid transparent;
+			margin-bottom: -1px;
+			border-radius: 8px 8px 0 0;
+			transition: color .15s, border-color .15s, background .15s;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+		}
+		.td-tab:hover { color: var(--td-deep); background: var(--td-mid-soft); }
+		.td-tab.is-active {
+			color: var(--td-deep);
+			border-bottom-color: var(--td-glow);
+		}
+		.td-tab .td-tab-count {
+			background: var(--td-cream);
+			color: var(--td-deep);
+			border-radius: 999px;
+			padding: 0.1rem 0.5rem;
+			font-size: 0.72rem;
+			font-weight: 700;
+		}
+
+		/* ---------- Note about source ---------- */
+		.td-source-note {
+			font-size: 0.78rem;
+			color: var(--td-ink-3);
+			margin-top: 0.6rem;
+			line-height: 1.4;
+		}
+		.td-source-note code {
+			background: rgba(11, 29, 46, 0.06);
+			padding: 0.05rem 0.35rem;
+			border-radius: 4px;
+			font-size: 0.8em;
+		}
+
+	</style>
+{% endblock %}
+
+{% block body %}
+<div class="td-lab landing-bleed" style="margin-left:calc(-1 * var(--bs-gutter-x, 0.75rem));margin-right:calc(-1 * var(--bs-gutter-x, 0.75rem));">
+
+	<div class="td-container">
+
+		{# ===================================================== #}
+		{# Header / intro                                         #}
+		{# ===================================================== #}
+		<header class="td-page-header">
+			<span class="td-page-eyebrow"><span class="dot"></span> Design lab · proposition</span>
+			<h1 class="td-page-title">Une charte plus moderne pour&nbsp;Tarmac</h1>
+			<p class="td-page-lead">Cette page recense les composants visuels qu'on réutilise dans l'app (cards de tâche, sous-tâche, badges, avatars, formulaires…) et propose un re-stylage cohérent avec le hero éditorial de la landing : palette navy/glow, cards papier, ombres douces, typographie tendue. Rien n'est encore appliqué à l'app — c'est une maquette pour valider la direction.</p>
+		</header>
+
+		{# ===================================================== #}
+		{# 1. Palette + tokens                                    #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">1. Palette &amp; tokens</h2>
+				<span class="td-section-sub">Reprise du hero — navy, mid, glow, cream</span>
+			</div>
+
+			<div class="td-palette">
+				<div class="td-swatch"><div class="td-swatch-chip" style="background:#0b1d2e"></div><div class="td-swatch-name">Deep</div><div class="td-swatch-hex">#0b1d2e</div></div>
+				<div class="td-swatch"><div class="td-swatch-chip" style="background:#345b7c"></div><div class="td-swatch-name">Mid</div><div class="td-swatch-hex">#345b7c</div></div>
+				<div class="td-swatch"><div class="td-swatch-chip" style="background:#f4a261"></div><div class="td-swatch-name">Glow</div><div class="td-swatch-hex">#f4a261</div></div>
+				<div class="td-swatch"><div class="td-swatch-chip" style="background:#f4ecd8"></div><div class="td-swatch-name">Cream</div><div class="td-swatch-hex">#f4ecd8</div></div>
+				<div class="td-swatch"><div class="td-swatch-chip" style="background:#faf8f3"></div><div class="td-swatch-name">Canvas</div><div class="td-swatch-hex">#faf8f3</div></div>
+				<div class="td-swatch"><div class="td-swatch-chip" style="background:#2f8c3a"></div><div class="td-swatch-name">Success</div><div class="td-swatch-hex">#2f8c3a</div></div>
+				<div class="td-swatch"><div class="td-swatch-chip" style="background:#b66525"></div><div class="td-swatch-name">Warning</div><div class="td-swatch-hex">#b66525</div></div>
+				<div class="td-swatch"><div class="td-swatch-chip" style="background:#b8364a"></div><div class="td-swatch-name">Danger</div><div class="td-swatch-hex">#b8364a</div></div>
+			</div>
+			<p class="td-source-note">Les <strong>variantes « soft »</strong> (badges, accents) sont les mêmes teintes à ~12-22 % d'opacité — la recette utilisée dans <code>.mockup-badge</code> du hero.</p>
+		</section>
+
+		{# ===================================================== #}
+		{# 2. Typographie                                         #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">2. Typographie</h2>
+				<span class="td-section-sub">Inter, letter-spacing négatif sur les titres</span>
+			</div>
+
+			<div class="td-type-card">
+				<div class="td-type-label">Display — landing / titres d'écran</div>
+				<div class="td-h-display">Visite annuelle 100&nbsp;heures</div>
+			</div>
+			<div class="td-type-card">
+				<div class="td-type-label">Title — titre de carte / section</div>
+				<div class="td-h-title">F-CGAB · Planeur biplace</div>
+			</div>
+			<div class="td-type-card">
+				<div class="td-type-label">Section — sous-titre de bloc</div>
+				<div class="td-h-section">Sous-tâches en attente d'inspection</div>
+			</div>
+			<div class="td-type-card">
+				<div class="td-type-label">Body</div>
+				<div class="td-body">Un Planeur peut être qualifié pour le vol par un Inspector après la complétion des sous-tâches qui nécessitent une inspection.</div>
+				<div class="td-body-muted mt-2">Le statut « En attente d'inspection » devient « Clôturé » dès qu'un Qualifié valide l'intervention.</div>
+			</div>
+			<div class="td-type-card">
+				<div class="td-type-label">Eyebrow / kicker</div>
+				<div class="td-eyebrow">Sous-tâche · critique · F-CGAB</div>
+			</div>
+		</section>
+
+		{# ===================================================== #}
+		{# 3. Boutons                                             #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">3. Boutons</h2>
+				<span class="td-section-sub">Primary navy, glow pour l'action héro, secondary papier</span>
+			</div>
+
+			<div class="td-row mb-3">
+				<button class="td-btn td-btn-primary"><i class="ti ti-plus"></i> Nouvelle tâche</button>
+				<button class="td-btn td-btn-glow"><i class="ti ti-rocket"></i> Action mise en avant</button>
+				<button class="td-btn td-btn-secondary"><i class="ti ti-edit"></i> Modifier</button>
+				<button class="td-btn td-btn-ghost"><i class="ti ti-x"></i> Annuler</button>
+				<button class="td-btn td-btn-danger"><i class="ti ti-trash"></i> Supprimer</button>
+				<button class="td-btn td-btn-secondary td-btn-icon" aria-label="Imprimer"><i class="ti ti-printer"></i></button>
+			</div>
+			<div class="td-row">
+				<button class="td-btn td-btn-primary td-btn-sm"><i class="ti ti-check"></i> Valider</button>
+				<button class="td-btn td-btn-secondary td-btn-sm"><i class="ti ti-filter"></i> Filtrer</button>
+				<button class="td-btn td-btn-ghost td-btn-sm">Ignorer</button>
+				<button class="td-btn td-btn-danger td-btn-sm"><i class="ti ti-x"></i> Refuser</button>
+				<button class="td-btn td-btn-secondary td-btn-sm td-btn-icon" aria-label="Plus"><i class="ti ti-dots"></i></button>
+			</div>
+		</section>
+
+		{# ===================================================== #}
+		{# 4. Badges & statuts                                    #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">4. Badges &amp; statuts</h2>
+				<span class="td-section-sub">Pills tintés — remplace <code>bg-*-lt text-white</code> de Tabler</span>
+			</div>
+
+			<div class="td-row mb-3">
+				<span class="td-badge td-badge-progress"><i class="ti ti-circle"></i> En cours</span>
+				<span class="td-badge td-badge-done"><i class="ti ti-circle-check"></i> Clôturé</span>
+				<span class="td-badge td-badge-inspect"><i class="ti ti-hourglass"></i> En attente d'inspection</span>
+				<span class="td-badge td-badge-danger"><i class="ti ti-x"></i> Annulé</span>
+				<span class="td-badge td-badge-started"><i class="ti ti-clock-play"></i> Démarrée</span>
+			</div>
+			<div class="td-row mb-3">
+				<span class="td-badge td-badge-priority"><i class="ti ti-flag"></i> Prioritaire</span>
+				<span class="td-badge td-difficulty-1"><i class="ti ti-gauge"></i> Débutant</span>
+				<span class="td-badge td-difficulty-2"><i class="ti ti-gauge"></i> Expérimenté</span>
+				<span class="td-badge td-difficulty-3"><i class="ti ti-gauge"></i> Expert</span>
+				<span class="td-badge td-badge-glow"><i class="ti ti-shield-check"></i> Qualif. requise</span>
+			</div>
+			<div class="td-row">
+				<span class="td-badge td-badge-spec"><i class="ti ti-tag"></i> Mécanique</span>
+				<span class="td-badge td-badge-spec"><i class="ti ti-tag"></i> Toile</span>
+				<span class="td-badge td-badge-spec"><i class="ti ti-tag"></i> Avionique</span>
+				<span class="td-badge td-badge-spec"><i class="ti ti-tag"></i> Carrosserie</span>
+			</div>
+		</section>
+
+		{# ===================================================== #}
+		{# 5. Avatars                                             #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">5. Avatars membres &amp; matériel</h2>
+				<span class="td-section-sub">Avatars contributeurs en gradient · vignettes matériel carrées</span>
+			</div>
+
+			<div class="td-grid td-grid-2">
+				<div class="td-card">
+					<div class="td-card-eyebrow">Avatar simple — 3 tailles</div>
+					<div class="td-row mb-3">
+						<span class="td-avatar td-avatar-sm td-c1">TH</span>
+						<span class="td-avatar td-c2">JM</span>
+						<span class="td-avatar td-avatar-lg td-c3">PL</span>
+					</div>
+					<div class="td-card-eyebrow">Stack contributeurs (jusqu'à 4 + « +N »)</div>
+					<div class="td-row">
+						<span class="td-avatar-stack">
+							<span class="td-avatar td-avatar-sm td-c1">TH</span>
+							<span class="td-avatar td-avatar-sm td-c2">JM</span>
+							<span class="td-avatar td-avatar-sm td-c3">PL</span>
+							<span class="td-avatar td-avatar-sm td-c4">SR</span>
+							<span class="td-avatar td-avatar-sm td-avatar-more">+3</span>
+						</span>
+					</div>
+				</div>
+
+				<div class="td-card">
+					<div class="td-card-eyebrow">Vignettes matériel</div>
+					<div class="td-row">
+						<span class="td-eqv"><i class="ti ti-plane"></i></span>
+						<span class="td-eqv td-eqv-glow"><i class="ti ti-wind"></i></span>
+						<span class="td-eqv td-eqv-cream"><i class="ti ti-truck"></i></span>
+						<span class="td-eqv" style="background:rgba(47,140,58,0.14);color:var(--td-success)"><i class="ti ti-helmet"></i></span>
+						<span class="td-eqv" style="background:rgba(107,62,160,0.14);color:#6b3ea0"><i class="ti ti-engine"></i></span>
+					</div>
+					<p class="td-source-note">Remplace l'<code>.avatar .avatar-lg .bg-X-lt</code> de Tabler — taille fixe, radius adouci, palette propre à l'app.</p>
+				</div>
+			</div>
+		</section>
+
+		{# ===================================================== #}
+		{# 6. Cards de tâche                                      #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">6. Cards de tâche</h2>
+				<span class="td-section-sub">Re-style de <code>component/taskCard.html.twig</code></span>
+			</div>
+
+			<div class="td-stack">
+
+				{# Task — en cours, avec progress et contributeurs #}
+				<article class="td-card is-link">
+					<div class="td-card-head">
+						<span class="td-eqv"><i class="ti ti-plane"></i></span>
+						<div class="flex-fill">
+							<div class="td-card-eyebrow">F-CGAB · Planeur biplace</div>
+							<h3 class="td-card-title">Visite annuelle 100 heures</h3>
+							<div class="td-card-meta"><i class="ti ti-calendar"></i> Échéance le 12 juin 2026</div>
+						</div>
+						<div class="d-none d-md-flex" style="gap:0.4rem;flex-wrap:wrap;justify-content:flex-end;">
+							<span class="td-badge td-badge-priority"><i class="ti ti-flag"></i> Prioritaire</span>
+							<span class="td-badge td-badge-progress"><i class="ti ti-circle"></i> En cours</span>
+							<span class="td-badge td-difficulty-2"><i class="ti ti-gauge"></i> Expérimenté</span>
+						</div>
+					</div>
+
+					<div class="d-md-none td-card-badges">
+						<span class="td-badge td-badge-priority"><i class="ti ti-flag"></i> Prioritaire</span>
+						<span class="td-badge td-badge-progress"><i class="ti ti-circle"></i> En cours</span>
+						<span class="td-badge td-difficulty-2"><i class="ti ti-gauge"></i> Expérimenté</span>
+					</div>
+
+					<div class="td-card-footer" style="border-top:0;padding-top:1rem;display:block;">
+						<div class="td-progress-meta">
+							<span><strong>5</strong> / 8 sous-tâches</span>
+							<span>62 %</span>
+						</div>
+						<div class="td-progress"><span style="width: 62%"></span></div>
+						<div class="d-flex justify-content-end mt-2">
+							<span class="td-avatar-stack">
+								<span class="td-avatar td-avatar-sm td-c1">TH</span>
+								<span class="td-avatar td-avatar-sm td-c2">JM</span>
+								<span class="td-avatar td-avatar-sm td-c3">PL</span>
+							</span>
+						</div>
+					</div>
+				</article>
+
+				{# Task — en attente d'inspection #}
+				<article class="td-card is-link">
+					<div class="td-card-head">
+						<span class="td-eqv td-eqv-glow"><i class="ti ti-wind"></i></span>
+						<div class="flex-fill">
+							<div class="td-card-eyebrow">Treuil n°2 · Treuillage</div>
+							<h3 class="td-card-title">Graissage câble &amp; poulies de renvoi</h3>
+							<div class="td-card-meta"><i class="ti ti-calendar"></i> Échéance le 30 mai 2026</div>
+						</div>
+						<div class="d-none d-md-flex" style="gap:0.4rem;flex-wrap:wrap;justify-content:flex-end;">
+							<span class="td-badge td-badge-inspect"><i class="ti ti-hourglass"></i> En attente d'inspection</span>
+							<span class="td-badge td-difficulty-1"><i class="ti ti-gauge"></i> Débutant</span>
+						</div>
+					</div>
+
+					<div class="td-card-footer" style="border-top:0;padding-top:1rem;display:block;">
+						<div class="td-progress-meta">
+							<span><strong>3</strong> / 3 sous-tâches</span>
+							<span>100 %</span>
+						</div>
+						<div class="td-progress is-done"><span style="width: 100%"></span></div>
+					</div>
+				</article>
+
+				{# Task — clôturée #}
+				<article class="td-card is-link" style="opacity:.85;">
+					<div class="td-card-head">
+						<span class="td-eqv td-eqv-cream"><i class="ti ti-truck"></i></span>
+						<div class="flex-fill">
+							<div class="td-card-eyebrow">Voiture rappel · Atelier</div>
+							<h3 class="td-card-title">Vidange + filtres</h3>
+							<div class="td-card-meta"><i class="ti ti-calendar"></i> Réalisée le 8 mai 2026</div>
+						</div>
+						<div class="d-none d-md-flex" style="gap:0.4rem;justify-content:flex-end;">
+							<span class="td-badge td-badge-done"><i class="ti ti-circle-check"></i> Clôturé</span>
+						</div>
+					</div>
+				</article>
+
+			</div>
+		</section>
+
+		{# ===================================================== #}
+		{# 7. Cards de sous-tâche                                 #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">7. Cards de sous-tâche</h2>
+				<span class="td-section-sub">Re-style de <code>component/subTaskCard.html.twig</code> — accent gauche pour le statut</span>
+			</div>
+
+			<p class="td-source-note mb-3">Statut = <strong>tag explicite en première position</strong> (plus parlant qu'une bordure couleur muette). Footer en pointillés avec « X contributions » + avatars dès qu'il y a une activité.</p>
+
+			<div class="td-stack">
+
+				<article class="td-card is-link">
+					<div class="td-card-head">
+						<span class="td-eqv"><i class="ti ti-plane"></i></span>
+						<div class="flex-fill">
+							<div class="td-card-eyebrow">F-CGAB · Visite 100h</div>
+							<h3 class="td-card-title">Vérification ouverture verrière en vol</h3>
+							<div class="td-card-meta"><i class="ti ti-calendar"></i> 12 juin 2026</div>
+							<div class="td-card-badges">
+								<span class="td-badge td-badge-inspect"><i class="ti ti-hourglass"></i> En attente d'inspection</span>
+								<span class="td-badge td-badge-priority"><i class="ti ti-flag"></i> Prioritaire</span>
+								<span class="td-badge td-difficulty-3"><i class="ti ti-gauge"></i> Expert</span>
+								<span class="td-badge td-badge-spec"><i class="ti ti-tag"></i> Mécanique</span>
+							</div>
+						</div>
+					</div>
+					<div class="td-card-footer">
+						<span class="td-card-meta"><i class="ti ti-clock-play"></i> 2 contributions</span>
+						<span class="td-avatar-stack">
+							<span class="td-avatar td-avatar-sm td-c2">JM</span>
+							<span class="td-avatar td-avatar-sm td-c4">SR</span>
+						</span>
+					</div>
+				</article>
+
+				<article class="td-card is-link">
+					<div class="td-card-head">
+						<span class="td-eqv td-eqv-glow"><i class="ti ti-wind"></i></span>
+						<div class="flex-fill">
+							<div class="td-card-eyebrow">Treuil n°2 · Graissage</div>
+							<h3 class="td-card-title">Graissage des poulies de renvoi</h3>
+							<div class="td-card-meta"><i class="ti ti-calendar"></i> Réalisée le 26 mai 2026</div>
+							<div class="td-card-badges">
+								<span class="td-badge td-badge-done"><i class="ti ti-circle-check"></i> Clôturé</span>
+								<span class="td-badge td-difficulty-1"><i class="ti ti-gauge"></i> Débutant</span>
+							</div>
+						</div>
+					</div>
+					<div class="td-card-footer">
+						<span class="td-card-meta"><i class="ti ti-clock-play"></i> 3 contributions</span>
+						<span class="td-avatar-stack">
+							<span class="td-avatar td-avatar-sm td-c1">TH</span>
+							<span class="td-avatar td-avatar-sm td-c3">PL</span>
+							<span class="td-avatar td-avatar-sm td-c5">FD</span>
+						</span>
+					</div>
+				</article>
+
+				<article class="td-card is-link">
+					<div class="td-card-head">
+						<span class="td-eqv td-eqv-cream"><i class="ti ti-truck"></i></span>
+						<div class="flex-fill">
+							<div class="td-card-eyebrow">Voiture rappel · Atelier</div>
+							<h3 class="td-card-title">Contrôle des plaquettes de frein</h3>
+							<div class="td-card-meta"><i class="ti ti-calendar"></i> Échéance le 10 juin 2026</div>
+							<div class="td-card-badges">
+								<span class="td-badge td-badge-started"><i class="ti ti-clock-play"></i> Démarrée</span>
+								<span class="td-badge td-difficulty-2"><i class="ti ti-gauge"></i> Expérimenté</span>
+								<span class="td-badge td-badge-spec"><i class="ti ti-tag"></i> Carrosserie</span>
+							</div>
+						</div>
+					</div>
+					<div class="td-card-footer">
+						<span class="td-card-meta"><i class="ti ti-clock-play"></i> 1 contribution</span>
+						<span class="td-avatar-stack">
+							<span class="td-avatar td-avatar-sm td-c4">SR</span>
+						</span>
+					</div>
+				</article>
+
+				<article class="td-card is-link" style="opacity:.7;">
+					<div class="td-card-head">
+						<span class="td-eqv"><i class="ti ti-plane"></i></span>
+						<div class="flex-fill">
+							<div class="td-card-eyebrow">F-CGAB · Annulée</div>
+							<h3 class="td-card-title">Remplacement de la sangle de baudrier</h3>
+							<div class="td-card-meta"><i class="ti ti-x"></i> Annulée — pièce déjà neuve</div>
+							<div class="td-card-badges">
+								<span class="td-badge td-badge-danger"><i class="ti ti-x"></i> Annulé</span>
+							</div>
+						</div>
+					</div>
+				</article>
+
+			</div>
+		</section>
+
+		{# ===================================================== #}
+		{# 8. KPI / dashboard                                     #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">8. KPI cards (dashboard)</h2>
+				<span class="td-section-sub">Pour les chiffres clés du tableau de bord</span>
+			</div>
+
+			<div class="td-grid td-grid-4">
+				<div class="td-kpi">
+					<div class="td-kpi-icon"><i class="ti ti-list-check"></i></div>
+					<div class="td-kpi-label">Tâches ouvertes</div>
+					<div class="td-kpi-value">42</div>
+					<div class="td-kpi-trend is-up"><i class="ti ti-arrow-up-right"></i> +3 cette semaine</div>
+				</div>
+				<div class="td-kpi accent-glow">
+					<div class="td-kpi-icon"><i class="ti ti-hourglass"></i></div>
+					<div class="td-kpi-label">À inspecter</div>
+					<div class="td-kpi-value">7</div>
+					<div class="td-kpi-trend">Plus ancienne : 3 jours</div>
+				</div>
+				<div class="td-kpi accent-success">
+					<div class="td-kpi-icon"><i class="ti ti-circle-check"></i></div>
+					<div class="td-kpi-label">Clôturées (30j)</div>
+					<div class="td-kpi-value">128</div>
+					<div class="td-kpi-trend is-up"><i class="ti ti-arrow-up-right"></i> +12 %</div>
+				</div>
+				<div class="td-kpi accent-danger">
+					<div class="td-kpi-icon"><i class="ti ti-flag"></i></div>
+					<div class="td-kpi-label">Prioritaires</div>
+					<div class="td-kpi-value">5</div>
+					<div class="td-kpi-trend is-down"><i class="ti ti-arrow-down-right"></i> -1 vs hier</div>
+				</div>
+			</div>
+		</section>
+
+		{# ===================================================== #}
+		{# 9. Page header & onglets                               #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">9. Header de page &amp; onglets</h2>
+				<span class="td-section-sub">Le bandeau « titre + actions » récurrent en haut de page</span>
+			</div>
+
+			<div class="mb-3">
+				<ol class="td-breadcrumb">
+					<li><a href="#"><i class="ti ti-home"></i></a></li>
+					<li><a href="#">Matériel</a></li>
+					<li><a href="#">F-CGAB</a></li>
+					<li class="is-current">Visite annuelle 100h</li>
+				</ol>
+			</div>
+
+			<div class="td-page-bar mb-3">
+				<span class="td-eqv"><i class="ti ti-plane"></i></span>
+				<div>
+					<h2 class="td-page-bar-title">Visite annuelle 100 heures</h2>
+					<div class="td-page-bar-sub">F-CGAB · Planeur biplace · échéance le 12 juin 2026</div>
+				</div>
+				<div class="td-page-bar-actions">
+					<button class="td-btn td-btn-secondary td-btn-sm"><i class="ti ti-edit"></i> Modifier</button>
+					<button class="td-btn td-btn-primary td-btn-sm"><i class="ti ti-plus"></i> Sous-tâche</button>
+				</div>
+			</div>
+
+			<div class="td-tabs">
+				<button class="td-tab is-active">Sous-tâches <span class="td-tab-count">8</span></button>
+				<button class="td-tab">Contributions <span class="td-tab-count">17</span></button>
+				<button class="td-tab">Documentation</button>
+				<button class="td-tab">Historique</button>
+			</div>
+			<div class="td-body-muted">Le contenu de l'onglet actif vient ici. Les onglets utilisent un soulignement <em>glow</em> et restent lisibles sur fond papier.</div>
+		</section>
+
+		{# ===================================================== #}
+		{# 10. Filtres                                            #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">10. Barre de filtres</h2>
+				<span class="td-section-sub">Re-style de <code>component/filters.html.twig</code></span>
+			</div>
+
+			<div class="td-filters-bar mb-3">
+				<span class="td-filter-chip"><strong>Statut :</strong> En cours <button aria-label="Retirer"><i class="ti ti-x"></i></button></span>
+				<span class="td-filter-chip"><strong>Matériel :</strong> F-CGAB <button aria-label="Retirer"><i class="ti ti-x"></i></button></span>
+				<span class="td-filter-chip"><strong>Difficulté :</strong> Expert <button aria-label="Retirer"><i class="ti ti-x"></i></button></span>
+				<span class="td-filter-chip"><strong>Échéance :</strong> Du 01/06 au 30/06 <button aria-label="Retirer"><i class="ti ti-x"></i></button></span>
+				<span class="td-filters-spacer"></span>
+				<button class="td-btn td-btn-secondary td-btn-sm" style="position:relative;">
+					<i class="ti ti-filter"></i> Filtrer
+					<span class="td-badge td-badge-priority" style="margin-left:0.4rem;">4</span>
+				</button>
+			</div>
+
+			<div class="td-filters-bar">
+				<span class="td-body-muted">Aucun filtre actif</span>
+				<span class="td-filters-spacer"></span>
+				<button class="td-btn td-btn-secondary td-btn-sm"><i class="ti ti-filter"></i> Filtrer</button>
+			</div>
+		</section>
+
+		{# ===================================================== #}
+		{# 11. Formulaires                                        #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">11. Formulaires</h2>
+				<span class="td-section-sub">Inputs, select, textarea, check, switch, recherche</span>
+			</div>
+
+			<div class="td-grid td-grid-2">
+				<div class="td-card" style="padding:1.5rem;">
+					<div class="td-field">
+						<label class="td-label" for="td-input-1">Titre de la tâche <span class="td-label-hint">obligatoire</span></label>
+						<input id="td-input-1" type="text" class="td-input" value="Visite annuelle 100 heures">
+					</div>
+
+					<div class="td-field">
+						<label class="td-label" for="td-input-2">Rechercher un membre</label>
+						<div class="td-input-group">
+							<i class="ti ti-search"></i>
+							<input id="td-input-2" type="text" class="td-input" placeholder="Tapez un nom, un email…">
+						</div>
+					</div>
+
+					<div class="td-field">
+						<label class="td-label" for="td-select-1">Matériel concerné</label>
+						<select id="td-select-1" class="td-select">
+							<option>F-CGAB · Planeur biplace</option>
+							<option>F-CHXY · Planeur monoplace</option>
+							<option>Treuil n°2</option>
+							<option>Voiture rappel</option>
+						</select>
+					</div>
+
+					<div class="td-field">
+						<label class="td-label" for="td-textarea-1">Notes internes</label>
+						<textarea id="td-textarea-1" class="td-textarea" placeholder="Détails, références constructeur, etc."></textarea>
+					</div>
+				</div>
+
+				<div class="td-card" style="padding:1.5rem;">
+					<div class="td-field">
+						<label class="td-label">Difficulté requise</label>
+						<div class="td-stack" style="gap:0.4rem;">
+							<label class="td-check"><input type="radio" name="diff" checked><span>Débutant — toute personne formée</span></label>
+							<label class="td-check"><input type="radio" name="diff"><span>Expérimenté — quelques années d'atelier</span></label>
+							<label class="td-check"><input type="radio" name="diff"><span>Expert — référent technique uniquement</span></label>
+						</div>
+					</div>
+
+					<div class="td-field">
+						<label class="td-label">Spécialisations</label>
+						<div class="td-row">
+							<label class="td-check"><input type="checkbox" checked><span>Mécanique</span></label>
+							<label class="td-check"><input type="checkbox"><span>Toile</span></label>
+							<label class="td-check"><input type="checkbox" checked><span>Avionique</span></label>
+							<label class="td-check"><input type="checkbox"><span>Carrosserie</span></label>
+						</div>
+					</div>
+
+					<div class="td-field">
+						<label class="td-switch">
+							<input type="checkbox" checked>
+							<span class="td-switch-track"></span>
+							<span>Sous-tâche prioritaire</span>
+						</label>
+						<label class="td-switch">
+							<input type="checkbox">
+							<span class="td-switch-track"></span>
+							<span>Nécessite une inspection</span>
+						</label>
+					</div>
+
+					<div class="d-flex gap-2 mt-3">
+						<button class="td-btn td-btn-primary"><i class="ti ti-check"></i> Enregistrer</button>
+						<button class="td-btn td-btn-ghost">Annuler</button>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		{# ===================================================== #}
+		{# 12. Alerts                                             #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">12. Alertes &amp; flash</h2>
+				<span class="td-section-sub">Messages persistants et notifications de flash</span>
+			</div>
+
+			<div class="td-alert is-success">
+				<i class="ti ti-circle-check td-alert-icon"></i>
+				<div class="td-alert-content"><strong>Sous-tâche validée.</strong> Le statut passe automatiquement à « Clôturé ».</div>
+			</div>
+			<div class="td-alert is-warning">
+				<i class="ti ti-alert-triangle td-alert-icon"></i>
+				<div class="td-alert-content">3 sous-tâches sont en attente d'inspection depuis plus de 7 jours.</div>
+			</div>
+			<div class="td-alert is-danger">
+				<i class="ti ti-alert-circle td-alert-icon"></i>
+				<div class="td-alert-content"><strong>Échec de l'import.</strong> Le fichier XLSX ne contient pas la colonne « Périodicité ».</div>
+			</div>
+			<div class="td-alert is-info">
+				<i class="ti ti-info-circle td-alert-icon"></i>
+				<div class="td-alert-content">Une nouvelle version du guide utilisateur est disponible.</div>
+			</div>
+		</section>
+
+		{# ===================================================== #}
+		{# 13. Empty state                                        #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-section-header">
+				<h2 class="td-section-title">13. Empty state</h2>
+				<span class="td-section-sub">Listes vides — invite à l'action</span>
+			</div>
+
+			<div class="td-empty">
+				<div class="td-empty-icon"><i class="ti ti-clipboard-list"></i></div>
+				<div class="td-empty-title">Aucune tâche pour ce matériel</div>
+				<p class="td-empty-text">Ajoute une tâche pour planifier une intervention, ou applique un plan de maintenance existant pour générer une série de tâches d'un coup.</p>
+				<div class="td-row" style="justify-content:center;">
+					<button class="td-btn td-btn-primary td-btn-sm"><i class="ti ti-plus"></i> Nouvelle tâche</button>
+					<button class="td-btn td-btn-secondary td-btn-sm"><i class="ti ti-template"></i> Appliquer un plan</button>
+				</div>
+			</div>
+		</section>
+
+		{# ===================================================== #}
+		{# 14. Closing                                            #}
+		{# ===================================================== #}
+		<section class="td-section">
+			<div class="td-card" style="background:linear-gradient(135deg, #0b1d2e 0%, #16334d 100%);color:#fff;border:0;padding:2rem;">
+				<div class="td-eyebrow" style="color:rgba(255,255,255,0.5)">Étape suivante</div>
+				<h3 style="font-size:1.6rem;font-weight:800;letter-spacing:-0.02em;margin:0.4rem 0 0.6rem;">Tu valides la direction ?</h3>
+				<p style="color:rgba(255,255,255,0.75);max-width:560px;margin:0 0 1.25rem;line-height:1.55;">
+					Une fois la charte validée, on extrait ces styles dans <code style="background:rgba(255,255,255,0.1);padding:0.05rem 0.4rem;border-radius:4px;">assets/styles/app.css</code> avec un préfixe stable (par ex. <code style="background:rgba(255,255,255,0.1);padding:0.05rem 0.4rem;border-radius:4px;">.tarmac-*</code>) et on migre les composants un par un — sans casser Tabler tant que la couverture n'est pas complète.
+				</p>
+				<div class="td-row">
+					<a href="{{ path('public_landing') }}" class="td-btn td-btn-glow"><i class="ti ti-arrow-left"></i> Retour landing</a>
+				</div>
+			</div>
+		</section>
+
+	</div>
+</div>
+{% endblock %}

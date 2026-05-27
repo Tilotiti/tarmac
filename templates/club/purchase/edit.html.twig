@@ -4,162 +4,153 @@
 	{{ 'editPurchase'|trans }}
 {% endblock %}
 
+{% block page_pretitle %}
+	<a href="{{ path('club_purchase_show', {id: purchase.id}) }}" class="tarmac-page-eyebrow">
+		<span class="tarmac-eqv" style="background:var(--td-mid-soft);color:var(--td-mid);">
+			<i class="ti ti-shopping-cart"></i>
+		</span>
+		{{ purchase.name }}
+	</a>
+{% endblock %}
+
 {% block page_content %}
-	<div class="card">
-		{{ form_start(form) }}
-		<div class="card-body">
-			{{ form_row(form.name) }}
-			{{ form_row(form.quantity) }}
-			{{ form_row(form.description) }}
+	<div class="row g-3">
+		<div class="col-12 col-lg-10 mx-auto">
+			<div class="tarmac-panel">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-edit"></i>{{ 'editPurchase'|trans }}
+				</div>
 
-			{# Uploaded Files - 2 Column Layout #}
-			<div
-				class="row g-3 mb-3">
-				{# Request Image Column #}
-				<div class="col-12 col-md-6">
-					<div class="uploaded-file-cell">
-						<div class="uploaded-file-header">
-							<label class="form-label mb-2">{{ 'purchaseRequestImageOrPdf'|trans }}</label>
-						</div>
-						<div class="uploaded-file-content">
-							{{ form_errors(form.requestImage) }}
+				{{ form_start(form) }}
+				{{ form_row(form.name) }}
+				{{ form_row(form.quantity) }}
+				{{ form_row(form.description) }}
 
-							<div class="uploaded-file-grid" data-controller="file-input-trigger">
-								<div class="row g-2 align-items-end">
-									<div class="col">
-										{{ form_widget(form.requestImage) }}
-									</div>
-									{% if purchase.requestImage %}
-										<div class="col-auto" data-controller="confirm" data-confirm-title-value="{{ 'confirmDelete'|trans }}" data-confirm-yes-value="{{ 'delete'|trans }}" data-confirm-cancel-value="{{ 'cancel'|trans }}">
-											<a href="{{ path('club_purchase_delete_request_image', {id: purchase.id, _token: csrf_token('del_req_img' ~ purchase.id)}) }}" class="btn btn-outline-danger btn-sm" data-confirm="{{ 'confirmDeleteRequestImage'|trans }}">
-												<i class="ti ti-trash me-2"></i>
-												{{ 'deleteFile'|trans }}
-											</a>
-										</div>
-									{% endif %}
-								</div>
-
-								{# Thumbnail, document, or placeholder - clickable #}
-								<div class="row mt-3">
-									<div class="col-12">
+				{# Pièces jointes (request + bill) — pattern préservé #}
+				<div class="row g-3 mb-3">
+					{# Request Image #}
+					<div class="col-12 col-md-6">
+						<div class="uploaded-file-cell">
+							<div class="uploaded-file-header">
+								<label class="form-label mb-2">{{ 'purchaseRequestImageOrPdf'|trans }}</label>
+							</div>
+							<div class="uploaded-file-content">
+								{{ form_errors(form.requestImage) }}
+								<div class="uploaded-file-grid" data-controller="file-input-trigger">
+									<div class="row g-2 align-items-end">
+										<div class="col">{{ form_widget(form.requestImage) }}</div>
 										{% if purchase.requestImage %}
-											{% if purchase.requestImage matches '/\\.(jpg|jpeg|png|gif|webp)$/i' %}
-												<div class="uploaded-file-thumbnail" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
-													<img src="{{ purchase.requestImage }}" alt="{{ 'purchaseRequestImage'|trans }}">
-												</div>
-											{% else %}
-												<div class="uploaded-file-document" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
-													<div class="uploaded-file-document-icon">
-														<i class="ti ti-file-type-pdf"></i>
-													</div>
-													<div class="uploaded-file-document-label">
-														{{ 'pdfDocument'|trans }}
-													</div>
-													<div class="uploaded-file-document-action">
-														<a href="{{ purchase.requestImage }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="min-height: 44px;" onclick="event.stopPropagation();">
-															<i class="ti ti-external-link me-2"></i>
-															{{ 'viewFile'|trans }}
-														</a>
-													</div>
-												</div>
-											{% endif %}
-										{% else %}
-											<div class="uploaded-file-empty" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
-												<i class="ti ti-photo fs-1 text-muted mb-2"></i>
-												<div class="text-muted">{{ 'clickToUploadImage'|trans }}</div>
+											<div class="col-auto" data-controller="confirm" data-confirm-title-value="{{ 'confirmDelete'|trans }}" data-confirm-yes-value="{{ 'delete'|trans }}" data-confirm-cancel-value="{{ 'cancel'|trans }}">
+												<a href="{{ path('club_purchase_delete_request_image', {id: purchase.id, _token: csrf_token('del_req_img' ~ purchase.id)}) }}" class="btn btn-outline-danger btn-sm" data-confirm="{{ 'confirmDeleteRequestImage'|trans }}">
+													<i class="ti ti-trash me-1"></i>{{ 'deleteFile'|trans }}
+												</a>
 											</div>
 										{% endif %}
 									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{# Bill Image Column #}
-				<div class="col-12 col-md-6">
-					<div class="uploaded-file-cell">
-						<div class="uploaded-file-header">
-							<label class="form-label mb-2">{{ 'purchaseBillImageOrPdf'|trans }}</label>
-						</div>
-						<div class="uploaded-file-content">
-							{{ form_errors(form.billImage) }}
-
-							<div class="uploaded-file-grid" data-controller="file-input-trigger">
-								<div class="row g-2 align-items-end">
-									<div class="col">
-										{{ form_widget(form.billImage) }}
-									</div>
-									{% if purchase.billImage %}
-										<div class="col-auto" data-controller="confirm" data-confirm-title-value="{{ 'confirmDelete'|trans }}" data-confirm-yes-value="{{ 'delete'|trans }}" data-confirm-cancel-value="{{ 'cancel'|trans }}">
-											<a href="{{ path('club_purchase_delete_bill_image', {id: purchase.id, _token: csrf_token('del_bill_img' ~ purchase.id)}) }}" class="btn btn-outline-danger btn-sm" data-confirm="{{ 'confirmDeleteBillImage'|trans }}">
-												<i class="ti ti-trash me-2"></i>
-												{{ 'deleteFile'|trans }}
-											</a>
+									<div class="row mt-3">
+										<div class="col-12">
+											{% if purchase.requestImage %}
+												{% if purchase.requestImage matches '/\\.(jpg|jpeg|png|gif|webp)$/i' %}
+													<div class="uploaded-file-thumbnail" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
+														<img src="{{ purchase.requestImage }}" alt="{{ 'purchaseRequestImage'|trans }}">
+													</div>
+												{% else %}
+													<div class="uploaded-file-document" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
+														<div class="uploaded-file-document-icon"><i class="ti ti-file-type-pdf"></i></div>
+														<div class="uploaded-file-document-label">{{ 'pdfDocument'|trans }}</div>
+														<div class="uploaded-file-document-action">
+															<a href="{{ purchase.requestImage }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" onclick="event.stopPropagation();">
+																<i class="ti ti-external-link me-2"></i>{{ 'viewFile'|trans }}
+															</a>
+														</div>
+													</div>
+												{% endif %}
+											{% else %}
+												<div class="uploaded-file-empty" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
+													<i class="ti ti-photo fs-1 text-muted mb-2"></i>
+													<div class="text-muted">{{ 'clickToUploadImage'|trans }}</div>
+												</div>
+											{% endif %}
 										</div>
-									{% endif %}
+									</div>
 								</div>
+							</div>
+						</div>
+					</div>
 
-								{# Thumbnail, document, or placeholder - clickable #}
-								<div class="row mt-3">
-									<div class="col-12">
+					{# Bill Image #}
+					<div class="col-12 col-md-6">
+						<div class="uploaded-file-cell">
+							<div class="uploaded-file-header">
+								<label class="form-label mb-2">{{ 'purchaseBillImageOrPdf'|trans }}</label>
+							</div>
+							<div class="uploaded-file-content">
+								{{ form_errors(form.billImage) }}
+								<div class="uploaded-file-grid" data-controller="file-input-trigger">
+									<div class="row g-2 align-items-end">
+										<div class="col">{{ form_widget(form.billImage) }}</div>
 										{% if purchase.billImage %}
-											{% if purchase.billImage matches '/\\.(jpg|jpeg|png|gif|webp)$/i' %}
-												<div class="uploaded-file-thumbnail" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
-													<img src="{{ purchase.billImage }}" alt="{{ 'purchaseBillImage'|trans }}">
-												</div>
-											{% else %}
-												<div class="uploaded-file-document" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
-													<div class="uploaded-file-document-icon">
-														<i class="ti ti-file-type-pdf"></i>
-													</div>
-													<div class="uploaded-file-document-label">
-														{{ 'pdfDocument'|trans }}
-													</div>
-													<div class="uploaded-file-document-action">
-														<a href="{{ purchase.billImage }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="min-height: 44px;" onclick="event.stopPropagation();">
-															<i class="ti ti-external-link me-2"></i>
-															{{ 'viewBill'|trans }}
-														</a>
-													</div>
-												</div>
-											{% endif %}
-										{% else %}
-											<div class="uploaded-file-empty" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
-												<i class="ti ti-photo fs-1 text-muted mb-2"></i>
-												<div class="text-muted">{{ 'clickToUploadImage'|trans }}</div>
+											<div class="col-auto" data-controller="confirm" data-confirm-title-value="{{ 'confirmDelete'|trans }}" data-confirm-yes-value="{{ 'delete'|trans }}" data-confirm-cancel-value="{{ 'cancel'|trans }}">
+												<a href="{{ path('club_purchase_delete_bill_image', {id: purchase.id, _token: csrf_token('del_bill_img' ~ purchase.id)}) }}" class="btn btn-outline-danger btn-sm" data-confirm="{{ 'confirmDeleteBillImage'|trans }}">
+													<i class="ti ti-trash me-1"></i>{{ 'deleteFile'|trans }}
+												</a>
 											</div>
 										{% endif %}
+									</div>
+									<div class="row mt-3">
+										<div class="col-12">
+											{% if purchase.billImage %}
+												{% if purchase.billImage matches '/\\.(jpg|jpeg|png|gif|webp)$/i' %}
+													<div class="uploaded-file-thumbnail" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
+														<img src="{{ purchase.billImage }}" alt="{{ 'purchaseBillImage'|trans }}">
+													</div>
+												{% else %}
+													<div class="uploaded-file-document" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
+														<div class="uploaded-file-document-icon"><i class="ti ti-file-type-pdf"></i></div>
+														<div class="uploaded-file-document-label">{{ 'pdfDocument'|trans }}</div>
+														<div class="uploaded-file-document-action">
+															<a href="{{ purchase.billImage }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" onclick="event.stopPropagation();">
+																<i class="ti ti-external-link me-2"></i>{{ 'viewBill'|trans }}
+															</a>
+														</div>
+													</div>
+												{% endif %}
+											{% else %}
+												<div class="uploaded-file-empty" data-action="click->file-input-trigger#trigger" style="cursor: pointer;">
+													<i class="ti ti-photo fs-1 text-muted mb-2"></i>
+													<div class="text-muted">{{ 'clickToUploadImage'|trans }}</div>
+												</div>
+											{% endif %}
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
-			{# Mark requestImage and billImage fields as rendered since we rendered them manually #}
-			{% do form.requestImage.setRendered %}
-			{% do form.billImage.setRendered %}
-		</div>
-		<div class="card-footer">
-			<div class="row">
-				<div class="col">
-					{% if is_granted('PURCHASE_REVERT_STATUS', purchase) and purchase.canRevertStatus %}
-						<a href="{{ path('club_purchase_revert_status', {id: purchase.id, _token: csrf_token('revert_status_purchase' ~ purchase.id)}) }}" class="btn btn-outline-warning" style="min-height: 44px;" data-controller="confirm" data-confirm="{{ 'confirmRevertStatus'|trans }}">
-							<i class="ti ti-arrow-back me-2"></i>
-							{{ 'revertStatus'|trans }}
-						</a>
-					{% endif %}
+				{% do form.requestImage.setRendered %}
+				{% do form.billImage.setRendered %}
+
+				<hr style="border-color: var(--td-border); margin: 1.25rem 0;">
+
+				<div class="d-flex justify-content-between gap-2 flex-wrap">
+					<div>
+						{% if is_granted('PURCHASE_REVERT_STATUS', purchase) and purchase.canRevertStatus %}
+							<a href="{{ path('club_purchase_revert_status', {id: purchase.id, _token: csrf_token('revert_status_purchase' ~ purchase.id)}) }}" class="btn btn-outline-secondary" data-controller="confirm" data-confirm="{{ 'confirmRevertStatus'|trans }}">
+								<i class="ti ti-arrow-back me-2"></i>{{ 'revertStatus'|trans }}
+							</a>
+						{% endif %}
+					</div>
+					<div class="d-flex gap-2">
+						<a href="{{ path('club_purchase_show', {id: purchase.id}) }}" class="btn btn-outline-secondary">{{ 'cancel'|trans }}</a>
+						<button type="submit" class="btn btn-primary">
+							<i class="ti ti-check me-2"></i>{{ 'save'|trans }}
+						</button>
+					</div>
 				</div>
-				<div class="col text-end">
-					<button type="submit" class="btn btn-primary" style="min-height: 44px;">
-						<i class="ti ti-device-floppy me-2"></i>
-						{{ 'save'|trans }}
-					</button>
-				</div>
+				{{ form_end(form) }}
 			</div>
 		</div>
-		{{ form_end(form) }}
 	</div>
 {% endblock %}

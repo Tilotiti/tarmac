@@ -4,106 +4,129 @@
 	{{ membership.user.fullname }}
 {% endblock %}
 
+{% block page_pretitle %}
+	<span class="tarmac-page-eyebrow" style="cursor:default;">
+		<span class="tarmac-eqv" style="background:var(--td-mid-soft);color:var(--td-mid);">
+			<i class="ti ti-user"></i>
+		</span>
+		{{ 'member'|trans }}
+	</span>
+{% endblock %}
+
 {% block page_actions %}
 	{% if is_granted('MANAGE', club) or (currentMembership is defined and (currentMembership.isManager or currentMembership.isInspector)) %}
-		<div class="d-flex gap-2 flex-wrap">
+		<div class="btn-list">
 			{% if currentMembership is defined and (currentMembership.isManager or currentMembership.isInspector) %}
-				<a href="{{ path('club_member_logbook', {id: membership.id}) }}" class="btn btn-outline-primary" style="min-height: 44px;">
+				<a href="{{ path('club_member_logbook', {id: membership.id}) }}" class="btn btn-outline-secondary">
 					<i class="ti ti-notebook me-2"></i>
 					<span class="d-none d-sm-inline">{{ 'mechanicLogbook'|trans }}</span>
 					<span class="d-inline d-sm-none">{{ 'logbook'|trans }}</span>
 				</a>
 			{% endif %}
-			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-edit-roles" style="min-height: 44px;">
-				<i class="ti ti-edit me-2"></i>
-				<span class="d-none d-sm-inline">{{ 'editRoles'|trans }}</span>
-				<span class="d-inline d-sm-none">{{ 'roles'|trans }}</span>
-			</button>
-			<form method="post" action="{{ path('club_member_delete', {id: membership.id}) }}" onsubmit="return confirm('{{ 'confirmRemoveFromClub'|trans({'memberName': membership.user.fullname}) }}');">
-				<button type="submit" class="btn btn-outline-danger" style="min-height: 44px;">
-					<i class="ti ti-trash me-2"></i>
-					<span class="d-none d-sm-inline">{{ 'removeFromClub'|trans }}</span>
-					<span class="d-inline d-sm-none">{{ 'remove'|trans }}</span>
+
+			{% if is_granted('MANAGE', club) %}
+				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-edit-roles">
+					<i class="ti ti-edit me-2"></i>
+					<span class="d-none d-sm-inline">{{ 'editRoles'|trans }}</span>
+					<span class="d-inline d-sm-none">{{ 'roles'|trans }}</span>
 				</button>
-			</form>
+
+				<div class="dropdown d-inline-block" data-controller="dropdown">
+					<button type="button" class="btn btn-outline-secondary" data-dropdown-target="toggle" aria-haspopup="true" aria-expanded="false" title="{{ 'moreActions'|trans }}">
+						<i class="ti ti-dots-vertical"></i>
+					</button>
+					<div class="dropdown-menu dropdown-menu-end" data-dropdown-target="menu">
+						<form method="post" action="{{ path('club_member_delete', {id: membership.id}) }}" onsubmit="return confirm('{{ 'confirmRemoveFromClub'|trans({'memberName': membership.user.fullname}) }}');">
+							<button type="submit" class="dropdown-item text-danger">
+								<i class="ti ti-trash me-2"></i>{{ 'removeFromClub'|trans }}
+							</button>
+						</form>
+					</div>
+				</div>
+			{% endif %}
 		</div>
 	{% endif %}
 {% endblock %}
 
 {% block page_content %}
-	{% if openModal %}
-		<div data-auto-open-modal="modal-edit-roles"></div>
-	{% endif %}
-	{# Member Information Card #}
-	<div class="card mb-3">
-		<div class="card-header">
-			<h3 class="card-title">{{ 'memberInformation'|trans }}</h3>
-		</div>
-		<div class="card-body">
-			<div class="d-flex align-items-start flex-column flex-sm-row">
-				<span class="avatar avatar-xl me-3 mb-3 mb-sm-0">{{ membership.user.firstname[:1] }}{{ membership.user.lastname[:1] }}</span>
-				<div class="flex-fill">
-					<h3 class="mb-1 {% if not membership.user.active %}text-danger{% endif %}">
-						{{ membership.user.fullname }}
-					</h3>
-					<div class="text-secondary mb-2">
-						<i class="ti ti-mail me-1"></i>
-						{{ membership.user.email }}
-					</div>
-					{% if not membership.user.active %}
-						<span class="badge bg-danger">{{ 'accountDisabled'|trans }}</span>
-					{% endif %}
+	{% if openModal %}<div data-auto-open-modal="modal-edit-roles"></div>{% endif %}
+
+	<div class="row g-3">
+
+		{# ========== Colonne principale ========== #}
+		<div class="col-12 col-lg-8">
+			<div class="tarmac-panel">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-user-circle"></i>
+					{{ 'memberInformation'|trans }}
 				</div>
-				<div class="d-flex flex-wrap gap-2 align-items-start">
+
+				<div class="d-flex align-items-center gap-3 flex-wrap">
+					<span class="contributor-avatar contributor-avatar--c{{ membership.user.id % 8 }}" style="width:64px;height:64px;font-size:1.4rem;flex-shrink:0;">
+						{{ membership.user.firstname[:1]|upper }}{{ membership.user.lastname[:1]|upper }}
+					</span>
+					<div class="flex-fill" style="min-width:0;">
+						<h3 style="font-size:1.3rem;font-weight:700;margin:0 0 0.3rem;{% if not membership.user.active %}color:var(--td-danger);{% endif %}">
+							{{ membership.user.fullname }}
+						</h3>
+						<div class="text-secondary" style="font-size:0.92rem;">
+							<i class="ti ti-mail me-1"></i>{{ membership.user.email }}
+						</div>
+						{% if not membership.user.active %}
+							<div class="mt-2">
+								<span class="tarmac-badge tarmac-badge--status-cancelled">
+									<i class="ti ti-ban"></i>{{ 'accountDisabled'|trans }}
+								</span>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+
+				<div class="tarmac-card__badges" style="margin-top:1rem;">
 					{% if membership.isManager %}
-						<span class="badge bg-blue-lt text-white fs-5 py-2 px-3">
-							<i class="ti ti-user-star me-1"></i>
-							{{ 'manager'|trans }}
-						</span>
+						<span class="tarmac-badge tarmac-badge--success"><i class="ti ti-user-star"></i>{{ 'manager'|trans }}</span>
 					{% endif %}
 					{% if membership.isInspector %}
-						<span class="badge bg-warning-lt text-white fs-5 py-2 px-3" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'qualifiedTooltip'|trans }}">
-							<i class="ti ti-shield-check me-1"></i>
-							{{ 'inspector'|trans }}
+						<span class="tarmac-badge tarmac-badge--glow" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'qualifiedTooltip'|trans }}">
+							<i class="ti ti-shield-check"></i>{{ 'inspector'|trans }}
 						</span>
 					{% endif %}
 					{% if membership.isPilote %}
-						<span class="badge bg-purple-lt text-white fs-5 py-2 px-3" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'pilotTooltip'|trans }}">
-							<i class="ti ti-plane me-1"></i>
-							{{ 'pilot'|trans }}
+						<span class="tarmac-badge tarmac-badge--info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'pilotTooltip'|trans }}">
+							<i class="ti ti-plane"></i>{{ 'pilot'|trans }}
 						</span>
 					{% endif %}
 					{% if not membership.isManager and not membership.isInspector and not membership.isPilote %}
-						<span class="badge bg-secondary-lt text-white fs-5 py-2 px-3">
-							<i class="ti ti-user me-1"></i>
-							{{ 'member'|trans }}
-						</span>
+						<span class="tarmac-badge tarmac-badge--secondary"><i class="ti ti-user"></i>{{ 'member'|trans }}</span>
 					{% endif %}
 				</div>
 			</div>
+		</div>
 
-			<hr class="my-4">
-
-			<div class="row">
-				<div class="col-12 col-sm-6 mb-3">
-					<div class="text-secondary small mb-1">{{ 'joinedOn'|trans }}</div>
-					<div>
-						<i class="ti ti-calendar me-1"></i>
-						{{ membership.joinedAt|date('d/m/Y à H:i') }}
+		{# ========== Sidebar ========== #}
+		<div class="col-12 col-lg-4">
+			<div class="tarmac-page-sidebar">
+				<div class="tarmac-panel">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-info-circle"></i>{{ 'details'|trans }}
 					</div>
-				</div>
-				<div class="col-12 col-sm-6 mb-3">
-					<div class="text-secondary small mb-1">{{ 'createdOn'|trans }}</div>
-					<div>
-						<i class="ti ti-clock me-1"></i>
-						{{ membership.createdAt|date('d/m/Y à H:i') }}
-					</div>
+					<ul class="tarmac-meta-list">
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'joinedOn'|trans }}</span>
+							<span class="tarmac-meta-list__value">{{ membership.joinedAt|date('d/m/Y') }}</span>
+						</li>
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'createdOn'|trans }}</span>
+							<span class="tarmac-meta-list__value">{{ membership.createdAt|date('d/m/Y') }}</span>
+						</li>
+					</ul>
 				</div>
 			</div>
 		</div>
+
 	</div>
 
-	{# Modal for editing roles - Only for managers #}
+	{# Modal éditer les rôles - inchangé fonctionnellement #}
 	{% if is_granted('MANAGE', club) %}
 		<div class="modal modal-blur fade" id="modal-edit-roles" tabindex="-1" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered" role="document">
@@ -114,65 +137,29 @@
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<div class="mb-3">
-							<div class="form-check">
-								<input type="checkbox" id="{{ form.isManager.vars.id }}" name="{{ form.isManager.vars.full_name }}" class="form-check-input" value="1" {% if form.isManager.vars.checked %} checked {% endif %}>
-								<label class="form-check-label" for="{{ form.isManager.vars.id }}">
-									<div>
-										<i class="ti ti-user-star me-1"></i>
-										{{ form.isManager.vars.label|trans }}
-									</div>
-									{% if form.isManager.vars.help %}
-										<div class="text-secondary small">{{ form.isManager.vars.help|trans }}</div>
-									{% endif %}
-								</label>
+						{% for field in [form.isManager, form.isInspector, form.isPilote] %}
+							<div class="mb-3">
+								<div class="form-check">
+									<input type="checkbox" id="{{ field.vars.id }}" name="{{ field.vars.full_name }}" class="form-check-input" value="1" {% if field.vars.checked %} checked {% endif %}>
+									<label class="form-check-label" for="{{ field.vars.id }}">
+										<div>{{ field.vars.label|trans }}</div>
+										{% if field.vars.help %}
+											<div class="text-secondary small">{{ field.vars.help|trans }}</div>
+										{% endif %}
+									</label>
+								</div>
+								{{ form_errors(field) }}
 							</div>
-							{{ form_errors(form.isManager) }}
-						</div>
-
-						<div class="mb-3">
-							<div class="form-check">
-								<input type="checkbox" id="{{ form.isInspector.vars.id }}" name="{{ form.isInspector.vars.full_name }}" class="form-check-input" value="1" {% if form.isInspector.vars.checked %} checked {% endif %}>
-								<label class="form-check-label" for="{{ form.isInspector.vars.id }}">
-									<div>
-										<i class="ti ti-shield-check me-1"></i>
-										{{ form.isInspector.vars.label|trans }}
-									</div>
-									{% if form.isInspector.vars.help %}
-										<div class="text-secondary small">{{ form.isInspector.vars.help|trans }}</div>
-									{% endif %}
-								</label>
-							</div>
-							{{ form_errors(form.isInspector) }}
-						</div>
-
-						<div>
-							<div class="form-check">
-								<input type="checkbox" id="{{ form.isPilote.vars.id }}" name="{{ form.isPilote.vars.full_name }}" class="form-check-input" value="1" {% if form.isPilote.vars.checked %} checked {% endif %}>
-								<label class="form-check-label" for="{{ form.isPilote.vars.id }}">
-									<div>
-										<i class="ti ti-plane me-1"></i>
-										{{ form.isPilote.vars.label|trans }}
-									</div>
-									{% if form.isPilote.vars.help %}
-										<div class="text-secondary small">{{ form.isPilote.vars.help|trans }}</div>
-									{% endif %}
-								</label>
-							</div>
-							{{ form_errors(form.isPilote) }}
-						</div>
+						{% endfor %}
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="min-height: 44px;">
-							<i class="ti ti-x me-2"></i>
-							{{ 'cancel'|trans }}
+						<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+							<i class="ti ti-x me-2"></i>{{ 'cancel'|trans }}
 						</button>
-						<button type="submit" class="btn btn-primary" style="min-height: 44px;">
-							<i class="ti ti-check me-2"></i>
-							{{ 'save'|trans }}
+						<button type="submit" class="btn btn-primary">
+							<i class="ti ti-check me-2"></i>{{ 'save'|trans }}
 						</button>
 					</div>
-					{# Mark fields as rendered so form_end doesn't render them again #}
 					{% do form.isManager.setRendered %}
 					{% do form.isInspector.setRendered %}
 					{% do form.isPilote.setRendered %}

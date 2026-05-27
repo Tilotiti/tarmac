@@ -4,120 +4,91 @@
 	{{ 'inviteMember'|trans }}
 {% endblock %}
 
+{% block page_pretitle %}
+	<a href="{{ path('club_invitations') }}" class="tarmac-page-eyebrow">
+		<span class="tarmac-eqv" style="background:var(--td-glow-soft);color:var(--td-warning);">
+			<i class="ti ti-mail"></i>
+		</span>
+		{{ 'pendingInvitations'|trans }}
+	</a>
+{% endblock %}
+
 {% block page_content %}
-	<div class="card">
-		<div class="card-body">
-			<div class="alert alert-info mb-4">
-				<i class="ti ti-info-circle me-2"></i>
-				<div>
-					<strong>{{ 'howItWorks'|trans }}</strong>
-					<ul class="mb-0 mt-2">
-						<li>{{ 'invitationSentByEmail'|trans }}</li>
-						<li>{{ 'invitationExistingUser'|trans }}</li>
-						<li>{{ 'invitationNewUser'|trans }}</li>
-						<li>{{ 'invitationValidDays'|trans }}</li>
-					</ul>
-				</div>
-			</div>
+	<div class="row g-3">
+		<div class="col-12 col-lg-8 mx-auto">
 
-			{{ form_start(form) }}
-
-			<div class="mb-3">
-				{{ form_label(form.email) }}
-				{{ form_widget(form.email, {
-					'attr': {
-						'class': 'form-control',
-						'autofocus': true
-					}
-				}) }}
-				{{ form_errors(form.email) }}
-			</div>
-
-			<div class="row">
-				<div class="col-12 col-md-6 mb-3">
-					{{ form_label(form.firstname) }}
-					{{ form_widget(form.firstname, {
-						'attr': {'class': 'form-control'}
-					}) }}
-					{{ form_errors(form.firstname) }}
-				</div>
-				<div class="col-12 col-md-6 mb-3">
-					{{ form_label(form.lastname) }}
-					{{ form_widget(form.lastname, {
-						'attr': {'class': 'form-control'}
-					}) }}
-					{{ form_errors(form.lastname) }}
-				</div>
-			</div>
-
-			<div class="card mb-3">
-				<div class="card-header">
-					<h4 class="card-title">{{ 'clubRoles'|trans }}</h4>
-				</div>
-				<div class="card-body">
-					<div class="mb-3">
-						<div class="form-check">
-							<input type="checkbox" id="{{ form.isManager.vars.id }}" name="{{ form.isManager.vars.full_name }}" class="form-check-input" value="1" {% if form.isManager.vars.checked %} checked {% endif %}>
-							<label class="form-check-label" for="{{ form.isManager.vars.id }}">
-								<div>
-									<i class="ti ti-user-star me-1"></i>
-									{{ form.isManager.vars.label|trans }}
-								</div>
-								{% if form.isManager.vars.help %}
-									<div class="text-secondary small">{{ form.isManager.vars.help|trans }}</div>
-								{% endif %}
-							</label>
-						</div>
-						{{ form_errors(form.isManager) }}
-					</div>
-
-					<div class="mb-3">
-						<div class="form-check">
-							<input type="checkbox" id="{{ form.isInspector.vars.id }}" name="{{ form.isInspector.vars.full_name }}" class="form-check-input" value="1" {% if form.isInspector.vars.checked %} checked {% endif %}>
-							<label class="form-check-label" for="{{ form.isInspector.vars.id }}">
-								<div>
-									<i class="ti ti-shield-check me-1"></i>
-									{{ form.isInspector.vars.label|trans }}
-								</div>
-								{% if form.isInspector.vars.help %}
-									<div class="text-secondary small">{{ form.isInspector.vars.help|trans }}</div>
-								{% endif %}
-							</label>
-						</div>
-						{{ form_errors(form.isInspector) }}
-					</div>
-
+			<div class="tarmac-panel mb-3" style="background: var(--td-info-soft); border-color: rgba(52, 91, 124, 0.25);">
+				<div class="d-flex align-items-start gap-2">
+					<i class="ti ti-info-circle" style="font-size:1.2rem;color:var(--td-info);"></i>
 					<div>
-						<div class="form-check">
-							<input type="checkbox" id="{{ form.isPilote.vars.id }}" name="{{ form.isPilote.vars.full_name }}" class="form-check-input" value="1" {% if form.isPilote.vars.checked %} checked {% endif %}>
-							<label class="form-check-label" for="{{ form.isPilote.vars.id }}">
-								<div>
-									<i class="ti ti-plane me-1"></i>
-									{{ form.isPilote.vars.label|trans }}
-								</div>
-								{% if form.isPilote.vars.help %}
-									<div class="text-secondary small">{{ form.isPilote.vars.help|trans }}</div>
-								{% endif %}
-							</label>
-						</div>
-						{{ form_errors(form.isPilote) }}
+						<strong>{{ 'howItWorks'|trans }}</strong>
+						<ul style="margin:0.4rem 0 0;padding-left:1.2rem;font-size:0.9rem;">
+							<li>{{ 'invitationSentByEmail'|trans }}</li>
+							<li>{{ 'invitationExistingUser'|trans }}</li>
+							<li>{{ 'invitationNewUser'|trans }}</li>
+							<li>{{ 'invitationValidDays'|trans }}</li>
+						</ul>
 					</div>
 				</div>
 			</div>
 
-			{# Mark fields as rendered so form_end doesn't render them again #}
-			{% do form.isManager.setRendered %}
-			{% do form.isInspector.setRendered %}
-			{% do form.isPilote.setRendered %}
+			<div class="tarmac-panel">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-mail-forward"></i>{{ 'inviteMember'|trans }}
+				</div>
 
-			<div class="form-footer">
-				<button type="submit" class="btn btn-primary w-100 w-md-auto" style="min-height: 44px;">
-					<i class="ti ti-mail me-2"></i>
-					{{ 'sendInvitation'|trans }}
-				</button>
+				{{ form_start(form) }}
+
+				<div class="mb-3">
+					{{ form_label(form.email) }}
+					{{ form_widget(form.email, {'attr': {'class': 'form-control', 'autofocus': true}}) }}
+					{{ form_errors(form.email) }}
+				</div>
+
+				<div class="row">
+					<div class="col-12 col-md-6 mb-3">
+						{{ form_label(form.firstname) }}
+						{{ form_widget(form.firstname, {'attr': {'class': 'form-control'}}) }}
+						{{ form_errors(form.firstname) }}
+					</div>
+					<div class="col-12 col-md-6 mb-3">
+						{{ form_label(form.lastname) }}
+						{{ form_widget(form.lastname, {'attr': {'class': 'form-control'}}) }}
+						{{ form_errors(form.lastname) }}
+					</div>
+				</div>
+
+				<div class="tarmac-panel" style="padding:0.9rem 1rem;margin-top:1rem;background:var(--td-canvas);">
+					<div class="tarmac-panel__title">{{ 'clubRoles'|trans }}</div>
+					{% for field in [form.isManager, form.isInspector, form.isPilote] %}
+						<div class="mb-3">
+							<div class="form-check">
+								<input type="checkbox" id="{{ field.vars.id }}" name="{{ field.vars.full_name }}" class="form-check-input" value="1" {% if field.vars.checked %} checked {% endif %}>
+								<label class="form-check-label" for="{{ field.vars.id }}">
+									<div>{{ field.vars.label|trans }}</div>
+									{% if field.vars.help %}
+										<div class="text-secondary small">{{ field.vars.help|trans }}</div>
+									{% endif %}
+								</label>
+							</div>
+							{{ form_errors(field) }}
+						</div>
+					{% endfor %}
+				</div>
+
+				{% do form.isManager.setRendered %}
+				{% do form.isInspector.setRendered %}
+				{% do form.isPilote.setRendered %}
+
+				<div class="d-flex justify-content-end gap-2 mt-3">
+					<a href="{{ path('club_invitations') }}" class="btn btn-outline-secondary">{{ 'cancel'|trans }}</a>
+					<button type="submit" class="btn btn-primary">
+						<i class="ti ti-mail me-2"></i>{{ 'sendInvitation'|trans }}
+					</button>
+				</div>
+
+				{{ form_end(form) }}
 			</div>
-
-			{{ form_end(form) }}
 		</div>
 	</div>
 {% endblock %}

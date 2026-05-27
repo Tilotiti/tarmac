@@ -1,142 +1,129 @@
 {#
-    Task Card Component
-    
-    Parameters:
-    - task: The Task entity to display
+    Task Card Component — charte Tarmac (cf. /design-lab)
+
+    Paramètres :
+    - task: l'entité Task à afficher
 #}
-<div class="col-12 mb-3">
-	<a href="{{ path('club_task_show', {id: task.id}) }}" class="text-decoration-none">
-		<div class="card card-link" style="cursor: pointer;">
-			<div class="card-body">
-				<div
-					class="d-flex align-items-start mb-3">
-					{# Equipment Avatar - same style as equipment list #}
-					<span class="avatar avatar-lg me-3 bg-{{ task.equipment.type.color }}-lt">
-						<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 1.5rem;"></i>
+{% set isCancelled = task.status == 'cancelled' %}
+{% set isWaitingApproval = task.isWaitingForApproval %}
+
+<div class="col-12 col-lg-6 mb-3 d-flex">
+	<a href="{{ path('club_task_show', {id: task.id}) }}" class="tarmac-card w-100{% if isCancelled %} tarmac-card--dimmed{% endif %}">
+
+		<div class="tarmac-card__head">
+			<span class="tarmac-eqv tarmac-eqv--{{ task.equipment.type.color }}">
+				<i class="ti {{ task.equipment.type.icon }}"></i>
+			</span>
+
+			<div class="flex-fill">
+				<div class="tarmac-card__eyebrow">{{ task.equipment.name }}</div>
+				<h3 class="tarmac-card__title">{{ task.title }}</h3>
+				{% if task.dueAt %}
+					<div class="tarmac-card__meta">
+						<i class="ti ti-calendar"></i>
+						{{ task.dueAt|date('d/m/Y') }}
+					</div>
+				{% endif %}
+			</div>
+
+			{# Desktop : badges à droite #}
+			<div class="d-none d-md-flex tarmac-card__badges tarmac-card__badges--right" style="margin-top:0;">
+				{% if task.isPriorityOrHasPrioritySubTask %}
+					<span class="tarmac-badge tarmac-badge--priority">
+						<i class="ti ti-flag"></i>
+						{{ 'priority'|trans }}
 					</span>
+				{% endif %}
 
-					{# Main content #}
-					<div
-						class="flex-grow-1">
-						{# Equipment name (main title) #}
-						<h3 class="card-title mb-1">
-							{{ task.equipment.name }}
-						</h3>
+				{% if isCancelled %}
+					<span class="tarmac-badge tarmac-badge--status-cancelled">
+						<i class="ti ti-x"></i>
+						{{ task.status|trans }}
+					</span>
+				{% elseif isWaitingApproval %}
+					<span class="tarmac-badge tarmac-badge--status-inspection">
+						<i class="ti ti-hourglass"></i>
+						{{ 'inspectionPending'|trans }}
+					</span>
+				{% elseif task.status == 'closed' %}
+					<span class="tarmac-badge tarmac-badge--status-closed">
+						<i class="ti ti-circle-check"></i>
+						{{ task.status|trans }}
+					</span>
+				{% else %}
+					<span class="tarmac-badge tarmac-badge--status-open">
+						<i class="ti ti-circle"></i>
+						{{ task.status|trans }}
+					</span>
+				{% endif %}
 
-						{# Task name (subtitle) #}
-						<div class="text-secondary mb-2">
-							{{ task.title }}
-						</div>
+				{% include 'component/difficultyBadge.html.twig' with {'label': task.difficultyLabel, 'color': task.difficultyColor} %}
+			</div>
+		</div>
 
-						{# Due date #}
-						<div class="text-secondary small">
-							{% if task.dueAt %}
-								<i class="ti ti-calendar me-1"></i>
-								{{ task.dueAt|date('d/m/Y') }}
-							{% endif %}
-						</div>
-					</div>
+		{# Mobile : badges sous le header #}
+		<div class="d-flex d-md-none tarmac-card__badges">
+			{% if task.isPriorityOrHasPrioritySubTask %}
+				<span class="tarmac-badge tarmac-badge--priority">
+					<i class="ti ti-flag"></i>
+					{{ 'priority'|trans }}
+				</span>
+			{% endif %}
 
-					{# Badges on desktop - right side #}
-					<div
-						class="ms-3 d-none d-md-flex gap-2 align-items-start">
-						{# Priority badge - show if task is priority or has priority subtasks #}
-						{% if task.isPriorityOrHasPrioritySubTask %}
-							<span class="badge bg-red-lt text-white">
-								<i class="ti ti-flag me-1"></i>
-								{{ 'priority'|trans }}
-							</span>
-						{% endif %}
+			{% if isCancelled %}
+				<span class="tarmac-badge tarmac-badge--status-cancelled">
+					<i class="ti ti-x"></i>
+					{{ task.status|trans }}
+				</span>
+			{% elseif isWaitingApproval %}
+				<span class="tarmac-badge tarmac-badge--status-inspection">
+					<i class="ti ti-hourglass"></i>
+					{{ 'inspectionPending'|trans }}
+				</span>
+			{% elseif task.status == 'closed' %}
+				<span class="tarmac-badge tarmac-badge--status-closed">
+					<i class="ti ti-circle-check"></i>
+					{{ task.status|trans }}
+				</span>
+			{% else %}
+				<span class="tarmac-badge tarmac-badge--status-open">
+					<i class="ti ti-circle"></i>
+					{{ task.status|trans }}
+				</span>
+			{% endif %}
 
-						{# If task is cancelled, always show cancelled badge #}
-						{% if task.status == 'cancelled' %}
-							<span class="badge bg-danger-lt text-white">
-								<i class="ti ti-x me-1"></i>
-								{{ task.status|trans }}
-							</span>
-							{# If task has subtasks waiting for inspection #}
-						{% elseif task.isWaitingForApproval %}
-							<span class="badge bg-orange-lt text-white">
-								<i class="ti ti-hourglass me-1"></i>
-								{{ 'inspectionPending'|trans }}
-							</span>
-							{# Status badge with icon #}
-						{% else %}
-							<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'done' ? 'info' : 'info') }}-lt text-white">
-								<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'done' ? 'check' : 'circle') }} me-1"></i>
-								{{ task.status|trans }}
-							</span>
-						{% endif %}
+			{% include 'component/difficultyBadge.html.twig' with {'label': task.difficultyLabel, 'color': task.difficultyColor} %}
+		</div>
 
-						{# Difficulty badge #}
-						{% include 'component/difficultyBadge.html.twig' with {'label': task.difficultyLabel, 'color': task.difficultyColor} %}
-					</div>
-				</div>
-
-				{# Badges on mobile - full width under avatar #}
-				<div
-					class="d-flex d-md-none gap-2 flex-wrap mb-3">
-					{# Priority badge - show if task is priority or has priority subtasks #}
-					{% if task.isPriorityOrHasPrioritySubTask %}
-						<span class="badge bg-red text-white">
-							<i class="ti ti-flag me-1"></i>
-							{{ 'priority'|trans }}
-						</span>
+		{# Progress bar + contributeurs — uniquement si la tâche a des sous-tâches #}
+		{% if task.subTasks|length > 0 %}
+			{% set totalSubTasks = 0 %}
+			{% set closed = 0 %}
+			{% for subtask in task.subTasks %}
+				{% if subtask.status != 'cancelled' %}
+					{% set totalSubTasks = totalSubTasks + 1 %}
+					{% if subtask.status == 'closed' %}
+						{% set closed = closed + 1 %}
 					{% endif %}
+				{% endif %}
+			{% endfor %}
+			{% set progress = totalSubTasks > 0 ? (closed / totalSubTasks * 100)|round : 100 %}
 
-					{# If task is cancelled, always show cancelled badge #}
-					{% if task.status == 'cancelled' %}
-						<span class="badge bg-danger text-white">
-							<i class="ti ti-x me-1"></i>
-							{{ task.status|trans }}
-						</span>
-						{# If task has subtasks waiting for inspection #}
-					{% elseif task.isWaitingForApproval %}
-						<span class="badge bg-orange text-white">
-							<i class="ti ti-hourglass me-1"></i>
-							{{ 'inspectionPending'|trans }}
-						</span>
-						{# Status badge with icon #}
-					{% else %}
-						<span class="badge bg-{{ task.status == 'closed' ? 'success' : (task.status == 'done' ? 'info' : 'info') }} text-white">
-							<i class="ti ti-{{ task.status == 'closed' ? 'circle-check' : (task.status == 'done' ? 'check' : 'circle') }} me-1"></i>
-							{{ task.status|trans }}
-						</span>
-					{% endif %}
-
-					{# Difficulty badge with icon and same style #}
-					{% include 'component/difficultyBadge.html.twig' with {'label': task.difficultyLabel, 'color': task.difficultyColor} %}
+			<div class="tarmac-card__footer">
+				<div class="tarmac-progress-meta">
+					<span><strong>{{ closed }}</strong> / {{ totalSubTasks }} {{ 'subTasks'|trans|lower }}</span>
+					<span>{{ progress }} %</span>
 				</div>
-
-				{# Progress bar at the bottom - cancelled subtasks excluded from total #}
-				{% if task.subTasks|length > 0 %}
-					{% set totalSubTasks = 0 %}
-					{% set closed = 0 %}
-					{% for subtask in task.subTasks %}
-						{% if subtask.status != 'cancelled' %}
-							{% set totalSubTasks = totalSubTasks + 1 %}
-							{% if subtask.status == 'closed' %}
-								{% set closed = closed + 1 %}
-							{% endif %}
-						{% endif %}
-					{% endfor %}
-					{% set progress = totalSubTasks > 0 ? (closed / totalSubTasks * 100)|round : 100 %}
-					<div class="progress progress-sm mb-2">
-						<div class="progress-bar bg-{{ progress == 100 ? 'success' : 'primary' }}" style="width: {{ progress }}%">
-							<span class="visually-hidden">{{ progress }}%</span>
-						</div>
-					</div>
-					<div class="d-flex align-items-center gap-2">
-						<div class="text-secondary small flex-grow-1">
-							{{ closed }}
-							/
-							{{ totalSubTasks }}
-							{{ 'subTasks'|trans|lower }}
-						</div>
+				<div class="tarmac-progress{% if progress == 100 %} tarmac-progress--done{% endif %}">
+					<span style="width: {{ progress }}%"></span>
+				</div>
+				{% if task.contributors|length > 0 %}
+					<div class="d-flex justify-content-end mt-2">
 						{% include 'component/contributorAvatars.html.twig' with {'contributors': task.contributors} only %}
 					</div>
 				{% endif %}
 			</div>
-		</div>
+		{% endif %}
+
 	</a>
 </div>

@@ -116,5 +116,22 @@ class SubTaskRepository extends ServiceEntityRepository
         $qb->addOrderBy('subTask.dueAt', $direction);
         return $this->addPositionOrdering($qb);
     }
+
+    public function countAwaitingInspectionByClub(\App\Entity\Club $club): int
+    {
+        return (int) $this->createQueryBuilder('subTask')
+            ->select('COUNT(DISTINCT subTask.id)')
+            ->join('subTask.task', 'task')
+            ->where('task.club = :club')
+            ->andWhere('subTask.requiresInspection = :true')
+            ->andWhere('subTask.status = :done')
+            ->andWhere('subTask.doneBy IS NOT NULL')
+            ->andWhere('subTask.inspectedBy IS NULL')
+            ->setParameter('club', $club)
+            ->setParameter('true', true)
+            ->setParameter('done', 'done')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
 

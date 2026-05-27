@@ -6,7 +6,7 @@
 
 {% block page_actions %}
 	{% if is_granted('MANAGE', club) %}
-		<a href="{{ path('club_equipment_new') }}" class="btn btn-primary" style="min-height: 44px;">
+		<a href="{{ path('club_equipment_new') }}" class="btn btn-primary">
 			<i class="ti ti-plus me-2"></i>
 			<span class="d-none d-sm-inline">{{ 'addEquipment'|trans }}</span>
 			<span class="d-inline d-sm-none">{{ 'add'|trans }}</span>
@@ -17,91 +17,73 @@
 {% block page_content %}
 	{% include 'component/filters.html.twig' with { form: filters } %}
 
-	{# Equipment cards - Mobile-first design #}
 	<div class="row">
 		{% for equipment in equipments %}
-			<div class="col-12 mb-3">
-				<a href="{{ path('club_equipment_show', {id: equipment.id}) }}" class="text-decoration-none">
-					<div
-						class="card h-100 card-link {% if not equipment.active %}opacity-75{% endif %}" style="cursor: pointer; position: relative;">
-						{# Badges - top right corner #}
-						<div
-							class="equipment-owner-badge">
-							{# Task and subtask count badges #}
-							{% set counts = pendingCounts[equipment.id] %}
+			{% set counts = pendingCounts[equipment.id] %}
+			<div class="col-12 col-md-6 col-lg-4 mb-3 d-flex">
+				<a href="{{ path('club_equipment_show', {id: equipment.id}) }}"
+				   class="tarmac-card w-100{% if not equipment.active %} tarmac-card--dimmed{% endif %}"
+				   style="display:flex;flex-direction:column;">
+
+					<div class="tarmac-card__head">
+						<span class="tarmac-eqv tarmac-eqv--{{ equipment.type.color }}">
+							<i class="ti {{ equipment.type.icon }}"></i>
+						</span>
+						<div class="flex-fill" style="min-width:0;">
+							<div class="tarmac-card__eyebrow">{{ equipment.type.label|trans }}</div>
+							<h3 class="tarmac-card__title" style="overflow:hidden;text-overflow:ellipsis;">
+								{{ equipment.name }}
+							</h3>
+						</div>
+					</div>
+
+					<div class="tarmac-card__badges" style="margin-top:0.5rem;">
+						{% if equipment.isPrivate %}
+							<span class="tarmac-badge tarmac-badge--warning"><i class="ti ti-user"></i>{{ 'private'|trans }}</span>
+						{% else %}
+							<span class="tarmac-badge tarmac-badge--info"><i class="ti ti-building"></i>{{ 'club'|trans }}</span>
+						{% endif %}
+						{% if not equipment.active %}
+							<span class="tarmac-badge tarmac-badge--status-cancelled"><i class="ti ti-ban"></i>{{ 'disabled'|trans }}</span>
+						{% endif %}
+					</div>
+
+					{% if counts.tasks > 0 or counts.subtasks > 0 %}
+						<div class="tarmac-card__footer d-flex align-items-center gap-3" style="margin-top:auto;">
 							{% if counts.tasks > 0 %}
-								<span class="badge bg-light text-dark me-1" title="{{ 'pendingTasks'|trans }}">
-									<i class="ti ti-checklist me-1" style="font-size: 0.75rem;"></i>
-									{{ counts.tasks }}
-									<span class="d-none d-sm-inline ms-1">{{ 'task'|trans|plural('fr') }}</span>
+								<span class="tarmac-card__meta" title="{{ 'pendingTasks'|trans }}">
+									<i class="ti ti-checklist"></i>
+									<strong style="color:var(--td-deep);">{{ counts.tasks }}</strong>
+									<span style="margin-left:0.2rem;">{{ 'task'|trans|plural('fr') }}</span>
 								</span>
 							{% endif %}
 							{% if counts.subtasks > 0 %}
-								<span class="badge bg-light text-dark me-1" title="{{ 'pendingSubTasks'|trans }}">
-									<i class="ti ti-checkbox me-1" style="font-size: 0.75rem;"></i>
-									{{ counts.subtasks }}
-									<span class="d-none d-sm-inline ms-1">{{ 'subTask'|trans|plural('fr') }}</span>
-								</span>
-							{% endif %}
-
-							{# Owner badge #}
-							{% if equipment.isPrivate %}
-								<span class="badge bg-orange-lt" title="{{ 'private'|trans }}">
-									<i class="ti ti-user" style="font-size: 0.75rem;"></i>
-									<span class="d-none d-sm-inline ms-1">{{ 'private'|trans }}</span>
-								</span>
-							{% else %}
-								<span class="badge bg-blue-lt" title="{{ 'club'|trans }}">
-									<i class="ti ti-building" style="font-size: 0.75rem;"></i>
-									<span class="d-none d-sm-inline ms-1">{{ 'club'|trans }}</span>
+								<span class="tarmac-card__meta" title="{{ 'pendingSubTasks'|trans }}">
+									<i class="ti ti-checkbox"></i>
+									<strong style="color:var(--td-deep);">{{ counts.subtasks }}</strong>
+									<span style="margin-left:0.2rem;">{{ 'subTask'|trans|plural('fr') }}</span>
 								</span>
 							{% endif %}
 						</div>
-
-						<div class="card-body">
-							<div
-								class="d-flex align-items-center">
-								{# Avatar with icon based on type #}
-								<span class="avatar avatar-lg me-3 bg-{{ equipment.type.color }}-lt">
-									<i class="ti {{ equipment.type.icon }} text-{{ equipment.type.color }}" style="font-size: 1.5rem;"></i>
-								</span>
-								<div
-									class="flex-fill">
-									{# Title: Equipment name #}
-									<h3 class="card-title mb-1 {% if not equipment.active %}text-secondary{% endif %}">
-										{{ equipment.name }}
-									</h3>
-									{# Subtitle: Equipment type label #}
-									<div class="text-secondary">
-										{{ equipment.type.label|trans }}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+					{% endif %}
 				</a>
 			</div>
 		{% else %}
 			<div class="col-12">
-				<div class="card">
-					<div class="card-body text-center text-secondary">
-						<i class="ti ti-package-off" style="font-size: 3rem; opacity: 0.5;"></i>
-						<p class="mt-3 mb-0">
-							<em>{{ 'noEquipmentFound'|trans }}</em>
-						</p>
-						{% if is_granted('MANAGE', club) %}
-							<a href="{{ path('club_equipment_new') }}" class="btn btn-primary mt-3" style="min-height: 44px;">
-								<i class="ti ti-plus me-2"></i>
-								{{ 'addEquipment'|trans }}
-							</a>
-						{% endif %}
-					</div>
+				<div class="tarmac-panel" style="text-align:center;padding:2.5rem 1.5rem;">
+					<div style="font-size:2.5rem;color:var(--td-ink-3);margin-bottom:0.75rem;"><i class="ti ti-package-off"></i></div>
+					<p class="text-secondary" style="margin:0 0 1rem;"><em>{{ 'noEquipmentFound'|trans }}</em></p>
+					{% if is_granted('MANAGE', club) %}
+						<a href="{{ path('club_equipment_new') }}" class="btn btn-primary">
+							<i class="ti ti-plus me-2"></i>
+							{{ 'addEquipment'|trans }}
+						</a>
+					{% endif %}
 				</div>
 			</div>
 		{% endfor %}
 	</div>
 
-	{# Pagination #}
 	<div class="d-flex justify-content-center mt-4">
 		{{ pagination(equipments) }}
 	</div>

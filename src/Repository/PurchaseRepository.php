@@ -155,12 +155,17 @@ class PurchaseRepository extends ServiceEntityRepository
 
     public function countPurchasesWaitingDelivery(Club $club): int
     {
+        return $this->countByStatus($club, PurchaseStatus::PURCHASED);
+    }
+
+    public function countByStatus(Club $club, PurchaseStatus $status): int
+    {
         return (int) $this->createQueryBuilder('purchase')
             ->select('COUNT(purchase.id)')
             ->where('purchase.club = :club')
             ->andWhere('purchase.status = :status')
             ->setParameter('club', $club)
-            ->setParameter('status', PurchaseStatus::PURCHASED)
+            ->setParameter('status', $status)
             ->getQuery()
             ->getSingleScalarResult();
     }

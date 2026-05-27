@@ -2906,6 +2906,146 @@
         <source>landingContactCta</source>
         <target>Écrire à contact@tarmac.center</target>
       </trans-unit>
+      <trans-unit id="875" resname="openTasks">
+        <source>openTasks</source>
+        <target>Tâches ouvertes</target>
+      </trans-unit>
+      <trans-unit id="876" resname="welcomeMessageKicker">
+        <source>welcomeMessageKicker</source>
+        <target>Mot du gestionnaire</target>
+      </trans-unit>
+      <trans-unit id="878" resname="welcomeMessageUpdatedByOn">
+        <source>welcomeMessageUpdatedByOn</source>
+        <target>Mis à jour par {name} le {date}</target>
+      </trans-unit>
+      <trans-unit id="879" resname="welcomeMessageUpdatedOn">
+        <source>welcomeMessageUpdatedOn</source>
+        <target>Mis à jour le {date}</target>
+      </trans-unit>
+      <trans-unit id="880" resname="details">
+        <source>details</source>
+        <target>Détails</target>
+      </trans-unit>
+      <trans-unit id="881" resname="myContribution">
+        <source>myContribution</source>
+        <target>Ma contribution</target>
+      </trans-unit>
+      <trans-unit id="882" resname="myContributionExplain">
+        <source>myContributionExplain</source>
+        <target>Note le temps que tu as passé sur cette sous-tâche. Cette contribution sera comptée dans le temps total quand la sous-tâche sera clôturée.</target>
+      </trans-unit>
+      <trans-unit id="883" resname="saveMyTime">
+        <source>saveMyTime</source>
+        <target>Enregistrer mon temps</target>
+      </trans-unit>
+      <trans-unit id="884" resname="updateMyTime">
+        <source>updateMyTime</source>
+        <target>Mettre à jour mon temps</target>
+      </trans-unit>
+      <trans-unit id="885" resname="closeSubTaskTitle">
+        <source>closeSubTaskTitle</source>
+        <target>Clôturer la sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="886" resname="closeSubTaskHint">
+        <source>closeSubTaskHint</source>
+        <target>Renseigne qui a travaillé sur cette sous-tâche et combien de temps. Une fois clôturée, elle apparaîtra comme terminée dans la tâche parente.</target>
+      </trans-unit>
+      <trans-unit id="887" resname="closeSubTaskWithInspectionHint">
+        <source>closeSubTaskWithInspectionHint</source>
+        <target>Cette sous-tâche nécessite une inspection. Après la clôture, un Qualifié devra valider l'intervention pour qu'elle soit définitivement marquée terminée.</target>
+      </trans-unit>
+      <trans-unit id="888" resname="parentTask">
+        <source>parentTask</source>
+        <target>Tâche parente</target>
+      </trans-unit>
+      <trans-unit id="889" resname="moreActions">
+        <source>moreActions</source>
+        <target>Plus d'actions</target>
+      </trans-unit>
+      <trans-unit id="890" resname="removeMyContributionConfirm">
+        <source>removeMyContributionConfirm</source>
+        <target>Retirer ma contribution sur cette sous-tâche ?</target>
+      </trans-unit>
+      <trans-unit id="891" resname="stepRequested">
+        <source>stepRequested</source>
+        <target>Demandée</target>
+      </trans-unit>
+      <trans-unit id="892" resname="stepApproved">
+        <source>stepApproved</source>
+        <target>Approuvée</target>
+      </trans-unit>
+      <trans-unit id="893" resname="stepPurchased">
+        <source>stepPurchased</source>
+        <target>Achetée</target>
+      </trans-unit>
+      <trans-unit id="894" resname="stepDelivered">
+        <source>stepDelivered</source>
+        <target>Livrée</target>
+      </trans-unit>
+      <trans-unit id="895" resname="stepComplete">
+        <source>stepComplete</source>
+        <target>Reçue</target>
+      </trans-unit>
+      <trans-unit id="896" resname="stepReimbursed">
+        <source>stepReimbursed</source>
+        <target>Remboursée</target>
+      </trans-unit>
+      <trans-unit id="897" resname="purchaseWorkflow">
+        <source>purchaseWorkflow</source>
+        <target>Parcours de l'achat</target>
+      </trans-unit>
+      <trans-unit id="898" resname="requestedBy">
+        <source>requestedBy</source>
+        <target>Demandé par</target>
+      </trans-unit>
+      <trans-unit id="899" resname="cancelledBy">
+        <source>cancelledBy</source>
+        <target>Annulée par</target>
+      </trans-unit>
+      <trans-unit id="900" resname="kpiToApprove">
+        <source>kpiToApprove</source>
+        <target>À approuver</target>
+      </trans-unit>
+      <trans-unit id="901" resname="kpiToPurchase">
+        <source>kpiToPurchase</source>
+        <target>À acheter</target>
+      </trans-unit>
+      <trans-unit id="902" resname="kpiAwaitingDelivery">
+        <source>kpiAwaitingDelivery</source>
+        <target>En attente de livraison</target>
+      </trans-unit>
+      <trans-unit id="903" resname="kpiToValidate">
+        <source>kpiToValidate</source>
+        <target>Livrés à valider</target>
+      </trans-unit>
+      <trans-unit id="904" resname="purchaseJourney">
+        <source>purchaseJourney</source>
+        <target>Parcours et acteurs</target>
+      </trans-unit>
+      <trans-unit id="905" resname="attachments">
+        <source>attachments</source>
+        <target>Pièces jointes</target>
+      </trans-unit>
+      <trans-unit id="906" resname="distributionBySpecialisation">
+        <source>distributionBySpecialisation</source>
+        <target>Répartition par spécialisation</target>
+      </trans-unit>
+      <trans-unit id="907" resname="myAccount">
+        <source>myAccount</source>
+        <target>Mon compte</target>
+      </trans-unit>
+      <trans-unit id="908" resname="helloUser">
+        <source>helloUser</source>
+        <target>Bonjour {name} !</target>
+      </trans-unit>
+      <trans-unit id="909" resname="noClubAvailable">
+        <source>noClubAvailable</source>
+        <target>Aucun club</target>
+      </trans-unit>
+      <trans-unit id="910" resname="noClubDescription">
+        <source>noClubDescription</source>
+        <target>Vous n'avez pas encore accès à un club actif. Contactez votre gestionnaire de club pour obtenir une invitation.</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

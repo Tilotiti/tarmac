@@ -1,7 +1,6 @@
 {% extends 'public/base.html.twig' %}
 
-{% block title %}Mot de passe oublié
-{% endblock %}
+{% block title %}Mot de passe oublié{% endblock %}
 
 {% block body %}
 	<div class="page page-center">
@@ -11,29 +10,22 @@
 					<img src="{{ asset('logo.svg') }}" height="48" alt="Tarmac">
 				</a>
 			</div>
-			<div class="card card-md">
-				<div class="card-body">
-					<h2 class="h2 text-center mb-4">Mot de passe oublié</h2>
-					<p class="text-center text-secondary mb-4">
-						Saisissez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.
-					</p>
+			<div class="tarmac-panel">
+				<h2 style="font-size:1.4rem;font-weight:800;text-align:center;margin:0 0 0.75rem;letter-spacing:-0.015em;">Mot de passe oublié</h2>
+				<p class="text-center text-secondary mb-4" style="font-size:0.92rem;">
+					Saisissez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+				</p>
 
-					{{ form_start(requestForm) }}
-					{{ form_row(requestForm.email, {
-						attr: { placeholder: 'votre@email.fr' }
-					}) }}
+				{{ form_start(requestForm) }}
+				{{ form_row(requestForm.email, {attr: { placeholder: 'votre@email.fr' }}) }}
 
-					<div class="form-footer">
-						<button type="submit" class="btn btn-primary w-100">
-							<i class="ti ti-mail me-2"></i>
-							Envoyer le lien de réinitialisation
-						</button>
-					</div>
-					{{ form_end(requestForm) }}
-				</div>
+				<button type="submit" class="btn btn-primary w-100 mt-3" style="min-height: 48px;">
+					<i class="ti ti-mail me-2"></i>Envoyer le lien de réinitialisation
+				</button>
+				{{ form_end(requestForm) }}
 			</div>
-			<div class="text-center text-secondary mt-3">
-				<a href="{{ path('public_login') }}">Retour à la connexion</a>
+			<div class="text-center mt-3" style="font-size:0.85rem;">
+				<a href="{{ path('public_login') }}" style="color:var(--td-ink-2);">Retour à la connexion</a>
 			</div>
 		</div>
 	</div>

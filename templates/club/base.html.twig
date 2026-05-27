@@ -7,13 +7,16 @@
 {% endblock %}
 
 {% block navbar_brand %}
-	<a href="{{ path('club_dashboard') }}">
-		<img src="{{ asset('logo.svg') }}" alt="Tarmac">
-	</a>
+	{% include 'component/brandMark.html.twig' with {
+		href: path('club_dashboard'),
+		tagline: club.name|default('Réparation & maintenance')
+	} %}
 {% endblock %}
 
 {% block user_dropdown_subtitle %}
-	<div class="mt-1 small text-secondary">{{ club.name|default('Club') }}</div>
+	<div class="tarmac-dropdown-header__club">
+		<i class="ti ti-windsock me-1"></i><strong>{{ club.name|default('Club') }}</strong>
+	</div>
 {% endblock %}
 
 {% block user_dropdown %}

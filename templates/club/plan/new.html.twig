@@ -6,24 +6,34 @@
 	{{ 'newPlan'|trans }}
 {% endblock %}
 
+{% block page_pretitle %}
+	<a href="{{ path('club_plans') }}" class="tarmac-page-eyebrow">
+		<span class="tarmac-eqv" style="background:var(--td-mid-soft);color:var(--td-mid);">
+			<i class="ti ti-file-check"></i>
+		</span>
+		{{ 'maintenancePlans'|trans }}
+	</a>
+{% endblock %}
+
 {% block page_content %}
 	<div data-controller="plan-form confirm">
 		{{ form_start(form) }}
 
-		{# Main form fields card #}
-		<div class="card mb-3">
-			<div class="card-body">
-				<div class="row">
-					<div class="col-12 col-md-6 mb-3">
-						{{ form_row(form.name) }}
-					</div>
-					<div class="col-12 col-md-6 mb-3">
-						{{ form_row(form.equipmentType) }}
-					</div>
+		{# Main form fields #}
+		<div class="tarmac-panel mb-3">
+			<div class="tarmac-panel__title">
+				<i class="ti ti-file-check"></i>{{ 'newPlan'|trans }}
+			</div>
+			<div class="row">
+				<div class="col-12 col-md-6 mb-3">
+					{{ form_row(form.name) }}
 				</div>
-				<div class="mb-3">
-					{{ form_row(form.description) }}
+				<div class="col-12 col-md-6 mb-3">
+					{{ form_row(form.equipmentType) }}
 				</div>
+			</div>
+			<div class="mb-3">
+				{{ form_row(form.description) }}
 			</div>
 		</div>
 

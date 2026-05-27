@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block page_actions %}
-	<a href="{{ path('club_task_new') }}" class="btn btn-primary" style="min-height: 44px;">
+	<a href="{{ path('club_task_new') }}" class="btn btn-primary">
 		<i class="ti ti-plus me-2"></i>
 		<span class="d-none d-sm-inline">{{ 'newTask'|trans }}</span>
 		<span class="d-inline d-sm-none">{{ 'add'|trans }}</span>
@@ -15,29 +15,23 @@
 {% block page_content %}
 	{% include 'component/filters.html.twig' with { form: filters } %}
 
-	{# Task cards - Mobile-first design #}
 	<div class="row">
 		{% for task in tasks %}
 			{% include 'component/taskCard.html.twig' with {'task': task} %}
 		{% else %}
 			<div class="col-12">
-				<div class="card">
-					<div class="card-body text-center text-secondary">
-						<i class="ti ti-checklist" style="font-size: 3rem; opacity: 0.5;"></i>
-						<p class="mt-3 mb-0">
-							<em>{{ 'noTasksFound'|trans }}</em>
-						</p>
-						<a href="{{ path('club_task_new') }}" class="btn btn-primary mt-3" style="min-height: 44px;">
-							<i class="ti ti-plus me-2"></i>
-							{{ 'newTask'|trans }}
-						</a>
-					</div>
+				<div class="tarmac-panel" style="text-align:center;padding:2.5rem 1.5rem;">
+					<div style="font-size:2.5rem;color:var(--td-ink-3);margin-bottom:0.75rem;"><i class="ti ti-checklist"></i></div>
+					<p class="text-secondary" style="margin:0 0 1rem;"><em>{{ 'noTasksFound'|trans }}</em></p>
+					<a href="{{ path('club_task_new') }}" class="btn btn-primary">
+						<i class="ti ti-plus me-2"></i>
+						{{ 'newTask'|trans }}
+					</a>
 				</div>
 			</div>
 		{% endfor %}
 	</div>
 
-	{# Pagination #}
 	<div class="d-flex justify-content-center mt-4">
 		{{ pagination(tasks) }}
 	</div>

@@ -4,29 +4,41 @@
 	{{ 'editSpecialisation'|trans }}
 {% endblock %}
 
+{% block page_pretitle %}
+	<a href="{{ path('club_specialisations') }}" class="tarmac-page-eyebrow">
+		<span class="tarmac-eqv" style="background:var(--td-neutral-soft);color:var(--td-neutral);">
+			<i class="ti ti-tag"></i>
+		</span>
+		{{ 'specialisations'|trans }}
+	</a>
+{% endblock %}
+
 {% block page_content %}
-	<div class="card">
-		<div class="card-header">
-			<h3 class="card-title">{{ 'editSpecialisation'|trans }}</h3>
-		</div>
-		<div class="card-body">
-			{{ form_start(form) }}
-			<div class="mb-3">
-				{{ form_label(form.name) }}
-				{{ form_widget(form.name) }}
-				{{ form_errors(form.name) }}
+	<div class="row g-3">
+		<div class="col-12 col-lg-6 mx-auto">
+			<div class="tarmac-panel">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-edit"></i>{{ 'editSpecialisation'|trans }}
+				</div>
+				{{ form_start(form) }}
+				<div class="mb-3">
+					{{ form_label(form.name) }}
+					{{ form_widget(form.name) }}
+					{{ form_errors(form.name) }}
+				</div>
+				<div class="mb-3">
+					{{ form_label(form.description) }}
+					{{ form_widget(form.description) }}
+					{{ form_errors(form.description) }}
+				</div>
+				<div class="d-flex justify-content-end gap-2 mt-3">
+					<a href="{{ path('club_specialisations') }}" class="btn btn-outline-secondary">{{ 'cancel'|trans }}</a>
+					<button type="submit" class="btn btn-primary">
+						<i class="ti ti-check me-2"></i>{{ 'save'|trans }}
+					</button>
+				</div>
+				{{ form_end(form) }}
 			</div>
-			<div class="mb-3">
-				{{ form_label(form.description) }}
-				{{ form_widget(form.description) }}
-				{{ form_errors(form.description) }}
-			</div>
-			<button type="submit" class="btn btn-primary" style="min-height: 44px;">
-				<i class="ti ti-check me-2"></i>
-				{{ 'save'|trans }}
-			</button>
-			<a href="{{ path('club_specialisations') }}" class="btn btn-outline-secondary ms-2">{{ 'cancel'|trans }}</a>
-			{{ form_end(form) }}
 		</div>
 	</div>
 {% endblock %}

@@ -7,138 +7,108 @@
 {% endblock %}
 
 {% block page_content %}
-	<div class="row">
-		<div class="col-12">
+	<div class="row g-3">
+		<div class="col-12 col-lg-10 mx-auto">
 			{{ form_start(form) }}
 
-			{# Main Task Information Card #}
-			<div class="card mb-3">
-				<div class="card-header">
-					<h3 class="card-title">{{ 'taskInformation'|trans }}</h3>
+			{# Main Task Information #}
+			<div class="tarmac-panel mb-3">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-checklist"></i>{{ 'taskInformation'|trans }}
 				</div>
-				<div class="card-body">
-					{{ form_row(form.equipment) }}
-					{{ form_row(form.title) }}
-					{{ form_row(form.description, {'attr': {'class': 'form-control w-100', 'rows': 3}}) }}
-					{% include 'component/documentationUploader.html.twig' with {
+				{{ form_row(form.equipment) }}
+				{{ form_row(form.title) }}
+				{{ form_row(form.description, {'attr': {'class': 'form-control w-100', 'rows': 3}}) }}
+				{% include 'component/documentationUploader.html.twig' with {
 					field: form.documentation,
 					existingUrl: null,
 					lightboxGroup: 'task-documentation',
 					emptyTextKey: 'clickToUploadDocumentation',
 					deletePath: null
 				} %}
-					{{ form_row(form.dueAt) }}
-				</div>
+				{{ form_row(form.dueAt) }}
 			</div>
 
-			{# SubTasks Section #}
+			{# SubTasks Section — collection-type preserved #}
 			{% set subtaskPrototype %}
-			<div class="card mb-3" data-collection-type-target="item">
-				<div class="card-header d-flex justify-content-between align-items-center">
-					<h5 class="card-title mb-0">{{ 'subTask'|trans }}
-						__INDEX__</h5>
-					<button type="button" class="btn btn-sm btn-danger" data-action="click->collection-type#removeItem" data-confirm="{{ 'confirmDeleteSubTask'|trans }}" aria-label="{{ 'deleteThisSubTask'|trans }}">
+			<div class="tarmac-panel mb-3" data-collection-type-target="item" style="background:var(--td-cream);">
+				<div class="d-flex justify-content-between align-items-center mb-2">
+					<h5 style="font-size:0.95rem;font-weight:700;margin:0;color:var(--td-deep);">{{ 'subTask'|trans }} __INDEX__</h5>
+					<button type="button" class="btn btn-outline-danger btn-sm" data-action="click->collection-type#removeItem" data-confirm="{{ 'confirmDeleteSubTask'|trans }}" aria-label="{{ 'deleteThisSubTask'|trans }}">
 						<i class="ti ti-trash"></i>
 					</button>
 				</div>
-				<div class="card-body">
-					<div class="row">
-						<div class="col-12 col-md-9 mb-2">
-							{{ form_row(form.subTasks.vars.prototype.title) }}
-						</div>
-						<div class="col-12 col-md-3 mb-2">
-							{{ form_row(form.subTasks.vars.prototype.difficulty) }}
-						</div>
-					</div>
-					<div class="mb-2">
-						{{ form_row(form.subTasks.vars.prototype.description, {'attr': {'rows': 2}}) }}
-					</div>
-					{% if form.subTasks.vars.prototype.specialisations is defined %}
-						<div class="mb-2">
-							{{ form_row(form.subTasks.vars.prototype.specialisations) }}
-						</div>
-					{% endif %}
-					<div class="form-check form-switch mb-2">
-						{{ form_widget(form.subTasks.vars.prototype.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
-						{{ form_label(form.subTasks.vars.prototype.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
-					</div>
-					{% include 'component/documentationUploader.html.twig' with {
+				<div class="row">
+					<div class="col-12 col-md-9 mb-2">{{ form_row(form.subTasks.vars.prototype.title) }}</div>
+					<div class="col-12 col-md-3 mb-2">{{ form_row(form.subTasks.vars.prototype.difficulty) }}</div>
+				</div>
+				<div class="mb-2">{{ form_row(form.subTasks.vars.prototype.description, {'attr': {'rows': 2}}) }}</div>
+				{% if form.subTasks.vars.prototype.specialisations is defined %}
+					<div class="mb-2">{{ form_row(form.subTasks.vars.prototype.specialisations) }}</div>
+				{% endif %}
+				<div class="form-check form-switch mb-2">
+					{{ form_widget(form.subTasks.vars.prototype.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
+					{{ form_label(form.subTasks.vars.prototype.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
+				</div>
+				{% include 'component/documentationUploader.html.twig' with {
 					field: form.subTasks.vars.prototype.documentation,
 					existingUrl: null,
 					lightboxGroup: 'subtask-documentation-prototype',
 					emptyTextKey: 'clickToUploadDocumentation',
 					deletePath: null
 				} %}
-				</div>
 			</div>
 			{% endset %}
 
 			<div {{ stimulus_controller('collection-type') }} data-collection-type-prototype-name-value="__subtask_name__" data-collection-type-display-index-name-value="__INDEX__" data-prototype="{{ subtaskPrototype|e('html_attr') }}">
-				<div
-					data-collection-type-target="container">
-					{# Empty state placeholder #}
-					<div class="empty text-center py-3 mb-3" data-collection-type-target="placeholder" style="{{ form.subTasks|length > 0 ? 'display: none;' : '' }}">
-						<p class="text-muted small mb-0">{{ 'noSubTasks'|trans }}</p>
+				<div data-collection-type-target="container">
+					<div class="tarmac-panel mb-3" data-collection-type-target="placeholder" style="text-align:center;padding:1.5rem;{{ form.subTasks|length > 0 ? 'display:none;' : '' }}">
+						<p class="text-secondary" style="margin:0;font-size:0.9rem;">{{ 'noSubTasks'|trans }}</p>
 					</div>
 
 					{% for subtask in form.subTasks %}
-						<div class="card mb-3" data-collection-type-target="item">
-							<div class="card-header d-flex justify-content-between align-items-center">
-								<h5 class="card-title mb-0">{{ 'subTask'|trans }}
-									{{ loop.index }}</h5>
-								<button type="button" class="btn btn-sm btn-danger" data-action="click->collection-type#removeItem" data-confirm="{{ 'confirmDeleteSubTask'|trans }}" aria-label="{{ 'deleteThisSubTask'|trans }}">
+						<div class="tarmac-panel mb-3" data-collection-type-target="item" style="background:var(--td-cream);">
+							<div class="d-flex justify-content-between align-items-center mb-2">
+								<h5 style="font-size:0.95rem;font-weight:700;margin:0;color:var(--td-deep);">{{ 'subTask'|trans }} {{ loop.index }}</h5>
+								<button type="button" class="btn btn-outline-danger btn-sm" data-action="click->collection-type#removeItem" data-confirm="{{ 'confirmDeleteSubTask'|trans }}" aria-label="{{ 'deleteThisSubTask'|trans }}">
 									<i class="ti ti-trash"></i>
 								</button>
 							</div>
-							<div class="card-body">
-								<div class="row">
-									<div class="col-12 col-md-9 mb-2">
-										{{ form_row(subtask.title) }}
-									</div>
-									<div class="col-12 col-md-3 mb-2">
-										{{ form_row(subtask.difficulty) }}
-									</div>
-								</div>
-								<div class="mb-2">
-									{{ form_row(subtask.description, {'attr': {'rows': 2}}) }}
-								</div>
-								{% if subtask.specialisations is defined %}
-									<div class="mb-2">
-										{{ form_row(subtask.specialisations) }}
-									</div>
-								{% endif %}
-								<div class="form-check form-switch mb-2">
-									{{ form_widget(subtask.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
-									{{ form_label(subtask.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
-								</div>
-								{% include 'component/documentationUploader.html.twig' with {
+							<div class="row">
+								<div class="col-12 col-md-9 mb-2">{{ form_row(subtask.title) }}</div>
+								<div class="col-12 col-md-3 mb-2">{{ form_row(subtask.difficulty) }}</div>
+							</div>
+							<div class="mb-2">{{ form_row(subtask.description, {'attr': {'rows': 2}}) }}</div>
+							{% if subtask.specialisations is defined %}
+								<div class="mb-2">{{ form_row(subtask.specialisations) }}</div>
+							{% endif %}
+							<div class="form-check form-switch mb-2">
+								{{ form_widget(subtask.requiresInspection, {'attr': {'class': 'form-check-input'}}) }}
+								{{ form_label(subtask.requiresInspection, null, {'label_attr': {'class': 'form-check-label'}}) }}
+							</div>
+							{% include 'component/documentationUploader.html.twig' with {
 								field: subtask.documentation,
 								existingUrl: subtask.vars.data.documentation ?? null,
 								lightboxGroup: 'subtask-documentation-existing',
 								emptyTextKey: 'clickToUploadDocumentation',
 								deletePath: null
 							} %}
-							</div>
 						</div>
 					{% endfor %}
 				</div>
 
 				<div class="text-center mb-3">
-					<button type="button" class="btn btn-secondary" data-action="click->collection-type#addItem" aria-label="{{ 'addSubTask'|trans }}" style="min-height: 44px;">
-						<i class="ti ti-plus me-2"></i>
-						{{ 'addSubTask'|trans }}
+					<button type="button" class="btn btn-outline-secondary" data-action="click->collection-type#addItem" aria-label="{{ 'addSubTask'|trans }}">
+						<i class="ti ti-plus me-2"></i>{{ 'addSubTask'|trans }}
 					</button>
 				</div>
 			</div>
 
-			{# Sticky Save Button for Mobile #}
-			<div class="card sticky-bottom-mobile">
-				<div class="card-body">
-					<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">
-						<i class="ti ti-check me-2"></i>
-						{{ 'save'|trans }}
-					</button>
-				</div>
+			{# Submit #}
+			<div class="tarmac-panel sticky-bottom-mobile">
+				<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">
+					<i class="ti ti-check me-2"></i>{{ 'save'|trans }}
+				</button>
 			</div>
 
 			{{ form_end(form) }}

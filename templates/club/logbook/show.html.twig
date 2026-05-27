@@ -4,42 +4,41 @@
 	{% if is_own_logbook %}
 		{{ 'myMechanicLogbook'|trans }}
 	{% else %}
-		{{ 'mechanicLogbookFor'|trans({'memberName': membership.user.fullName}) }}
+		{{ membership.user.fullName }}
 	{% endif %}
 {% endblock %}
 
 {% block page_header %}
-	{# Fil d'ariane spécifique au carnet mécano #}
-	<div class="mb-1">
-		<ol class="breadcrumb" aria-label="breadcrumb">
-			<li class="breadcrumb-item">
-				<a href="{{ path('club_dashboard') }}">{{ 'home'|trans }}</a>
-			</li>
-			{% if is_own_logbook %}
-				<li class="breadcrumb-item active" aria-current="page">
-					{{ 'myMechanicLogbook'|trans }}
-				</li>
-			{% else %}
-				<li class="breadcrumb-item">
-					<a href="{{ path('club_members') }}">{{ 'members'|trans }}</a>
-				</li>
-				<li class="breadcrumb-item">
-					<a href="{{ path('club_member_show', {id: membership.id}) }}">{{ membership.user.fullName }}</a>
-				</li>
-				<li class="breadcrumb-item active" aria-current="page">
-					{{ 'mechanicLogbook'|trans }}
-				</li>
-			{% endif %}
-		</ol>
+	{# Breadcrumb spécifique (path différent pour own vs other) #}
+	<ol class="tarmac-breadcrumb" aria-label="breadcrumbs">
+		<li>
+			<a href="{{ path('club_dashboard') }}" aria-label="{{ 'home'|trans }}">
+				<i class="ti ti-home"></i>
+			</a>
+		</li>
+		{% if is_own_logbook %}
+			<li class="is-current">{{ 'myMechanicLogbook'|trans }}</li>
+		{% else %}
+			<li><a href="{{ path('club_members') }}">{{ 'members'|trans }}</a></li>
+			<li><a href="{{ path('club_member_show', {id: membership.id}) }}">{{ membership.user.fullName }}</a></li>
+			<li class="is-current">{{ 'mechanicLogbook'|trans }}</li>
+		{% endif %}
+	</ol>
+
+	<div class="tarmac-page-eyebrow" style="cursor:default;">
+		<span class="tarmac-eqv" style="background:var(--td-mid-soft);color:var(--td-mid);">
+			<i class="ti ti-tools"></i>
+		</span>
+		{{ 'mechanicLogbook'|trans }}
 	</div>
-	{{ block('page_pretitle') }}
+
 	<h2 class="page-title">
 		{{ block('page_title') }}
 	</h2>
 {% endblock %}
 
 {% block page_actions %}
-	<a href="{{ path('club_member_logbook_pdf', {id: membership.id}) ~ (app.request.query.all ? '?' ~ app.request.query.all|url_encode : '') }}" class="btn btn-outline-primary" style="min-height: 44px;">
+	<a href="{{ path('club_member_logbook_pdf', {id: membership.id}) ~ (app.request.query.all ? '?' ~ app.request.query.all|url_encode : '') }}" class="btn btn-outline-secondary">
 		<i class="ti ti-printer me-2"></i>
 		<span class="d-none d-sm-inline">{{ 'exportPdf'|trans }}</span>
 		<span class="d-inline d-sm-none">{{ 'pdf'|trans }}</span>
@@ -47,239 +46,180 @@
 {% endblock %}
 
 {% block page_content %}
-	{# Filtres #}
-	{% include 'component/filters.html.twig' with { form: filters } %}
+	{# Helper : total heures globales en h/m #}
+	{% set totalMinutes = (facets.global.time * 60)|round(0, 'floor') %}
+	{% set totalHours = (totalMinutes / 60)|round(0, 'floor') %}
+	{% set totalMin = totalMinutes - (totalHours * 60) %}
 
-	{# Statistiques globales - carte de profil mécano #}
-	<div class="card mb-3">
-		<div class="card-body">
-			<div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-3">
-				<span class="avatar avatar-xl bg-blue-lt text-blue">
-					{{ membership.user.firstname[:1] }}{{ membership.user.lastname[:1] }}
-				</span>
-				<div class="flex-fill">
-					<h2 class="mb-1">
-						{% if is_own_logbook %}
-							{{ 'myMechanicLogbook'|trans }}
-						{% else %}
-							{{ membership.user.fullName }}
-						{% endif %}
-					</h2>
-					<div class="text-secondary small mb-1">
-						{{ 'globalStatistics'|trans }}
-						–
-						<strong>{{ facets.global.count }}</strong>
-						{{ 'contributionsCount'|trans }}
-					</div>
-					<div class="d-flex flex-wrap gap-2">
-						<div class="badge bg-blue-lt text-blue">
-							<i class="ti ti-clock-hour-5 me-1"></i>
-							{% set totalMinutes = (facets.global.time * 60)|round(0, 'floor') %}
-							{% set hours = (totalMinutes / 60)|round(0, 'floor') %}
-							{% set minutes = totalMinutes - (hours * 60) %}
-							{{ hours }}{{ 'hours'|trans }}
-							{% if minutes > 0 %}
-								{{ minutes }}min
-							{% endif %}
-						</div>
-						<div class="badge bg-purple-lt text-purple">
-							<i class="ti ti-circle-dotted me-1"></i>
-							{{ facets.bySpecialisation|length }}
-							{{ 'specialisations'|trans }}
-						</div>
-					</div>
+	{# KPI strip #}
+	<div class="row g-2 mb-4">
+		<div class="col-6 col-md-4">
+			<div class="tarmac-kpi tarmac-kpi--glow">
+				<span class="tarmac-kpi__icon"><i class="ti ti-clock-hour-5"></i></span>
+				<div class="tarmac-kpi__label">{{ 'totalTime'|trans }}</div>
+				<div class="tarmac-kpi__value">
+					{{ totalHours }}<span style="font-size:0.6em;font-weight:600;color:var(--td-ink-3);">h</span>{% if totalMin > 0 %}{{ totalMin }}<span style="font-size:0.6em;font-weight:600;color:var(--td-ink-3);">m</span>{% endif %}
 				</div>
 			</div>
-
-			{# Rappel très compact des filtres actifs (si besoin on peut se contenter du composant existant) #}
-			{# On s'appuie sur component/filters pour le détail, donc rien à dupliquer ici #}
+		</div>
+		<div class="col-6 col-md-4">
+			<div class="tarmac-kpi">
+				<span class="tarmac-kpi__icon"><i class="ti ti-list-check"></i></span>
+				<div class="tarmac-kpi__label">{{ 'contributionsCount'|trans|capitalize }}</div>
+				<div class="tarmac-kpi__value">{{ facets.global.count }}</div>
+			</div>
+		</div>
+		<div class="col-12 col-md-4">
+			<div class="tarmac-kpi tarmac-kpi--purple">
+				<span class="tarmac-kpi__icon"><i class="ti ti-tag"></i></span>
+				<div class="tarmac-kpi__label">{{ 'specialisations'|trans }}</div>
+				<div class="tarmac-kpi__value">{{ facets.bySpecialisation|length }}</div>
+			</div>
 		</div>
 	</div>
 
-	{# Statistiques par spécialisation : cartes individuelles #}
-	{% if facets.bySpecialisation is not empty %}
-		<div class="mb-3">
-			<h3 class="mb-2">{{ 'statisticsBySpecialisation'|trans }}</h3>
-			<div class="d-flex flex-column gap-2">
-				{% set totalTime = facets.global.time > 0 ? facets.global.time : 1 %}
-				{% for row in facets.bySpecialisation %}
-					{% set ratio = (row.time / totalTime * 100)|round(0, 'floor') %}
-					<div class="card card-sm">
-						<div class="card-body py-2 px-3">
-							<div class="d-flex justify-content-between align-items-center mb-1">
-								<div class="d-flex flex-wrap align-items-center gap-2">
-									<span class="badge bg-blue-lt text-blue">
-										{{ row.specialisation.name }}
-									</span>
-									<span class="text-secondary small">
-										{{ ratio }}%
-									</span>
-								</div>
-								<div class="text-end small">
-									<div class="fw-bold">
-										{{ row.count }}
-										{{ 'contributionsCount'|trans }}
-									</div>
-									<div class="text-secondary">
-										{% set minutes = (row.time * 60)|round(0, 'floor') %}
-										{% set h = (minutes / 60)|round(0, 'floor') %}
-										{% set m = minutes - (h * 60) %}
-										{{ h }}{{ 'hours'|trans }}
-										{% if m > 0 %}
-											{{ m }}min
-										{% endif %}
-									</div>
-								</div>
-							</div>
-							<div class="progress progress-xs">
-								<div class="progress-bar bg-blue" style="width: {{ ratio }}%"></div>
-							</div>
-						</div>
-					</div>
-				{% endfor %}
-			</div>
-		</div>
-	{% endif %}
+	<div class="row g-3">
 
-	{# Liste des contributions - style cartes inspiré des sous-tâches #}
-	<div class="mb-3">
-		<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
-			<h3 class="mb-0">{{ 'contributionsList'|trans }}</h3>
-			{% if facets.global.count > 0 %}
-				<span class="text-secondary small">
-					{{ facets.global.count }}
-					{{ 'contributionsCount'|trans }}
-				</span>
+		{# ========== Colonne principale ========== #}
+		<div class="col-12 col-lg-8">
+
+			{# Filtres #}
+			{% include 'component/filters.html.twig' with { form: filters } %}
+
+			{# Liste des contributions #}
+			<div class="tarmac-section-bar">
+				<h3 class="tarmac-section-bar__title">
+					<i class="ti ti-history"></i>
+					{{ 'contributionsList'|trans }}
+					<span class="tarmac-section-bar__count">{{ facets.global.count }}</span>
+				</h3>
+			</div>
+
+			{% if contributions|length > 0 %}
+				<div class="row">
+					{% for contribution in contributions %}
+						{% set subTask = contribution.subTask %}
+						{% set task = subTask.task %}
+						{% set isCancelled = subTask.status == 'cancelled' %}
+						<div class="col-12 col-lg-6 mb-3 d-flex">
+							<a href="{{ path('club_subtask_show', {taskId: task.id, id: subTask.id}) }}"
+							   class="tarmac-card w-100{% if isCancelled %} tarmac-card--dimmed{% endif %}">
+
+								<div class="tarmac-card__head">
+									<span class="tarmac-eqv tarmac-eqv--{{ task.equipment.type.color }}">
+										<i class="ti {{ task.equipment.type.icon }}"></i>
+									</span>
+									<div class="flex-fill">
+										<div class="tarmac-card__eyebrow">{{ task.equipment.name }} · {{ task.title }}</div>
+										<h3 class="tarmac-card__title">{{ subTask.title }}</h3>
+
+										<div class="tarmac-card__badges">
+											{# Statut explicite — premier badge #}
+											{% if subTask.isWaitingForApproval %}
+												<span class="tarmac-badge tarmac-badge--status-inspection">
+													<i class="ti ti-hourglass"></i>{{ 'statusDonePendingLabel'|trans }}
+												</span>
+											{% elseif subTask.status == 'closed' %}
+												<span class="tarmac-badge tarmac-badge--status-closed">
+													<i class="ti ti-circle-check"></i>{{ 'statusClosedLabel'|trans }}
+												</span>
+											{% elseif subTask.status == 'cancelled' %}
+												<span class="tarmac-badge tarmac-badge--status-cancelled">
+													<i class="ti ti-x"></i>{{ 'statusCancelledLabel'|trans }}
+												</span>
+											{% else %}
+												<span class="tarmac-badge tarmac-badge--status-open">
+													<i class="ti ti-circle"></i>{{ 'statusOpenLabel'|trans }}
+												</span>
+											{% endif %}
+
+											{# Signature #}
+											{% if subTask.completedBy %}
+												<span class="tarmac-badge tarmac-badge--success">
+													<i class="ti ti-signature"></i>{{ 'signedBy'|trans }} {{ subTask.completedBy.fullName ?? subTask.completedBy.email }}
+												</span>
+											{% else %}
+												<span class="tarmac-badge tarmac-badge--secondary">
+													<i class="ti ti-signature-off"></i>{{ 'notSigned'|trans }}
+												</span>
+											{% endif %}
+
+											{# Spécialisations #}
+											{% for specialisation in subTask.specialisations %}
+												<span class="tarmac-badge tarmac-badge--specialisation">
+													<i class="ti ti-tag"></i>{{ specialisation.name }}
+												</span>
+											{% endfor %}
+										</div>
+									</div>
+								</div>
+
+								{# Footer : temps + date #}
+								<div class="tarmac-card__footer d-flex align-items-center justify-content-between gap-2">
+									<span class="tarmac-card__meta">
+										<i class="ti ti-calendar"></i>
+										{{ contribution.createdAt|date('d/m/Y H:i') }}
+									</span>
+									<span style="font-weight:700;color:var(--td-deep);font-size:0.95rem;">
+										<i class="ti ti-clock-hour-5 me-1" style="color:var(--td-ink-3);"></i>
+										{{ contribution.timeSpent|number_format(2, ',', ' ') }}
+										<span style="font-size:0.78rem;font-weight:500;color:var(--td-ink-3);">{{ 'hours'|trans }}</span>
+									</span>
+								</div>
+							</a>
+						</div>
+					{% endfor %}
+				</div>
+
+				<div class="d-flex justify-content-center mt-3">
+					{{ pagination(contributions) }}
+				</div>
+			{% else %}
+				<div class="tarmac-panel" style="text-align:center;padding:2.5rem 1.5rem;">
+					<div style="font-size:2.5rem;color:var(--td-ink-3);margin-bottom:0.75rem;"><i class="ti ti-history-off"></i></div>
+					<p class="text-secondary" style="margin:0;"><em>{{ 'noContributionsFound'|trans }}</em></p>
+				</div>
 			{% endif %}
+
+		</div>{# /col-12 col-lg-8 (main) #}
+
+		{# ========== Sidebar ========== #}
+		<div class="col-12 col-lg-4">
+			<div class="tarmac-page-sidebar">
+
+				{# Panel : répartition par spécialisation #}
+				{% if facets.bySpecialisation is not empty %}
+					<div class="tarmac-panel">
+						<div class="tarmac-panel__title">
+							<i class="ti ti-chart-pie"></i>
+							{{ 'distributionBySpecialisation'|trans }}
+						</div>
+						<ul class="tarmac-spec-list">
+							{% set totalTime = facets.global.time > 0 ? facets.global.time : 1 %}
+							{% for row in facets.bySpecialisation %}
+								{% set ratio = (row.time / totalTime * 100)|round(0, 'floor') %}
+								{% set rowMinutes = (row.time * 60)|round(0, 'floor') %}
+								{% set rowHours = (rowMinutes / 60)|round(0, 'floor') %}
+								{% set rowMin = rowMinutes - (rowHours * 60) %}
+								<li class="tarmac-spec-list__item">
+									<div class="tarmac-spec-list__head">
+										<span class="tarmac-spec-list__name">{{ row.specialisation.name }}</span>
+										<span class="tarmac-spec-list__time">
+											{{ rowHours }}h{% if rowMin > 0 %}{{ rowMin }}{% endif %} · {{ ratio }}%
+										</span>
+									</div>
+									<div class="tarmac-progress">
+										<span style="width: {{ ratio }}%"></span>
+									</div>
+									<div class="tarmac-spec-list__count">{{ row.count }} {{ 'contributionsCount'|trans }}</div>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+
+			</div>
 		</div>
 
-		{% if contributions|length > 0 %}
-			<div class="row">
-				{% for contribution in contributions %}
-					{% set subTask = contribution.subTask %}
-					{% set task = subTask.task %}
-					{% set statusColor = subTask.status == 'closed' ? 'success' : (subTask.status == 'cancelled' ? 'danger' : (subTask.isWaitingForApproval ? 'warning' : 'info')) %}
-					<div class="col-12 mb-2">
-						<a href="{{ path('club_subtask_show', {taskId: task.id, id: subTask.id}) }}" class="text-decoration-none">
-							<div class="card card-link" style="cursor: pointer;">
-								<div class="card-status-start bg-{{ statusColor }}"></div>
-								<div class="card-body">
-									<div class="d-flex align-items-start">
-										<div class="me-3 d-none d-sm-block">
-											<span class="avatar avatar-lg bg-{{ task.equipment.type.color }}-lt">
-												<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}"></i>
-											</span>
-										</div>
-										<div class="flex-fill">
-											<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-1">
-												<div>
-													<div class="text-secondary small">
-														{{ task.equipment.name }}
-													</div>
-													<div class="fw-bold">
-														{{ task.title }}
-													</div>
-													<div class="text-secondary small">
-														{{ subTask.title }}
-													</div>
-												</div>
-												<div class="text-end">
-													<div class="fw-bold">
-														<i class="ti ti-clock-hour-5 me-1"></i>
-														{{ contribution.timeSpent|number_format(2, ',', ' ') }}
-														<span class="text-muted small">{{ 'hours'|trans }}</span>
-													</div>
-													<div class="text-secondary small">
-														<i class="ti ti-calendar-time me-1"></i>
-														{{ contribution.createdAt|date('d/m/Y H:i') }}
-													</div>
-												</div>
-											</div>
-
-											<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2">
-												<div class="d-flex flex-wrap gap-1 align-items-center">
-													{% if subTask.specialisations|length > 0 %}
-														{% for specialisation in subTask.specialisations %}
-															<span class="badge bg-blue-lt text-blue">
-																{{ specialisation.name }}
-															</span>
-														{% endfor %}
-													{% else %}
-														<span class="text-secondary small">
-															{{ 'noSpecialisation'|trans }}
-														</span>
-													{% endif %}
-												</div>
-												<div
-													class="d-flex flex-column text-end">
-													{# Statut & inspection #}
-													<div class="mb-1">
-														{% if subTask.isWaitingForApproval %}
-															<span class="badge bg-warning-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'waitingForApproval'|trans }}">
-																<i class="ti ti-clock-check me-1"></i>
-																{{ 'statusDonePendingLabel'|trans }}
-															</span>
-														{% elseif subTask.status == 'closed' %}
-															<span class="badge bg-success-lt text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ 'statusClosedTooltip'|trans }}">
-																<i class="ti ti-circle-check me-1"></i>
-																{{ 'statusClosedLabel'|trans }}
-															</span>
-														{% elseif subTask.status == 'open' %}
-															<span class="badge bg-info-lt text-white">
-																<i class="ti ti-circle-dashed me-1"></i>
-																{{ 'statusOpenLabel'|trans }}
-															</span>
-														{% elseif subTask.status == 'cancelled' %}
-															<span class="badge bg-danger-lt text-white">
-																<i class="ti ti-x me-1"></i>
-																{{ 'statusCancelledLabel'|trans }}
-															</span>
-														{% endif %}
-													</div>
-													{% if subTask.completedBy %}
-														<span class="badge bg-green-lt text-green align-self-end mb-1">
-															<i class="ti ti-signature me-1"></i>
-															{{ 'signedBy'|trans }}
-														</span>
-														<span class="text-secondary small">
-															{{ subTask.completedBy.fullName ?? subTask.completedBy.email }}
-														</span>
-														{% if subTask.status == 'closed' and subTask.doneAt %}
-															<span class="text-secondary small">
-																{{ 'validatedOn'|trans }}
-																{{ subTask.doneAt|date('d/m/Y') }}
-															</span>
-														{% endif %}
-													{% else %}
-														<span class="badge bg-secondary-lt text-secondary align-self-end mb-1">
-															<i class="ti ti-signature-off me-1"></i>
-															{{ 'notSigned'|trans }}
-														</span>
-													{% endif %}
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</a>
-					</div>
-				{% endfor %}
-			</div>
-
-			<div class="d-flex justify-content-center mt-3">
-				{{ pagination(contributions) }}
-			</div>
-		{% else %}
-			<div class="card">
-				<div class="card-body text-center text-secondary">
-					<em>{{ 'noContributionsFound'|trans }}</em>
-				</div>
-			</div>
-		{% endif %}
-	</div>
-{% endblock %}
-
-{% block javascripts %}
-	{{ parent() }}
+	</div>{# /row g-3 #}
 {% endblock %}

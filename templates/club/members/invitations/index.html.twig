@@ -5,13 +5,13 @@
 {% endblock %}
 
 {% block page_actions %}
-	<div class="d-flex gap-2">
-		<a href="{{ path('club_invitation_import') }}" class="btn btn-secondary" style="min-height: 44px;">
+	<div class="btn-list">
+		<a href="{{ path('club_invitation_import') }}" class="btn btn-outline-secondary">
 			<i class="ti ti-file-upload me-2"></i>
 			<span class="d-none d-sm-inline">{{ 'import'|trans }}</span>
 			<span class="d-inline d-sm-none">{{ 'import'|trans }}</span>
 		</a>
-		<a href="{{ path('club_invitation_create') }}" class="btn btn-primary" style="min-height: 44px;">
+		<a href="{{ path('club_invitation_create') }}" class="btn btn-primary">
 			<i class="ti ti-plus me-2"></i>
 			<span class="d-none d-sm-inline">{{ 'invite'|trans }}</span>
 			<span class="d-inline d-sm-none">{{ 'invite'|trans }}</span>
@@ -20,150 +20,70 @@
 {% endblock %}
 
 {% block page_content %}
-	{# Invitation cards - Mobile-first design, full-width #}
 	<div class="row">
 		{% for invitation in invitations %}
-			<div class="col-12 mb-3">
-				<a href="{{ path('club_invitation_show', {id: invitation.id}) }}" class="text-decoration-none">
-					<div class="card card-link" style="cursor: pointer;">
-						<div class="card-body">
-							<div
-								class="d-flex align-items-start mb-3">
-								{# Mail Avatar - similar to task list's equipment avatar #}
-								<span class="avatar avatar-lg me-3 bg-yellow-lt">
-									<i class="ti ti-mail text-yellow" style="font-size: 1.5rem;"></i>
-								</span>
+			<div class="col-12 col-lg-6 mb-3 d-flex">
+				<a href="{{ path('club_invitation_show', {id: invitation.id}) }}"
+				   class="tarmac-card w-100"
+				   style="display:flex;flex-direction:column;">
 
-								{# Main content #}
-								<div
-									class="flex-grow-1">
-									{# Name/Email (main title) #}
-									<h3 class="card-title mb-1">
-										{% if invitation.fullname %}
-											{{ invitation.fullname }}
-										{% else %}
-											{{ invitation.email }}
-										{% endif %}
-									</h3>
-
-									{# Email (subtitle if name exists) #}
-									{% if invitation.fullname %}
-										<div class="text-secondary mb-2">
-											{{ invitation.email }}
-										</div>
-									{% endif %}
-
-									{# Dates #}
-									<div class="text-secondary small">
-										<i class="ti ti-calendar me-1"></i>
-										{{ 'sentOn'|trans }}
-										{{ invitation.createdAt|date('d/m/Y') }}
-										<span class="mx-2">•</span>
-										<i class="ti ti-clock me-1"></i>
-										{{ 'expiresOn'|trans }}
-										{{ invitation.expiresAt|date('d/m/Y') }}
-									</div>
+					<div class="tarmac-card__head">
+						<span class="tarmac-eqv" style="background:var(--td-glow-soft);color:var(--td-warning);">
+							<i class="ti ti-mail"></i>
+						</span>
+						<div class="flex-fill" style="min-width:0;">
+							<h3 class="tarmac-card__title" style="overflow:hidden;text-overflow:ellipsis;">
+								{{ invitation.fullname ?: invitation.email }}
+							</h3>
+							{% if invitation.fullname %}
+								<div class="tarmac-card__meta" style="overflow:hidden;text-overflow:ellipsis;">
+									<i class="ti ti-at"></i>{{ invitation.email }}
 								</div>
-
-								{# Badges on desktop - right side #}
-								<div
-									class="ms-3 d-none d-md-flex gap-2 align-items-start">
-									{# Roles badges #}
-									{% if invitation.isManager %}
-										<span class="badge bg-blue text-white">
-											<i class="ti ti-shield me-1"></i>
-											{{ 'manager'|trans }}
-										</span>
-									{% endif %}
-									{% if invitation.isInspector %}
-										<span class="badge bg-green text-white">
-											<i class="ti ti-eye-check me-1"></i>
-											{{ 'inspector'|trans }}
-										</span>
-									{% endif %}
-									{% if invitation.isPilote %}
-										<span class="badge bg-purple text-white">
-											<i class="ti ti-plane me-1"></i>
-											{{ 'pilot'|trans }}
-										</span>
-									{% endif %}
-									{% if not invitation.isManager and not invitation.isInspector and not invitation.isPilote %}
-										<span class="badge bg-secondary text-white">
-											<i class="ti ti-user me-1"></i>
-											{{ 'member'|trans }}
-										</span>
-									{% endif %}
-
-									{# Locked status #}
-									{% if invitation.isLocked %}
-										<span class="badge bg-info text-white">
-											<i class="ti ti-lock me-1"></i>
-											{{ 'existingUser'|trans }}
-										</span>
-									{% endif %}
-								</div>
-							</div>
-
-							{# Badges on mobile - full width under avatar #}
-							<div
-								class="d-flex d-md-none gap-2 flex-wrap">
-								{# Roles badges #}
-								{% if invitation.isManager %}
-									<span class="badge bg-blue text-white">
-										<i class="ti ti-shield me-1"></i>
-										{{ 'manager'|trans }}
-									</span>
-								{% endif %}
-								{% if invitation.isInspector %}
-									<span class="badge bg-green text-white">
-										<i class="ti ti-eye-check me-1"></i>
-										{{ 'inspector'|trans }}
-									</span>
-								{% endif %}
-								{% if invitation.isPilote %}
-									<span class="badge bg-purple text-white">
-										<i class="ti ti-plane me-1"></i>
-										{{ 'pilot'|trans }}
-									</span>
-								{% endif %}
-								{% if not invitation.isManager and not invitation.isInspector and not invitation.isPilote %}
-									<span class="badge bg-secondary text-white">
-										<i class="ti ti-user me-1"></i>
-										{{ 'member'|trans }}
-									</span>
-								{% endif %}
-
-								{# Locked status #}
-								{% if invitation.isLocked %}
-									<span class="badge bg-info text-white">
-										<i class="ti ti-lock me-1"></i>
-										{{ 'existingUser'|trans }}
-									</span>
-								{% endif %}
-							</div>
+							{% endif %}
 						</div>
+					</div>
+
+					<div class="tarmac-card__badges" style="margin-top:0.5rem;">
+						{% if invitation.isManager %}
+							<span class="tarmac-badge tarmac-badge--success"><i class="ti ti-shield"></i>{{ 'manager'|trans }}</span>
+						{% endif %}
+						{% if invitation.isInspector %}
+							<span class="tarmac-badge tarmac-badge--glow"><i class="ti ti-eye-check"></i>{{ 'inspector'|trans }}</span>
+						{% endif %}
+						{% if invitation.isPilote %}
+							<span class="tarmac-badge tarmac-badge--info"><i class="ti ti-plane"></i>{{ 'pilot'|trans }}</span>
+						{% endif %}
+						{% if not invitation.isManager and not invitation.isInspector and not invitation.isPilote %}
+							<span class="tarmac-badge tarmac-badge--secondary"><i class="ti ti-user"></i>{{ 'member'|trans }}</span>
+						{% endif %}
+						{% if invitation.isLocked %}
+							<span class="tarmac-badge tarmac-badge--azure"><i class="ti ti-lock"></i>{{ 'existingUser'|trans }}</span>
+						{% endif %}
+					</div>
+
+					<div class="tarmac-card__footer d-flex align-items-center justify-content-between gap-2" style="margin-top:auto;">
+						<span class="tarmac-card__meta">
+							<i class="ti ti-calendar"></i>{{ 'sentOn'|trans }} {{ invitation.createdAt|date('d/m/Y') }}
+						</span>
+						<span class="tarmac-card__meta">
+							<i class="ti ti-clock"></i>{{ 'expiresOn'|trans }} {{ invitation.expiresAt|date('d/m/Y') }}
+						</span>
 					</div>
 				</a>
 			</div>
 		{% else %}
 			<div class="col-12">
-				<div class="card">
-					<div class="card-body text-center text-secondary">
-						<i class="ti ti-mail-opened" style="font-size: 3rem; opacity: 0.5;"></i>
-						<p class="mt-3 mb-0">
-							<em>{{ 'noPendingInvitations'|trans }}</em>
-						</p>
-						<a href="{{ path('club_invitation_create') }}" class="btn btn-primary mt-3" style="min-height: 44px;">
-							<i class="ti ti-plus me-2"></i>
-							{{ 'inviteNewMember'|trans }}
-						</a>
-					</div>
+				<div class="tarmac-panel" style="text-align:center;padding:2.5rem 1.5rem;">
+					<div style="font-size:2.5rem;color:var(--td-ink-3);margin-bottom:0.75rem;"><i class="ti ti-mail-opened"></i></div>
+					<p class="text-secondary" style="margin:0 0 1rem;"><em>{{ 'noPendingInvitations'|trans }}</em></p>
+					<a href="{{ path('club_invitation_create') }}" class="btn btn-primary">
+						<i class="ti ti-plus me-2"></i>{{ 'inviteNewMember'|trans }}
+					</a>
 				</div>
 			</div>
 		{% endfor %}
 	</div>
 
-	{# Pagination #}
 	<div class="d-flex justify-content-center mt-4">
 		{{ pagination(invitations) }}
 	</div>

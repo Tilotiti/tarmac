@@ -1,16 +1,16 @@
 {#
   Difficulty Badge Component
-  
-  Usage:
+
+  Usage :
     {% include 'component/difficultyBadge.html.twig' with {'difficulty': task.difficulty} %}
     {% include 'component/difficultyBadge.html.twig' with {'difficulty': 2, 'size': 'sm'} %}
     {% include 'component/difficultyBadge.html.twig' with {'label': task.difficultyLabel, 'color': task.difficultyColor} %}
-  
-  Parameters:
-  - difficulty: integer (1-3) representing the difficulty level (for single difficulty)
-  - label: string (optional) - pre-formatted label (e.g., 'debutant - experimente' for range)
-  - color: string (optional) - color name (e.g., 'success', 'warning', 'danger')
-  - size: string (optional) - 'sm' for small badge
+
+  Paramètres :
+  - difficulty: integer (1-3) — niveau de difficulté pour une sous-tâche unique
+  - label: string (optionnel) — label déjà formaté (ex. 'debutant - experimente' pour une plage)
+  - color: string (optionnel) — nom de couleur (success / warning / danger), utilisé avec `label`
+  - size: string (optionnel) — 'sm' pour un badge plus petit
 #}
 {% set difficultyMap = {
   1: 'debutant',
@@ -25,10 +25,9 @@
 } %}
 
 {% if label is defined %}
-	{# Use provided label and color (for task with range) #}
+	{# Label fourni + color (cas Task avec range) #}
 	{% set badgeLabel = label %}
 	{% set badgeColor = color|default('warning') %}
-	{# If label contains a range (e.g., 'debutant - experimente'), translate each part separately #}
 	{% if ' - ' in badgeLabel %}
 		{% set labelParts = badgeLabel|split(' - ') %}
 		{% set badgeLabel = (labelParts[0]|trans) ~ ' - ' ~ (labelParts[1]|trans) %}
@@ -36,12 +35,12 @@
 		{% set badgeLabel = badgeLabel|trans %}
 	{% endif %}
 {% else %}
-	{# Use integer difficulty (for single subtask) #}
+	{# Difficulté entière (cas SubTask) #}
 	{% set badgeLabel = difficultyMap[difficulty]|trans %}
 	{% set badgeColor = difficultyColorMap[difficulty] %}
 {% endif %}
 
-<span class="badge bg-{{ badgeColor }}-lt text-white{% if size is defined %} badge-{{ size }}{% endif %}">
-	<i class="ti ti-gauge me-1"></i>
+<span class="tarmac-badge tarmac-badge--{{ badgeColor }}{% if size is defined and size == 'sm' %} tarmac-badge--sm{% endif %}">
+	<i class="ti ti-gauge"></i>
 	{{ badgeLabel }}
 </span>

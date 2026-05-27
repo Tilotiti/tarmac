@@ -1,89 +1,81 @@
 {% extends 'club/base.html.twig' %}
 
 {% block page_title %}
-	{{ 'edit'|trans }}
-	-
-	{{ task.equipment.name }}
-	-
 	{{ task.title }}
 {% endblock %}
 
+{% block page_pretitle %}
+	<a href="{{ path('club_task_show', {id: task.id}) }}" class="tarmac-page-eyebrow">
+		<span class="tarmac-eqv tarmac-eqv--{{ task.equipment.type.color }}">
+			<i class="ti {{ task.equipment.type.icon }}"></i>
+		</span>
+		{{ task.equipment.name }} · {{ task.title }}
+	</a>
+{% endblock %}
+
 {% block page_content %}
-	<div class="row">
-		<div class="col-12">
-			{% if task.planApplication %}
-				{# Plan Information Card #}
-				<div class="card mb-3">
-					<div class="card-header">
-						<h3 class="card-title">
-							<i class="ti ti-clipboard-list me-2"></i>
-							{{ 'maintenancePlan'|trans }}
-						</h3>
-					</div>
-					<div class="card-body">
-						<div class="row">
-							<div class="col-12 col-md-6 mb-2">
-								<div class="mb-3">
-									<label class="form-label">{{ task.planApplication.plan.name }}</label>
-									{% if task.planApplication.plan.description %}
-										<div class="text-muted small mt-1">{{ task.planApplication.plan.description }}</div>
-									{% endif %}
-								</div>
-							</div>
-							<div class="col-12 col-md-6 mb-2">
-								<div class="mb-3">
-									<label class="form-label">{{ 'appliedOn'|trans }}</label>
-									<div>{{ task.planApplication.appliedAt|date('d/m/Y') }}</div>
-								</div>
-								{% if task.planApplication.dueAt %}
-									<div class="mb-3">
-										<label class="form-label">{{ 'planDueDate'|trans }}</label>
-										<div>{{ task.planApplication.dueAt|date('d/m/Y') }}</div>
-									</div>
-								{% endif %}
-							</div>
-						</div>
-					</div>
+	<div class="row g-3">
+		<div class="col-12 col-lg-8">
+			<div class="tarmac-panel">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-edit"></i>{{ 'edit'|trans }} {{ 'task'|trans|lower }}
 				</div>
-			{% endif %}
 
-			{# Task Edit Form Card #}
-			<div class="card">
-				<div class="card-header">
-					<h3 class="card-title">{{ 'edit'|trans }}
-						{{ 'task'|trans|lower }}</h3>
+				<div class="mb-3">
+					<label class="form-label">{{ 'equipment'|trans }}</label>
+					<div class="form-control-plaintext">{{ task.equipment.name }}</div>
+					<small class="form-text">{{ (task.equipment.type.value ~ 'Type')|trans }}</small>
 				</div>
-				<div
-					class="card-body">
-					{# Display equipment info (read-only) #}
-					<div class="mb-3">
-						<label class="form-label">{{ 'equipment'|trans }}</label>
-						<div class="form-control-plaintext">{{ task.equipment.name }}</div>
-						<small class="text-muted">{{ (task.equipment.type.value ~ 'Type')|trans }}</small>
-					</div>
 
-					{{ form_start(form) }}
-					{{ form_row(form.title) }}
-					{{ form_row(form.description) }}
-					{% set taskDocumentationDeletePath = task.documentation ? path('club_task_delete_documentation', {id: task.id, _token: csrf_token('del_task_doc' ~ task.id)}) : null %}
-					{% include 'component/documentationUploader.html.twig' with {
-						field: form.documentation,
-						existingUrl: task.documentation,
-						deletePath: taskDocumentationDeletePath,
-						deleteConfirmKey: 'confirmDeleteTaskDocumentation',
-						lightboxGroup: 'task-documentation-' ~ task.id
-					} %}
-					{{ form_row(form.dueAt) }}
+				{{ form_start(form) }}
+				{{ form_row(form.title) }}
+				{{ form_row(form.description) }}
+				{% set taskDocumentationDeletePath = task.documentation ? path('club_task_delete_documentation', {id: task.id, _token: csrf_token('del_task_doc' ~ task.id)}) : null %}
+				{% include 'component/documentationUploader.html.twig' with {
+					field: form.documentation,
+					existingUrl: task.documentation,
+					deletePath: taskDocumentationDeletePath,
+					deleteConfirmKey: 'confirmDeleteTaskDocumentation',
+					lightboxGroup: 'task-documentation-' ~ task.id
+				} %}
+				{{ form_row(form.dueAt) }}
 
-					<div class="form-footer">
-						<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">
-							<i class="ti ti-check me-2"></i>
-							{{ 'save'|trans }}
-						</button>
-					</div>
-					{{ form_end(form) }}
+				<div class="d-flex justify-content-end gap-2 mt-3">
+					<a href="{{ path('club_task_show', {id: task.id}) }}" class="btn btn-outline-secondary">{{ 'cancel'|trans }}</a>
+					<button type="submit" class="btn btn-primary">
+						<i class="ti ti-check me-2"></i>{{ 'save'|trans }}
+					</button>
 				</div>
+				{{ form_end(form) }}
 			</div>
 		</div>
+
+		{% if task.planApplication %}
+			<div class="col-12 col-lg-4">
+				<div class="tarmac-panel">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-clipboard-list"></i>{{ 'maintenancePlan'|trans }}
+					</div>
+					<div style="font-weight:700;color:var(--td-deep);margin-bottom:0.3rem;">
+						{{ task.planApplication.plan.name }}
+					</div>
+					{% if task.planApplication.plan.description %}
+						<div class="text-secondary" style="font-size:0.85rem;margin-bottom:0.6rem;">{{ task.planApplication.plan.description }}</div>
+					{% endif %}
+					<ul class="tarmac-meta-list">
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'appliedOn'|trans }}</span>
+							<span class="tarmac-meta-list__value">{{ task.planApplication.appliedAt|date('d/m/Y') }}</span>
+						</li>
+						{% if task.planApplication.dueAt %}
+							<li>
+								<span class="tarmac-meta-list__label">{{ 'planDueDate'|trans }}</span>
+								<span class="tarmac-meta-list__value">{{ task.planApplication.dueAt|date('d/m/Y') }}</span>
+							</li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+		{% endif %}
 	</div>
 {% endblock %}

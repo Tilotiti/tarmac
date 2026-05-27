@@ -278,5 +278,17 @@ class TaskRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function countOpenByClub(\App\Entity\Club $club): int
+    {
+        return (int) $this->createQueryBuilder('task')
+            ->select('COUNT(task.id)')
+            ->where('task.club = :club')
+            ->andWhere('task.status = :open')
+            ->setParameter('club', $club)
+            ->setParameter('open', 'open')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
 

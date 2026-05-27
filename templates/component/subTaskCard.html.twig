@@ -1,120 +1,100 @@
 {#
-    SubTask Card Component
+    SubTask Card Component — charte Tarmac (cf. /design-lab)
 
-    Parameters:
-    - subTask: The SubTask entity to display
+    Paramètres :
+    - subTask: l'entité SubTask à afficher
 #}
 {% set task = subTask.task %}
-{% set statusColor = subTask.isWaitingForApproval ? 'warning' : (subTask.status == 'closed' ? 'success' : (subTask.status == 'cancelled' ? 'danger' : 'info')) %}
-<div class="col-12 mb-3">
-	<a href="{{ path('club_subtask_show', {taskId: task.id, id: subTask.id}) }}" class="text-decoration-none">
-		<div class="card card-link" style="cursor: pointer;" title="{{ subTask.status|trans }}" role="article" aria-label="{{ subTask.title }} - {{ subTask.status|trans }}">
-			<div class="card-status-start bg-{{ statusColor }}"></div>
-			<div class="card-body">
-				<div
-					class="d-flex align-items-start mb-3">
-				{# Equipment Avatar #}
-				<span class="avatar avatar-lg me-3 bg-{{ task.equipment.type.color }}-lt">
-					<i class="ti {{ task.equipment.type.icon }} text-{{ task.equipment.type.color }}" style="font-size: 1.5rem;"></i>
-				</span>
+{% set isCancelled = subTask.status == 'cancelled' %}
 
-					{# Main content #}
-					<div
-						class="flex-grow-1">
-						{# Equipment + Task name (main title) #}
-						<h3 class="card-title mb-1">
-							{{ task.equipment.name }}
-							-
-							{{ task.title }}
-						</h3>
+<div class="col-12 col-lg-6 mb-3 d-flex">
+	<a href="{{ path('club_subtask_show', {taskId: task.id, id: subTask.id}) }}"
+	   class="tarmac-card w-100{% if isCancelled %} tarmac-card--dimmed{% endif %}"
+	   role="article"
+	   aria-label="{{ subTask.title }} - {{ subTask.status|trans }}">
 
-						{# SubTask name (subtitle) #}
-						<div class="text-secondary mb-2">
-							{{ subTask.title }}
-						</div>
+		<div class="tarmac-card__head">
+			<span class="tarmac-eqv tarmac-eqv--{{ task.equipment.type.color }}">
+				<i class="ti {{ task.equipment.type.icon }}"></i>
+			</span>
 
-						{# Due date #}
-						<div class="text-secondary small">
-							{% if task.dueAt %}
-								<i class="ti ti-calendar me-1"></i>
-								{{ task.dueAt|date('d/m/Y') }}
-							{% endif %}
-						</div>
+			<div class="flex-fill">
+				<div class="tarmac-card__eyebrow">{{ task.equipment.name }} · {{ task.title }}</div>
+				<h3 class="tarmac-card__title">{{ subTask.title }}</h3>
+				{% if task.dueAt %}
+					<div class="tarmac-card__meta">
+						<i class="ti ti-calendar"></i>
+						{{ task.dueAt|date('d/m/Y') }}
 					</div>
+				{% endif %}
 
-					{# Badges on desktop - right side (status shown via card border) #}
-					<div
-						class="ms-3 d-none d-md-flex gap-2 align-items-start">
-						{% if subTask.status == 'open' and subTask.contributions|length > 0 %}
-							<span class="badge bg-azure-lt text-white">
-								<i class="ti ti-clock-play me-1"></i>
-								{{ 'started'|trans }}
-							</span>
-						{% endif %}
-						{% if subTask.isPriority %}
-							<span class="badge bg-red-lt text-white">
-								<i class="ti ti-flag me-1"></i>
-								{{ 'priority'|trans }}
-							</span>
-						{% endif %}
-
-						{% include 'component/difficultyBadge.html.twig' with {'difficulty': subTask.difficulty} %}
-
-						{% if subTask.requiresInspection %}
-							<span class="badge bg-warning-lt text-white">
-								<i class="ti ti-shield-check me-1"></i>
-								{{ 'requiresInspection'|trans }}
-							</span>
-						{% endif %}
-						{% for spec in subTask.specialisations %}
-							<span class="badge bg-secondary-lt text-dark" title="{{ spec.description|default('')|e('html_attr') }}">
-								<i class="ti ti-tag me-1"></i>
-								{{ spec.name }}
-							</span>
-						{% endfor %}
-					</div>
-				</div>
-
-				{# Badges on mobile (status shown via card border) #}
-				<div
-					class="d-flex d-md-none gap-2 flex-wrap mb-3">
-					{% if subTask.status == 'open' and subTask.contributions|length > 0 %}
-						<span class="badge bg-azure text-white">
-							<i class="ti ti-clock-play me-1"></i>
+				<div class="tarmac-card__badges">
+					{# Statut explicite — premier badge #}
+					{% if subTask.isWaitingForApproval %}
+						<span class="tarmac-badge tarmac-badge--status-inspection">
+							<i class="ti ti-hourglass"></i>
+							{{ 'waitingForApproval'|trans }}
+						</span>
+					{% elseif subTask.status == 'closed' %}
+						<span class="tarmac-badge tarmac-badge--status-closed">
+							<i class="ti ti-circle-check"></i>
+							{{ subTask.status|trans }}
+						</span>
+					{% elseif subTask.status == 'cancelled' %}
+						<span class="tarmac-badge tarmac-badge--status-cancelled">
+							<i class="ti ti-x"></i>
+							{{ subTask.status|trans }}
+						</span>
+					{% elseif subTask.contributions|length > 0 %}
+						<span class="tarmac-badge tarmac-badge--started">
+							<i class="ti ti-clock-play"></i>
 							{{ 'started'|trans }}
 						</span>
+					{% else %}
+						<span class="tarmac-badge tarmac-badge--status-open">
+							<i class="ti ti-circle"></i>
+							{{ subTask.status|trans }}
+						</span>
 					{% endif %}
+
 					{% if subTask.isPriority %}
-						<span class="badge bg-red text-white">
-							<i class="ti ti-flag me-1"></i>
+						<span class="tarmac-badge tarmac-badge--priority">
+							<i class="ti ti-flag"></i>
 							{{ 'priority'|trans }}
 						</span>
 					{% endif %}
 
 					{% include 'component/difficultyBadge.html.twig' with {'difficulty': subTask.difficulty} %}
 
-					{# Validation badge #}
-					{% if subTask.requiresInspection %}
-						<span class="badge bg-warning-lt text-white">
-							<i class="ti ti-shield-check me-1"></i>
+					{# Qualif. requise — uniquement si encore en open (sinon le statut le porte déjà) #}
+					{% if subTask.requiresInspection and subTask.status == 'open' and not subTask.isWaitingForApproval %}
+						<span class="tarmac-badge tarmac-badge--glow">
+							<i class="ti ti-shield-check"></i>
 							{{ 'requiresInspection'|trans }}
 						</span>
 					{% endif %}
+
 					{% for spec in subTask.specialisations %}
-						<span class="badge bg-secondary text-white" title="{{ spec.description|default('')|e('html_attr') }}">
-							<i class="ti ti-tag me-1"></i>
+						<span class="tarmac-badge tarmac-badge--specialisation" title="{{ spec.description|default('')|e('html_attr') }}">
+							<i class="ti ti-tag"></i>
 							{{ spec.name }}
 						</span>
 					{% endfor %}
 				</div>
-
-				{% set subContributors = subTask.contributors %}
-				{% if subContributors|length > 0 %}
-					<div class="d-flex justify-content-end">
-						{% include 'component/contributorAvatars.html.twig' with {'contributors': subContributors} only %}
-					</div>
-				{% endif %}
 			</div>
 		</div>
+
+		{# Footer — contributions + avatars (séparateur en pointillés) #}
+		{% if subTask.contributions|length > 0 %}
+			<div class="tarmac-card__footer d-flex align-items-center justify-content-between gap-2">
+				<span class="tarmac-card__meta">
+					<i class="ti ti-clock-play"></i>
+					{{ subTask.contributions|length }}
+					{{ (subTask.contributions|length > 1 ? 'contributions' : 'contribution')|trans|lower }}
+				</span>
+				{% include 'component/contributorAvatars.html.twig' with {'contributors': subTask.contributors} only %}
+			</div>
+		{% endif %}
+
 	</a>
 </div>

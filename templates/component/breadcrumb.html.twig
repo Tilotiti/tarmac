@@ -1,12 +1,12 @@
 {% if items|length >= 3 %}
-	<ol class="breadcrumb text-muted" aria-label="breadcrumbs">
+	<ol class="tarmac-breadcrumb" aria-label="breadcrumbs">
 		{% for item in items %}
-			<li class="breadcrumb-item {% if loop.last %}active{% endif %}">
+			<li{% if loop.last %} class="is-current"{% endif %}>
 				{% if item.translatedLabel == 'home' %}
-					<a href="{{ item.url }}">
+					<a href="{{ item.url }}" aria-label="{{ 'home'|trans }}">
 						<i class="ti ti-home"></i>
 					</a>
-				{% elseif item.url %}
+				{% elseif item.url and not loop.last %}
 					<a href="{{ item.url }}">{{ item.translatedLabel }}</a>
 				{% else %}
 					{{ item.translatedLabel }}

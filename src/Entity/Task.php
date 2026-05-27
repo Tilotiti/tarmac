@@ -528,6 +528,34 @@ class Task
         return array_values($contributors);
     }
 
+    /**
+     * Contributeurs avec leur temps total agrégé sur toutes les sous-tâches
+     * de cette tâche. Trié par temps décroissant.
+     *
+     * @return array<int, array{user: User, timeSpent: float}>
+     */
+    public function getContributorsWithTime(): array
+    {
+        $stats = [];
+        foreach ($this->subTasks as $subTask) {
+            foreach ($subTask->getContributions() as $contribution) {
+                $user = $contribution->getMembership()?->getUser();
+                if ($user === null) {
+                    continue;
+                }
+                $id = $user->getId();
+                if (!isset($stats[$id])) {
+                    $stats[$id] = ['user' => $user, 'timeSpent' => 0.0];
+                }
+                $stats[$id]['timeSpent'] += (float) $contribution->getTimeSpent();
+            }
+        }
+
+        usort($stats, fn($a, $b) => $b['timeSpent'] <=> $a['timeSpent']);
+
+        return $stats;
+    }
+
     public function isPriority(): bool
     {
         return $this->priority;
