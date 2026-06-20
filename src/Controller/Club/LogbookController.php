@@ -50,8 +50,11 @@ class LogbookController extends ExtendedController
             'club' => $club,
         ]);
 
+        // Only admins reach this point without a membership (the VIEW voter
+        // grants access to members and admins). An admin has no personal
+        // logbook, so we send them to the members list to pick one.
         if (!$membership) {
-            throw $this->createAccessDeniedException();
+            return $this->redirectToRoute('club_members');
         }
 
         return $this->redirectToRoute('club_member_logbook', [
@@ -87,7 +90,7 @@ class LogbookController extends ExtendedController
         $isOwnLogbook = $membership->getUser() === $user;
         $isManagerOrInspector = $currentMembership && ($currentMembership->isManager() || $currentMembership->isInspector());
 
-        if (!$isOwnLogbook && !$isManagerOrInspector) {
+        if (!$isOwnLogbook && !$isManagerOrInspector && !$user->isAdmin()) {
             throw $this->createAccessDeniedException();
         }
 
@@ -145,7 +148,7 @@ class LogbookController extends ExtendedController
         $isOwnLogbook = $membership->getUser() === $user;
         $isManagerOrInspector = $currentMembership && ($currentMembership->isManager() || $currentMembership->isInspector());
 
-        if (!$isOwnLogbook && !$isManagerOrInspector) {
+        if (!$isOwnLogbook && !$isManagerOrInspector && !$user->isAdmin()) {
             throw $this->createAccessDeniedException();
         }
 
