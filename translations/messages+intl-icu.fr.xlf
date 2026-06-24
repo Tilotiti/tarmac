@@ -491,9 +491,29 @@
         <source>confirmCancelInvitation</source>
         <target>Êtes-vous sûr de vouloir annuler cette invitation ?</target>
       </trans-unit>
+      <trans-unit id="158k1" resname="cancelInvitation">
+        <source>cancelInvitation</source>
+        <target>Annuler l'invitation</target>
+      </trans-unit>
       <trans-unit id="158l" resname="invitationDetails">
         <source>invitationDetails</source>
         <target>Détails de l'invitation</target>
+      </trans-unit>
+      <trans-unit id="158l1" resname="invitationLink">
+        <source>invitationLink</source>
+        <target>Lien d'invitation</target>
+      </trans-unit>
+      <trans-unit id="158l2" resname="invitationLinkHelp">
+        <source>invitationLinkHelp</source>
+        <target>Si le membre ne reçoit pas l'e-mail (même dans ses spams), copiez ce lien et transmettez-le-lui directement.</target>
+      </trans-unit>
+      <trans-unit id="158l3" resname="copy">
+        <source>copy</source>
+        <target>Copier</target>
+      </trans-unit>
+      <trans-unit id="158l4" resname="copied">
+        <source>copied</source>
+        <target>Copié</target>
       </trans-unit>
       <trans-unit id="158m" resname="fullName">
         <source>fullName</source>

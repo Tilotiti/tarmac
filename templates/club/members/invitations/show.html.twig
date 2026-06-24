@@ -36,7 +36,7 @@
 			<div class="dropdown-menu dropdown-menu-end" data-dropdown-target="menu">
 				<form method="post" action="{{ path('club_invitation_delete', {id: invitation.id}) }}" onsubmit="return confirm('{{ 'confirmCancelInvitation'|trans }}');">
 					<button type="submit" class="dropdown-item text-danger">
-						<i class="ti ti-trash me-2"></i>{{ 'cancelInvitation'|trans|default('Annuler l\'invitation') }}
+						<i class="ti ti-trash me-2"></i>{{ 'cancelInvitation'|trans }}
 					</button>
 				</form>
 			</div>
@@ -75,6 +75,19 @@
 						<span class="tarmac-meta-list__value">{{ invitation.expiresAt|date('d/m/Y H:i') }}</span>
 					</li>
 				</ul>
+			</div>
+
+			<div class="tarmac-panel mb-3">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-link"></i>{{ 'invitationLink'|trans }}
+				</div>
+				<p class="text-secondary small" style="margin:0 0 0.75rem;">{{ 'invitationLinkHelp'|trans }}</p>
+				<div class="input-group">
+					<input type="text" class="form-control font-monospace" value="{{ invitationUrl }}" readonly aria-label="{{ 'invitationLink'|trans }}" onclick="this.select();">
+					<button type="button" class="btn btn-primary" style="min-height:44px;" onclick="navigator.clipboard.writeText(this.previousElementSibling.value); this.innerHTML = '<i class=\'ti ti-check me-1\'></i>{{ 'copied'|trans }}';">
+						<i class="ti ti-copy me-1"></i>{{ 'copy'|trans }}
+					</button>
+				</div>
 			</div>
 
 			{% if invitation.isLocked %}

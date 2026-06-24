@@ -18,6 +18,7 @@ use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/invitations', host: '{subdomain}.%domain%', requirements: ['subdomain' => '(?!www|app).*'])]
@@ -166,11 +167,16 @@ class InvitationController extends ExtendedController
             $openModal = true;
         }
 
+        $invitationUrl = $this->generateUrl('public_invitation_accept', [
+            'token' => $invitation->getToken(),
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
         return $this->render('club/members/invitations/show.html.twig', [
             'club' => $club,
             'invitation' => $invitation,
             'form' => $form,
             'openModal' => $openModal,
+            'invitationUrl' => $invitationUrl,
         ]);
     }
 
