@@ -46,31 +46,29 @@ class PlanApplicationController extends ExtendedController
     {
         $club = $this->clubResolver->resolve();
 
-        // Handle filters
-        $filterForm = $this->createFilter(PlanApplicationFilterType::class, null, [
+        // Handle filters with default status 'active' (hide cancelled applications)
+        $filterForm = $this->createFilter(PlanApplicationFilterType::class, ['cancelled' => '0'], [
             'club' => $club,
         ]);
         $filterForm->handleRequest($request);
 
-        // Build query with filters
+        // Build query with filters (getData() falls back to defaults when the form is not submitted)
         $qb = $this->applicationRepository->queryAll();
-        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
-            $filters = $filterForm->getData();
-            if (!empty($filters['plan'])) {
-                $qb = $this->applicationRepository->filterByPlan($qb, $filters['plan']);
-            }
-            if (!empty($filters['equipment'])) {
-                $qb = $this->applicationRepository->filterByEquipment($qb, $filters['equipment']);
-            }
-            if (!empty($filters['equipmentType'])) {
-                $qb = $this->applicationRepository->filterByEquipmentType($qb, $filters['equipmentType']);
-            }
-            if (isset($filters['cancelled']) && $filters['cancelled'] !== '') {
-                $qb = $this->applicationRepository->filterByCancelled($qb, $filters['cancelled'] === '1');
-            }
-            if (!empty($filters['dueDate']) && $filters['dueDate'] !== 'all') {
-                $qb = $this->applicationRepository->filterByDueDate($qb, $filters['dueDate']);
-            }
+        $filters = $filterForm->getData() ?? [];
+        if (!empty($filters['plan'])) {
+            $qb = $this->applicationRepository->filterByPlan($qb, $filters['plan']);
+        }
+        if (!empty($filters['equipment'])) {
+            $qb = $this->applicationRepository->filterByEquipment($qb, $filters['equipment']);
+        }
+        if (!empty($filters['equipmentType'])) {
+            $qb = $this->applicationRepository->filterByEquipmentType($qb, $filters['equipmentType']);
+        }
+        if (isset($filters['cancelled']) && $filters['cancelled'] !== '') {
+            $qb = $this->applicationRepository->filterByCancelled($qb, $filters['cancelled'] === '1');
+        }
+        if (!empty($filters['dueDate']) && $filters['dueDate'] !== 'all') {
+            $qb = $this->applicationRepository->filterByDueDate($qb, $filters['dueDate']);
         }
 
         $qb = $this->applicationRepository->orderByDueDate($qb, 'ASC');
@@ -134,9 +132,12 @@ class PlanApplicationController extends ExtendedController
             $data = $form->getData();
             $this->taskStatusService->handleCancelApplication($application, $this->getUser(), $data['message'] ?? null);
             $this->addFlash('success', 'planApplicationCancelled');
+
+            return $this->redirectToRoute('club_plan_applications');
         }
 
-        return $this->redirectToRoute('club_plan_applications');
+        $this->addFlash('error', 'invalidRequest');
+        return $this->redirectToRoute('club_plan_application_show', ['id' => $application->getId()]);
     }
 
     #[Route('/{id}/print', name: 'club_plan_application_print', requirements: ['id' => '\d+'])]

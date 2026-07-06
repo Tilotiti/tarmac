@@ -27,11 +27,9 @@
 					<i class="ti ti-dots-vertical"></i>
 				</button>
 				<div class="dropdown-menu dropdown-menu-end" data-dropdown-target="menu">
-					<form method="post" action="{{ path('club_plan_application_cancel', {id: application.id}) }}" style="display: inline;" data-controller="confirm" data-confirm-title-value="{{ 'confirmCancel'|trans }}" data-confirm-yes-value="{{ 'confirm'|trans }}" data-confirm-cancel-value="{{ 'cancel'|trans }}">
-						<button type="submit" class="dropdown-item text-danger" data-confirm="{{ 'confirmCancelApplication'|trans }}">
-							<i class="ti ti-x me-2"></i>{{ 'cancelApplication'|trans }}
-						</button>
-					</form>
+					<button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#cancelApplicationModal">
+						<i class="ti ti-x me-2"></i>{{ 'cancelApplication'|trans }}
+					</button>
 				</div>
 			</div>
 		{% endif %}
@@ -132,4 +130,32 @@
 		</div>
 
 	</div>
+
+	{# Cancel Modal #}
+	{% if is_granted('MANAGE', club) and not application.isCancelled %}
+		<div class="modal fade" id="cancelApplicationModal" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">{{ 'cancelApplication'|trans }}</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<form method="post" action="{{ path('club_plan_application_cancel', {id: application.id}) }}">
+						<input type="hidden" name="activity_form[_token]" value="{{ csrf_token('activity_form') }}">
+						<div class="modal-body">
+							<p>{{ 'confirmCancelApplication'|trans }}</p>
+							<div class="mb-3">
+								<label class="form-label">{{ 'cancellationReason'|trans }}</label>
+								<textarea name="activity_form[message]" class="form-control" rows="3" placeholder="{{ 'optionalReason'|trans }}"></textarea>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="min-height: 44px;">{{ 'cancel'|trans }}</button>
+							<button type="submit" class="btn btn-danger" style="min-height: 44px;">{{ 'cancelApplication'|trans }}</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	{% endif %}
 {% endblock %}
