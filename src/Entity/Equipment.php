@@ -29,6 +29,9 @@ class Equipment
     #[Assert\NotNull(message: 'typeRequired')]
     private ?EquipmentType $type = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
     #[ORM\ManyToOne(targetEntity: Club::class, inversedBy: 'equipments')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Club $club = null;
@@ -93,6 +96,18 @@ class Equipment
     public function setType(EquipmentType $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

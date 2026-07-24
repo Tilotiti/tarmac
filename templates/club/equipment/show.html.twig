@@ -62,6 +62,17 @@
 		{# ========== Colonne principale ========== #}
 		<div class="col-12 col-lg-8">
 
+			{# Description #}
+			{% if equipment.description %}
+				<div class="tarmac-panel mb-3">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-notes"></i>
+						{{ 'description'|trans }}
+					</div>
+					<p class="text-secondary" style="margin:0;white-space:pre-line;">{{ equipment.description }}</p>
+				</div>
+			{% endif %}
+
 			{# Plan Applications #}
 			{% if applications|length > 0 %}
 				<div class="tarmac-panel mb-3">

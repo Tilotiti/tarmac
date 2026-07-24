@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -34,6 +35,15 @@ class EquipmentType extends AbstractType
                 'attr' => [
                     'placeholder' => 'equipmentNamePlaceholder',
                     'class' => 'form-control',
+                ],
+            ])
+            ->add('description', TextareaType::class, [
+                'label' => 'description',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'equipmentDescriptionPlaceholder',
+                    'class' => 'form-control',
+                    'rows' => 4,
                 ],
             ])
             ->add('type', EnumType::class, [

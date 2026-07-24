@@ -29,6 +29,13 @@
 					</div>
 
 					<div class="mb-3">
+						{{ form_label(form.description) }}
+						{{ form_widget(form.description) }}
+						{{ form_errors(form.description) }}
+						<small class="form-text">{{ 'equipmentDescriptionHint'|trans }}</small>
+					</div>
+
+					<div class="mb-3">
 						{{ form_label(form.type) }}
 						{{ form_widget(form.type) }}
 						{{ form_errors(form.type) }}

@@ -645,6 +645,14 @@
         <source>equipmentResponsibleHint</source>
         <target>Personne responsable de ce matériel (optionnel)</target>
       </trans-unit>
+      <trans-unit id="96e" resname="equipmentDescriptionPlaceholder">
+        <source>equipmentDescriptionPlaceholder</source>
+        <target>Ex. : état général, particularités, consignes d'utilisation…</target>
+      </trans-unit>
+      <trans-unit id="96f" resname="equipmentDescriptionHint">
+        <source>equipmentDescriptionHint</source>
+        <target>Informations générales sur le matériel : état, remarques, consignes (optionnel)</target>
+      </trans-unit>
       <trans-unit id="97" resname="noEquipmentFound">
         <source>noEquipmentFound</source>
         <target>Aucun matériel trouvé</target>
