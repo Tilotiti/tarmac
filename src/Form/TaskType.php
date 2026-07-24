@@ -127,6 +127,7 @@ class TaskType extends AbstractType
                 'label' => false,
                 'prototype' => true,
                 'prototype_name' => '__subtask_name__',
+                'prototype_data' => new \App\Entity\SubTask(),
                 'attr' => [
                     'data-controller' => 'collection-type',
                     'data-collection-type-prototype-name-value' => '__subtask_name__',

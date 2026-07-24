@@ -60,6 +60,7 @@ class PlanTaskType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
                 'label' => false,
+                'prototype_data' => new \App\Entity\PlanSubTask(),
                 'attr' => ['class' => 'subtask-templates-collection'],
             ])
         ;

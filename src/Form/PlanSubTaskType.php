@@ -37,7 +37,6 @@ class PlanSubTaskType extends AbstractType
                     'expert' => 3,
                 ],
                 'required' => true,
-                'data' => 2,
                 'attr' => ['class' => 'form-select'],
             ])
             ->add('requiresInspection', CheckboxType::class, [
