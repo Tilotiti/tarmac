@@ -3508,6 +3508,27 @@
         <source>insertAfterSubTask</source>
         <target>Après : {rank}. {title}</target>
       </trans-unit>
+      <!-- Clés manquantes repérées via debug:translation -->
+      <trans-unit id="1716" resname="no">
+        <source>no</source>
+        <target>Non</target>
+      </trans-unit>
+      <trans-unit id="1717" resname="deleteThisTask">
+        <source>deleteThisTask</source>
+        <target>Supprimer cette tâche</target>
+      </trans-unit>
+      <trans-unit id="1718" resname="planApplications">
+        <source>planApplications</source>
+        <target>Applications de plans</target>
+      </trans-unit>
+      <trans-unit id="1719" resname="noPlanApplicationsFound">
+        <source>noPlanApplicationsFound</source>
+        <target>Aucune application de plan trouvée</target>
+      </trans-unit>
+      <trans-unit id="1720" resname="noTasks">
+        <source>noTasks</source>
+        <target>Aucune tâche</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>
