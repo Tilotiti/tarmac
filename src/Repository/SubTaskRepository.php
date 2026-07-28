@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\SubTask;
 use App\Entity\Task;
-use App\Entity\User;
 use App\Service\ClubResolver;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -68,13 +67,6 @@ class SubTaskRepository extends ServiceEntityRepository
             ->setParameter('maxDifficulty', $max);
     }
 
-    public function filterByClaimedBy(QueryBuilder $qb, User $user): QueryBuilder
-    {
-        return $qb
-            ->andWhere('subTask.claimedBy = :user')
-            ->setParameter('user', $user);
-    }
-
     public function filterByAwaitingInspection(QueryBuilder $qb): QueryBuilder
     {
         return $qb
@@ -85,35 +77,22 @@ class SubTaskRepository extends ServiceEntityRepository
     }
 
     /**
-     * Add plan-aware position ordering to a query builder
-     * This respects planPosition from maintenance plans, falling back to regular position
+     * Ordonne les sous-tâches par leur position au sein de leur tâche.
+     *
+     * `position` est la seule source de vérité de l'ordre : elle est renumérotée
+     * densément par App\Service\Maintenance\SubTaskOrderer à chaque création ou
+     * réorganisation. `planPosition` ne conserve que l'origine du plan d'entretien
+     * et n'intervient plus dans le tri.
      */
     public function addPositionOrdering(QueryBuilder $qb, string $direction = 'ASC'): QueryBuilder
     {
         return $qb
-            // Subtasks with planPosition set are ordered by planPosition first
-            // Subtasks without planPosition (NULL) come after
-            ->addOrderBy('CASE WHEN subTask.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
-            ->addOrderBy('subTask.planPosition', $direction)
-            ->addOrderBy('subTask.position', $direction);
+            ->addOrderBy('subTask.position', $direction)
+            ->addOrderBy('subTask.id', $direction);
     }
 
     public function orderByPosition(QueryBuilder $qb): QueryBuilder
     {
-        return $this->addPositionOrdering($qb);
-    }
-
-    /**
-     * @deprecated Use orderByPosition() instead, which now includes plan position ordering
-     */
-    public function orderByPlanPosition(QueryBuilder $qb, string $direction = 'ASC'): QueryBuilder
-    {
-        return $this->addPositionOrdering($qb, $direction);
-    }
-
-    public function orderByDueDate(QueryBuilder $qb, string $direction = 'ASC'): QueryBuilder
-    {
-        $qb->addOrderBy('subTask.dueAt', $direction);
         return $this->addPositionOrdering($qb);
     }
 
