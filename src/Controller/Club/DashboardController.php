@@ -79,9 +79,8 @@ class DashboardController extends ExtendedController
                 ->addOrderBy('task.dueAt', 'ASC')
                 ->addOrderBy('CASE WHEN task.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
                 ->addOrderBy('task.planPosition', 'ASC')
-                ->addOrderBy('CASE WHEN subtask.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
-                ->addOrderBy('subtask.planPosition', 'ASC')
                 ->addOrderBy('subtask.position', 'ASC')
+                ->addOrderBy('subtask.id', 'ASC')
                 ->setMaxResults(5);
             $awaitingInspectionSubTasks = $inspectionQb->getQuery()->getResult();
         }
@@ -189,13 +188,12 @@ class DashboardController extends ExtendedController
             ->setParameter('true', true)
             ->andWhere('subtask.status = :open')
             ->setParameter('open', 'open')
-            // Order by dueAt, then by plan position (task and subtask)
+            // Échéance, puis ordre du plan pour les tâches, puis ordre manuel des sous-tâches
             ->orderBy('task.dueAt', 'ASC')
             ->addOrderBy('CASE WHEN task.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
             ->addOrderBy('task.planPosition', 'ASC')
-            ->addOrderBy('CASE WHEN subtask.planPosition IS NULL THEN 1 ELSE 0 END', 'ASC')
-            ->addOrderBy('subtask.planPosition', 'ASC')
-            ->addOrderBy('subtask.position', 'ASC');
+            ->addOrderBy('subtask.position', 'ASC')
+            ->addOrderBy('subtask.id', 'ASC');
 
         $prioritySubTasks = $prioritySubTasksQb->getQuery()->getResult();
 
