@@ -261,7 +261,7 @@ class PurchaseController extends ExtendedController
         $this->entityManager->persist($activity);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'purchaseCancelled');
+        $this->addFlash('success', 'purchaseRequestCancelled');
 
         return $this->redirectToRoute('club_purchases');
     }
@@ -294,7 +294,7 @@ class PurchaseController extends ExtendedController
         $this->entityManager->persist($activity);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'purchaseApproved');
+        $this->addFlash('success', 'purchaseRequestApproved');
 
         return $this->redirectToRoute('club_purchase_show', ['id' => $purchase->getId()]);
     }

@@ -922,14 +922,6 @@
       </trans-unit>
 
       <!-- Flash Messages: Inspection -->
-      <trans-unit id="133" resname="inspectionApproved">
-        <source>inspectionApproved</source>
-        <target>La tâche critique a été validée.</target>
-      </trans-unit>
-      <trans-unit id="134" resname="inspectionRejected">
-        <source>inspectionRejected</source>
-        <target>La tâche critique n'a pas été approuvée.</target>
-      </trans-unit>
       <trans-unit id="135" resname="rejectionReasonRequired">
         <source>rejectionReasonRequired</source>
         <target>Veuillez indiquer la raison du rejet.</target>
@@ -1492,10 +1484,6 @@
         <source>dueDateHelp</source>
         <target>Date d'échéance du plan (optionnel)</target>
       </trans-unit>
-      <trans-unit id="182" resname="relativeDueDays">
-        <source>relativeDueDays</source>
-        <target>Jours relatifs</target>
-      </trans-unit>
       <trans-unit id="183" resname="relativeDueDaysPlaceholder">
         <source>relativeDueDaysPlaceholder</source>
         <target>Ex. : -7 pour 7 jours avant</target>
@@ -1578,10 +1566,6 @@
         <source>inspectionRejected</source>
         <target>Tâche critique rejetée</target>
       </trans-unit>
-      <trans-unit id="203" resname="active">
-        <source>active</source>
-        <target>Actif</target>
-      </trans-unit>
       <trans-unit id="204" resname="endOfWeek">
         <source>endOfWeek</source>
         <target>Fin de semaine</target>
@@ -1658,20 +1642,12 @@
         <source>viewTask</source>
         <target>Voir la tâche</target>
       </trans-unit>
-      <trans-unit id="222" resname="endOfWeek">
-        <source>endOfWeek</source>
-        <target>Fin de semaine</target>
-      </trans-unit>
       <trans-unit id="223" resname="end_of_week">
         <source>end_of_week</source>
         <target>Fin de semaine</target>
       </trans-unit>
       <trans-unit id="224" resname="end_of_month">
         <source>end_of_month</source>
-        <target>Fin du mois</target>
-      </trans-unit>
-      <trans-unit id="225" resname="endOfMonth">
-        <source>endOfMonth</source>
         <target>Fin du mois</target>
       </trans-unit>
 
@@ -1698,14 +1674,6 @@
       </trans-unit>
 
       <!-- Maintenance Plans -->
-      <trans-unit id="231" resname="plans">
-        <source>plans</source>
-        <target>Plans de maintenance</target>
-      </trans-unit>
-      <trans-unit id="232" resname="newPlan">
-        <source>newPlan</source>
-        <target>Nouveau plan</target>
-      </trans-unit>
       <trans-unit id="233" resname="editPlan">
         <source>editPlan</source>
         <target>Modifier le plan</target>
@@ -1745,14 +1713,6 @@
       <trans-unit id="242" resname="description">
         <source>description</source>
         <target>Description</target>
-      </trans-unit>
-      <trans-unit id="243" resname="difficulty">
-        <source>difficulty</source>
-        <target>Difficulté</target>
-      </trans-unit>
-      <trans-unit id="244" resname="requiresInspection">
-        <source>requiresInspection</source>
-        <target>Requiert une validation</target>
       </trans-unit>
       <trans-unit id="245" resname="gliderType">
         <source>gliderType</source>
@@ -2092,14 +2052,6 @@
         <source>totalTimeSpent</source>
         <target>Temps total passé</target>
       </trans-unit>
-      <trans-unit id="340" resname="subTaskMarkedAsDone">
-        <source>subTaskMarkedAsDone</source>
-        <target>La sous-tâche a été marquée comme terminée</target>
-      </trans-unit>
-      <trans-unit id="341" resname="complete">
-        <source>complete</source>
-        <target>Compléter</target>
-      </trans-unit>
       <trans-unit id="342" resname="completeSubTask">
         <source>completeSubTask</source>
         <target>Compléter la sous-tâche</target>
@@ -2131,10 +2083,6 @@
       <trans-unit id="346a" resname="viewMaintenancePlan">
         <source>viewMaintenancePlan</source>
         <target>Voir le plan d'entretien</target>
-      </trans-unit>
-      <trans-unit id="347" resname="maintenancePlans">
-        <source>maintenancePlans</source>
-        <target>Plans de maintenance</target>
       </trans-unit>
       <trans-unit id="348" resname="applyNewPlan">
         <source>applyNewPlan</source>
@@ -2354,12 +2302,12 @@
         <source>purchaseEdited</source>
         <target>Demande d'achat modifiée</target>
       </trans-unit>
-      <trans-unit id="395" resname="purchaseApproved">
-        <source>purchaseApproved</source>
+      <trans-unit id="395" resname="purchaseRequestApproved">
+        <source>purchaseRequestApproved</source>
         <target>Demande d'achat approuvée</target>
       </trans-unit>
-      <trans-unit id="396" resname="purchaseCancelled">
-        <source>purchaseCancelled</source>
+      <trans-unit id="396" resname="purchaseRequestCancelled">
+        <source>purchaseRequestCancelled</source>
         <target>Demande d'achat annulée</target>
       </trans-unit>
       <trans-unit id="397" resname="noPurchasesFound">
@@ -2457,10 +2405,6 @@
       <trans-unit id="412" resname="reimbursed">
         <source>reimbursed</source>
         <target>Remboursé</target>
-      </trans-unit>
-      <trans-unit id="413" resname="cancelled">
-        <source>cancelled</source>
-        <target>Annulé</target>
       </trans-unit>
       <trans-unit id="414" resname="hasImages">
         <source>hasImages</source>
@@ -2642,10 +2586,6 @@
         <source>contributionsCount</source>
         <target>contributions</target>
       </trans-unit>
-      <trans-unit id="804" resname="totalTime">
-        <source>totalTime</source>
-        <target>Temps total</target>
-      </trans-unit>
       <trans-unit id="805" resname="statisticsBySpecialisation">
         <source>statisticsBySpecialisation</source>
         <target>Statistiques par spécialisation</target>
@@ -2661,14 +2601,6 @@
       <trans-unit id="808" resname="specialisation">
         <source>specialisation</source>
         <target>Spécialisation</target>
-      </trans-unit>
-      <trans-unit id="809" resname="specialisations">
-        <source>specialisations</source>
-        <target>Spécialisations</target>
-      </trans-unit>
-      <trans-unit id="809_timeSpent" resname="timeSpent">
-        <source>timeSpent</source>
-        <target>Temps passé</target>
       </trans-unit>
       <trans-unit id="810" resname="signedBy">
         <source>signedBy</source>
@@ -2689,10 +2621,6 @@
       <trans-unit id="814" resname="noSpecialisation">
         <source>noSpecialisation</source>
         <target>Aucune spécialisation</target>
-      </trans-unit>
-      <trans-unit id="815" resname="hours">
-        <source>hours</source>
-        <target>heures</target>
       </trans-unit>
       <trans-unit id="816" resname="exportPdf">
         <source>exportPdf</source>

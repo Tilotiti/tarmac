@@ -207,9 +207,9 @@ class Activity
                 ActivityType::CREATED => 'purchaseCreated',
                 ActivityType::EDITED => 'purchaseEdited',
                 ActivityType::DONE => $this->isReimbursedActivity() ? 'purchaseReimbursed' : 'purchasePurchased',
-                ActivityType::INSPECTED_APPROVED => 'purchaseApproved',
+                ActivityType::INSPECTED_APPROVED => 'purchaseRequestApproved',
                 ActivityType::CLOSED => 'purchaseDelivered',
-                ActivityType::CANCELLED => 'purchaseCancelled',
+                ActivityType::CANCELLED => 'purchaseRequestCancelled',
                 default => $this->type?->value ?? 'unknown',
             };
         }
