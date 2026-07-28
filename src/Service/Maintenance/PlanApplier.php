@@ -80,9 +80,10 @@ class PlanApplier
                 $subTask->setDifficulty($subTaskTemplate->getDifficulty());
                 $subTask->setRequiresInspection($subTaskTemplate->requiresInspection());
                 $subTask->setDocumentation($subTaskTemplate->getDocumentation());
+                // Les templates sont itérés dans l'ordre du plan : la position ainsi
+                // attribuée reproduit cet ordre, et devient modifiable manuellement
+                // ensuite via le mode « Réorganiser » (cf. SubTaskOrderer).
                 $subTask->setPosition($subTaskPosition++);
-                // Copy plan position to preserve ordering from the maintenance plan
-                $subTask->setPlanPosition($subTaskTemplate->getPosition());
                 // Copy linked specialisations from plan subtask template
                 foreach ($subTaskTemplate->getSpecialisations() as $specialisation) {
                     $subTask->addSpecialisation($specialisation);

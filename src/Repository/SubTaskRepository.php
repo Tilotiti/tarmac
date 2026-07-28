@@ -81,8 +81,7 @@ class SubTaskRepository extends ServiceEntityRepository
      *
      * `position` est la seule source de vérité de l'ordre : elle est renumérotée
      * densément par App\Service\Maintenance\SubTaskOrderer à chaque création ou
-     * réorganisation. `planPosition` ne conserve que l'origine du plan d'entretien
-     * et n'intervient plus dans le tri.
+     * réorganisation.
      */
     public function addPositionOrdering(QueryBuilder $qb, string $direction = 'ASC'): QueryBuilder
     {

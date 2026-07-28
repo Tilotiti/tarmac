@@ -9,8 +9,8 @@ use App\Entity\Task;
  * Seul endroit du code qui écrit SubTask::$position.
  *
  * L'ordre des sous-tâches d'une tâche est porté exclusivement par `position`,
- * renumérotée densément (0..n-1) après chaque opération. `planPosition` ne
- * conserve que l'origine du plan d'entretien et n'intervient plus dans le tri.
+ * renumérotée densément (0..n-1) après chaque opération. Un plan d'entretien
+ * appliqué ne fait qu'initialiser cette position ; elle devient ensuite libre.
  *
  * Le service mute les entités sans jamais flusher : c'est à l'appelant de le faire.
  */

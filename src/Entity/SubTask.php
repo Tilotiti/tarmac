@@ -81,11 +81,12 @@ class SubTask
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?\DateTimeImmutable $createdAt = null;
 
+    /**
+     * Ordre de la sous-tâche au sein de sa tâche, seule source de vérité.
+     * Écrite exclusivement par App\Service\Maintenance\SubTaskOrderer.
+     */
     #[ORM\Column(type: Types::SMALLINT)]
     private int $position = 0;
-
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private ?int $planPosition = null;
 
     /**
      * @var Collection<int, Contribution>
@@ -390,17 +391,6 @@ class SubTask
         return $this;
     }
 
-    public function getPlanPosition(): ?int
-    {
-        return $this->planPosition;
-    }
-
-    public function setPlanPosition(?int $planPosition): static
-    {
-        $this->planPosition = $planPosition;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Activity>
