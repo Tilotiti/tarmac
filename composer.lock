@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f43d73f7c6f9f67dc50a927d66fd351a",
+    "content-hash": "78dbeee1d95e904ff3542042041cf796",
     "packages": [
         {
             "name": "async-aws/core",
@@ -11537,21 +11537,21 @@
         },
         {
             "name": "php-translation/symfony-bundle",
-            "version": "0.16.1",
+            "version": "0.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-translation/symfony-bundle.git",
-                "reference": "f20131586199bb88a6f99669f5822a0c4b70852f"
+                "reference": "93be2a00e5cbcc218d9ca6b0c02375a948a3addb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-translation/symfony-bundle/zipball/f20131586199bb88a6f99669f5822a0c4b70852f",
-                "reference": "f20131586199bb88a6f99669f5822a0c4b70852f",
+                "url": "https://api.github.com/repos/php-translation/symfony-bundle/zipball/93be2a00e5cbcc218d9ca6b0c02375a948a3addb",
+                "reference": "93be2a00e5cbcc218d9ca6b0c02375a948a3addb",
                 "shasum": ""
             },
             "require": {
                 "nyholm/nsa": "^1.1",
-                "php": "^8.1",
+                "php": "^8.2",
                 "php-translation/extractor": "^2.0",
                 "php-translation/symfony-storage": "^2.1",
                 "symfony/asset": "^5.3 || ^6.0 || ^7.0",
@@ -11562,7 +11562,7 @@
                 "symfony/translation": "^5.3 || ^6.0 || ^7.0",
                 "symfony/twig-bundle": "^5.3 || ^6.0 || ^7.0",
                 "symfony/validator": "^5.3 || ^6.0 || ^7.0",
-                "twig/twig": "^3.3"
+                "twig/twig": "^3.21"
             },
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.3",
@@ -11610,9 +11610,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-translation/symfony-bundle/issues",
-                "source": "https://github.com/php-translation/symfony-bundle/tree/0.16.1"
+                "source": "https://github.com/php-translation/symfony-bundle/tree/0.17.1"
             },
-            "time": "2025-09-02T08:49:34+00:00"
+            "time": "2026-05-11T15:58:06+00:00"
         },
         {
             "name": "php-translation/symfony-storage",
