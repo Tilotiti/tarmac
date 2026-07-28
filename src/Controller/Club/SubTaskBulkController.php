@@ -11,7 +11,9 @@ use App\Entity\Task;
 use App\Repository\ContributionRepository;
 use App\Repository\MembershipRepository;
 use App\Security\Voter\SubTaskVoter;
+use App\Security\Voter\TaskVoter;
 use App\Service\ClubResolver;
+use App\Service\Maintenance\SubTaskOrderer;
 use App\Service\Maintenance\TaskStatusService;
 use App\Service\SubdomainService;
 use App\Form\ActivityFormType;
@@ -35,6 +37,7 @@ class SubTaskBulkController extends ExtendedController
         private readonly MembershipRepository $membershipRepository,
         private readonly ContributionRepository $contributionRepository,
         private readonly TaskStatusService $taskStatusService,
+        private readonly SubTaskOrderer $subTaskOrderer,
         private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($subdomainService);
@@ -464,6 +467,46 @@ class SubTaskBulkController extends ExtendedController
         $this->entityManager->flush();
 
         $this->addFlash('success', $newPriority ? 'bulkSubTasksPrioritized' : 'bulkSubTasksUnprioritized');
+
+        return $this->redirectBackToTask($task, $request);
+    }
+
+    /**
+     * Enregistrer un nouvel ordre pour les sous-tâches d'une tâche.
+     *
+     * Les identifiants sont reçus dans l'ordre voulu. La liste peut être partielle
+     * (l'écran est filtré) : SubTaskOrderer ne réattribue alors que les emplacements
+     * déjà occupés par ces sous-tâches. Réservé aux gestionnaires et à l'auteur de
+     * la tâche (TASK_EDIT), et donc impossible sur une tâche close ou annulée.
+     */
+    #[Route('/reorder', name: 'club_subtasks_bulk_reorder', methods: ['POST'])]
+    #[IsGranted(TaskVoter::EDIT, 'task')]
+    public function reorder(
+        #[MapEntity(id: 'taskId')] Task $task,
+        Request $request,
+    ): Response {
+        $token = $request->request->get('_token');
+        if (!is_string($token) || !$this->isCsrfTokenValid('bulk_reorder_subtasks_' . $task->getId(), $token)) {
+            $this->addFlash('error', 'invalidRequest');
+            return $this->redirectBackToTask($task, $request);
+        }
+
+        $club = $this->clubResolver->resolve();
+        if ($task->getClub() !== $club) {
+            $this->addFlash('error', 'accessDenied');
+            return $this->redirectBackToTask($task, $request);
+        }
+
+        $subTaskIds = $this->getIdsFromRequest($request);
+        if (empty($subTaskIds)) {
+            $this->addFlash('error', 'noSubTaskIdsSelected');
+            return $this->redirectBackToTask($task, $request);
+        }
+
+        $this->subTaskOrderer->reorder($task, $subTaskIds);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'subTasksReordered');
 
         return $this->redirectBackToTask($task, $request);
     }

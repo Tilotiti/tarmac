@@ -18,6 +18,7 @@ use App\Repository\MembershipRepository;
 use App\Security\Voter\SubTaskVoter;
 use App\Security\Voter\TaskVoter;
 use App\Service\ClubResolver;
+use App\Service\Maintenance\SubTaskOrderer;
 use App\Service\Maintenance\TaskStatusService;
 use App\Service\SubdomainService;
 use App\Service\CommentNotificationService;
@@ -40,6 +41,7 @@ class SubTaskController extends ExtendedController
         SubdomainService $subdomainService,
         private readonly ClubResolver $clubResolver,
         private readonly TaskStatusService $taskStatusService,
+        private readonly SubTaskOrderer $subTaskOrderer,
         private readonly EntityManagerInterface $entityManager,
         private readonly MembershipRepository $membershipRepository,
         private readonly ContributionRepository $contributionRepository,
@@ -71,21 +73,17 @@ class SubTaskController extends ExtendedController
         $subTask->setTask($task);
         $subTask->setCreatedBy($this->getUser());
 
-        // Auto-set position
-        $maxPosition = 0;
-        foreach ($task->getSubTasks() as $existingSubTask) {
-            $maxPosition = max($maxPosition, $existingSubTask->getPosition());
-        }
-        $subTask->setPosition($maxPosition + 1);
-
         // If task is priority, inherit to new subtask
         if ($task->isPriority()) {
             $subTask->setPriority(true);
         }
 
+        $existingSubTasks = $task->getSubTasks()->toArray();
+
         $form = $this->createForm(SubTaskType::class, $subTask, [
             'club' => $task->getClub(),
             'can_manage_specialisations' => $this->isGranted('MANAGE', $club),
+            'position_choices' => $existingSubTasks,
         ]);
         $form->handleRequest($request);
 
@@ -94,6 +92,31 @@ class SubTaskController extends ExtendedController
             if ($task->isPriority() && !$subTask->isPriority()) {
                 $subTask->setPriority(true);
             }
+
+            // Emplacement choisi dans le formulaire : fin (défaut), début, ou après une
+            // sous-tâche existante. addSubTask() est nécessaire pour que l'orderer voie
+            // la nouvelle sous-tâche, qui n'est pas encore persistée.
+            $task->addSubTask($subTask);
+            $insertPosition = $form->has('insertPosition')
+                ? (string) $form->get('insertPosition')->getData()
+                : SubTaskType::INSERT_AT_END;
+
+            $after = null;
+            if ($insertPosition !== SubTaskType::INSERT_AT_END && $insertPosition !== SubTaskType::INSERT_AT_START) {
+                foreach ($existingSubTasks as $candidate) {
+                    if ((string) $candidate->getId() === $insertPosition) {
+                        $after = $candidate;
+                        break;
+                    }
+                }
+            }
+
+            $this->subTaskOrderer->insert(
+                $task,
+                $subTask,
+                $after,
+                $insertPosition === SubTaskType::INSERT_AT_START
+            );
 
             $this->entityManager->persist($subTask);
             $this->entityManager->flush();

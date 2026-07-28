@@ -113,6 +113,9 @@ export default class extends Controller {
     enterSelectionMode() {
         this.selectionMode = true;
         this.updateUi();
+        // Prévient subtask-reorder, qui doit sortir de son mode : les deux barres
+        // flottantes ne peuvent pas coexister.
+        this.dispatch('start');
     }
 
     exitSelectionMode() {
@@ -332,6 +335,7 @@ export default class extends Controller {
     }
 
     updateUi() {
+        this.element.classList.toggle('is-selecting', this.selectionMode);
         this.toggleSelectionClasses();
         this.updateCounter();
         this.updateActionsBarVisibility();

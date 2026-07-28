@@ -77,7 +77,7 @@ class Task
      * @var Collection<int, SubTask>
      */
     #[ORM\OneToMany(targetEntity: SubTask::class, mappedBy: 'task', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['planPosition' => 'ASC', 'position' => 'ASC'])]
+    #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
     #[Assert\Count(min: 1, minMessage: 'atLeastOneSubTaskRequired')]
     private Collection $subTasks;
 

@@ -3467,6 +3467,47 @@
         <source>viewAnomaly</source>
         <target>Voir l'anomalie</target>
       </trans-unit>
+      <!-- Subtasks ordering -->
+      <trans-unit id="1706" resname="reorderSubTasks">
+        <source>reorderSubTasks</source>
+        <target>Réorganiser</target>
+      </trans-unit>
+      <trans-unit id="1707" resname="cancelReorder">
+        <source>cancelReorder</source>
+        <target>Annuler la réorganisation</target>
+      </trans-unit>
+      <trans-unit id="1708" resname="saveOrder">
+        <source>saveOrder</source>
+        <target>Enregistrer l'ordre</target>
+      </trans-unit>
+      <trans-unit id="1709" resname="dragToReorder">
+        <source>dragToReorder</source>
+        <target>Glissez les sous-tâches pour changer leur ordre.</target>
+      </trans-unit>
+      <trans-unit id="1710" resname="subTasksReordered">
+        <source>subTasksReordered</source>
+        <target>L'ordre des sous-tâches a été enregistré.</target>
+      </trans-unit>
+      <trans-unit id="1711" resname="insertPosition">
+        <source>insertPosition</source>
+        <target>Emplacement</target>
+      </trans-unit>
+      <trans-unit id="1712" resname="insertPositionHelp">
+        <source>insertPositionHelp</source>
+        <target>Où placer cette sous-tâche dans la liste de la tâche.</target>
+      </trans-unit>
+      <trans-unit id="1713" resname="insertAtEnd">
+        <source>insertAtEnd</source>
+        <target>À la fin</target>
+      </trans-unit>
+      <trans-unit id="1714" resname="insertAtStart">
+        <source>insertAtStart</source>
+        <target>Au tout début</target>
+      </trans-unit>
+      <trans-unit id="1715" resname="insertAfterSubTask">
+        <source>insertAfterSubTask</source>
+        <target>Après : {rank}. {title}</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

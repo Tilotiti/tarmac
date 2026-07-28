@@ -38,6 +38,11 @@
 						{{ form_row(form.requiresInspection) }}
 					</div>
 				</div>
+				{% if form.insertPosition is defined %}
+					<div class="mb-3">
+						{{ form_row(form.insertPosition) }}
+					</div>
+				{% endif %}
 				{% include 'component/documentationUploader.html.twig' with {
 					field: form.documentation,
 					existingUrl: null,

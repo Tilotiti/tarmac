@@ -696,6 +696,87 @@
     }
 }
 
+/* Réorganisation des sous-tâches (glisser-déposer) */
+
+/* La poignée vit hors du <a> de la carte : en mode réorganisation on peut ainsi
+   neutraliser le lien sans intercepter le clic en JS. */
+.subtask-bulk-item-wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+.subtask-bulk-item-wrapper > .tarmac-card {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.subtask-reorder-handle {
+    width: 0;
+    flex: 0 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: var(--td-ink-2);
+    transition: width 0.15s ease, flex-basis 0.15s ease;
+}
+
+.subtask-reorder-handle i {
+    opacity: 0;
+    font-size: 1.35rem;
+    transition: opacity 0.15s ease;
+}
+
+.is-reordering .subtask-reorder-handle {
+    /* Cible tactile ≥ 44 px */
+    width: 2.75rem;
+    flex: 0 0 2.75rem;
+    cursor: grab;
+    touch-action: none;
+}
+
+.is-reordering .subtask-reorder-handle:active {
+    cursor: grabbing;
+}
+
+.is-reordering .subtask-reorder-handle i {
+    opacity: 1;
+}
+
+/* Le lien est neutralisé pendant le tri : un appui sur la carte ne navigue pas. */
+.is-reordering .subtask-bulk-item-wrapper > .tarmac-card {
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Les deux modes s'excluent : on masque le bouton de l'autre mode. */
+.is-reordering [data-subtask-bulk-selection-target="selectToggle"],
+.is-selecting [data-subtask-reorder-target="toggle"] {
+    display: none;
+}
+
+.subtask-reorder-ghost > .tarmac-card {
+    opacity: 0.4;
+    border-style: dashed;
+}
+
+.subtask-reorder-chosen > .tarmac-card {
+    box-shadow: 0 0.75rem 1.5rem rgba(15, 23, 42, 0.18);
+    border-color: var(--td-glow);
+}
+
+.subtask-reorder-actions {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 1030;
+    max-width: 100%;
+}
+
+.subtask-reorder-actions--visible {
+    animation: subtask-bulk-actions-in 0.18s ease-out forwards;
+}
+
 /* Tom Select (member / user pickers) — aligné Tabler */
 .member-select.ts-wrapper {
     width: 100%;
