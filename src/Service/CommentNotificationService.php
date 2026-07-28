@@ -3,23 +3,26 @@
 namespace App\Service;
 
 use App\Entity\Activity;
+use App\Entity\Anomaly;
 use App\Entity\SubTask;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Repository\ActivityRepository;
 use App\Repository\ContributionRepository;
+use App\Repository\MembershipRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class TaskCommentNotificationService
+class CommentNotificationService
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ActivityRepository $activityRepository,
         private readonly ContributionRepository $contributionRepository,
+        private readonly MembershipRepository $membershipRepository,
         private readonly MailerInterface $mailer,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
@@ -119,6 +122,144 @@ class TaskCommentNotificationService
                 error_log(sprintf('Failed to send subtask comment notification to %s: %s', $recipient->getEmail(), $e->getMessage()));
             }
         }
+    }
+
+    /**
+     * Send email notifications to everyone involved in an anomaly when a comment is added
+     */
+    public function sendAnomalyCommentNotifications(Anomaly $anomaly, Activity $comment, User $commentAuthor): void
+    {
+        $recipients = $this->getUsersWithActivityOnAnomaly($anomaly, $commentAuthor);
+
+        if (empty($recipients)) {
+            return;
+        }
+
+        $club = $anomaly->getClub();
+        $anomalyUrl = $this->urlGenerator->generate('club_anomaly_show', [
+            'subdomain' => $club->getSubdomain(),
+            'id' => $anomaly->getId(),
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        foreach ($recipients as $recipient) {
+            try {
+                $email = (new TemplatedEmail())
+                    ->from(new Address('contact@tarmac.center', 'Tarmac'))
+                    ->to($recipient->getEmail())
+                    ->subject(sprintf(
+                        '[%s] Nouveau commentaire sur l\'anomalie : %s',
+                        $club->getName(),
+                        $anomaly->getTitle()
+                    ))
+                    ->htmlTemplate('email/anomaly_comment.html.twig')
+                    ->context([
+                        'club' => $club,
+                        'anomaly' => $anomaly,
+                        'comment' => $comment,
+                        'commentAuthor' => $commentAuthor,
+                        'anomalyUrl' => $anomalyUrl,
+                    ])
+                ;
+
+                $this->mailer->send($email);
+            } catch (\Throwable $e) {
+                // Log error but continue with other recipients
+                error_log(sprintf('Failed to send anomaly comment notification to %s: %s', $recipient->getEmail(), $e->getMessage()));
+            }
+        }
+    }
+
+    /**
+     * Alert the club managers that a piece of equipment has been grounded.
+     */
+    public function sendAnomalyGroundedNotification(Anomaly $anomaly, User $author): void
+    {
+        $recipients = $this->getClubManagers($anomaly, $author);
+
+        if (empty($recipients)) {
+            return;
+        }
+
+        $club = $anomaly->getClub();
+        $anomalyUrl = $this->urlGenerator->generate('club_anomaly_show', [
+            'subdomain' => $club->getSubdomain(),
+            'id' => $anomaly->getId(),
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        foreach ($recipients as $recipient) {
+            try {
+                $email = (new TemplatedEmail())
+                    ->from(new Address('contact@tarmac.center', 'Tarmac'))
+                    ->to($recipient->getEmail())
+                    ->subject(sprintf(
+                        '[%s] Matériel immobilisé : %s',
+                        $club->getName(),
+                        $anomaly->getEquipment()->getName()
+                    ))
+                    ->htmlTemplate('email/anomaly_grounded.html.twig')
+                    ->context([
+                        'club' => $club,
+                        'anomaly' => $anomaly,
+                        'author' => $author,
+                        'anomalyUrl' => $anomalyUrl,
+                    ])
+                ;
+
+                $this->mailer->send($email);
+            } catch (\Throwable $e) {
+                // Log error but continue with other recipients
+                error_log(sprintf('Failed to send anomaly grounded notification to %s: %s', $recipient->getEmail(), $e->getMessage()));
+            }
+        }
+    }
+
+    /**
+     * Get all users involved in an anomaly (excluding the given user)
+     *
+     * @return User[]
+     */
+    private function getUsersWithActivityOnAnomaly(Anomaly $anomaly, User $excludeUser): array
+    {
+        $users = [];
+
+        foreach ([$anomaly->getReportedBy(), $anomaly->getCreatedBy(), $anomaly->getResolvedBy()] as $user) {
+            if ($user && $user->getId() !== $excludeUser->getId()) {
+                $users[$user->getId()] = $user;
+            }
+        }
+
+        foreach ($anomaly->getActivities() as $activity) {
+            if ($activity->getUser() && $activity->getUser()->getId() !== $excludeUser->getId()) {
+                $users[$activity->getUser()->getId()] = $activity->getUser();
+            }
+        }
+
+        return array_values($users);
+    }
+
+    /**
+     * Get the managers of the anomaly's club (excluding the given user)
+     *
+     * @return User[]
+     */
+    private function getClubManagers(Anomaly $anomaly, User $excludeUser): array
+    {
+        $memberships = $this->membershipRepository->findBy([
+            'club' => $anomaly->getClub(),
+            'isManager' => true,
+        ]);
+
+        $users = [];
+
+        foreach ($memberships as $membership) {
+            $user = $membership->getUser();
+
+            if ($user && $user->getId() !== $excludeUser->getId()) {
+                $users[$user->getId()] = $user;
+            }
+        }
+
+        return array_values($users);
     }
 
     /**

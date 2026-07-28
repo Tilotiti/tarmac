@@ -6,9 +6,24 @@
 	{{ 'newTask'|trans }}
 {% endblock %}
 
+{% block page_pretitle %}
+	{% if anomaly %}
+		<a href="{{ path('club_anomaly_show', {id: anomaly.id}) }}" class="tarmac-page-eyebrow">
+			<i class="ti ti-alert-triangle me-1"></i>{{ anomaly.title }}
+		</a>
+	{% endif %}
+{% endblock %}
+
 {% block page_content %}
 	<div class="row g-3">
 		<div class="col-12 col-lg-10 mx-auto">
+			{% if anomaly %}
+				<div class="alert alert-info" role="status">
+					<i class="ti ti-link me-2"></i>
+					{{ 'taskWillBeLinkedToAnomaly'|trans({'equipment': anomaly.equipment.name}) }}
+				</div>
+			{% endif %}
+
 			{{ form_start(form) }}
 
 			{# Main Task Information #}
@@ -16,7 +31,10 @@
 				<div class="tarmac-panel__title">
 					<i class="ti ti-checklist"></i>{{ 'taskInformation'|trans }}
 				</div>
-				{{ form_row(form.equipment) }}
+				{# Absent when the equipment is imposed by the context (task created from an anomaly) #}
+				{% if form.equipment is defined %}
+					{{ form_row(form.equipment) }}
+				{% endif %}
 				{{ form_row(form.title) }}
 				{{ form_row(form.description, {'attr': {'class': 'form-control w-100', 'rows': 3}}) }}
 				{% include 'component/documentationUploader.html.twig' with {

@@ -1,0 +1,65 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'editAnomaly'|trans }}
+{% endblock %}
+
+{% block page_pretitle %}
+	<a href="{{ path('club_equipment_show', {id: anomaly.equipment.id}) }}" class="tarmac-page-eyebrow">
+		<i class="ti {{ anomaly.equipment.type.icon }} me-1"></i>{{ anomaly.equipment.name }}
+	</a>
+{% endblock %}
+
+{% block page_content %}
+	<div class="row g-3">
+		<div class="col-12 col-lg-10 mx-auto">
+			{# enctype explicite : le champ photos est un input brut, pas un FileType #}
+			{{ form_start(form, {attr: {enctype: 'multipart/form-data'}}) }}
+
+			<div class="tarmac-panel mb-3">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-alert-triangle"></i>{{ 'anomalyInformation'|trans }}
+				</div>
+				{% if form.reportedBy is defined %}
+					{{ form_row(form.reportedBy) }}
+				{% endif %}
+				{{ form_row(form.reportedAt) }}
+				{{ form_row(form.title) }}
+				{{ form_row(form.description) }}
+			</div>
+
+			{# Only managers may revise the impact once the anomaly exists #}
+			{% if form.impact is defined %}
+				<div class="tarmac-panel mb-3">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-activity-heartbeat"></i>{{ 'anomalyImpact'|trans }}
+					</div>
+					{{ form_row(form.impact) }}
+				</div>
+			{% endif %}
+
+			<div class="tarmac-panel mb-3">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-camera"></i>{{ 'anomalyPhotos'|trans }}
+				</div>
+
+				{% if anomaly.photos|length > 0 %}
+					<div class="mb-3">
+						{% include 'component/anomalyPhotos.html.twig' with {'anomaly': anomaly, 'canDelete': false} only %}
+					</div>
+					<p class="text-secondary" style="font-size:0.85rem;">{{ 'anomalyManagePhotosFromDetail'|trans }}</p>
+				{% endif %}
+
+				{% include 'component/anomalyPhotoInput.html.twig' only %}
+			</div>
+
+			<div class="tarmac-panel sticky-bottom-mobile">
+				<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">
+					<i class="ti ti-check me-2"></i>{{ 'save'|trans }}
+				</button>
+			</div>
+
+			{{ form_end(form) }}
+		</div>
+	</div>
+{% endblock %}

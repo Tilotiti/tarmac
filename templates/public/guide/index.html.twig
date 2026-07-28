@@ -46,14 +46,15 @@
 							<a href="#plans" class="list-group-item list-group-item-action">5. Plans d'entretien</a>
 							<a href="#application" class="list-group-item list-group-item-action">6. Appliquer un plan</a>
 							<a href="#taches" class="list-group-item list-group-item-action">7. Tâches &amp; sous-tâches</a>
-							<a href="#contribuer" class="list-group-item list-group-item-action">8. Contribuer &amp; commenter</a>
-							<a href="#terminer" class="list-group-item list-group-item-action">9. Marquer comme terminé</a>
-							<a href="#inspection" class="list-group-item list-group-item-action">10. Inspection &amp; clôture</a>
-							<a href="#carnet" class="list-group-item list-group-item-action">11. Carnet mécanicien</a>
-							<a href="#achats" class="list-group-item list-group-item-action">12. Achats</a>
-							<a href="#membres" class="list-group-item list-group-item-action">13. Membres &amp; invitations</a>
-							<a href="#specialisations" class="list-group-item list-group-item-action">14. Spécialisations</a>
-							<a href="#faq" class="list-group-item list-group-item-action">15. Questions fréquentes</a>
+							<a href="#anomalies" class="list-group-item list-group-item-action">8. Signaler une anomalie</a>
+							<a href="#contribuer" class="list-group-item list-group-item-action">9. Contribuer &amp; commenter</a>
+							<a href="#terminer" class="list-group-item list-group-item-action">10. Marquer comme terminé</a>
+							<a href="#inspection" class="list-group-item list-group-item-action">11. Inspection &amp; clôture</a>
+							<a href="#carnet" class="list-group-item list-group-item-action">12. Carnet mécanicien</a>
+							<a href="#achats" class="list-group-item list-group-item-action">13. Achats</a>
+							<a href="#membres" class="list-group-item list-group-item-action">14. Membres &amp; invitations</a>
+							<a href="#specialisations" class="list-group-item list-group-item-action">15. Spécialisations</a>
+							<a href="#faq" class="list-group-item list-group-item-action">16. Questions fréquentes</a>
 						</nav>
 					</div>
 				</aside>
@@ -174,6 +175,8 @@
 											<li><strong>Tableau de bord</strong>&nbsp;: la vue d'ensemble décrite ci-dessus
 												(accessible aussi en cliquant sur le logo).</li>
 											<li><strong>Tâches</strong>&nbsp;: ce qu'il y a à faire sur le matériel du club.</li>
+											<li><strong>Anomalies</strong>&nbsp;: ce qui a été constaté sur un matériel et qui
+												ne va pas, signalé par les membres.</li>
 											<li><strong>Achats</strong>&nbsp;: pièces, consommables, outillages demandés ou en
 												cours de commande.</li>
 											<li><strong>Carnet mécanicien</strong>&nbsp;: l'historique des actions réalisées.</li>
@@ -313,8 +316,113 @@
 
 							<hr>
 
+							<section id="anomalies">
+								<h2>8. Signaler une anomalie</h2>
+								<p>
+									Une <strong>anomalie</strong>, c'est quelque chose que vous avez constaté sur un matériel
+									et qui ne va pas&nbsp;: un bruit inhabituel, une fissure, un voyant qui reste allumé,
+									une pièce qui a du jeu. Vous n'avez pas besoin de savoir comment le réparer, ni même
+									d'être certain que c'est grave. C'est justement le rôle de l'anomalie&nbsp;: dire ce que
+									vous avez vu, pour que quelqu'un s'en occupe.
+								</p>
+								<p>
+									<strong>Tout membre peut signaler une anomalie</strong>, sur n'importe quel matériel du
+									club — planeur compris, même si vous n'êtes pas pilote. C'est la différence avec les
+									tâches&nbsp;: une tâche décrit un travail à faire, une anomalie décrit un constat.
+								</p>
+
+								<h3>Comment signaler</h3>
+								<p>
+									Depuis le menu <strong>Anomalies</strong>, ou directement depuis la fiche d'un matériel
+									avec le bouton «&nbsp;Signaler une anomalie&nbsp;». Vous renseignez un titre court, une
+									description, la date à laquelle vous l'avez constatée, et vous pouvez
+									<strong>joindre plusieurs photos</strong> — une photo vaut souvent mieux qu'un long texte
+									pour un mécanicien.
+								</p>
+								<p>
+									Un <strong>gestionnaire</strong> peut aussi enregistrer une anomalie pour le compte d'un
+									autre membre, par exemple si quelqu'un l'a signalée de vive voix.
+								</p>
+
+								<h3>L'impact sur le matériel</h3>
+								<p>À la création, vous indiquez si le matériel reste utilisable&nbsp;:</p>
+								<ul>
+									<li><span class="badge bg-secondary-lt text-secondary">À déterminer</span> — vous ne savez
+										pas. C'est le choix par défaut, et il n'y a aucune honte à le laisser.</li>
+									<li><span class="badge bg-green-lt text-green">Fonctionnement normal</span> — le matériel
+										peut continuer à voler ou à servir.</li>
+									<li><span class="badge bg-red-lt text-red">Arrêt du matériel</span> — le matériel ne doit
+										plus être utilisé en l'état. Les gestionnaires du club sont
+										<strong>prévenus immédiatement par e-mail</strong>.</li>
+								</ul>
+								<p>
+									Ensuite, seul un gestionnaire peut modifier l'impact&nbsp;: immobiliser durablement un
+									matériel est une décision de gestion. Chaque changement est tracé dans le journal de
+									l'anomalie.
+								</p>
+
+								<h3>Le cycle de vie</h3>
+								<p>Le statut d'une anomalie se déduit tout seul des tâches qui lui sont rattachées&nbsp;:</p>
+								<ul>
+									<li><span class="badge bg-yellow-lt text-yellow">Relevé</span> — l'anomalie est signalée,
+										mais aucune tâche n'a encore été ouverte pour la traiter.</li>
+									<li><span class="badge bg-blue-lt text-blue">Pris en compte</span> — au moins une tâche a
+										été créée ou rattachée&nbsp;: le club s'en occupe.</li>
+									<li><span class="badge bg-green-lt text-green">Traité</span> — toutes les tâches sont
+										clôturées <em>et</em> un gestionnaire a confirmé que le problème est bien résolu.</li>
+									<li><span class="badge bg-secondary-lt text-secondary">Ignoré</span> — un doublon, une
+										fausse alerte, ou un constat qui ne nécessite finalement aucune action.</li>
+								</ul>
+								<p>
+									Point important&nbsp;: <strong>clôturer les tâches ne suffit pas</strong> à clore
+									l'anomalie. Le bouton «&nbsp;Marquer comme traité&nbsp;» ne devient actif que lorsque
+									toutes les tâches liées sont fermées, et c'est un gestionnaire qui appuie dessus. C'est
+									une vérification volontaire&nbsp;: on veut que quelqu'un confirme que le problème constaté
+									a bien disparu, pas seulement que le travail a été fait.
+								</p>
+								<p>
+									Une anomalie n'est jamais supprimée. Si elle n'a pas lieu d'être, on l'ignore — ce qui
+									préserve l'historique. Un gestionnaire peut toujours la <strong>rouvrir</strong> si elle a
+									été classée à tort.
+								</p>
+
+								<h3>Faire le lien avec les tâches</h3>
+								<p>
+									Depuis la fiche d'une anomalie, un gestionnaire dispose de deux boutons&nbsp;:
+									<strong>créer une tâche</strong> (le matériel et le titre sont préremplis, et le lien est
+									posé automatiquement), ou <strong>rattacher une tâche existante</strong> du même matériel.
+									Une anomalie peut être couverte par plusieurs tâches, et une même tâche peut résoudre
+									plusieurs anomalies.
+								</p>
+								<p>
+									Le lien se voit dans les deux sens&nbsp;: la fiche d'une tâche affiche les anomalies
+									qu'elle traite, et chaque rattachement est inscrit dans les deux journaux — celui de
+									l'anomalie et celui de la tâche.
+								</p>
+
+								<h3>Retrouver les anomalies</h3>
+								<p>
+									Le menu <strong>Anomalies</strong> liste tout ce qui est en cours&nbsp;: par défaut, les
+									anomalies traitées et ignorées sont masquées. Vous pouvez filtrer par matériel, par impact
+									et par statut, et la fiche de chaque matériel affiche ses anomalies en cours.
+								</p>
+								<p>
+									Les gestionnaires peuvent traiter les anomalies <strong>en lot</strong>&nbsp;: le bouton
+									«&nbsp;Sélectionner&nbsp;» de la liste permet d'en cocher plusieurs, puis de toutes les
+									marquer comme traitées ou ignorées d'un coup. Celles qui ne sont pas éligibles sont
+									simplement laissées de côté.
+								</p>
+								<p>
+									Comme les tâches, chaque anomalie possède un <strong>journal complet</strong> de tout ce
+									qui s'est passé, et vous pouvez y <strong>commenter</strong>. Les participants reçoivent
+									un e-mail à chaque nouveau commentaire.
+								</p>
+							</section>
+
+							<hr>
+
 							<section id="contribuer">
-								<h2>8. Contribuer &amp; commenter</h2>
+								<h2>9. Contribuer &amp; commenter</h2>
 								<p>
 									Contribuer, c'est <strong>signaler que vous avez avancé</strong> sur une sous-tâche.
 									C'est le geste qui matérialise l'avancement collectif et permet à chacun de voir où
@@ -346,7 +454,7 @@
 							<hr>
 
 							<section id="terminer">
-								<h2>9. Marquer comme terminé</h2>
+								<h2>10. Marquer comme terminé</h2>
 								<p>
 									Quand le travail est entièrement réalisé, on clique sur
 									<strong>Marquer comme terminé</strong> sur la sous-tâche.
@@ -372,7 +480,7 @@
 							<hr>
 
 							<section id="inspection">
-								<h2>10. Inspection &amp; clôture</h2>
+								<h2>11. Inspection &amp; clôture</h2>
 								<p>
 									Quand une sous-tâche <strong>critique</strong> est <em>terminée (en attente
 									d'inspection)</em>, un membre <strong>qualifié</strong> doit la passer en revue. Il
@@ -393,7 +501,7 @@
 							<hr>
 
 							<section id="carnet">
-								<h2>11. Carnet mécanicien</h2>
+								<h2>12. Carnet mécanicien</h2>
 								<p>
 									Le <strong>carnet mécanicien</strong> (menu <strong>Carnet</strong>) est la liste de
 									<strong>vos contributions</strong> (temps passé sur des sous-tâches), filtrable par
@@ -415,7 +523,7 @@
 							<hr>
 
 							<section id="achats">
-								<h2>12. Achats</h2>
+								<h2>13. Achats</h2>
 								<p>
 									Le menu <strong>Achats</strong> centralise tout ce qu'il faut commander pour
 									l'entretien&nbsp;: pièces, consommables, outillage, fournitures. Chaque achat porte un
@@ -442,7 +550,7 @@
 							<hr>
 
 							<section id="membres">
-								<h2>13. Membres &amp; invitations</h2>
+								<h2>14. Membres &amp; invitations</h2>
 								<p>
 									La liste des membres est accessible via <strong>Club → Membres</strong>. On y voit
 									pour chacun ses rôles (membre, pilote propriétaire, qualifié, gestionnaire) et son
@@ -469,7 +577,7 @@
 							<hr>
 
 							<section id="specialisations">
-								<h2>14. Spécialisations</h2>
+								<h2>15. Spécialisations</h2>
 								<p class="text-secondary">Réservé aux <strong>gestionnaires</strong>.</p>
 								<p>
 									Les <strong>spécialisations</strong> (menu <strong>Club → Spécialisations</strong>)
@@ -485,7 +593,7 @@
 							<hr>
 
 							<section id="faq">
-								<h2>15. Questions fréquentes</h2>
+								<h2>16. Questions fréquentes</h2>
 
 								<h4>Je suis sur un téléphone, c'est dur à utiliser&nbsp;?</h4>
 								<p>

@@ -1,0 +1,63 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'newAnomaly'|trans }}
+{% endblock %}
+
+{% block page_pretitle %}
+	{% if equipment %}
+		<a href="{{ path('club_equipment_show', {id: equipment.id}) }}" class="tarmac-page-eyebrow">
+			<i class="ti {{ equipment.type.icon }} me-1"></i>{{ equipment.name }}
+		</a>
+	{% endif %}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row g-3">
+		<div class="col-12 col-lg-10 mx-auto">
+			{# enctype explicite : le champ photos est un input brut, pas un FileType #}
+			{{ form_start(form, {attr: {enctype: 'multipart/form-data'}}) }}
+
+			<div class="tarmac-panel mb-3">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-alert-triangle"></i>{{ 'anomalyInformation'|trans }}
+				</div>
+
+				{# Absent when reached from an equipment page: the equipment is imposed #}
+				{% if form.equipment is defined %}
+					{{ form_row(form.equipment) }}
+				{% endif %}
+				{% if form.reportedBy is defined %}
+					{{ form_row(form.reportedBy) }}
+				{% endif %}
+				{{ form_row(form.reportedAt) }}
+				{{ form_row(form.title) }}
+				{{ form_row(form.description) }}
+			</div>
+
+			{% if form.impact is defined %}
+				<div class="tarmac-panel mb-3">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-activity-heartbeat"></i>{{ 'anomalyImpact'|trans }}
+					</div>
+					{{ form_row(form.impact) }}
+				</div>
+			{% endif %}
+
+			<div class="tarmac-panel mb-3">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-camera"></i>{{ 'anomalyPhotos'|trans }}
+				</div>
+				{% include 'component/anomalyPhotoInput.html.twig' only %}
+			</div>
+
+			<div class="tarmac-panel sticky-bottom-mobile">
+				<button type="submit" class="btn btn-primary w-100" style="min-height: 44px;">
+					<i class="ti ti-check me-2"></i>{{ 'save'|trans }}
+				</button>
+			</div>
+
+			{{ form_end(form) }}
+		</div>
+	</div>
+{% endblock %}

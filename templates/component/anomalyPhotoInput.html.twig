@@ -1,0 +1,43 @@
+{#
+    Champ d'ajout de photos d'anomalie.
+
+    Volontairement un input HTML brut et non un FileType Symfony : l'extension du
+    bundle uploaded-file-type s'accroche à *tous* les FileType et son écouteur
+    POST_SUBMIT passe le tableau de fichiers à un service typé `UploadedFile`,
+    ce qui lève une TypeError dès qu'on active `multiple`. Les fichiers sont donc
+    lus et validés côté contrôleur (AnomalyController::collectPhotos()).
+
+    Le formulaire porteur doit déclarer enctype="multipart/form-data".
+
+    Paramètres :
+    - id: (optionnel) identifiant du champ, à différencier si la page en contient
+      plusieurs
+#}
+{% set id = id|default('anomalyPhotoFiles') %}
+
+<div
+	class="mb-3"
+	data-controller="image-downscale"
+	data-image-downscale-max-edge-value="3000"
+	data-image-downscale-quality-value="0.9"
+	data-image-downscale-busy-label-value="{{ 'anomalyPhotosPreparing'|trans }}"
+>
+	<label class="form-label" for="{{ id }}">{{ 'anomalyPhotos'|trans }}</label>
+
+	<input
+		type="file"
+		id="{{ id }}"
+		name="photoFiles[]"
+		class="form-control"
+		multiple
+		accept="image/jpeg,image/png,image/gif,image/webp,image/heic,image/heif"
+		data-action="change->image-downscale#process">
+
+	<div class="form-hint">{{ 'anomalyPhotosHelp'|trans }}</div>
+
+	<p class="text-secondary d-flex align-items-center gap-2"
+		style="font-size:0.85rem;margin:0.5rem 0 0;"
+		data-image-downscale-target="status"
+		role="status"
+		hidden></p>
+</div>

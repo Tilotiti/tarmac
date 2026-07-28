@@ -1,0 +1,93 @@
+{#
+    Anomaly Card Component — charte Tarmac (cf. /design-lab)
+
+    Paramètres :
+    - anomaly: l'entité Anomaly à afficher
+    - selectable: (optionnel) affiche la case de sélection multiple
+#}
+{% set selectable = selectable|default(false) %}
+{% set status = anomaly.status %}
+{% set isResolved = anomaly.isResolved %}
+
+<div class="col-12 col-lg-6 mb-3 d-flex{% if selectable %} anomaly-bulk-item-wrapper{% endif %}"
+	{% if selectable %}data-anomaly-bulk-selection-target="item" data-anomaly-bulk-selection-id-value="{{ anomaly.id }}"{% endif %}>
+	<a href="{{ path('club_anomaly_show', {id: anomaly.id}) }}"
+		class="tarmac-card w-100{% if isResolved %} tarmac-card--dimmed{% endif %}"
+		{% if selectable %}data-action="click->anomaly-bulk-selection#onItemClick"{% endif %}>
+
+		<div class="tarmac-card__head">
+			{% if selectable %}
+				<div class="anomaly-bulk-checkbox">
+					<div class="form-check" data-anomaly-bulk-selection-target="checkbox">
+						<input class="form-check-input" type="checkbox" value="{{ anomaly.id }}"
+							data-action="click->anomaly-bulk-selection#onCheckboxClick"
+							aria-label="{{ 'select'|trans }}">
+					</div>
+				</div>
+			{% endif %}
+
+			<span class="tarmac-eqv tarmac-eqv--{{ anomaly.equipment.type.color }}">
+				<i class="ti {{ anomaly.equipment.type.icon }}"></i>
+			</span>
+
+			<div class="flex-fill">
+				<div class="tarmac-card__eyebrow">{{ anomaly.equipment.name }}</div>
+				<h3 class="tarmac-card__title">{{ anomaly.title }}</h3>
+				{# L'auteur est en pied de carte : ici la colonne de badges réserve de la
+				   largeur sur toute la hauteur du bloc et faisait casser la ligne. #}
+				<div class="tarmac-card__meta">
+					<i class="ti ti-calendar"></i>
+					{{ anomaly.reportedAt|date('d/m/Y') }}
+				</div>
+			</div>
+
+			{# Desktop : badges à droite #}
+			<div class="d-none d-md-flex tarmac-card__badges tarmac-card__badges--right" style="margin-top:0;">
+				{% if anomaly.isGrounding %}
+					<span class="tarmac-badge tarmac-badge--danger">
+						<i class="ti {{ anomaly.impact.icon }}"></i>
+						{{ anomaly.impact.label|trans }}
+					</span>
+				{% endif %}
+				<span class="tarmac-badge tarmac-badge--{{ status.color }}">
+					<i class="ti {{ status.icon }}"></i>
+					{{ status.label|trans }}
+				</span>
+			</div>
+		</div>
+
+		{# Mobile : badges sous le header #}
+		<div class="d-flex d-md-none tarmac-card__badges">
+			{% if anomaly.isGrounding %}
+				<span class="tarmac-badge tarmac-badge--danger">
+					<i class="ti {{ anomaly.impact.icon }}"></i>
+					{{ anomaly.impact.label|trans }}
+				</span>
+			{% endif %}
+			<span class="tarmac-badge tarmac-badge--{{ status.color }}">
+				<i class="ti {{ status.icon }}"></i>
+				{{ status.label|trans }}
+			</span>
+		</div>
+
+		{# Pied de carte : auteur à gauche, compteurs à droite — pleine largeur #}
+		<div class="tarmac-card__footer">
+			<div class="tarmac-progress-meta" style="margin-bottom:0;">
+				<span class="text-truncate">
+					{% if anomaly.reportedBy %}
+						<i class="ti ti-user me-1"></i>{{ anomaly.reportedBy.fullName }}
+					{% endif %}
+				</span>
+				<span class="d-flex align-items-center flex-shrink-0" style="gap:0.85rem;">
+					{% if anomaly.tasks|length > 0 %}
+						<span><i class="ti ti-checklist me-1"></i>{{ 'anomalyLinkedTasksCount'|trans({'count': anomaly.tasks|length}) }}</span>
+					{% endif %}
+					{% if anomaly.photos|length > 0 %}
+						<span><i class="ti ti-photo me-1"></i>{{ anomaly.photos|length }}</span>
+					{% endif %}
+				</span>
+			</div>
+		</div>
+
+	</a>
+</div>

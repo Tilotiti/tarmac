@@ -30,6 +30,10 @@ class Activity
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Purchase $purchase = null;
 
+    #[ORM\ManyToOne(targetEntity: Anomaly::class, inversedBy: 'activities')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?Anomaly $anomaly = null;
+
     #[ORM\Column(length: 30, enumType: ActivityType::class)]
     private ?ActivityType $type = null;
 
@@ -85,6 +89,18 @@ class Activity
     public function setPurchase(?Purchase $purchase): static
     {
         $this->purchase = $purchase;
+
+        return $this;
+    }
+
+    public function getAnomaly(): ?Anomaly
+    {
+        return $this->anomaly;
+    }
+
+    public function setAnomaly(?Anomaly $anomaly): static
+    {
+        $this->anomaly = $anomaly;
 
         return $this;
     }
@@ -165,9 +181,25 @@ class Activity
 
     public function getTypeLabel(): string
     {
-        // For context-sensitive labels, we check if it's a subtask or purchase activity
+        // For context-sensitive labels, we check if it's a subtask, purchase or anomaly activity
         $isSubTask = $this->subTask !== null;
         $isPurchase = $this->purchase !== null;
+        $isAnomaly = $this->anomaly !== null;
+
+        if ($isAnomaly) {
+            return match ($this->type) {
+                ActivityType::COMMENT => 'comment',
+                ActivityType::CREATED => 'anomalyCreated',
+                ActivityType::EDITED => 'anomalyEdited',
+                ActivityType::IMPACT_CHANGED => 'anomalyImpactChanged',
+                ActivityType::TASK_LINKED => 'anomalyTaskLinked',
+                ActivityType::TASK_UNLINKED => 'anomalyTaskUnlinked',
+                ActivityType::CLOSED => 'anomalyTreated',
+                ActivityType::CANCELLED => 'anomalyIgnored',
+                ActivityType::REOPENED => 'anomalyReopened',
+                default => $this->type?->value ?? 'unknown',
+            };
+        }
 
         if ($isPurchase) {
             return match ($this->type) {
@@ -194,6 +226,9 @@ class Activity
             ActivityType::CLOSED => 'taskClosed',
             ActivityType::CANCELLED => $isSubTask ? 'subTaskCancelled' : 'taskCancelled',
             ActivityType::APPLICATION_CANCELLED => 'applicationCancelled',
+            // Entrées miroir posées sur la tâche lors d'un (dé)rattachement d'anomalie
+            ActivityType::TASK_LINKED => 'taskLinkedToAnomaly',
+            ActivityType::TASK_UNLINKED => 'taskUnlinkedFromAnomaly',
             default => $this->type?->value ?? 'unknown',
         };
     }
@@ -211,6 +246,10 @@ class Activity
             ActivityType::INSPECTED_REJECTED => 'ti-circle-x',
             ActivityType::CLOSED => 'ti-lock',
             ActivityType::CANCELLED, ActivityType::APPLICATION_CANCELLED => 'ti-ban',
+            ActivityType::IMPACT_CHANGED => 'ti-alert-triangle',
+            ActivityType::TASK_LINKED => 'ti-link',
+            ActivityType::TASK_UNLINKED => 'ti-unlink',
+            ActivityType::REOPENED => 'ti-rotate',
             default => 'ti-circle',
         };
     }
@@ -226,6 +265,10 @@ class Activity
             ActivityType::UNDONE => 'orange',
             ActivityType::INSPECTED_APPROVED, ActivityType::CLOSED => 'success',
             ActivityType::INSPECTED_REJECTED, ActivityType::CANCELLED, ActivityType::APPLICATION_CANCELLED => 'danger',
+            ActivityType::IMPACT_CHANGED => 'orange',
+            ActivityType::TASK_LINKED => 'info',
+            ActivityType::TASK_UNLINKED => 'secondary',
+            ActivityType::REOPENED => 'yellow',
             default => 'secondary',
         };
     }

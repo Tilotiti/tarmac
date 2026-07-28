@@ -6,6 +6,7 @@ use App\Entity\Club;
 use App\Entity\Equipment;
 use App\Form\EquipmentType;
 use App\Form\PlanApplyType;
+use App\Repository\AnomalyRepository;
 use App\Repository\PlanApplicationRepository;
 use App\Repository\PlanRepository;
 use App\Repository\Paginator;
@@ -35,6 +36,7 @@ class EquipmentController extends ExtendedController
         private readonly PlanRepository $planRepository,
         private readonly PlanApplicationRepository $applicationRepository,
         private readonly TaskRepository $taskRepository,
+        private readonly AnomalyRepository $anomalyRepository,
         private readonly PlanApplier $planApplier,
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -172,11 +174,18 @@ class EquipmentController extends ExtendedController
         $qb = $this->taskRepository->orderByRelevantDate($qb, 'ASC');
         $pendingTasks = $qb->setMaxResults(10)->getQuery()->getResult();
 
+        // Get unresolved anomalies for this equipment
+        $anomalyQb = $this->anomalyRepository->queryByEquipment($equipment);
+        $anomalyQb = $this->anomalyRepository->filterByUnresolved($anomalyQb);
+        $anomalyQb = $this->anomalyRepository->orderByRelevance($anomalyQb);
+        $openAnomalies = $anomalyQb->setMaxResults(10)->getQuery()->getResult();
+
         return $this->render('club/equipment/show.html.twig', [
             'club' => $club,
             'equipment' => $equipment,
             'applications' => $applications,
             'pendingTasks' => $pendingTasks,
+            'openAnomalies' => $openAnomalies,
         ]);
     }
 

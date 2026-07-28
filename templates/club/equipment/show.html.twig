@@ -15,7 +15,7 @@
 
 {% block page_actions %}
 	<div class="btn-list">
-		<a href="{{ path('club_tasks', {'filters[equipment]': equipment.id, 'filters[status]': 'open'}) }}" class="btn btn-outline-secondary">
+		<a href="{{ path('club_tasks', {'equipment': equipment.id, 'status': ['open']}) }}" class="btn btn-outline-secondary">
 			<i class="ti ti-checklist me-2"></i>
 			<span class="d-none d-sm-inline">{{ 'viewTasks'|trans }}</span>
 			<span class="d-inline d-sm-none">{{ 'tasks'|trans }}</span>
@@ -143,7 +143,7 @@
 							<span class="tarmac-section-bar__count">{{ pendingTasks|length }}</span>
 						</h3>
 						<div class="tarmac-section-bar__actions">
-							<a href="{{ path('club_tasks', {'filters[equipment]': equipment.id, 'filters[status]': 'open'}) }}" class="btn btn-sm btn-outline-secondary">
+							<a href="{{ path('club_tasks', {'equipment': equipment.id, 'status': ['open']}) }}" class="btn btn-sm btn-outline-secondary">
 								<i class="ti ti-arrow-right me-1"></i><span class="btn-text">{{ 'viewAllTasks'|trans }}</span>
 							</a>
 						</div>
@@ -155,6 +155,42 @@
 					</div>
 				</div>
 			{% endif %}
+
+			{# Anomalies #}
+			<div class="mb-4">
+				<div class="tarmac-section-bar">
+					<h3 class="tarmac-section-bar__title">
+						<i class="ti ti-alert-triangle"></i>
+						{{ 'anomalies'|trans }}
+						{% if openAnomalies|length > 0 %}
+							<span class="tarmac-section-bar__count">{{ openAnomalies|length }}</span>
+						{% endif %}
+					</h3>
+					<div class="tarmac-section-bar__actions">
+						<a href="{{ path('club_anomaly_new', {equipment: equipment.id}) }}" class="btn btn-sm btn-primary">
+							<i class="ti ti-plus me-1"></i><span class="btn-text">{{ 'reportAnomaly'|trans }}</span>
+						</a>
+						{% if openAnomalies|length > 0 %}
+							<a href="{{ path('club_anomalies', {'equipment': equipment.id}) }}" class="btn btn-sm btn-outline-secondary">
+								<i class="ti ti-arrow-right me-1"></i><span class="btn-text">{{ 'viewAllAnomalies'|trans }}</span>
+							</a>
+						{% endif %}
+					</div>
+				</div>
+				{% if openAnomalies|length > 0 %}
+					<div class="row">
+						{% for anomaly in openAnomalies %}
+							{% include 'component/anomalyCard.html.twig' with {'anomaly': anomaly} %}
+						{% endfor %}
+					</div>
+				{% else %}
+					<div class="tarmac-panel">
+						<p class="text-secondary" style="margin:0;font-size:0.9rem;">
+							<em>{{ 'noAnomalyForEquipment'|trans }}</em>
+						</p>
+					</div>
+				{% endif %}
+			</div>
 
 		</div>{# /col-lg-8 (main) #}
 

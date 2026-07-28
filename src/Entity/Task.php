@@ -88,12 +88,19 @@ class Task
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     private Collection $activities;
 
+    /**
+     * @var Collection<int, Anomaly>
+     */
+    #[ORM\ManyToMany(targetEntity: Anomaly::class, mappedBy: 'tasks')]
+    private Collection $anomalies;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->status = 'open';
         $this->subTasks = new ArrayCollection();
         $this->activities = new ArrayCollection();
+        $this->anomalies = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -494,6 +501,30 @@ class Task
                 $activity->setTask(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Anomaly>
+     */
+    public function getAnomalies(): Collection
+    {
+        return $this->anomalies;
+    }
+
+    public function addAnomaly(Anomaly $anomaly): static
+    {
+        if (!$this->anomalies->contains($anomaly)) {
+            $this->anomalies->add($anomaly);
+        }
+
+        return $this;
+    }
+
+    public function removeAnomaly(Anomaly $anomaly): static
+    {
+        $this->anomalies->removeElement($anomaly);
 
         return $this;
     }

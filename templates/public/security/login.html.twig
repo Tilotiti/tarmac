@@ -2,6 +2,16 @@
 
 {% block title %}Connexion{% endblock %}
 
+{# Inutile de proposer « Se connecter » sur la page de connexion #}
+{% block anonymous_actions %}
+	<a href="{{ path('public_guide') }}" class="nav-link px-2">
+		<span class="nav-link-icon d-md-none d-lg-inline-block">
+			<i class="ti ti-book-2"></i>
+		</span>
+		<span class="nav-link-title">{{ 'userGuide'|trans }}</span>
+	</a>
+{% endblock %}
+
 {% block body %}
 	<div class="page page-center">
 		<div class="container container-tight py-4">

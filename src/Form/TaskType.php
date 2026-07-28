@@ -39,8 +39,9 @@ class TaskType extends AbstractType
             $isPilot = $membership?->isPilote() ?? false;
         }
 
-        // Only show equipment field when creating a new task, not when editing
-        if (!$isEditMode) {
+        // Only show equipment field when creating a new task, not when editing —
+        // nor when the equipment is imposed by the context (task created from an anomaly)
+        if (!$isEditMode && !$options['lock_equipment']) {
             $builder
                 ->add('equipment', EntityType::class, [
                     'class' => Equipment::class,
@@ -142,6 +143,7 @@ class TaskType extends AbstractType
             'data_class' => Task::class,
             'include_subtasks' => false,
             'is_edit' => false,
+            'lock_equipment' => false,
             'user' => null,
             'club' => null,
             'can_manage_specialisations' => false,
@@ -150,6 +152,7 @@ class TaskType extends AbstractType
         $resolver->setAllowedTypes('user', ['null', User::class]);
         $resolver->setAllowedTypes('club', ['null', Club::class]);
         $resolver->setAllowedTypes('is_edit', 'bool');
+        $resolver->setAllowedTypes('lock_equipment', 'bool');
         $resolver->setAllowedTypes('can_manage_specialisations', 'bool');
     }
 }

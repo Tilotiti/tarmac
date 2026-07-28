@@ -3,6 +3,7 @@
 namespace App\Controller\Club;
 
 use App\Controller\ExtendedController;
+use App\Entity\Anomaly;
 use App\Entity\Enum\ActivityType;
 use App\Entity\SubTask;
 use App\Entity\Task;
@@ -16,11 +17,13 @@ use App\Form\SubTaskCompleteFormType;
 use App\Repository\MembershipRepository;
 use App\Repository\Paginator;
 use App\Repository\TaskRepository;
+use App\Security\Voter\AnomalyVoter;
 use App\Security\Voter\TaskVoter;
 use App\Service\ClubResolver;
+use App\Service\Maintenance\AnomalyStatusService;
 use App\Service\Maintenance\TaskStatusService;
 use App\Service\SubdomainService;
-use App\Service\TaskCommentNotificationService;
+use App\Service\CommentNotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
@@ -40,9 +43,10 @@ class TaskController extends ExtendedController
         private readonly MembershipRepository $membershipRepository,
         private readonly TaskRepository $taskRepository,
         private readonly TaskStatusService $taskStatusService,
+        private readonly AnomalyStatusService $anomalyStatusService,
         private readonly EntityManagerInterface $entityManager,
         private readonly Filesystem $s3Filesystem,
-        private readonly TaskCommentNotificationService $commentNotificationService,
+        private readonly CommentNotificationService $commentNotificationService,
     ) {
         parent::__construct($subdomainService);
     }
@@ -95,6 +99,14 @@ class TaskController extends ExtendedController
         $task->setClub($club);
         $task->setCreatedBy($this->getUser());
 
+        // Created from an anomaly: the equipment is imposed and the title pre-filled
+        $anomaly = $this->resolveRequestedAnomaly($request);
+
+        if ($anomaly !== null) {
+            $task->setEquipment($anomaly->getEquipment());
+            $task->setTitle($anomaly->getTitle());
+        }
+
         // Add one empty subtask by default for new tasks
         if ($task->getSubTasks()->count() === 0) {
             $subTask = new \App\Entity\SubTask();
@@ -108,6 +120,7 @@ class TaskController extends ExtendedController
             'user' => $this->getUser(),
             'club' => $club,
             'can_manage_specialisations' => $this->isGranted('MANAGE', $club),
+            'lock_equipment' => $anomaly !== null,
         ]);
         $form->handleRequest($request);
 
@@ -118,6 +131,7 @@ class TaskController extends ExtendedController
                 return $this->render('club/task/new.html.twig', [
                     'club' => $club,
                     'task' => $task,
+                    'anomaly' => $anomaly,
                     'form' => $form,
                 ]);
             }
@@ -129,6 +143,7 @@ class TaskController extends ExtendedController
                 return $this->render('club/task/new.html.twig', [
                     'club' => $club,
                     'task' => $task,
+                    'anomaly' => $anomaly,
                     'form' => $form,
                 ]);
             }
@@ -146,14 +161,42 @@ class TaskController extends ExtendedController
 
             $this->addFlash('success', 'taskCreated');
 
+            if ($anomaly !== null) {
+                $this->anomalyStatusService->handleLinkTask($anomaly, $task, $this->getUser());
+
+                return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
+            }
+
             return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
         }
 
         return $this->render('club/task/new.html.twig', [
             'club' => $club,
             'task' => $task,
+            'anomaly' => $anomaly,
             'form' => $form,
         ]);
+    }
+
+    /**
+     * Anomaly this task is being created for, when reached from an anomaly page.
+     * Returns null unless the user is actually allowed to link tasks to it.
+     */
+    private function resolveRequestedAnomaly(Request $request): ?Anomaly
+    {
+        $anomalyId = $request->query->getInt('anomaly');
+
+        if ($anomalyId <= 0) {
+            return null;
+        }
+
+        $anomaly = $this->entityManager->getRepository(Anomaly::class)->find($anomalyId);
+
+        if (!$anomaly instanceof Anomaly || !$this->isGranted(AnomalyVoter::LINK_TASK, $anomaly)) {
+            return null;
+        }
+
+        return $anomaly;
     }
 
     #[Route('/{id}', name: 'club_task_show', requirements: ['id' => '\d+'])]

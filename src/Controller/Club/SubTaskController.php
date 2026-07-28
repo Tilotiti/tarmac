@@ -20,7 +20,7 @@ use App\Security\Voter\TaskVoter;
 use App\Service\ClubResolver;
 use App\Service\Maintenance\TaskStatusService;
 use App\Service\SubdomainService;
-use App\Service\TaskCommentNotificationService;
+use App\Service\CommentNotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
@@ -45,7 +45,7 @@ class SubTaskController extends ExtendedController
         private readonly ContributionRepository $contributionRepository,
         private readonly Filesystem $s3Filesystem,
         private readonly TranslatorInterface $translator,
-        private readonly TaskCommentNotificationService $commentNotificationService,
+        private readonly CommentNotificationService $commentNotificationService,
     ) {
         parent::__construct($subdomainService);
     }

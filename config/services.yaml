@@ -29,6 +29,11 @@ services:
         arguments:
             $s3Filesystem: '@oneup_flysystem.s3_filesystem'
 
+    # AnomalyController with S3 filesystem injection (photo deletion)
+    App\Controller\Club\AnomalyController:
+        arguments:
+            $s3Filesystem: '@oneup_flysystem.s3_filesystem'
+
     # PDO Session Handler
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:

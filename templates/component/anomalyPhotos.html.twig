@@ -1,0 +1,27 @@
+{#
+    Galerie de photos d'une anomalie.
+
+    Paramètres :
+    - anomaly: l'entité Anomaly
+    - canDelete: (optionnel) affiche le bouton de suppression sur chaque photo
+#}
+{% set canDelete = canDelete|default(false) %}
+
+<div class="anomaly-photo-grid">
+	{% for photo in anomaly.photos %}
+		<div class="anomaly-photo">
+			<a href="{{ photo }}" target="_blank" rel="noopener noreferrer" aria-label="{{ 'anomalyOpenPhoto'|trans }}">
+				<img src="{{ photo }}" alt="{{ 'anomalyPhotoAlt'|trans({'index': loop.index}) }}" loading="lazy">
+			</a>
+			{% if canDelete %}
+				<form method="post" action="{{ path('club_anomaly_delete_photo', {id: anomaly.id}) }}" data-turbo="false">
+					<input type="hidden" name="_token" value="{{ csrf_token('anomaly_delete_photo_' ~ anomaly.id) }}">
+					<input type="hidden" name="url" value="{{ photo }}">
+					<button type="submit" class="anomaly-photo__delete" data-confirm="{{ 'anomalyDeletePhotoConfirm'|trans }}" title="{{ 'delete'|trans }}">
+						<i class="ti ti-trash"></i>
+					</button>
+				</form>
+			{% endif %}
+		</div>
+	{% endfor %}
+</div>

@@ -1,0 +1,404 @@
+{% extends 'club/base.html.twig' %}
+
+{% set status = anomaly.status %}
+{% set canEdit = is_granted('ANOMALY_EDIT', anomaly) %}
+{% set canTreat = is_granted('ANOMALY_TREAT', anomaly) %}
+{% set canIgnore = is_granted('ANOMALY_IGNORE', anomaly) %}
+{% set canReopen = is_granted('ANOMALY_REOPEN', anomaly) %}
+{% set canChangeImpact = is_granted('ANOMALY_CHANGE_IMPACT', anomaly) %}
+{% set canLinkTask = is_granted('ANOMALY_LINK_TASK', anomaly) %}
+
+{% block page_title %}
+	{{ anomaly.title }}
+{% endblock %}
+
+{% block page_pretitle %}
+	<a href="{{ path('club_equipment_show', {id: anomaly.equipment.id}) }}" class="tarmac-page-eyebrow">
+		<i class="ti {{ anomaly.equipment.type.icon }} me-1"></i>{{ anomaly.equipment.name }}
+	</a>
+{% endblock %}
+
+{% block page_actions %}
+	{% if canTreat %}
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#treatAnomalyModal">
+			<i class="ti ti-circle-check me-2"></i>
+			<span class="d-none d-sm-inline">{{ 'anomalyMarkAsTreated'|trans }}</span>
+			<span class="d-inline d-sm-none">{{ 'anomalyStatusTreated'|trans }}</span>
+		</button>
+	{% endif %}
+
+	{% if canLinkTask %}
+		<a href="{{ path('club_task_new', {anomaly: anomaly.id}) }}" class="btn btn-primary">
+			<i class="ti ti-plus me-2"></i>
+			<span class="d-none d-sm-inline">{{ 'anomalyCreateTask'|trans }}</span>
+			<span class="d-inline d-sm-none">{{ 'task'|trans }}</span>
+		</a>
+	{% endif %}
+
+	{% if canEdit or canIgnore or canReopen %}
+		<div class="dropdown d-inline-block" data-controller="dropdown">
+			<button type="button" class="btn btn-outline-secondary" data-dropdown-target="toggle" aria-haspopup="true" aria-expanded="false" title="{{ 'moreActions'|trans }}">
+				<i class="ti ti-dots-vertical"></i>
+			</button>
+			<div class="dropdown-menu dropdown-menu-end" data-dropdown-target="menu">
+				{% if canEdit %}
+					<a href="{{ path('club_anomaly_edit', {id: anomaly.id}) }}" class="dropdown-item">
+						<i class="ti ti-edit me-2"></i>{{ 'edit'|trans }}
+					</a>
+				{% endif %}
+				{% if canReopen %}
+					<button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reopenAnomalyModal">
+						<i class="ti ti-rotate me-2"></i>{{ 'anomalyReopen'|trans }}
+					</button>
+				{% endif %}
+				{% if canEdit and canIgnore %}
+					<div class="dropdown-divider"></div>
+				{% endif %}
+				{% if canIgnore %}
+					<button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#ignoreAnomalyModal">
+						<i class="ti ti-eye-off me-2"></i>{{ 'anomalyIgnore'|trans }}
+					</button>
+				{% endif %}
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row g-3">
+
+		{# ========== Colonne principale ========== #}
+		<div class="col-12 col-lg-8">
+
+			<div class="tarmac-panel mb-3">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-file-description"></i>{{ 'description'|trans }}
+				</div>
+				<p style="margin:0;white-space:pre-wrap;">{{ anomaly.description|nl2br }}</p>
+			</div>
+
+			{# Photos #}
+			<div class="tarmac-panel mb-3">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-camera"></i>
+					{{ 'anomalyPhotos'|trans }}
+					{% if anomaly.photos|length > 0 %}
+						<span class="tarmac-section-bar__count">{{ anomaly.photos|length }}</span>
+					{% endif %}
+				</div>
+
+				{% if anomaly.photos|length > 0 %}
+					{% include 'component/anomalyPhotos.html.twig' with {'anomaly': anomaly, 'canDelete': canEdit} only %}
+				{% else %}
+					<p class="text-secondary" style="margin:0;font-size:0.9rem;">
+						<em>{{ 'anomalyNoPhoto'|trans }}</em>
+					</p>
+				{% endif %}
+
+				{% if canEdit %}
+					<hr style="border-color: var(--td-border); margin: 1.25rem 0;">
+					<form method="post"
+						action="{{ path('club_anomaly_add_photos', {id: anomaly.id}) }}"
+						enctype="multipart/form-data"
+						data-turbo="false">
+						<input type="hidden" name="_token" value="{{ csrf_token('anomaly_add_photos_' ~ anomaly.id) }}">
+						{% include 'component/anomalyPhotoInput.html.twig' only %}
+						<button type="submit" class="btn btn-outline-primary btn-sm">
+							<i class="ti ti-upload me-1"></i>{{ 'anomalyAddPhotos'|trans }}
+						</button>
+					</form>
+				{% endif %}
+			</div>
+
+			{# Tâches liées #}
+			<div class="tarmac-panel mb-3">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-checklist"></i>
+					{{ 'anomalyLinkedTasks'|trans }}
+					{% if anomaly.tasks|length > 0 %}
+						<span class="tarmac-section-bar__count">{{ anomaly.tasks|length }}</span>
+					{% endif %}
+					{% if canLinkTask %}
+						<a href="{{ path('club_task_new', {anomaly: anomaly.id}) }}" class="btn btn-primary btn-sm ms-auto">
+							<i class="ti ti-plus me-1"></i>{{ 'anomalyCreateTask'|trans }}
+						</a>
+					{% endif %}
+				</div>
+
+				{% if anomaly.tasks|length > 0 %}
+					<ul class="tarmac-meta-list">
+						{% for task in anomaly.tasks %}
+							<li class="d-flex align-items-center justify-content-between gap-2">
+								<a href="{{ path('club_task_show', {id: task.id}) }}" class="flex-fill text-truncate">
+									{{ task.title }}
+								</a>
+								<span class="d-flex align-items-center gap-2">
+									{% if task.status == 'cancelled' %}
+										<span class="tarmac-badge tarmac-badge--status-cancelled"><i class="ti ti-x"></i>{{ task.status|trans }}</span>
+									{% elseif task.status == 'closed' %}
+										<span class="tarmac-badge tarmac-badge--status-closed"><i class="ti ti-circle-check"></i>{{ task.status|trans }}</span>
+									{% else %}
+										<span class="tarmac-badge tarmac-badge--status-open"><i class="ti ti-circle"></i>{{ task.status|trans }}</span>
+									{% endif %}
+
+									<a href="{{ path('club_task_show', {id: task.id}) }}"
+										class="btn btn-sm btn-outline-primary"
+										title="{{ 'viewTask'|trans }}"
+										aria-label="{{ 'viewTask'|trans }}">
+										<i class="ti ti-arrow-right"></i>
+									</a>
+
+									{% if canLinkTask %}
+										<form method="post" action="{{ path('club_anomaly_unlink_task', {id: anomaly.id, taskId: task.id}) }}" data-turbo="false">
+											<input type="hidden" name="_token" value="{{ csrf_token('anomaly_unlink_task_' ~ anomaly.id) }}">
+											<button type="submit" class="btn btn-sm btn-outline-secondary" data-confirm="{{ 'anomalyUnlinkTaskConfirm'|trans }}" title="{{ 'anomalyUnlinkTask'|trans }}">
+												<i class="ti ti-unlink"></i>
+											</button>
+										</form>
+									{% endif %}
+								</span>
+							</li>
+						{% endfor %}
+					</ul>
+				{% else %}
+					<p class="text-secondary" style="margin:0;font-size:0.9rem;">
+						<em>{{ 'anomalyNoLinkedTask'|trans }}</em>
+					</p>
+				{% endif %}
+
+				{% if linkTaskForm %}
+					<hr style="border-color: var(--td-border); margin: 1.25rem 0;">
+					{{ form_start(linkTaskForm, {
+						action: path('club_anomaly_link_task', {id: anomaly.id}),
+						attr: {'data-turbo': 'false'}
+					}) }}
+					<div class="mb-3">{{ form_row(linkTaskForm.task) }}</div>
+					<button type="submit" class="btn btn-outline-primary btn-sm">
+						<i class="ti ti-link me-1"></i>{{ 'anomalyLinkExistingTask'|trans }}
+					</button>
+					{{ form_end(linkTaskForm) }}
+				{% endif %}
+			</div>
+
+			{# Journal & commentaires #}
+			<div class="tarmac-panel">
+				<div class="tarmac-panel__title">
+					<i class="ti ti-history"></i>{{ 'activity'|trans }}
+				</div>
+
+				{% if anomaly.activities|length > 0 %}
+					<ul class="tarmac-timeline">
+						{% for activity in anomaly.activities %}
+							{% set iconVariant = activity.typeColor in ['success', 'green'] ? 'success'
+								: activity.typeColor in ['warning', 'orange', 'yellow'] ? 'warning'
+								: activity.typeColor in ['danger', 'red'] ? 'danger'
+								: activity.typeColor in ['azure', 'cyan', 'info'] ? 'azure'
+								: activity.typeColor == 'purple' ? 'purple'
+								: '' %}
+							<li class="tarmac-timeline__item">
+								<span class="tarmac-timeline__icon{% if iconVariant %} tarmac-timeline__icon--{{ iconVariant }}{% endif %}">
+									<i class="ti {{ activity.typeIcon }}"></i>
+								</span>
+								<div class="tarmac-timeline__head">
+									<span class="tarmac-timeline__author">{{ activity.user.fullName }}</span>
+									<span class="tarmac-timeline__action">{{ activity.typeLabel|trans|lower }}</span>
+									<span class="tarmac-timeline__date">{{ activity.createdAt|date('d/m/Y H:i') }}</span>
+								</div>
+								{% if activity.message %}
+									<div class="tarmac-timeline__body">{{ activity.message|nl2br }}</div>
+								{% endif %}
+							</li>
+						{% endfor %}
+					</ul>
+				{% else %}
+					<p class="text-secondary" style="margin:0;font-size:0.9rem;">
+						<em>{{ 'noActivityYet'|trans }}</em>
+					</p>
+				{% endif %}
+
+				{% if commentForm %}
+					<hr style="border-color: var(--td-border); margin: 1.25rem 0;">
+					{{ form_start(commentForm, {action: path('club_anomaly_comment', {id: anomaly.id})}) }}
+					<label for="{{ commentForm.message.vars.id }}" class="form-label">
+						<i class="ti ti-message me-1"></i>{{ 'addComment'|trans }}
+					</label>
+					<div class="mb-3">{{ form_widget(commentForm.message) }}</div>
+					<button type="submit" class="btn btn-primary btn-sm">
+						<i class="ti ti-send me-1"></i>{{ 'addComment'|trans }}
+					</button>
+					{{ form_end(commentForm) }}
+				{% endif %}
+			</div>
+		</div>
+
+		{# ========== Sidebar ========== #}
+		<div class="col-12 col-lg-4">
+			<div class="tarmac-page-sidebar">
+				<div class="tarmac-panel">
+					<div class="tarmac-panel__title">
+						<i class="ti ti-info-circle"></i>{{ 'details'|trans }}
+					</div>
+					<ul class="tarmac-meta-list">
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'status'|trans }}</span>
+							<span class="tarmac-meta-list__value">
+								<span class="tarmac-badge tarmac-badge--{{ status.color }}">
+									<i class="ti {{ status.icon }}"></i>
+									{{ status.label|trans }}
+								</span>
+							</span>
+						</li>
+						<li>
+							{# Libellé court : « Impact sur le matériel » écrasait la valeur dans une colonne étroite #}
+							<span class="tarmac-meta-list__label">{{ 'anomalyImpactShort'|trans }}</span>
+							<span class="tarmac-meta-list__value">
+								<span class="tarmac-badge tarmac-badge--{{ anomaly.impact.color }}">
+									<i class="ti {{ anomaly.impact.icon }}"></i>
+									{{ anomaly.impact.label|trans }}
+								</span>
+							</span>
+						</li>
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'equipment'|trans }}</span>
+							<span class="tarmac-meta-list__value">
+								<a href="{{ path('club_equipment_show', {id: anomaly.equipment.id}) }}">{{ anomaly.equipment.name }}</a>
+							</span>
+						</li>
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'anomalyReportedBy'|trans }}</span>
+							<span class="tarmac-meta-list__value">{{ anomaly.reportedBy ? anomaly.reportedBy.fullName : '—' }}</span>
+						</li>
+						<li>
+							<span class="tarmac-meta-list__label">{{ 'anomalyReportedAtShort'|trans }}</span>
+							<span class="tarmac-meta-list__value">{{ anomaly.reportedAt|date('d/m/Y') }}</span>
+						</li>
+						{% if anomaly.createdBy and anomaly.reportedBy and anomaly.createdBy.id != anomaly.reportedBy.id %}
+							<li>
+								<span class="tarmac-meta-list__label">{{ 'anomalyRecordedBy'|trans }}</span>
+								<span class="tarmac-meta-list__value">{{ anomaly.createdBy.fullName }}</span>
+							</li>
+						{% endif %}
+						{% if anomaly.resolvedBy %}
+							<li>
+								<span class="tarmac-meta-list__label">{{ 'anomalyResolvedBy'|trans }}</span>
+								<span class="tarmac-meta-list__value">
+									{{ anomaly.resolvedBy.fullName }}
+									{% if anomaly.resolvedAt %}<br><small class="text-secondary">{{ anomaly.resolvedAt|date('d/m/Y H:i') }}</small>{% endif %}
+								</span>
+							</li>
+						{% endif %}
+					</ul>
+				</div>
+
+				{% if canChangeImpact %}
+					<div class="tarmac-panel">
+						<div class="tarmac-panel__title">
+							<i class="ti ti-activity-heartbeat"></i>{{ 'anomalyChangeImpact'|trans }}
+						</div>
+						<form method="post" action="{{ path('club_anomaly_impact', {id: anomaly.id}) }}" data-turbo="false">
+							<input type="hidden" name="_token" value="{{ csrf_token('anomaly_impact_' ~ anomaly.id) }}">
+							<div class="mb-3">
+								<label for="anomalyImpactSelect" class="form-label">{{ 'anomalyImpact'|trans }}</label>
+								<select id="anomalyImpactSelect" name="impact" class="form-select">
+									{% for impact in anomalyImpacts %}
+										<option value="{{ impact.value }}" {{ impact == anomaly.impact ? 'selected' : '' }}>
+											{{ impact.label|trans }}
+										</option>
+									{% endfor %}
+								</select>
+							</div>
+							<button type="submit" class="btn btn-outline-primary btn-sm w-100" style="min-height: 44px;">
+								<i class="ti ti-check me-1"></i>{{ 'save'|trans }}
+							</button>
+						</form>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+
+	{# ========== Modales ========== #}
+	{% if canTreat %}
+		<div class="modal fade" id="treatAnomalyModal" tabindex="-1" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					{{ form_start(treatForm, {
+						action: path('club_anomaly_treat', {id: anomaly.id}),
+						attr: {'data-turbo': 'false'}
+					}) }}
+					<div class="modal-header">
+						<h5 class="modal-title">{{ 'anomalyMarkAsTreated'|trans }}</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'close'|trans }}"></button>
+					</div>
+					<div class="modal-body">
+						<p class="text-secondary">{{ 'anomalyTreatHelp'|trans }}</p>
+						{{ form_row(treatForm.message, {'id': 'treatAnomalyMessage'}) }}
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ 'cancel'|trans }}</button>
+						<button type="submit" class="btn btn-success">
+							<i class="ti ti-circle-check me-1"></i>{{ 'confirm'|trans }}
+						</button>
+					</div>
+					{{ form_end(treatForm) }}
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
+	{% if canIgnore %}
+		<div class="modal fade" id="ignoreAnomalyModal" tabindex="-1" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					{{ form_start(ignoreForm, {
+						action: path('club_anomaly_ignore', {id: anomaly.id}),
+						attr: {'data-turbo': 'false'}
+					}) }}
+					<div class="modal-header">
+						<h5 class="modal-title">{{ 'anomalyIgnore'|trans }}</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'close'|trans }}"></button>
+					</div>
+					<div class="modal-body">
+						<p class="text-secondary">{{ 'anomalyIgnoreHelp'|trans }}</p>
+						{{ form_row(ignoreForm.message, {'id': 'ignoreAnomalyMessage'}) }}
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ 'cancel'|trans }}</button>
+						<button type="submit" class="btn btn-danger">
+							<i class="ti ti-eye-off me-1"></i>{{ 'confirm'|trans }}
+						</button>
+					</div>
+					{{ form_end(ignoreForm) }}
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
+	{% if canReopen %}
+		<div class="modal fade" id="reopenAnomalyModal" tabindex="-1" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					{{ form_start(reopenForm, {
+						action: path('club_anomaly_reopen', {id: anomaly.id}),
+						attr: {'data-turbo': 'false'}
+					}) }}
+					<div class="modal-header">
+						<h5 class="modal-title">{{ 'anomalyReopen'|trans }}</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'close'|trans }}"></button>
+					</div>
+					<div class="modal-body">
+						<p class="text-secondary">{{ 'anomalyReopenHelp'|trans }}</p>
+						{{ form_row(reopenForm.message, {'id': 'reopenAnomalyMessage'}) }}
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ 'cancel'|trans }}</button>
+						<button type="submit" class="btn btn-primary">
+							<i class="ti ti-rotate me-1"></i>{{ 'confirm'|trans }}
+						</button>
+					</div>
+					{{ form_end(reopenForm) }}
+				</div>
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}

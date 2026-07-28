@@ -1,0 +1,58 @@
+{% extends 'email/base.html.twig' %}
+
+{% block title %}Matériel immobilisé - Tarmac
+{% endblock %}
+
+{% block preheader %}
+	{{ anomaly.equipment.name }} est signalé comme inutilisable : {{ anomaly.title }}
+{% endblock %}
+
+{% block email_title %}Matériel immobilisé
+{% endblock %}
+
+{% block email_body %}
+	<h2 style="margin-top: 0; font-size: 20px; color: #111827; font-weight: 600;">
+		{{ anomaly.equipment.name }} est signalé comme inutilisable
+	</h2>
+
+	<p style="margin: 16px 0; color: #4b5563;">
+		<strong>{{ author.fullname ?? author.email }}</strong>
+		a signalé une anomalie qui rend le matériel
+		<strong style="color: #345B7C;">{{ anomaly.equipment.name }}</strong>
+		inutilisable, au club
+		<strong style="color: #345B7C;">{{ club.name }}</strong>.
+	</p>
+
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 24px 0;">
+		<tr>
+			<td class="alert alert-danger" style="background-color: #fdeaec; border-left: 4px solid #b8364a; border-radius: 6px; padding: 16px;">
+				<p style="margin: 0 0 8px; color: #b8364a; font-weight: 600;">{{ anomaly.title }}</p>
+				<p style="margin: 0; color: #7a2432; white-space: pre-wrap;">{{ anomaly.description|nl2br }}</p>
+			</td>
+		</tr>
+	</table>
+
+	<p style="margin: 16px 0; color: #4b5563;">
+		Déclarée le
+		{{ anomaly.reportedAt|date('d/m/Y') }}
+		par
+		<strong>{{ anomaly.reportedBy ? (anomaly.reportedBy.fullname ?? anomaly.reportedBy.email) : 'un membre' }}</strong>.
+	</p>
+
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 30px 0;">
+		<tr>
+			<td align="center">
+				<a href="{{ anomalyUrl }}" class="btn" style="display: inline-block; padding: 14px 32px; background-color: #345B7C; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">
+					Voir l'anomalie
+				</a>
+			</td>
+		</tr>
+	</table>
+
+	<hr style="border: 0; border-top: 1px solid #e8ebee; margin: 30px 0;">
+
+	<p style="font-size: 13px; color: #667382; margin: 16px 0;">
+		Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :<br>
+		<a href="{{ anomalyUrl }}" style="color: #345B7C; word-break: break-all; text-decoration: none;">{{ anomalyUrl }}</a>
+	</p>
+{% endblock %}

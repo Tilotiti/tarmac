@@ -1,0 +1,159 @@
+{% extends 'club/base.html.twig' %}
+
+{% set canManage = is_granted('MANAGE', club) %}
+
+{% block page_title %}
+	{{ 'anomalies'|trans }}
+{% endblock %}
+
+{% block page_actions %}
+	<a href="{{ path('club_anomaly_new') }}" class="btn btn-primary">
+		<i class="ti ti-plus me-2"></i>
+		<span class="d-none d-sm-inline">{{ 'newAnomaly'|trans }}</span>
+		<span class="d-inline d-sm-none">{{ 'add'|trans }}</span>
+	</a>
+{% endblock %}
+
+{% block page_content %}
+	{% include 'component/filters.html.twig' with { form: filters } %}
+
+	<div
+		{% if canManage %}
+			data-controller="anomaly-bulk-selection"
+			data-anomaly-bulk-selection-bulkSelectionStart-value="{{ 'selectAnomalies'|trans }}"
+			data-anomaly-bulk-selection-bulkSelectionCancel-value="{{ 'cancelSelection'|trans }}"
+		{% endif %}
+	>
+		{# Pas de titre de section ici : « Anomalies » est déjà le titre de la page.
+		   Le bouton doit en revanche rester dans le scope du contrôleur Stimulus. #}
+		{% if canManage and anomalies|length > 0 %}
+			<div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+				<span class="text-secondary" style="font-size:0.85rem;">
+					{{ 'anomaliesCount'|trans({'count': anomalies.count}) }}
+				</span>
+				<button type="button" class="btn btn-outline-secondary btn-sm"
+					data-anomaly-bulk-selection-target="selectToggle"
+					data-action="click->anomaly-bulk-selection#toggleSelectionMode"
+					title="{{ 'selectAnomalies'|trans }}">
+					<i class="ti ti-list-check me-1" data-anomaly-bulk-selection-target="selectIcon"></i>
+					<span class="btn-text" data-anomaly-bulk-selection-target="selectLabel">{{ 'selectAnomalies'|trans }}</span>
+				</button>
+			</div>
+		{% endif %}
+
+		<div class="row">
+			{% for anomaly in anomalies %}
+				{% include 'component/anomalyCard.html.twig' with {'anomaly': anomaly, 'selectable': canManage} %}
+			{% else %}
+				<div class="col-12">
+					<div class="tarmac-panel" style="text-align:center;padding:2.5rem 1.5rem;">
+						<div style="font-size:2.5rem;color:var(--td-ink-3);margin-bottom:0.75rem;"><i class="ti ti-alert-triangle"></i></div>
+						<p class="text-secondary" style="margin:0 0 1rem;"><em>{{ 'noAnomaliesFound'|trans }}</em></p>
+						<a href="{{ path('club_anomaly_new') }}" class="btn btn-primary">
+							<i class="ti ti-plus me-2"></i>
+							{{ 'newAnomaly'|trans }}
+						</a>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+
+		{% if canManage %}
+			{# Barre d'actions flottante — visible dès qu'une anomalie est cochée #}
+			<div class="anomaly-bulk-actions d-none" data-anomaly-bulk-selection-target="actionsBar">
+				<div class="card shadow-lg">
+					<div class="card-body d-flex align-items-center gap-2">
+						<div class="me-2">
+							<span class="badge bg-primary-lt">
+								<span data-anomaly-bulk-selection-target="counter">0</span>
+								{{ 'anomalies'|trans|lower }}
+							</span>
+						</div>
+						<div class="d-flex flex-wrap gap-2 ms-auto">
+							<button type="button" class="btn btn-outline-secondary btn-sm"
+								data-action="click->anomaly-bulk-selection#exitSelectionMode">
+								{{ 'cancel'|trans }}
+							</button>
+							<button type="button" class="btn btn-success btn-sm"
+								data-action="click->anomaly-bulk-selection#openModal"
+								data-modal-id="bulkTreatAnomaliesModal"
+								data-form-id="bulkTreatAnomaliesForm">
+								<i class="ti ti-circle-check me-1"></i>{{ 'anomalyMarkAsTreated'|trans }}
+							</button>
+							<button type="button" class="btn btn-outline-danger btn-sm"
+								data-action="click->anomaly-bulk-selection#openModal"
+								data-modal-id="bulkIgnoreAnomaliesModal"
+								data-form-id="bulkIgnoreAnomaliesForm">
+								<i class="ti ti-eye-off me-1"></i>{{ 'anomalyIgnore'|trans }}
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{# Modale : marquer comme traité #}
+			<div class="modal fade" id="bulkTreatAnomaliesModal" tabindex="-1" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						{{ form_start(bulkResolutionForm, {
+							action: path('club_anomalies_bulk_treat'),
+							attr: {
+								id: 'bulkTreatAnomaliesForm',
+								'data-turbo': 'false'
+							}
+						}) }}
+						<div class="modal-header">
+							<h5 class="modal-title">{{ 'anomalyMarkAsTreated'|trans }}</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'close'|trans }}"></button>
+						</div>
+						<div class="modal-body">
+							<p class="text-secondary">{{ 'anomalyBulkTreatHelp'|trans }}</p>
+							{{ form_row(bulkResolutionForm.message, {'id': 'bulkTreatAnomaliesMessage'}) }}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ 'cancel'|trans }}</button>
+							<button type="submit" class="btn btn-success">
+								<i class="ti ti-circle-check me-1"></i>{{ 'confirm'|trans }}
+							</button>
+						</div>
+						{{ form_end(bulkResolutionForm) }}
+					</div>
+				</div>
+			</div>
+
+			{# Modale : ignorer #}
+			<div class="modal fade" id="bulkIgnoreAnomaliesModal" tabindex="-1" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered">
+					<div class="modal-content">
+						{{ form_start(bulkIgnoreForm, {
+							action: path('club_anomalies_bulk_ignore'),
+							attr: {
+								id: 'bulkIgnoreAnomaliesForm',
+								'data-turbo': 'false'
+							}
+						}) }}
+						<div class="modal-header">
+							<h5 class="modal-title">{{ 'anomalyIgnore'|trans }}</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'close'|trans }}"></button>
+						</div>
+						<div class="modal-body">
+							<p class="text-secondary">{{ 'anomalyBulkIgnoreHelp'|trans }}</p>
+							{{ form_row(bulkIgnoreForm.message, {'id': 'bulkIgnoreAnomaliesMessage'}) }}
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ 'cancel'|trans }}</button>
+							<button type="submit" class="btn btn-danger">
+								<i class="ti ti-eye-off me-1"></i>{{ 'confirm'|trans }}
+							</button>
+						</div>
+						{{ form_end(bulkIgnoreForm) }}
+					</div>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+
+	<div class="d-flex justify-content-center mt-4">
+		{{ pagination(anomalies) }}
+	</div>
+{% endblock %}

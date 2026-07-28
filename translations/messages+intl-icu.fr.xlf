@@ -3074,6 +3074,399 @@
         <source>noClubDescription</source>
         <target>Vous n'avez pas encore accès à un club actif. Contactez votre gestionnaire de club pour obtenir une invitation.</target>
       </trans-unit>
+      <!-- Anomalies -->
+      <trans-unit id="1608" resname="taskInformation">
+        <source>taskInformation</source>
+        <target>Informations sur la tâche</target>
+      </trans-unit>
+      <trans-unit id="1609" resname="deleteThisSubTask">
+        <source>deleteThisSubTask</source>
+        <target>Supprimer cette sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="1610" resname="select">
+        <source>select</source>
+        <target>Sélectionner</target>
+      </trans-unit>
+      <trans-unit id="1611" resname="anomalies">
+        <source>anomalies</source>
+        <target>Anomalies</target>
+      </trans-unit>
+      <trans-unit id="1612" resname="newAnomaly">
+        <source>newAnomaly</source>
+        <target>Nouvelle anomalie</target>
+      </trans-unit>
+      <trans-unit id="1613" resname="editAnomaly">
+        <source>editAnomaly</source>
+        <target>Modifier l'anomalie</target>
+      </trans-unit>
+      <trans-unit id="1614" resname="reportAnomaly">
+        <source>reportAnomaly</source>
+        <target>Signaler une anomalie</target>
+      </trans-unit>
+      <trans-unit id="1615" resname="anomalyInformation">
+        <source>anomalyInformation</source>
+        <target>Informations sur l'anomalie</target>
+      </trans-unit>
+      <trans-unit id="1616" resname="noAnomaliesFound">
+        <source>noAnomaliesFound</source>
+        <target>Aucune anomalie trouvée</target>
+      </trans-unit>
+      <trans-unit id="1617" resname="noAnomalyForEquipment">
+        <source>noAnomalyForEquipment</source>
+        <target>Aucune anomalie signalée sur ce matériel.</target>
+      </trans-unit>
+      <trans-unit id="1618" resname="viewAllAnomalies">
+        <source>viewAllAnomalies</source>
+        <target>Voir toutes les anomalies</target>
+      </trans-unit>
+      <trans-unit id="1619" resname="anomalyName">
+        <source>anomalyName</source>
+        <target>Titre</target>
+      </trans-unit>
+      <trans-unit id="1620" resname="searchByAnomalyName">
+        <source>searchByAnomalyName</source>
+        <target>Rechercher dans le titre ou la description</target>
+      </trans-unit>
+      <trans-unit id="1621" resname="selectAnomalies">
+        <source>selectAnomalies</source>
+        <target>Sélectionner</target>
+      </trans-unit>
+      <trans-unit id="1622" resname="anomalyStatusReported">
+        <source>anomalyStatusReported</source>
+        <target>Relevé</target>
+      </trans-unit>
+      <trans-unit id="1623" resname="anomalyStatusAcknowledged">
+        <source>anomalyStatusAcknowledged</source>
+        <target>Pris en compte</target>
+      </trans-unit>
+      <trans-unit id="1624" resname="anomalyStatusTreated">
+        <source>anomalyStatusTreated</source>
+        <target>Traité</target>
+      </trans-unit>
+      <trans-unit id="1625" resname="anomalyStatusIgnored">
+        <source>anomalyStatusIgnored</source>
+        <target>Ignoré</target>
+      </trans-unit>
+      <trans-unit id="1626" resname="anomalyStatusHelp">
+        <source>anomalyStatusHelp</source>
+        <target>Relevé : aucune tâche ouverte. Pris en compte : au moins une tâche en cours. Traité : confirmé par un gestionnaire une fois toutes les tâches fermées.</target>
+      </trans-unit>
+      <trans-unit id="1627" resname="anomalyImpact">
+        <source>anomalyImpact</source>
+        <target>Impact sur le matériel</target>
+      </trans-unit>
+      <trans-unit id="1628" resname="anomalyImpactToDetermine">
+        <source>anomalyImpactToDetermine</source>
+        <target>À déterminer</target>
+      </trans-unit>
+      <trans-unit id="1629" resname="anomalyImpactNormal">
+        <source>anomalyImpactNormal</source>
+        <target>Fonctionnement normal</target>
+      </trans-unit>
+      <trans-unit id="1630" resname="anomalyImpactGrounded">
+        <source>anomalyImpactGrounded</source>
+        <target>Arrêt du matériel</target>
+      </trans-unit>
+      <trans-unit id="1631" resname="anomalyImpactHelp">
+        <source>anomalyImpactHelp</source>
+        <target>Indiquez si le matériel reste utilisable. En cas d'arrêt, les gestionnaires du club sont prévenus par e-mail.</target>
+      </trans-unit>
+      <trans-unit id="1632" resname="anomalyChangeImpact">
+        <source>anomalyChangeImpact</source>
+        <target>Modifier l'impact</target>
+      </trans-unit>
+      <trans-unit id="1633" resname="anomalyImpactUpdated">
+        <source>anomalyImpactUpdated</source>
+        <target>L'impact a été mis à jour.</target>
+      </trans-unit>
+      <trans-unit id="1634" resname="anomalyReportedBy">
+        <source>anomalyReportedBy</source>
+        <target>Signalé par</target>
+      </trans-unit>
+      <trans-unit id="1635" resname="anomalyReportedByHelp">
+        <source>anomalyReportedByHelp</source>
+        <target>En tant que gestionnaire, vous pouvez enregistrer une anomalie pour le compte d'un autre membre.</target>
+      </trans-unit>
+      <trans-unit id="1636" resname="anomalyReportedAt">
+        <source>anomalyReportedAt</source>
+        <target>Date de déclaration</target>
+      </trans-unit>
+      <trans-unit id="1637" resname="anomalyRecordedBy">
+        <source>anomalyRecordedBy</source>
+        <target>Saisi par</target>
+      </trans-unit>
+      <trans-unit id="1638" resname="anomalyResolvedBy">
+        <source>anomalyResolvedBy</source>
+        <target>Clôturé par</target>
+      </trans-unit>
+      <trans-unit id="1639" resname="anomalyTitlePlaceholder">
+        <source>anomalyTitlePlaceholder</source>
+        <target>Ex. : bruit anormal au démontage de l'aile</target>
+      </trans-unit>
+      <trans-unit id="1640" resname="anomalyDescriptionPlaceholder">
+        <source>anomalyDescriptionPlaceholder</source>
+        <target>Décrivez ce que vous avez constaté : où, quand, dans quelles circonstances.</target>
+      </trans-unit>
+      <trans-unit id="1641" resname="anomalyPhotos">
+        <source>anomalyPhotos</source>
+        <target>Photos</target>
+      </trans-unit>
+      <trans-unit id="1642" resname="anomalyPhotosHelp">
+        <source>anomalyPhotosHelp</source>
+        <target>Vous pouvez sélectionner plusieurs photos à la fois. Elles sont automatiquement allégées avant l'envoi, en conservant assez de détail pour zoomer sur un défaut fin.</target>
+      </trans-unit>
+      <trans-unit id="1643" resname="anomalyAddPhotos">
+        <source>anomalyAddPhotos</source>
+        <target>Ajouter les photos</target>
+      </trans-unit>
+      <trans-unit id="1644" resname="anomalyPhotosAdded">
+        <source>anomalyPhotosAdded</source>
+        <target>Les photos ont été ajoutées.</target>
+      </trans-unit>
+      <trans-unit id="1645" resname="anomalyNoPhoto">
+        <source>anomalyNoPhoto</source>
+        <target>Aucune photo.</target>
+      </trans-unit>
+      <trans-unit id="1646" resname="anomalyNoPhotoUploaded">
+        <source>anomalyNoPhotoUploaded</source>
+        <target>Aucune photo n'a été ajoutée.</target>
+      </trans-unit>
+      <trans-unit id="1647" resname="anomalyPhotoDeleted">
+        <source>anomalyPhotoDeleted</source>
+        <target>La photo a été supprimée.</target>
+      </trans-unit>
+      <trans-unit id="1648" resname="anomalyDeletePhotoConfirm">
+        <source>anomalyDeletePhotoConfirm</source>
+        <target>Supprimer cette photo ?</target>
+      </trans-unit>
+      <trans-unit id="1649" resname="anomalyOpenPhoto">
+        <source>anomalyOpenPhoto</source>
+        <target>Ouvrir la photo</target>
+      </trans-unit>
+      <trans-unit id="1650" resname="anomalyPhotoAlt">
+        <source>anomalyPhotoAlt</source>
+        <target>Photo {index} de l'anomalie</target>
+      </trans-unit>
+      <trans-unit id="1651" resname="anomalyManagePhotosFromDetail">
+        <source>anomalyManagePhotosFromDetail</source>
+        <target>Les photos existantes se suppriment depuis la fiche de l'anomalie.</target>
+      </trans-unit>
+      <trans-unit id="1652" resname="invalidImageFormat">
+        <source>invalidImageFormat</source>
+        <target>Format d'image non pris en charge.</target>
+      </trans-unit>
+      <trans-unit id="1653" resname="anomalyLinkedTasks">
+        <source>anomalyLinkedTasks</source>
+        <target>Tâches liées</target>
+      </trans-unit>
+      <trans-unit id="1654" resname="anomalyLinkedTasksCount">
+        <source>anomalyLinkedTasksCount</source>
+        <target>{count, plural, one {# tâche} other {# tâches}}</target>
+      </trans-unit>
+      <trans-unit id="1655" resname="anomalyNoLinkedTask">
+        <source>anomalyNoLinkedTask</source>
+        <target>Aucune tâche liée pour l'instant.</target>
+      </trans-unit>
+      <trans-unit id="1656" resname="anomalyCreateTask">
+        <source>anomalyCreateTask</source>
+        <target>Créer une tâche</target>
+      </trans-unit>
+      <trans-unit id="1657" resname="anomalyLinkTask">
+        <source>anomalyLinkTask</source>
+        <target>Tâche existante</target>
+      </trans-unit>
+      <trans-unit id="1658" resname="anomalyLinkTaskPlaceholder">
+        <source>anomalyLinkTaskPlaceholder</source>
+        <target>Choisir une tâche du même matériel</target>
+      </trans-unit>
+      <trans-unit id="1659" resname="anomalyLinkExistingTask">
+        <source>anomalyLinkExistingTask</source>
+        <target>Rattacher la tâche</target>
+      </trans-unit>
+      <trans-unit id="1660" resname="anomalyUnlinkTask">
+        <source>anomalyUnlinkTask</source>
+        <target>Détacher la tâche</target>
+      </trans-unit>
+      <trans-unit id="1661" resname="anomalyUnlinkTaskConfirm">
+        <source>anomalyUnlinkTaskConfirm</source>
+        <target>Détacher cette tâche de l'anomalie ?</target>
+      </trans-unit>
+      <trans-unit id="1662" resname="anomalyTaskRequired">
+        <source>anomalyTaskRequired</source>
+        <target>Sélectionnez une tâche.</target>
+      </trans-unit>
+      <trans-unit id="1663" resname="anomalyTaskEquipmentMismatch">
+        <source>anomalyTaskEquipmentMismatch</source>
+        <target>Cette tâche ne concerne pas le même matériel.</target>
+      </trans-unit>
+      <trans-unit id="1664" resname="taskWillBeLinkedToAnomaly">
+        <source>taskWillBeLinkedToAnomaly</source>
+        <target>Cette tâche portera sur {equipment} et sera rattachée à l'anomalie.</target>
+      </trans-unit>
+      <trans-unit id="1665" resname="anomalyMarkAsTreated">
+        <source>anomalyMarkAsTreated</source>
+        <target>Marquer comme traité</target>
+      </trans-unit>
+      <trans-unit id="1666" resname="anomalyTreatHelp">
+        <source>anomalyTreatHelp</source>
+        <target>Toutes les tâches liées sont fermées. Confirmez que l'anomalie est bien résolue.</target>
+      </trans-unit>
+      <trans-unit id="1667" resname="anomalyMarkedAsTreated">
+        <source>anomalyMarkedAsTreated</source>
+        <target>L'anomalie a été marquée comme traitée.</target>
+      </trans-unit>
+      <trans-unit id="1668" resname="anomalyCannotBeTreated">
+        <source>anomalyCannotBeTreated</source>
+        <target>L'anomalie ne peut pas être marquée comme traitée : il faut au moins une tâche liée, et toutes doivent être fermées.</target>
+      </trans-unit>
+      <trans-unit id="1669" resname="anomalyIgnore">
+        <source>anomalyIgnore</source>
+        <target>Ignorer</target>
+      </trans-unit>
+      <trans-unit id="1670" resname="anomalyIgnoreHelp">
+        <source>anomalyIgnoreHelp</source>
+        <target>À utiliser pour un doublon ou une fausse alerte. Vous pouvez préciser la raison.</target>
+      </trans-unit>
+      <trans-unit id="1671" resname="anomalyIgnoredFlash">
+        <source>anomalyIgnoredFlash</source>
+        <target>L'anomalie a été ignorée.</target>
+      </trans-unit>
+      <trans-unit id="1672" resname="anomalyReopen">
+        <source>anomalyReopen</source>
+        <target>Rouvrir</target>
+      </trans-unit>
+      <trans-unit id="1673" resname="anomalyReopenHelp">
+        <source>anomalyReopenHelp</source>
+        <target>L'anomalie redeviendra active et ressortira dans la liste.</target>
+      </trans-unit>
+      <trans-unit id="1674" resname="anomalyReopenedFlash">
+        <source>anomalyReopenedFlash</source>
+        <target>L'anomalie a été rouverte.</target>
+      </trans-unit>
+      <trans-unit id="1675" resname="anomalyCreatedFlash">
+        <source>anomalyCreatedFlash</source>
+        <target>L'anomalie a été signalée.</target>
+      </trans-unit>
+      <trans-unit id="1676" resname="anomalyUpdated">
+        <source>anomalyUpdated</source>
+        <target>L'anomalie a été mise à jour.</target>
+      </trans-unit>
+      <trans-unit id="1677" resname="anomalyTaskLinkedFlash">
+        <source>anomalyTaskLinkedFlash</source>
+        <target>La tâche a été rattachée à l'anomalie.</target>
+      </trans-unit>
+      <trans-unit id="1678" resname="anomalyTaskUnlinkedFlash">
+        <source>anomalyTaskUnlinkedFlash</source>
+        <target>La tâche a été détachée de l'anomalie.</target>
+      </trans-unit>
+      <trans-unit id="1679" resname="anomalyBulkTreatHelp">
+        <source>anomalyBulkTreatHelp</source>
+        <target>Seules les anomalies dont toutes les tâches sont fermées seront traitées. Les autres sont ignorées.</target>
+      </trans-unit>
+      <trans-unit id="1680" resname="anomalyBulkIgnoreHelp">
+        <source>anomalyBulkIgnoreHelp</source>
+        <target>Les anomalies déjà traitées ou ignorées ne seront pas modifiées.</target>
+      </trans-unit>
+      <trans-unit id="1681" resname="noAnomalySelected">
+        <source>noAnomalySelected</source>
+        <target>Aucune anomalie sélectionnée.</target>
+      </trans-unit>
+      <trans-unit id="1682" resname="noEligibleAnomalies">
+        <source>noEligibleAnomalies</source>
+        <target>Aucune anomalie éligible parmi celles sélectionnées.</target>
+      </trans-unit>
+      <trans-unit id="1683" resname="anomaliesBulkTreated">
+        <source>anomaliesBulkTreated</source>
+        <target>Les anomalies sélectionnées ont été marquées comme traitées.</target>
+      </trans-unit>
+      <trans-unit id="1684" resname="anomaliesBulkIgnored">
+        <source>anomaliesBulkIgnored</source>
+        <target>Les anomalies sélectionnées ont été ignorées.</target>
+      </trans-unit>
+      <trans-unit id="1685" resname="anomalyCreated">
+        <source>anomalyCreated</source>
+        <target>a signalé l'anomalie</target>
+      </trans-unit>
+      <trans-unit id="1686" resname="anomalyEdited">
+        <source>anomalyEdited</source>
+        <target>a modifié l'anomalie</target>
+      </trans-unit>
+      <trans-unit id="1687" resname="anomalyTreated">
+        <source>anomalyTreated</source>
+        <target>a marqué l'anomalie comme traitée</target>
+      </trans-unit>
+      <trans-unit id="1688" resname="anomalyIgnored">
+        <source>anomalyIgnored</source>
+        <target>a ignoré l'anomalie</target>
+      </trans-unit>
+      <trans-unit id="1689" resname="anomalyReopened">
+        <source>anomalyReopened</source>
+        <target>a rouvert l'anomalie</target>
+      </trans-unit>
+      <trans-unit id="1690" resname="anomalyImpactChanged">
+        <source>anomalyImpactChanged</source>
+        <target>a modifié l'impact</target>
+      </trans-unit>
+      <trans-unit id="1691" resname="anomalyTaskLinked">
+        <source>anomalyTaskLinked</source>
+        <target>a rattaché une tâche</target>
+      </trans-unit>
+      <trans-unit id="1692" resname="anomalyTaskUnlinked">
+        <source>anomalyTaskUnlinked</source>
+        <target>a détaché une tâche</target>
+      </trans-unit>
+      <trans-unit id="1693" resname="descriptionRequired">
+        <source>descriptionRequired</source>
+        <target>La description est obligatoire.</target>
+      </trans-unit>
+      <trans-unit id="1694" resname="anomalyImpactRequired">
+        <source>anomalyImpactRequired</source>
+        <target>L'impact est obligatoire.</target>
+      </trans-unit>
+      <trans-unit id="1695" resname="reportedByRequired">
+        <source>reportedByRequired</source>
+        <target>Le membre à l'origine du signalement est obligatoire.</target>
+      </trans-unit>
+      <trans-unit id="1696" resname="reportedAtRequired">
+        <source>reportedAtRequired</source>
+        <target>La date de déclaration est obligatoire.</target>
+      </trans-unit>
+      <trans-unit id="1697" resname="anomalyPhotosPreparing">
+        <source>anomalyPhotosPreparing</source>
+        <target>Préparation des photos…</target>
+      </trans-unit>
+      <trans-unit id="1698" resname="anomalyPhotosRejected">
+        <source>anomalyPhotosRejected</source>
+        <target>Certaines photos ont été ignorées : format non pris en charge ou fichier trop volumineux.</target>
+      </trans-unit>
+      <trans-unit id="1699" resname="anomalyImpactShort">
+        <source>anomalyImpactShort</source>
+        <target>Impact</target>
+      </trans-unit>
+      <trans-unit id="1700" resname="anomalyReportedAtShort">
+        <source>anomalyReportedAtShort</source>
+        <target>Date</target>
+      </trans-unit>
+      <trans-unit id="1701" resname="taskLinkedToAnomaly">
+        <source>taskLinkedToAnomaly</source>
+        <target>a rattaché cette tâche à une anomalie</target>
+      </trans-unit>
+      <trans-unit id="1702" resname="taskUnlinkedFromAnomaly">
+        <source>taskUnlinkedFromAnomaly</source>
+        <target>a détaché cette tâche d'une anomalie</target>
+      </trans-unit>
+      <trans-unit id="1703" resname="anomaliesCount">
+        <source>anomaliesCount</source>
+        <target>{count, plural, one {# anomalie} other {# anomalies}}</target>
+      </trans-unit>
+      <trans-unit id="1704" resname="viewPlan">
+        <source>viewPlan</source>
+        <target>Voir le plan</target>
+      </trans-unit>
+      <trans-unit id="1705" resname="viewAnomaly">
+        <source>viewAnomaly</source>
+        <target>Voir l'anomalie</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

@@ -15,5 +15,9 @@ enum ActivityType: string
     case INSPECTED_APPROVED = 'inspected_approved';
     case INSPECTED_REJECTED = 'inspected_rejected';
     case APPLICATION_CANCELLED = 'application_cancelled';
+    case IMPACT_CHANGED = 'impact_changed';
+    case TASK_LINKED = 'task_linked';
+    case TASK_UNLINKED = 'task_unlinked';
+    case REOPENED = 'reopened';
 }
 
