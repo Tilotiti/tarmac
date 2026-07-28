@@ -10,25 +10,49 @@ priority: 150
 - ✅ **USE**: `translations/messages+intl-icu.fr.xlf`
 - ❌ **DO NOT USE**: YAML files (`.yaml` or `.yml`) for translations
 
+## ⛔ Never run `translation:extract`
+
+`php-translation/symfony-bundle` **overrides** Symfony's native command. The documented
+`--force --format=xlf` options no longer exist; the actual signature is
+`translation:extract [<configuration> [<locale>]]`.
+
+Worse, the `app` configuration is set to `output_format: yaml` (see `config/packages/translation.yaml`),
+so running it writes `translations/messages+intl-icu.fr.yaml` and `validators+intl-icu.fr.yaml` —
+a full duplicate of the catalog in the **forbidden** format, leaving two diverging sources of truth
+for the same domain. The XLF file is left untouched.
+
+If you ever run it by accident, delete the generated `.yaml` files immediately.
+
 ## Workflow
 
 1) Use camelCase keys in code/Twig: `{{ 'yourTranslationKey'|trans }}`
-2) After any change that affects translations, run:
+2) **Add the key by hand** to `translations/messages+intl-icu.fr.xlf`, at the end of `<body>`,
+   with the next free numeric `id` (grep the last `<trans-unit id="…">`). Group related keys
+   under an XML comment, e.g. `<!-- Subtasks ordering -->`.
+3) List keys used in code but absent from the catalog (read-only, native Symfony command):
 
 ```bash
-symfony console translation:extract --force --format=xlf fr
+symfony console debug:translation fr --domain=messages --only-missing
 ```
 
-3) Update FR catalog: `translations/messages+intl-icu.fr.xlf`
-4) **Never create or modify YAML translation files** - all translations must be in the XLF file
+Note: the domain is `messages` — `+intl-icu` is a filename suffix, not a domain.
+The `unused` state reported by this command is **unreliable** here: keys referenced only from PHP
+string literals (flash messages such as `subTasksReordered`) or from form `label`/`help` options
+are not detected by the scanner. Never delete a key on that basis alone.
+
+4) Validate the catalog, then clear the cache:
+
+```bash
+symfony console lint:xliff translations/
+symfony console cache:clear
+```
+
+5) **Never create or modify YAML translation files** - all translations must be in the XLF file
 
 ### Mandatory translation workflow (FR only)
 
-1. Run extraction after any template/text changes:
-
-```bash
-symfony console translation:extract --force --format=xlf fr
-```
+1. After any template/text change, add the new keys to the XLF catalog by hand, then check
+   nothing was forgotten with `debug:translation` (see above).
 
 2. Open the XLF catalog and translate new/changed keys immediately:
 - `translations/messages+intl-icu.fr.xlf` (XLF format ONLY)
@@ -79,6 +103,8 @@ When a translation key is dynamically created via Twig concatenation (e.g.,
 In these cases, you MUST manually add the generated keys to the catalog right away.
 
 Process:
-1) Run extraction `symfony console translation:extract --force --format=xlf fr`.
-2) Manually add any missing concatenated keys to the XLF catalog.
+1) Enumerate every value the concatenation can produce (e.g. every case of the enum).
+2) Manually add each generated key to the XLF catalog.
 3) Do not leave placeholders. Keep casing and glossary consistent.
+
+`debug:translation` cannot help here either — it only sees literal keys.

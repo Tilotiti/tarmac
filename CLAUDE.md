@@ -12,7 +12,7 @@ Tarmac est une webapp Symfony 7.4 (PHP ≥ 8.5) **mobile-first** de gestion de c
 - Vider le cache : `symfony console cache:clear` (préférer à `bin/console cache:clear`).
 - Tests : `bin/phpunit` ou `vendor/bin/phpunit`. Un seul test : `vendor/bin/phpunit --filter NomDuTest tests/Chemin/FichierTest.php`. Config dans `phpunit.dist.xml`, bootstrap `tests/bootstrap.php`, `APP_ENV=test`. `failOnDeprecation/Notice/Warning` est activé.
 - Migrations Doctrine : `symfony console doctrine:migrations:migrate`. Helper local : `bin/database`.
-- Extraction des traductions (obligatoire après tout changement de texte) : `symfony console translation:extract --force --format=xlf fr` puis compléter `translations/messages+intl-icu.fr.xlf`.
+- Traductions : les nouvelles clés s'ajoutent **à la main** dans `translations/messages+intl-icu.fr.xlf`. Pour lister celles qui manquent : `symfony console debug:translation fr --domain=messages --only-missing`. **Ne jamais lancer `translation:extract`** (voir la section Traductions ci-dessous).
 - Compilation des assets (prod) : `composer assets:compile` (= `php bin/console asset-map:compile`).
 - Déploiement : `bin/release` (release Heroku — voir `Procfile` / `app.json`).
 
@@ -57,7 +57,10 @@ Cœur : `Club` ←→ `Membership` ←→ `User`. Un `Membership` porte les rôl
 - **Toujours** des clés `lowerCamelCase` (`{{ 'welcomeUser'|trans }}`), jamais de chaîne en dur côté utilisateur.
 - Catalogue **unique** : `translations/messages+intl-icu.fr.xlf`. **Ne jamais créer de YAML de traduction** (`.yaml`/`.yml`) — ils seront supprimés.
 - ICU pour variables/pluriels : `{count, plural, one {# item} other {# items}}`.
-- Clés dynamiques (`(equipment.type.value ~ 'Type')|trans`) : les ajouter manuellement au catalogue (l'extracteur ne les voit pas).
+- ⛔ **Ne jamais lancer `symfony console translation:extract`.** `php-translation/symfony-bundle` a surchargé la commande (les options `--force --format=xlf` n'existent plus) et sa configuration `app` est en `output_format: yaml` : elle génère `translations/messages+intl-icu.fr.yaml` + `validators+intl-icu.fr.yaml`, soit un doublon complet du catalogue au format interdit, sans toucher au XLF. Si ça arrive, supprimer les `.yaml` produits.
+- Ajouter les clés **manuellement** en fin de `<body>`, avec le prochain `id` numérique libre, groupées sous un commentaire XML. Vérifier ensuite avec `symfony console lint:xliff translations/`.
+- `debug:translation` liste les clés manquantes, mais son état `unused` n'est **pas fiable** : les clés utilisées uniquement depuis du PHP (messages flash) ou depuis les options `label`/`help` d'un formulaire ne sont pas détectées. Ne jamais supprimer une clé sur cette seule base.
+- Clés dynamiques (`(equipment.type.value ~ 'Type')|trans`) : énumérer tous les cas possibles et les ajouter manuellement (aucun outil ne les voit).
 - Glossaire : Club, Équipement, Planeur (Glider), Membre, Gestionnaire (Manager), Qualifié (Inspector). Ne jamais traduire « Tarmac ».
 
 ### Templates Twig

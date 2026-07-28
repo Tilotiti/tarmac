@@ -22,7 +22,9 @@ Mobile-first Symfony webapp for aviation club management using Tabler.io.
 ## Quick Commands
 - Start server: `bin/server`
 - Clear cache: `symfony console cache:clear`
-- Extract translations: `symfony console translation:extract --force --format=xlf fr`
+- List missing translations: `symfony console debug:translation fr --domain=messages --only-missing`
+  (new keys are added **by hand** to `translations/messages+intl-icu.fr.xlf` — never run
+  `translation:extract`, it generates forbidden YAML catalogs, see `translations.mdc`)
 
 ## Important Notes
 - Local dev domain: `tarmac.wip` (requires Symfony proxy)
