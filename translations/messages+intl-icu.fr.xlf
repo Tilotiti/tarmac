@@ -930,19 +930,19 @@
       <!-- Flash Messages: Maintenance Plans -->
       <trans-unit id="136" resname="planCreated">
         <source>planCreated</source>
-        <target>Le plan de maintenance a été créé avec succès.</target>
+        <target>Le plan d'entretien a été créé avec succès.</target>
       </trans-unit>
       <trans-unit id="137" resname="planUpdated">
         <source>planUpdated</source>
-        <target>Le plan de maintenance a été mis à jour.</target>
+        <target>Le plan d'entretien a été mis à jour.</target>
       </trans-unit>
       <trans-unit id="138" resname="planApplied">
         <source>planApplied</source>
-        <target>Le plan de maintenance a été appliqué à le matériel.</target>
+        <target>Le plan d'entretien a été appliqué au matériel.</target>
       </trans-unit>
       <trans-unit id="139" resname="planApplicationCancelled">
         <source>planApplicationCancelled</source>
-        <target>L'application du plan de maintenance a été annulée.</target>
+        <target>L'application du plan d'entretien a été annulée.</target>
       </trans-unit>
       <trans-unit id="139a" resname="exportPlan">
         <source>exportPlan</source>
@@ -1118,7 +1118,7 @@
       </trans-unit>
       <trans-unit id="139ad" resname="maintenancePlans">
         <source>maintenancePlans</source>
-        <target>Plans de maintenance</target>
+        <target>Plans d'entretien</target>
       </trans-unit>
       <trans-unit id="139ae" resname="specialisations">
         <source>specialisations</source>
@@ -1182,7 +1182,7 @@
       </trans-unit>
       <trans-unit id="140" resname="noPlansAvailable">
         <source>noPlansAvailable</source>
-        <target>Aucun plan de maintenance disponible pour ce type de matériel.</target>
+        <target>Aucun plan d'entretien disponible pour ce type de matériel.</target>
       </trans-unit>
       <trans-unit id="141" resname="invalidRequest">
         <source>invalidRequest</source>
@@ -1446,11 +1446,11 @@
       <!-- Labels: Maintenance Plans -->
       <trans-unit id="172" resname="plans">
         <source>plans</source>
-        <target>Plans de maintenance</target>
+        <target>Plans d'entretien</target>
       </trans-unit>
       <trans-unit id="173" resname="plan">
         <source>plan</source>
-        <target>Plan de maintenance</target>
+        <target>Plan d'entretien</target>
       </trans-unit>
       <trans-unit id="174" resname="newPlan">
         <source>newPlan</source>
@@ -1458,11 +1458,11 @@
       </trans-unit>
       <trans-unit id="175" resname="noPlans">
         <source>noPlans</source>
-        <target>Aucun plan de maintenance</target>
+        <target>Aucun plan d'entretien</target>
       </trans-unit>
       <trans-unit id="176" resname="noPlansDescription">
         <source>noPlansDescription</source>
-        <target>Créez un plan de maintenance pour automatiser les tâches récurrentes sur vos matériels.</target>
+        <target>Créez un plan d'entretien pour automatiser les tâches récurrentes sur vos matériels.</target>
       </trans-unit>
       <trans-unit id="177" resname="applications">
         <source>applications</source>
@@ -1474,7 +1474,7 @@
       </trans-unit>
       <trans-unit id="179" resname="applyPlan">
         <source>applyPlan</source>
-        <target>Appliquer un plan de maintenance</target>
+        <target>Appliquer un plan d'entretien</target>
       </trans-unit>
       <trans-unit id="180" resname="selectEquipment">
         <source>selectEquipment</source>
@@ -1498,7 +1498,7 @@
       </trans-unit>
       <trans-unit id="186" resname="maintenancePlan">
         <source>maintenancePlan</source>
-        <target>Plan de maintenance</target>
+        <target>Plan d'entretien</target>
       </trans-unit>
       <trans-unit id="187" resname="appliedOn">
         <source>appliedOn</source>
@@ -1510,7 +1510,7 @@
       </trans-unit>
       <trans-unit id="189" resname="taskFromMaintenancePlan">
         <source>taskFromMaintenancePlan</source>
-        <target>Cette tâche fait partie d'un plan de maintenance.</target>
+        <target>Cette tâche fait partie d'un plan d'entretien.</target>
       </trans-unit>
       <trans-unit id="190" resname="equipmentRequired">
         <source>equipmentRequired</source>
@@ -1608,7 +1608,7 @@
       </trans-unit>
       <trans-unit id="213" resname="pendingPlans">
         <source>pendingPlans</source>
-        <target>Maintenance à réaliser</target>
+        <target>Entretien à réaliser</target>
       </trans-unit>
       <trans-unit id="214" resname="nextTasks">
         <source>nextTasks</source>
@@ -1696,7 +1696,7 @@
       </trans-unit>
       <trans-unit id="238" resname="addTasksToPlan">
         <source>addTasksToPlan</source>
-        <target>Ajoutez des tâches pour définir les étapes de maintenance.</target>
+        <target>Ajoutez des tâches pour définir les étapes de l'entretien.</target>
       </trans-unit>
       <trans-unit id="239" resname="noSubTasks">
         <source>noSubTasks</source>
@@ -1748,7 +1748,7 @@
       </trans-unit>
       <trans-unit id="251" resname="noTasksInPlanDescription">
         <source>noTasksInPlanDescription</source>
-        <target>Ce plan ne contient aucune tâche. Ajoutez des tâches pour définir les étapes de maintenance.</target>
+        <target>Ce plan ne contient aucune tâche. Ajoutez des tâches pour définir les étapes de l'entretien.</target>
       </trans-unit>
       <trans-unit id="252" resname="addTasks">
         <source>addTasks</source>
@@ -1796,11 +1796,11 @@
       </trans-unit>
       <trans-unit id="263" resname="maintenanceTimeline">
         <source>maintenanceTimeline</source>
-        <target>Calendrier de maintenance</target>
+        <target>Calendrier d'entretien</target>
       </trans-unit>
       <trans-unit id="264" resname="existingMaintenancePlanned">
         <source>existingMaintenancePlanned</source>
-        <target>Maintenance existante prévue</target>
+        <target>Entretien déjà prévu</target>
       </trans-unit>
       <trans-unit id="265" resname="tasksToBeCreated">
         <source>tasksToBeCreated</source>
@@ -2090,11 +2090,11 @@
       </trans-unit>
       <trans-unit id="349" resname="noMaintenancePlans">
         <source>noMaintenancePlans</source>
-        <target>Aucun plan de maintenance</target>
+        <target>Aucun plan d'entretien</target>
       </trans-unit>
       <trans-unit id="350" resname="noMaintenancePlansDescription">
         <source>noMaintenancePlansDescription</source>
-        <target>Aucun plan de maintenance n'a été appliqué à ce matériel. Commencez par en appliquer un pour organiser la maintenance.</target>
+        <target>Aucun plan d'entretien n'a été appliqué à ce matériel. Commencez par en appliquer un pour organiser l'entretien.</target>
       </trans-unit>
       <trans-unit id="351" resname="confirmCancelApplication">
         <source>confirmCancelApplication</source>
