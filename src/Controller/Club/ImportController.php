@@ -23,7 +23,7 @@ use App\Service\Import\ValueMapper;
 use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
-use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
+use SlopeIt\BreadcrumbBundle\Service\BreadcrumbBuilder;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,16 +53,17 @@ class ImportController extends ExtendedController
         private readonly ImportRowResolver $resolver,
         private readonly EntityManagerInterface $entityManager,
         private readonly TranslatorInterface $translator,
+        private readonly BreadcrumbBuilder $breadcrumbBuilder,
     ) {
         parent::__construct($subdomainService);
     }
 
     #[Route('', name: 'club_import_file', methods: ['GET', 'POST'])]
-    #[Breadcrumb([['label' => 'home', 'route' => 'club_dashboard'], ['label' => 'import']])]
     public function uploadFile(Request $request, string $definition): Response
     {
         $club = $this->clubResolver->resolve();
         $def = $this->definition($definition);
+        $this->buildBreadcrumb($def);
         $form = $this->createForm(ImportFileType::class);
         $form->handleRequest($request);
 
@@ -99,11 +100,11 @@ class ImportController extends ExtendedController
     }
 
     #[Route('/colonnes', name: 'club_import_mapping', methods: ['GET', 'POST'])]
-    #[Breadcrumb([['label' => 'home', 'route' => 'club_dashboard'], ['label' => 'import']])]
     public function mapping(Request $request, string $definition): Response
     {
         $club = $this->clubResolver->resolve();
         $def = $this->definition($definition);
+        $this->buildBreadcrumb($def);
         $state = $this->stateStore->get($club, $definition);
         if ($state === null) {
             return $this->redirectToRoute('club_import_file', ['definition' => $definition]);
@@ -194,11 +195,11 @@ class ImportController extends ExtendedController
     }
 
     #[Route('/valeurs', name: 'club_import_values', methods: ['GET', 'POST'])]
-    #[Breadcrumb([['label' => 'home', 'route' => 'club_dashboard'], ['label' => 'import']])]
     public function values(Request $request, string $definition): Response
     {
         $club = $this->clubResolver->resolve();
         $def = $this->definition($definition);
+        $this->buildBreadcrumb($def);
         $state = $this->stateStore->get($club, $definition);
         if ($state === null || $state->values === []) {
             return $this->redirectToRoute('club_import_mapping', ['definition' => $definition]);
@@ -226,11 +227,11 @@ class ImportController extends ExtendedController
     }
 
     #[Route('/apercu', name: 'club_import_preview', methods: ['GET'])]
-    #[Breadcrumb([['label' => 'home', 'route' => 'club_dashboard'], ['label' => 'import']])]
     public function preview(string $definition): Response
     {
         $club = $this->clubResolver->resolve();
         $def = $this->definition($definition);
+        $this->buildBreadcrumb($def);
         $state = $this->stateStore->get($club, $definition);
         if ($state === null) {
             return $this->redirectToRoute('club_import_file', ['definition' => $definition]);
@@ -290,6 +291,20 @@ class ImportController extends ExtendedController
         }
 
         return $this->redirectToRoute($def->listRoute());
+    }
+
+    /**
+     * Fil d'Ariane des écrans de l'assistant : home → liste de la définition (Équipements ou
+     * Membres) → import. La route de la liste dépend de la définition en cours ({definition} dans
+     * l'URL), ce que #[Breadcrumb] statique ne peut pas exprimer (le nom de route n'accepte pas de
+     * placeholder $var) : on construit donc le fil au runtime via BreadcrumbBuilder.
+     */
+    private function buildBreadcrumb(ImportDefinitionInterface $def): void
+    {
+        $this->breadcrumbBuilder
+            ->addItem('home', 'club_dashboard')
+            ->addItem($this->trans($def->key()), $def->listRoute())
+            ->addItem('import');
     }
 
     private function definition(string $key): ImportDefinitionInterface

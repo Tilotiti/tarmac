@@ -8,8 +8,7 @@
 	{% if is_granted('MANAGE', club) %}
 		<a href="{{ path('club_import_file', {definition: 'equipments'}) }}" class="btn btn-outline-secondary">
 			<i class="ti ti-file-upload me-2"></i>
-			<span class="d-none d-sm-inline">{{ 'import'|trans }}</span>
-			<span class="d-inline d-sm-none">{{ 'import'|trans }}</span>
+			<span>{{ 'import'|trans }}</span>
 		</a>
 		<a href="{{ path('club_equipment_new') }}" class="btn btn-primary">
 			<i class="ti ti-plus me-2"></i>
