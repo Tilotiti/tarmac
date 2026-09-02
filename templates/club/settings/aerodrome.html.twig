@@ -1,0 +1,23 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}{{ 'aerodrome'|trans }}{% endblock %}
+
+{% block page_content %}
+	<div class="row g-3">
+		<div class="col-12 col-lg-10 mx-auto">
+			<div class="tarmac-panel" style="max-width:640px;">
+				<p class="text-secondary">{{ 'aerodromeSettingsLead'|trans }}</p>
+				{{ form_start(form) }}
+				{% include 'component/aerodromeSelector.html.twig' with {
+					aerodromeField: form.aerodrome,
+					locationField: form.locationLabel,
+					searchUrl: path('api_aerodromes'),
+				} %}
+				<button type="submit" class="btn btn-primary w-100" style="min-height:48px;">
+					<i class="ti ti-device-floppy me-2"></i>{{ 'save'|trans }}
+				</button>
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+{% endblock %}

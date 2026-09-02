@@ -3760,6 +3760,15 @@
         <source>valueNotAllowed</source>
         <target>Cette valeur n'est pas autorisée</target>
       </trans-unit>
+      <!-- Club : réglages de l'aérodrome -->
+      <trans-unit id="1801" resname="aerodromeSettingsLead">
+        <source>aerodromeSettingsLead</source>
+        <target>Le terrain où votre club vole. Il sert à situer votre club et à éviter les doublons.</target>
+      </trans-unit>
+      <trans-unit id="1802" resname="aerodromeSaved">
+        <source>aerodromeSaved</source>
+        <target>Aérodrome enregistré</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>
