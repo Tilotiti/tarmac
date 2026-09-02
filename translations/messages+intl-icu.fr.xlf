@@ -3935,7 +3935,7 @@
       <!-- Demandes d'adhésion : acceptation directe -->
       <trans-unit id="1843" resname="joinRequestRoles">
         <source>joinRequestRoles</source>
-        <target>Rôles à attribuer (aucun = membre)</target>
+        <target>Choisissez ses rôles. Sans rôle coché, la personne sera simple membre.</target>
       </trans-unit>
       <trans-unit id="1844" resname="acceptJoinRequest">
         <source>acceptJoinRequest</source>
@@ -3944,6 +3944,14 @@
       <trans-unit id="1845" resname="joinRequestAccepted">
         <source>joinRequestAccepted</source>
         <target>Membre ajouté au club, il a été prévenu par e-mail</target>
+      </trans-unit>
+      <trans-unit id="1846" resname="accept">
+        <source>accept</source>
+        <target>Accepter</target>
+      </trans-unit>
+      <trans-unit id="1847" resname="acceptJoinRequestTitle">
+        <source>acceptJoinRequestTitle</source>
+        <target>Accepter la demande d'adhésion</target>
       </trans-unit>
     </body>
 </file>
