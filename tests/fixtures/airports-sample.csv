@@ -1,0 +1,6 @@
+"id","ident","type","name","latitude_deg","longitude_deg","elevation_ft","continent","iso_country","iso_region","municipality","scheduled_service","gps_code","icao_code","iata_code","local_code","home_link","wikipedia_link","keywords"
+4145,"LFHM","small_airport","Megève Altiport",45.8208,6.65222,4823,"EU","FR","FR-ARA","Megève","no","LFHM","LFHM","MVV","","","",""
+4104,"LFPG","large_airport","Charles de Gaulle International Airport",49.012798,2.55,392,"EU","FR","FR-IDF","","yes","LFPG","LFPG","CDG","","","",""
+99999,"FR-0001","heliport","Héliport de test",45.0,5.0,0,"EU","FR","FR-ARA","Test","no","","","","","","",""
+2212,"EDDB","large_airport","Berlin Brandenburg Airport",52.351389,13.493889,157,"EU","DE","DE-BR","Berlin","yes","EDDB","EDDB","BER","","","",""
+99998,"FR-0002","closed_airport","Ancien terrain",46.0,1.0,0,"EU","FR","FR-NAQ","","no","","","","","","",""
