@@ -69,4 +69,47 @@ class SpreadsheetReaderTest extends TestCase
         $this->expectException(ImportReadException::class);
         (new SpreadsheetReader())->read('x', 'pdf');
     }
+
+    public function testDelimiterIgnoresSeparatorsInsideQuotedValues(): void
+    {
+        $csv = "Nom,Notes\n\"F-CGAB\",\"visite; freins; câble\"\n\"F-CHXY\",\"ok\"\n";
+
+        $sheet = (new SpreadsheetReader())->read($csv, 'csv');
+
+        $this->assertSame(2, $sheet->columnCount());
+        $this->assertSame('visite; freins; câble', $sheet->rows()[1][1]);
+    }
+
+    public function testRejectsMoreThanTwoThousandRows(): void
+    {
+        $csv = '';
+        for ($i = 0; $i < 2002; $i++) {
+            $csv .= 'F-' . $i . ";Planeur\n";
+        }
+
+        $this->expectException(ImportReadException::class);
+        (new SpreadsheetReader())->read($csv, 'csv');
+    }
+
+    public function testAcceptsTwoThousandDataRowsWithHeader(): void
+    {
+        $csv = "Immatriculation;Type\n";
+        for ($i = 0; $i < 2000; $i++) {
+            $csv .= 'F-' . $i . ";Planeur\n";
+        }
+
+        $sheet = (new SpreadsheetReader())->read($csv, 'csv');
+
+        $this->assertSame(2001, $sheet->rowCount());
+    }
+
+    public function testRejectsUnreadableXlsx(): void
+    {
+        try {
+            (new SpreadsheetReader())->read('garbage', 'xlsx');
+            $this->fail('ImportReadException attendue.');
+        } catch (ImportReadException $exception) {
+            $this->assertSame('unreadableFile', $exception->getMessage());
+        }
+    }
 }

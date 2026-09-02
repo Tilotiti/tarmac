@@ -12,6 +12,7 @@ final class SpreadsheetReader
 {
     public const MAX_ROWS = 2000;
     private const DELIMITERS = [';', ',', "\t"];
+    private const SNIFF_LINES = 20;
 
     public function read(string $contents, string $extension): ImportSheet
     {
@@ -40,27 +41,52 @@ final class SpreadsheetReader
         }
 
         $rows = $spreadsheet->getActiveSheet()->toArray(null, true, false, false);
-        if (count($rows) > self::MAX_ROWS + 1) {
+        $sheet = new ImportSheet($rows);
+
+        // Les lignes entièrement vides (souvent du formatage résiduel dans les XLSX) sont
+        // retirées par ImportSheet avant ce contrôle : le plafond porte sur les lignes utiles.
+        // Le « +1 » tolère un fichier de MAX_ROWS lignes de données sans en-tête.
+        if ($sheet->rowCount() > self::MAX_ROWS + 1) {
             throw new ImportReadException('tooManyRows');
         }
 
-        return new ImportSheet($rows);
+        return $sheet;
     }
 
     private function detectDelimiter(string $contents): string
     {
-        $head = implode("\n", array_slice(preg_split('/\R/', $contents) ?: [], 0, 20));
-        $best = ';';
-        $bestCount = -1;
+        $lines = array_values(array_filter(preg_split('/\R/', $contents) ?: [], static fn (string $line): bool => trim($line) !== ''));
+        $lines = array_slice($lines, 0, self::SNIFF_LINES);
+
+        $best = null;
+        $bestShare = -1.0;
+        $bestMode = 0;
         foreach (self::DELIMITERS as $delimiter) {
-            $count = substr_count($head, $delimiter);
-            if ($count > $bestCount) {
+            $counts = [];
+            foreach ($lines as $line) {
+                $fields = str_getcsv($line, $delimiter, '"', '');
+                $counts[] = count($fields);
+            }
+            if ($counts === []) {
+                continue;
+            }
+            $frequencies = array_count_values($counts);
+            arsort($frequencies);
+            $mode = (int) array_key_first($frequencies);
+            $modeCount = $frequencies[$mode];
+            $share = $modeCount / count($counts);
+
+            if ($mode <= 1) {
+                continue;
+            }
+            if ($share > $bestShare || ($share === $bestShare && $mode > $bestMode)) {
                 $best = $delimiter;
-                $bestCount = $count;
+                $bestShare = $share;
+                $bestMode = $mode;
             }
         }
 
-        return $best;
+        return $best ?? ';';
     }
 
     private function toUtf8(string $contents): string

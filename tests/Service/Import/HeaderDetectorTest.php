@@ -26,4 +26,12 @@ class HeaderDetectorTest extends TestCase
     {
         $this->assertFalse((new HeaderDetector())->looksLikeHeader(new ImportSheet([['F-CGAB', 'Planeur']])));
     }
+
+    public function testRejectsLongCells(): void
+    {
+        $longCell = str_repeat('a', 61);
+        $sheet = new ImportSheet([[$longCell, 'Type'], ['F-CGAB', 'Planeur']]);
+
+        $this->assertFalse((new HeaderDetector())->looksLikeHeader($sheet));
+    }
 }
