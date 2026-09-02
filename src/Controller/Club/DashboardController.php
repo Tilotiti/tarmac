@@ -54,6 +54,8 @@ class DashboardController extends ExtendedController
         $healthReport = null;
         $showHealthCheck = false;
         if ($isManager) {
+            // L'écriture en GET est volontaire : idempotente, elle ne fait que réafficher la carte.
+            // Le lien du menu porte `data-turbo-prefetch="false"` pour qu'un simple survol ne la déclenche pas.
             if ($request->query->getBoolean('healthCheck') && $club->getHealthCheckDismissedAt() !== null) {
                 $club->setHealthCheckDismissedAt(null);
                 $this->entityManager->flush();

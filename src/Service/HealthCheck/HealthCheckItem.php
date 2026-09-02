@@ -5,7 +5,7 @@ namespace App\Service\HealthCheck;
 final readonly class HealthCheckItem
 {
     /**
-     * @param string $key clé de traduction : healthCheck<Key>Title et healthCheck<Key>Why
+     * @param string $key clé de traduction : healthCheck<Key>Title, healthCheck<Key>Why et healthCheck<Key>Action
      * @param array<string, mixed> $routeParams
      */
     public function __construct(

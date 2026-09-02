@@ -9,7 +9,7 @@ final class ClubHealthCheck
 {
     public const REDISPLAY_AFTER_DAYS = 30;
 
-    /** @var array<int|string, HealthReport> rapport mémoïsé par club (clé : id du club, ou spl_object_id si pas encore persisté) */
+    /** @var array<string, HealthReport> rapport mémoïsé par club (clé préfixée par id: ou obj: pour éviter toute collision entre un id de club et un spl_object_id) */
     private array $cache = [];
 
     /** @param iterable<HealthCheckInterface> $checks */
@@ -21,7 +21,7 @@ final class ClubHealthCheck
     /** Un même club ne doit être contrôlé qu'une fois par requête (tableau de bord + badge de menu, ou plusieurs pages consultant le badge). */
     public function check(Club $club): HealthReport
     {
-        $key = $club->getId() ?? spl_object_id($club);
+        $key = $club->getId() !== null ? 'id:' . $club->getId() : 'obj:' . spl_object_id($club);
 
         if (!isset($this->cache[$key])) {
             $items = [];
@@ -34,6 +34,9 @@ final class ClubHealthCheck
         return $this->cache[$key];
     }
 
+    /**
+     * @internal conservé pour les tests, qui ont besoin de vider le cache mémoïsé entre deux appels
+     */
     public function reset(): void
     {
         $this->cache = [];
