@@ -1,0 +1,42 @@
+{% extends 'email/base.html.twig' %}
+
+{% block title %}Nouveau club - Tarmac{% endblock %}
+{% block preheader %}{{ club.name }} vient d'être créé sur Tarmac{% endblock %}
+{% block email_title %}Nouveau club{% endblock %}
+
+{% block email_body %}
+	<h2 style="margin-top: 0; font-size: 20px; color: #111827; font-weight: 600;">{{ club.name }}</h2>
+
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 16px 0; color: #4b5563;">
+		<tr><td style="padding: 4px 0;"><strong>Adresse</strong></td><td style="padding: 4px 0;"><a href="{{ clubUrl }}" style="color: #345B7C;">{{ clubUrl }}</a></td></tr>
+		<tr><td style="padding: 4px 0;"><strong>Terrain</strong></td><td style="padding: 4px 0;">{{ club.locationText ?: '—' }}</td></tr>
+		<tr><td style="padding: 4px 0;"><strong>Créé par</strong></td><td style="padding: 4px 0;">{{ club.createdBy.fullName }} ({{ club.createdBy.email }})</td></tr>
+		<tr><td style="padding: 4px 0;"><strong>Le</strong></td><td style="padding: 4px 0;">{{ club.createdAt|date('d/m/Y à H:i') }}</td></tr>
+	</table>
+
+	{% if report.duplicates is not empty %}
+		<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 24px 0;">
+			<tr>
+				<td style="background-color: #fff3cd; border-left: 4px solid #f59f00; border-radius: 6px; padding: 16px;">
+					<p style="margin: 0; color: #856404;"><strong>Doublon probable, création confirmée malgré l'alerte :</strong></p>
+					<ul style="margin: 8px 0 0; padding-left: 20px; color: #856404;">
+						{% for other in report.duplicates %}<li>{{ other.name }} ({{ other.subdomain }})</li>{% endfor %}
+					</ul>
+				</td>
+			</tr>
+		</table>
+	{% endif %}
+
+	{% if report.neighbours is not empty %}
+		<p style="margin: 16px 0; color: #4b5563;"><strong>Sur le même terrain :</strong>
+			{% for other in report.neighbours %}{{ other.name }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
+	{% endif %}
+
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 30px 0;">
+		<tr>
+			<td align="center">
+				<a href="{{ adminUrl }}" style="display: inline-block; padding: 14px 32px; background-color: #345B7C; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Voir la fiche du club</a>
+			</td>
+		</tr>
+	</table>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'email/base.html.twig' %}
+
+{% block title %}Bienvenue sur Tarmac{% endblock %}
+{% block preheader %}{{ club.name }} est prêt sur Tarmac{% endblock %}
+{% block email_title %}Bienvenue{% endblock %}
+
+{% block email_body %}
+	<h2 style="margin-top: 0; font-size: 20px; color: #111827; font-weight: 600;">{{ club.name }} est sur Tarmac</h2>
+
+	<p style="margin: 16px 0; color: #4b5563;">Bonjour {{ user.firstname }},</p>
+
+	<p style="margin: 16px 0; color: #4b5563;">Votre club est créé. Vos membres se connecteront à cette adresse, gardez-la précieusement :</p>
+
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 24px 0;">
+		<tr>
+			<td style="background-color: #e3f2fd; border-left: 4px solid #345B7C; border-radius: 6px; padding: 16px;">
+				<p style="margin: 0; color: #1565c0; font-size: 18px;"><a href="{{ clubUrl }}" style="color: #1565c0;">{{ clubUrl }}</a></p>
+			</td>
+		</tr>
+	</table>
+
+	<p style="margin: 16px 0; color: #4b5563;">Sur votre tableau de bord, une liste vous indique ce qu'il reste à configurer : votre matériel, vos membres, vos plans d'entretien. Prenez les points dans l'ordre, chacun prend quelques minutes.</p>
+
+	<p style="margin: 16px 0; color: #4b5563;">Tarmac est gratuit, sans publicité, construit par un pilote bénévole pour les clubs associatifs. Une question, un blocage ? Répondez à cet e-mail ou écrivez à <a href="mailto:contact@tarmac.center" style="color: #345B7C;">contact@tarmac.center</a>.</p>
+
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 30px 0;">
+		<tr>
+			<td align="center">
+				<a href="{{ clubUrl }}" style="display: inline-block; padding: 14px 32px; background-color: #345B7C; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Ouvrir mon club</a>
+			</td>
+		</tr>
+	</table>
+
+	<p style="font-size: 14px; color: #667382; margin: 16px 0;">Le <a href="{{ guideUrl }}" style="color: #345B7C;">guide utilisateur</a> explique chaque écran, du matériel au carnet mécanicien.</p>
+{% endblock %}

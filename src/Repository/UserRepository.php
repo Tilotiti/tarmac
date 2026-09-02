@@ -65,6 +65,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * La colonne roles est un JSON : on filtre en PHP sur les utilisateurs actifs,
+     * ce qui reste bon marché à l'échelle de Tarmac (quelques centaines de comptes).
+     *
+     * @return User[]
+     */
+    public function findAdmins(): array
+    {
+        return array_values(array_filter(
+            $this->findBy(['active' => true]),
+            static fn (User $user): bool => $user->isAdmin()
+        ));
+    }
 }
 
 
