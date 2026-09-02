@@ -1,0 +1,5 @@
+Nom;Prénom;Courriel;Qualifié
+Dupont;Jean;jean@example.test;oui
+Martin;Claire;claire@example.test;
+Invalide;Paul;pas-un-mail;
+Dupont;Jean;JEAN@example.test;

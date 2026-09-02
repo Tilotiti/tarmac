@@ -22,6 +22,7 @@ class ImportRowResolverTest extends TestCase
             public function key(): string { return 'fake'; }
             public function titleKey(): string { return 'fake'; }
             public function listRoute(): string { return 'club_dashboard'; }
+            public function previewTemplate(): string { return 'club/import/preview.html.twig'; }
             public function fields(): array
             {
                 return [
@@ -67,7 +68,7 @@ class ImportRowResolverTest extends TestCase
 
         $this->assertSame(5, count($preview->rows));
         $this->assertNull($preview->rows[0]->reason);
-        $this->assertSame(['name' => 'F-CGAB', 'type' => 'glider', 'note' => ''], $preview->rows[0]->values);
+        $this->assertSame(['name' => 'F-CGAB', 'type' => 'glider', 'note' => '', '_line' => '1'], $preview->rows[0]->values);
         $this->assertSame('importReasonMissing', $preview->rows[1]->reason);
         $this->assertSame('name', $preview->rows[1]->field);
         $this->assertSame('importReasonValueNotMapped', $preview->rows[2]->reason);

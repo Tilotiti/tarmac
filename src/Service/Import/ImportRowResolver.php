@@ -49,6 +49,7 @@ final class ImportRowResolver
                 $values[$field->key] = $value;
             }
 
+            $values['_line'] = (string) $line;
             if ($reason === null) {
                 $reason = $definition->validate($values, $context);
             }

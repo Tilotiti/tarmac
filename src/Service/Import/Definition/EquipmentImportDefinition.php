@@ -39,6 +39,11 @@ final class EquipmentImportDefinition implements ImportDefinitionInterface
         return 'club_equipments';
     }
 
+    public function previewTemplate(): string
+    {
+        return 'club/import/preview.html.twig';
+    }
+
     public function fields(): array
     {
         return [

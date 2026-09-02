@@ -6,7 +6,6 @@ use App\Entity\Club;
 use App\Entity\Invitation;
 use App\Entity\JoinRequest;
 use App\Form\InvitationType;
-use App\Form\InvitationImportType;
 use App\Repository\InvitationRepository;
 use App\Repository\JoinRequestRepository;
 use App\Repository\Paginator;
@@ -14,7 +13,6 @@ use App\Controller\ExtendedController;
 use App\Service\ClubResolver;
 use App\Service\InvitationService;
 use App\Service\Onboarding\JoinRequestService;
-use App\Service\InvitationImportService;
 use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
@@ -35,7 +33,6 @@ class InvitationController extends ExtendedController
         private readonly JoinRequestRepository $joinRequestRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly InvitationService $invitationService,
-        private readonly InvitationImportService $invitationImportService,
         private readonly JoinRequestService $joinRequestService,
     ) {
         parent::__construct($subdomainService);
@@ -108,42 +105,7 @@ class InvitationController extends ExtendedController
         ]);
     }
 
-    #[Route('/import', name: 'club_invitation_import')]
-    #[Breadcrumb([
-        ['label' => 'home', 'route' => 'club_dashboard'],
-        ['label' => 'members', 'route' => 'club_members'],
-        ['label' => 'invitations', 'route' => 'club_invitations'],
-        ['label' => 'import'],
-    ])]
-    public function import(Request $request): Response
-    {
-        $club = $this->clubResolver->resolve();
-
-        $form = $this->createForm(InvitationImportType::class);
-        $form->handleRequest($request);
-
-        $result = null;
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $file = $form->get('file')->getData();
-
-            if ($file) {
-                $result = $this->invitationImportService->importFromFile($file, $club);
-
-                if (!$result->hasErrors()) {
-                    $this->addFlash('success', 'importProcessed');
-                }
-            }
-        }
-
-        return $this->render('club/members/invitations/import.html.twig', [
-            'club' => $club,
-            'form' => $form,
-            'result' => $result,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'club_invitation_show')]
+    #[Route('/{id}', name: 'club_invitation_show', requirements: ['id' => '\d+'])]
     #[Breadcrumb([
         ['label' => 'home', 'route' => 'club_dashboard'],
         ['label' => 'members', 'route' => 'club_members'],
@@ -191,7 +153,7 @@ class InvitationController extends ExtendedController
         ]);
     }
 
-    #[Route('/{id}/resend', name: 'club_invitation_resend', methods: ['POST'])]
+    #[Route('/{id}/resend', name: 'club_invitation_resend', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function resendInvitation(Invitation $invitation): Response
     {
         $club = $this->clubResolver->resolve();
@@ -208,7 +170,7 @@ class InvitationController extends ExtendedController
         return $this->redirectToRoute('club_invitation_show', ['id' => $invitation->getId()]);
     }
 
-    #[Route('/{id}/delete', name: 'club_invitation_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'club_invitation_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
     public function deleteInvitation(Invitation $invitation): Response
     {
         $club = $this->clubResolver->resolve();

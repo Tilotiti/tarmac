@@ -4131,6 +4131,27 @@
         <source>importReasonAlreadyExists</source>
         <target>Existe déjà dans le club</target>
       </trans-unit>
+      <!-- Assistant d'import : définition « invitations » -->
+      <trans-unit id="1892" resname="importInvitationsTitle">
+        <source>importInvitationsTitle</source>
+        <target>Importer des membres</target>
+      </trans-unit>
+      <trans-unit id="1893" resname="importReasonInvalidEmail">
+        <source>importReasonInvalidEmail</source>
+        <target>Adresse e-mail invalide</target>
+      </trans-unit>
+      <trans-unit id="1894" resname="importReasonAlreadyMember">
+        <source>importReasonAlreadyMember</source>
+        <target>Déjà membre du club</target>
+      </trans-unit>
+      <trans-unit id="1895" resname="importReasonPendingInvitation">
+        <source>importReasonPendingInvitation</source>
+        <target>Invitation déjà en attente</target>
+      </trans-unit>
+      <trans-unit id="1896" resname="importInvitationsPreviewHint">
+        <source>importInvitationsPreviewHint</source>
+        <target>Cochez les rôles de chaque personne avant d'envoyer : les invitations partent à la confirmation.</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

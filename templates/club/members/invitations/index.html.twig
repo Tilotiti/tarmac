@@ -6,7 +6,7 @@
 
 {% block page_actions %}
 	<div class="btn-list">
-		<a href="{{ path('club_invitation_import') }}" class="btn btn-outline-secondary">
+		<a href="{{ path('club_import_file', {definition: 'invitations'}) }}" class="btn btn-outline-secondary">
 			<i class="ti ti-file-upload me-2"></i>
 			<span class="d-none d-sm-inline">{{ 'import'|trans }}</span>
 			<span class="d-inline d-sm-none">{{ 'import'|trans }}</span>

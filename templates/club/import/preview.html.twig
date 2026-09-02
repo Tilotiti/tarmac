@@ -6,6 +6,7 @@
 	<div class="tarmac-panel">
 		{% include 'club/import/_steps.html.twig' with {current: 3} %}
 		<p class="fw-bold">{{ 'importPreviewSummary'|trans({imported: preview.importableCount, ignored: preview.ignoredCount}) }}</p>
+		{% block preview_lead %}{% endblock %}
 		<form method="post" action="{{ path('club_import_confirm', {definition: definition.key}) }}">
 			<input type="hidden" name="_token" value="{{ csrf_token('import-confirm') }}">
 			<div class="table-responsive">

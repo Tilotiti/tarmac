@@ -225,7 +225,7 @@ class ImportController extends ExtendedController
         }
         $preview = $this->resolver->resolve($this->sheet($state), $state, $def, new ImportContext($club, $this->getUser()));
 
-        return $this->render('club/import/preview.html.twig', ['club' => $club, 'definition' => $def, 'state' => $state, 'preview' => $preview]);
+        return $this->render($def->previewTemplate(), ['club' => $club, 'definition' => $def, 'state' => $state, 'preview' => $preview]);
     }
 
     #[Route('/confirmer', name: 'club_import_confirm', methods: ['POST'])]

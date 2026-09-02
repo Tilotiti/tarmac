@@ -1,0 +1,19 @@
+{% extends 'club/import/preview.html.twig' %}
+
+{% block preview_lead %}
+	<p class="text-secondary">{{ 'importInvitationsPreviewHint'|trans }}</p>
+{% endblock %}
+
+{% block preview_extra_headers %}
+	<th>{{ 'manager'|trans }}</th><th>{{ 'inspector'|trans }}</th><th>{{ 'pilot'|trans }}</th>
+{% endblock %}
+
+{% block preview_extra_cells %}
+	{% for role in ['isManager', 'isInspector', 'isPilote'] %}
+		<td>
+			{% if row.isImportable %}
+				<input type="checkbox" class="form-check-input" name="rows[{{ row.line }}][{{ role }}]" value="1" {% if row.values[role] == 'yes' %}checked{% endif %} aria-label="{{ role == 'isManager' ? 'manager'|trans : (role == 'isInspector' ? 'inspector'|trans : 'pilot'|trans) }}">
+			{% endif %}
+		</td>
+	{% endfor %}
+{% endblock %}
