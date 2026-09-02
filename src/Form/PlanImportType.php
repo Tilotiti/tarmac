@@ -25,6 +25,7 @@ class PlanImportType extends AbstractType
                 new NotNull(message: 'planImportFileRequired'),
                 new File(
                     maxSize: '4M',
+                    maxSizeMessage: 'fileTooLarge',
                     mimeTypes: [
                         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                         'application/octet-stream',

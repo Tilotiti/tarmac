@@ -18,7 +18,7 @@ class JoinRequestType extends AbstractType
             'help' => 'joinRequestMessageHelp',
             'required' => false,
             'attr' => ['rows' => 4, 'maxlength' => 500],
-            'constraints' => [new Length(max: 500)],
+            'constraints' => [new Length(max: 500, maxMessage: 'valueTooLong')],
         ]);
     }
 

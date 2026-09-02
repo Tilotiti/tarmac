@@ -31,6 +31,7 @@ class ChangePasswordFormType extends AbstractType
                             min: 6,
                             minMessage: 'passwordMinLength',
                             max: 4096,
+                            maxMessage: 'valueTooLong',
                         ),
                     ],
                     'label' => 'newPassword',

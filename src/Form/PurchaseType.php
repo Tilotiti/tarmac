@@ -31,8 +31,8 @@ class PurchaseType extends AbstractType
                 'required' => true,
                 'attr' => ['class' => 'form-control', 'min' => 1],
                 'constraints' => [
-                    new Assert\NotNull(),
-                    new Assert\GreaterThanOrEqual(1),
+                    new Assert\NotNull(message: 'valueRequired'),
+                    new Assert\GreaterThanOrEqual(1, message: 'quantityMinOne'),
                 ],
             ])
             ->add('description', TextareaType::class, [
@@ -49,6 +49,7 @@ class PurchaseType extends AbstractType
                 'constraints' => [
                     new Assert\File(
                         maxSize: '10M',
+                        maxSizeMessage: 'fileTooLarge',
                         mimeTypes: [
                             'image/jpeg',
                             'image/png',
@@ -69,6 +70,7 @@ class PurchaseType extends AbstractType
                 'constraints' => [
                     new Assert\File(
                         maxSize: '10M',
+                        maxSizeMessage: 'fileTooLarge',
                         mimeTypes: [
                             'image/jpeg',
                             'image/png',

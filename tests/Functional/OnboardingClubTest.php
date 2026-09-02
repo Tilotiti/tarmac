@@ -99,6 +99,24 @@ class OnboardingClubTest extends FunctionalTestCase
         $this->assertNotNull($this->entityManager()->getRepository(Club::class)->findOneBy(['subdomain' => 'cvv-bailleau']));
     }
 
+    public function testNameTooLongShowsSubstitutedLimit(): void
+    {
+        $this->client->loginUser($this->createUser('president@example.test'));
+        $field = $this->aerodrome('Bailleau', 48.5, 1.6);
+
+        $this->client->request('GET', $this->www('/creer-mon-club/club'));
+        $this->client->submitForm('Créer mon club', [
+            'onboarding_club[name]' => str_repeat('a', 256),
+            'onboarding_club[subdomain]' => 'beauce',
+            'onboarding_club[aerodrome]' => (string) $field->getId(),
+        ]);
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSelectorTextContains('body', '255');
+        $this->assertSelectorTextNotContains('body', '{{ limit }}');
+        $this->assertSelectorTextNotContains('body', '{limit}');
+    }
+
     public function testNeighbourOnSameAerodromeIsShownAsInformation(): void
     {
         $this->client->loginUser($this->createUser('president@example.test'));

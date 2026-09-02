@@ -28,7 +28,7 @@ class OnboardingClubType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'clubName',
                 'attr' => ['placeholder' => 'clubNamePlaceholder', 'autocomplete' => 'organization'],
-                'constraints' => [new NotBlank(message: 'clubNameRequired'), new Length(max: 255)],
+                'constraints' => [new NotBlank(message: 'clubNameRequired'), new Length(max: 255, maxMessage: 'valueTooLong')],
             ])
             ->add('subdomain', TextType::class, [
                 'label' => 'clubAddress',

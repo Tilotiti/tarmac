@@ -53,6 +53,7 @@ class RegistrationFormType extends AbstractType
                             min: 6,
                             minMessage: 'passwordMinLength',
                             max: 4096,
+                            maxMessage: 'valueTooLong',
                         ),
                         new PasswordStrength(minScore: PasswordStrength::STRENGTH_WEAK),
                         new NotCompromisedPassword(),

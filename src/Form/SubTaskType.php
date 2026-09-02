@@ -62,6 +62,7 @@ class SubTaskType extends AbstractType
                 'constraints' => [
                     new Assert\File(
                         maxSize: '10M',
+                        maxSizeMessage: 'fileTooLarge',
                         mimeTypes: [
                             'image/jpeg',
                             'image/png',

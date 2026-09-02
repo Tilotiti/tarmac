@@ -44,7 +44,7 @@ class OnboardingAccountType extends AbstractType
                     'label' => 'password',
                     'constraints' => [
                         new NotBlank(message: 'passwordRequired'),
-                        new Length(min: 6, minMessage: 'passwordMinLength', max: 4096),
+                        new Length(min: 6, minMessage: 'passwordMinLength', max: 4096, maxMessage: 'valueTooLong'),
                         new PasswordStrength(minScore: PasswordStrength::STRENGTH_WEAK, message: 'passwordTooWeak'),
                         new NotCompromisedPassword(message: 'passwordCompromised'),
                     ],

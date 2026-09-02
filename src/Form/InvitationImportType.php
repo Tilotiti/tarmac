@@ -20,6 +20,7 @@ class InvitationImportType extends AbstractType
                     new Assert\NotBlank(message: 'fileRequired'),
                     new Assert\File(
                         maxSize: '10M',
+                        maxSizeMessage: 'fileTooLarge',
                         mimeTypes: [
                             'application/vnd.ms-excel',
                             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

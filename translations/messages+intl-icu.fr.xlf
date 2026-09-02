@@ -3751,6 +3751,23 @@
         <source>withoutAerodrome</source>
         <target>Sans aérodrome</target>
       </trans-unit>
+      <!-- Messages de contraintes de validation explicites (domaine messages) -->
+      <trans-unit id="1796" resname="valueRequired">
+        <source>valueRequired</source>
+        <target>Cette valeur est obligatoire</target>
+      </trans-unit>
+      <trans-unit id="1797" resname="quantityMinOne">
+        <source>quantityMinOne</source>
+        <target>La quantité doit être au moins 1</target>
+      </trans-unit>
+      <trans-unit id="1798" resname="fileTooLarge">
+        <source>fileTooLarge</source>
+        <target>Le fichier dépasse la taille maximale de {limit} {suffix}</target>
+      </trans-unit>
+      <trans-unit id="1799" resname="valueTooLong">
+        <source>valueTooLong</source>
+        <target>Ce texte dépasse {limit} caractères</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>
