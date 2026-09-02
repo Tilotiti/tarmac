@@ -3664,9 +3664,58 @@
         <source>openMyClub</source>
         <target>Ouvrir mon club</target>
       </trans-unit>
-      <trans-unit id="1774" resname="onboardingJoinRequestPlaceholder">
-        <source>onboardingJoinRequestPlaceholder</source>
-        <target>Cette fonctionnalité arrive dans la prochaine étape.</target>
+      <!-- Onboarding : demandes d'adhésion -->
+      <trans-unit id="1775" resname="joinRequestTitle">
+        <source>joinRequestTitle</source>
+        <target>Rejoindre {club}</target>
+      </trans-unit>
+      <trans-unit id="1776" resname="joinRequestLead">
+        <source>joinRequestLead</source>
+        <target>Les gestionnaires du club recevront votre nom, votre e-mail et ce message. Ils vous enverront une invitation s'ils vous reconnaissent.</target>
+      </trans-unit>
+      <trans-unit id="1777" resname="joinRequestMessage">
+        <source>joinRequestMessage</source>
+        <target>Un mot pour les gestionnaires</target>
+      </trans-unit>
+      <trans-unit id="1778" resname="joinRequestMessageHelp">
+        <source>joinRequestMessageHelp</source>
+        <target>Facultatif : qui vous êtes, depuis quand vous volez au club…</target>
+      </trans-unit>
+      <trans-unit id="1779" resname="sendJoinRequest">
+        <source>sendJoinRequest</source>
+        <target>Envoyer ma demande</target>
+      </trans-unit>
+      <trans-unit id="1780" resname="backToClubCreation">
+        <source>backToClubCreation</source>
+        <target>Revenir à la création de mon club</target>
+      </trans-unit>
+      <trans-unit id="1781" resname="joinRequestSentTitle">
+        <source>joinRequestSentTitle</source>
+        <target>Demande envoyée</target>
+      </trans-unit>
+      <trans-unit id="1782" resname="joinRequestSentBody">
+        <source>joinRequestSentBody</source>
+        <target>Les gestionnaires de {club} ont été prévenus. Sans réponse sous quelques jours, écrivez à contact@tarmac.center.</target>
+      </trans-unit>
+      <trans-unit id="1783" resname="alreadyMemberOfClub">
+        <source>alreadyMemberOfClub</source>
+        <target>Vous êtes déjà membre de ce club</target>
+      </trans-unit>
+      <trans-unit id="1784" resname="joinRequests">
+        <source>joinRequests</source>
+        <target>Demandes d'adhésion</target>
+      </trans-unit>
+      <trans-unit id="1785" resname="joinRequestsHint">
+        <source>joinRequestsHint</source>
+        <target>Ces personnes ont trouvé votre club en voulant en créer un. Invitez-les si vous les reconnaissez.</target>
+      </trans-unit>
+      <trans-unit id="1786" resname="ignore">
+        <source>ignore</source>
+        <target>Ignorer</target>
+      </trans-unit>
+      <trans-unit id="1787" resname="joinRequestIgnored">
+        <source>joinRequestIgnored</source>
+        <target>Demande ignorée</target>
       </trans-unit>
     </body>
 </file>

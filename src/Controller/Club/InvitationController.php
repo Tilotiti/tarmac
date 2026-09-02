@@ -4,9 +4,11 @@ namespace App\Controller\Club;
 
 use App\Entity\Club;
 use App\Entity\Invitation;
+use App\Entity\JoinRequest;
 use App\Form\InvitationType;
 use App\Form\InvitationImportType;
 use App\Repository\InvitationRepository;
+use App\Repository\JoinRequestRepository;
 use App\Repository\Paginator;
 use App\Controller\ExtendedController;
 use App\Service\ClubResolver;
@@ -29,6 +31,7 @@ class InvitationController extends ExtendedController
         SubdomainService $subdomainService,
         private readonly ClubResolver $clubResolver,
         private readonly InvitationRepository $invitationRepository,
+        private readonly JoinRequestRepository $joinRequestRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly InvitationService $invitationService,
         private readonly InvitationImportService $invitationImportService,
@@ -56,6 +59,7 @@ class InvitationController extends ExtendedController
         return $this->render('club/members/invitations/index.html.twig', [
             'club' => $club,
             'invitations' => $invitations,
+            'joinRequests' => $this->joinRequestRepository->findOpenByClub($club),
         ]);
     }
 
@@ -70,6 +74,11 @@ class InvitationController extends ExtendedController
         $club = $this->clubResolver->resolve();
 
         $invitation = new Invitation();
+        if ($request->isMethod('GET') && $request->query->has('email')) {
+            $invitation->setEmail((string) $request->query->get('email'));
+            $invitation->setFirstname($request->query->get('firstname'));
+            $invitation->setLastname($request->query->get('lastname'));
+        }
         $form = $this->createForm(InvitationType::class, $invitation);
         $form->handleRequest($request);
 
@@ -210,6 +219,24 @@ class InvitationController extends ExtendedController
         $this->invitationService->cancelInvitation($invitation);
 
         $this->addFlash('success', 'invitationCancelled');
+
+        return $this->redirectToRoute('club_invitations');
+    }
+
+    #[Route('/demandes/{id}/ignorer', name: 'club_join_request_ignore', methods: ['POST'])]
+    public function ignoreJoinRequest(Request $request, JoinRequest $joinRequest): Response
+    {
+        $club = $this->clubResolver->resolve();
+        if ($joinRequest->getClub() !== $club) {
+            throw $this->createNotFoundException();
+        }
+        if (!$this->isCsrfTokenValid('ignore-join-request-' . $joinRequest->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $joinRequest->markHandled($this->getUser());
+        $this->entityManager->flush();
+        $this->addFlash('success', 'joinRequestIgnored');
 
         return $this->redirectToRoute('club_invitations');
     }

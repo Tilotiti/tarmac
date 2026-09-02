@@ -4,7 +4,9 @@ namespace App\Controller\Public;
 
 use App\Controller\ExtendedController;
 use App\Entity\Club;
+use App\Entity\JoinRequest;
 use App\Entity\User;
+use App\Form\Onboarding\JoinRequestType;
 use App\Form\Onboarding\OnboardingAccountType;
 use App\Form\Onboarding\OnboardingClubType;
 use App\Repository\ClubRepository;
@@ -247,20 +249,28 @@ class OnboardingController extends ExtendedController
         ]);
     }
 
-    /**
-     * Route provisoire : la tâche 11 remplace cette action par le vrai tunnel de
-     * demande d'adhésion (JoinRequestService, JoinRequestType). Nécessaire ici
-     * uniquement pour que les liens « Demander à rejoindre » de duplicate.html.twig
-     * résolvent une route réelle — ils ne sont jamais suivis avant la tâche 11.
-     */
     #[Route('/rejoindre/{id}', name: 'public_onboarding_join_request', methods: ['GET', 'POST'])]
-    public function joinRequest(Club $club): Response
+    public function joinRequest(Request $request, Club $club): Response
     {
         $user = $this->verifiedUserOrRedirect();
         if ($user instanceof Response) {
             return $user;
         }
+        if ($club->hasUser($user)) {
+            $this->addFlash('info', 'alreadyMemberOfClub');
 
-        return new Response($this->translator->trans('onboardingJoinRequestPlaceholder'));
+            return $this->redirectToRoute('public_clubs');
+        }
+
+        $form = $this->createForm(JoinRequestType::class, new JoinRequest());
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->joinRequestService->submit($user, $club, $form->getData()->getMessage());
+
+            return $this->render('public/onboarding/joinRequestSent.html.twig', ['club' => $club]);
+        }
+
+        return $this->render('public/onboarding/joinRequest.html.twig', ['club' => $club, 'form' => $form]);
     }
 }

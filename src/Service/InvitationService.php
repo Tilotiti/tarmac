@@ -7,6 +7,7 @@ use App\Entity\Invitation;
 use App\Entity\Membership;
 use App\Entity\User;
 use App\Repository\InvitationRepository;
+use App\Repository\JoinRequestRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -20,6 +21,7 @@ class InvitationService
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly InvitationRepository $invitationRepository,
+        private readonly JoinRequestRepository $joinRequestRepository,
         private readonly MailerInterface $mailer,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
@@ -138,6 +140,10 @@ class InvitationService
 
         // Delete the invitation
         $this->entityManager->remove($invitation);
+
+        // Une demande d'adhésion ouverte pour ce club est satisfaite par cette invitation.
+        $joinRequest = $this->joinRequestRepository->findOpenByUserAndClub($user, $invitation->getClub());
+        $joinRequest?->markHandled($user);
 
         $this->entityManager->flush();
 

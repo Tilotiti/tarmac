@@ -1,0 +1,28 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}{{ 'joinRequestTitle'|trans({club: club.name}) }}{% endblock %}
+
+{% block body %}
+	<div class="page page-center">
+		<div class="container container-tight py-4">
+			<div class="text-center mb-4">
+				<a href="{{ path('public_landing') }}" class="navbar-brand navbar-brand-autodark">
+					<img src="{{ asset('logo.svg') }}" height="48" alt="Tarmac">
+				</a>
+			</div>
+			<div class="tarmac-panel">
+				<h2 style="font-size:1.4rem;font-weight:800;text-align:center;margin:0 0 0.5rem;">{{ 'joinRequestTitle'|trans({club: club.name}) }}</h2>
+				<p class="text-center text-secondary mb-4">{{ 'joinRequestLead'|trans }}</p>
+				{{ form_start(form, {attr: {'data-turbo': 'false'}}) }}
+				{{ form_row(form.message) }}
+				<button type="submit" class="btn btn-primary w-100 mt-3" style="min-height:48px;">
+					<i class="ti ti-send me-2"></i>{{ 'sendJoinRequest'|trans }}
+				</button>
+				{{ form_end(form) }}
+			</div>
+			<div class="text-center mt-3">
+				<a href="{{ path('public_onboarding_club') }}" style="color:var(--td-ink-2);font-size:0.85rem;">{{ 'backToClubCreation'|trans }}</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}

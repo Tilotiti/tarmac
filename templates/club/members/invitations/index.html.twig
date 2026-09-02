@@ -20,6 +20,30 @@
 {% endblock %}
 
 {% block page_content %}
+	{% if joinRequests is not empty %}
+		<div class="tarmac-panel mb-4">
+			<h3 style="font-size:1.05rem;font-weight:700;margin:0 0 0.75rem;"><i class="ti ti-door-enter me-2"></i>{{ 'joinRequests'|trans }}</h3>
+			<p class="text-secondary" style="font-size:0.9rem;">{{ 'joinRequestsHint'|trans }}</p>
+			<div class="list-group">
+				{% for joinRequest in joinRequests %}
+					<div class="list-group-item">
+						<div class="fw-bold">{{ joinRequest.user.fullName }}</div>
+						<div class="text-secondary" style="font-size:0.9rem;"><i class="ti ti-at"></i> {{ joinRequest.user.email }} · {{ joinRequest.createdAt|date('d/m/Y') }}</div>
+						{% if joinRequest.message %}<p class="mb-2 mt-1" style="white-space:pre-line;">{{ joinRequest.message }}</p>{% endif %}
+						<div class="d-flex gap-2 mt-2">
+							<a href="{{ path('club_invitation_create', {email: joinRequest.user.email, firstname: joinRequest.user.firstname, lastname: joinRequest.user.lastname}) }}" class="btn btn-primary" style="min-height:44px;">
+								<i class="ti ti-plus me-2"></i>{{ 'invite'|trans }}
+							</a>
+							<form method="post" action="{{ path('club_join_request_ignore', {id: joinRequest.id}) }}">
+								<input type="hidden" name="_token" value="{{ csrf_token('ignore-join-request-' ~ joinRequest.id) }}">
+								<button type="submit" class="btn btn-outline-secondary" style="min-height:44px;">{{ 'ignore'|trans }}</button>
+							</form>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
 	<div class="row">
 		{% for invitation in invitations %}
 			<div class="col-12 col-lg-6 mb-3 d-flex">
