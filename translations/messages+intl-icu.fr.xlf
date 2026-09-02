@@ -3695,7 +3695,7 @@
       </trans-unit>
       <trans-unit id="1785" resname="joinRequestsHint">
         <source>joinRequestsHint</source>
-        <target>Ces personnes ont trouvé votre club en voulant en créer un. Invitez-les si vous les reconnaissez.</target>
+        <target>Ces personnes ont trouvé votre club en voulant en créer un. Si vous les reconnaissez, cochez leurs rôles et acceptez : elles rejoignent le club aussitôt.</target>
       </trans-unit>
       <trans-unit id="1786" resname="ignore">
         <source>ignore</source>
@@ -3931,6 +3931,19 @@
       <trans-unit id="1842" resname="subdomainTakenCalloutHint">
         <source>subdomainTakenCalloutHint</source>
         <target>Si c'est votre club, inutile d'en créer un second : demandez à le rejoindre, ses gestionnaires vous enverront une invitation.</target>
+      </trans-unit>
+      <!-- Demandes d'adhésion : acceptation directe -->
+      <trans-unit id="1843" resname="joinRequestRoles">
+        <source>joinRequestRoles</source>
+        <target>Rôles à attribuer (aucun = membre)</target>
+      </trans-unit>
+      <trans-unit id="1844" resname="acceptJoinRequest">
+        <source>acceptJoinRequest</source>
+        <target>Accepter et ajouter au club</target>
+      </trans-unit>
+      <trans-unit id="1845" resname="joinRequestAccepted">
+        <source>joinRequestAccepted</source>
+        <target>Membre ajouté au club, il a été prévenu par e-mail</target>
       </trans-unit>
     </body>
 </file>

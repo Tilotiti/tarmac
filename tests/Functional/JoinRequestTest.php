@@ -183,4 +183,47 @@ class JoinRequestTest extends FunctionalTestCase
         $this->assertFalse($joinRequest->isOpen());
         $this->assertSame($requester, $joinRequest->getHandledBy());
     }
+
+    public function testManagerAcceptsJoinRequestWithRoles(): void
+    {
+        $manager = $this->createUser('manager@example.test');
+        $club = $this->createClub('Planeurs de Beauce', 'beauce');
+        $club->addMembership((new Membership())->setUser($manager)->setClub($club)->setIsManager(true));
+        $this->entityManager()->flush();
+        $requester = $this->createUser('candidat@example.test');
+        $joinRequest = static::getContainer()->get(\App\Service\Onboarding\JoinRequestService::class)->submit($requester, $club, null);
+
+        $this->client->loginUser($manager);
+        $crawler = $this->client->request('GET', 'https://beauce.' . static::getContainer()->getParameter('domain') . '/invitations');
+        $form = $crawler->selectButton('Accepter et ajouter au club')->form();
+        $form['isInspector']->tick();
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects('/invitations');
+        $this->assertEmailCount(1);
+        $this->assertEmailAddressContains($this->getMailerMessage(), 'to', 'candidat@example.test');
+
+        $refreshedClub = $this->entityManager()->getRepository(\App\Entity\Club::class)->find($club->getId());
+        $refreshedRequester = $this->entityManager()->getRepository(\App\Entity\User::class)->find($requester->getId());
+        $membership = $refreshedClub->getMembership($refreshedRequester);
+        $this->assertNotNull($membership);
+        $this->assertTrue($membership->isInspector());
+        $this->assertFalse($membership->isManager());
+        $this->assertFalse($this->entityManager()->getRepository(JoinRequest::class)->find($joinRequest->getId())->isOpen());
+    }
+
+    public function testAcceptingJoinRequestWithWrongTokenIsForbidden(): void
+    {
+        $manager = $this->createUser('manager@example.test');
+        $club = $this->createClub('Planeurs de Beauce', 'beauce');
+        $club->addMembership((new Membership())->setUser($manager)->setClub($club)->setIsManager(true));
+        $this->entityManager()->flush();
+        $requester = $this->createUser('candidat@example.test');
+        $joinRequest = static::getContainer()->get(\App\Service\Onboarding\JoinRequestService::class)->submit($requester, $club, null);
+
+        $this->client->loginUser($manager);
+        $this->client->request('POST', 'https://beauce.' . static::getContainer()->getParameter('domain') . '/invitations/demandes/' . $joinRequest->getId() . '/accepter', ['_token' => 'wrong']);
+
+        $this->assertResponseStatusCodeSame(403);
+    }
 }

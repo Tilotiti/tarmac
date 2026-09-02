@@ -13,6 +13,7 @@ use App\Repository\Paginator;
 use App\Controller\ExtendedController;
 use App\Service\ClubResolver;
 use App\Service\InvitationService;
+use App\Service\Onboarding\JoinRequestService;
 use App\Service\InvitationImportService;
 use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,6 +36,7 @@ class InvitationController extends ExtendedController
         private readonly EntityManagerInterface $entityManager,
         private readonly InvitationService $invitationService,
         private readonly InvitationImportService $invitationImportService,
+        private readonly JoinRequestService $joinRequestService,
     ) {
         parent::__construct($subdomainService);
     }
@@ -240,5 +242,27 @@ class InvitationController extends ExtendedController
 
         return $this->redirectToRoute('club_invitations');
     }
-}
 
+    #[Route('/demandes/{id}/accepter', name: 'club_join_request_accept', methods: ['POST'])]
+    public function acceptJoinRequest(Request $request, JoinRequest $joinRequest): Response
+    {
+        $club = $this->clubResolver->resolve();
+        if ($joinRequest->getClub() !== $club || !$joinRequest->isOpen()) {
+            throw $this->createNotFoundException();
+        }
+        if (!$this->isCsrfTokenValid('accept-join-request-' . $joinRequest->getId(), (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $this->joinRequestService->accept(
+            $joinRequest,
+            $this->getUser(),
+            $request->request->getBoolean('isManager'),
+            $request->request->getBoolean('isInspector'),
+            $request->request->getBoolean('isPilote'),
+        );
+        $this->addFlash('success', 'joinRequestAccepted');
+
+        return $this->redirectToRoute('club_invitations');
+    }
+}

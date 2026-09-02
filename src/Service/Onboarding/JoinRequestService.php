@@ -46,11 +46,8 @@ final class JoinRequestService
             ->toArray();
         $recipients = $managers !== [] ? $managers : $this->userRepository->findAdmins();
 
-        $inviteUrl = $this->subdomainService->generateClubUrl((string) $club->getSubdomain(), '/invitations/create', [
-            'email' => $user->getEmail(),
-            'firstname' => $user->getFirstname(),
-            'lastname' => $user->getLastname(),
-        ]);
+        // Les gestionnaires acceptent (avec les rôles) ou ignorent depuis la page Invitations
+        $requestsUrl = $this->subdomainService->generateClubUrl((string) $club->getSubdomain(), '/invitations');
 
         foreach ($recipients as $recipient) {
             $this->mailer->send((new TemplatedEmail())
@@ -58,9 +55,45 @@ final class JoinRequestService
                 ->to((string) $recipient->getEmail())
                 ->subject(sprintf('%s souhaite rejoindre %s', $user->getFullName(), $club->getName()))
                 ->htmlTemplate('email/joinRequest.html.twig')
-                ->context(['joinRequest' => $joinRequest, 'inviteUrl' => $inviteUrl]));
+                ->context(['joinRequest' => $joinRequest, 'requestsUrl' => $requestsUrl]));
         }
 
         return $joinRequest;
+    }
+
+    /**
+     * Le demandeur est connu et son e-mail vérifié : on crée l'adhésion directement,
+     * avec les rôles choisis par le gestionnaire, puis on le prévient.
+     */
+    public function accept(JoinRequest $joinRequest, User $handledBy, bool $isManager, bool $isInspector, bool $isPilote): Membership
+    {
+        $club = $joinRequest->getClub();
+        $user = $joinRequest->getUser();
+
+        $membership = $club->getMembership($user);
+        if ($membership === null) {
+            $membership = (new Membership())->setUser($user)->setClub($club);
+            $club->addMembership($membership);
+            $user->addMembership($membership);
+            $this->entityManager->persist($membership);
+        }
+        $membership->setIsManager($isManager)->setIsInspector($isInspector)->setIsPilote($isPilote);
+
+        $joinRequest->markHandled($handledBy);
+        $this->entityManager->flush();
+
+        $this->mailer->send((new TemplatedEmail())
+            ->from(new Address('contact@tarmac.center', 'Tarmac'))
+            ->to((string) $user->getEmail())
+            ->subject(sprintf('Bienvenue à %s', $club->getName()))
+            ->htmlTemplate('email/joinRequestAccepted.html.twig')
+            ->context([
+                'user' => $user,
+                'club' => $club,
+                'membership' => $membership,
+                'clubUrl' => $this->subdomainService->generateClubUrl((string) $club->getSubdomain()),
+            ]));
+
+        return $membership;
     }
 }

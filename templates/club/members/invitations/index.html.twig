@@ -30,15 +30,33 @@
 						<div class="fw-bold">{{ joinRequest.user.fullName }}</div>
 						<div class="text-secondary" style="font-size:0.9rem;"><i class="ti ti-at"></i> {{ joinRequest.user.email }} · {{ joinRequest.createdAt|date('d/m/Y') }}</div>
 						{% if joinRequest.message %}<p class="mb-2 mt-1" style="white-space:pre-line;">{{ joinRequest.message }}</p>{% endif %}
-						<div class="d-flex gap-2 mt-2">
-							<a href="{{ path('club_invitation_create', {email: joinRequest.user.email, firstname: joinRequest.user.firstname, lastname: joinRequest.user.lastname}) }}" class="btn btn-primary" style="min-height:44px;">
-								<i class="ti ti-plus me-2"></i>{{ 'invite'|trans }}
-							</a>
-							<form method="post" action="{{ path('club_join_request_ignore', {id: joinRequest.id}) }}">
-								<input type="hidden" name="_token" value="{{ csrf_token('ignore-join-request-' ~ joinRequest.id) }}">
-								<button type="submit" class="btn btn-outline-secondary" style="min-height:44px;">{{ 'ignore'|trans }}</button>
-							</form>
-						</div>
+						<form method="post" action="{{ path('club_join_request_accept', {id: joinRequest.id}) }}" class="mt-2">
+							<input type="hidden" name="_token" value="{{ csrf_token('accept-join-request-' ~ joinRequest.id) }}">
+							<div class="text-secondary" style="font-size:0.85rem;margin-bottom:0.35rem;">{{ 'joinRequestRoles'|trans }}</div>
+							<div class="d-flex flex-wrap gap-3 mb-2">
+								<label class="form-check form-check-inline m-0" style="min-height:44px;align-items:center;display:flex;">
+									<input class="form-check-input" type="checkbox" name="isManager" value="1">
+									<span class="form-check-label ms-1">{{ 'manager'|trans }}</span>
+								</label>
+								<label class="form-check form-check-inline m-0" style="min-height:44px;align-items:center;display:flex;">
+									<input class="form-check-input" type="checkbox" name="isInspector" value="1">
+									<span class="form-check-label ms-1">{{ 'inspector'|trans }}</span>
+								</label>
+								<label class="form-check form-check-inline m-0" style="min-height:44px;align-items:center;display:flex;">
+									<input class="form-check-input" type="checkbox" name="isPilote" value="1">
+									<span class="form-check-label ms-1">{{ 'pilot'|trans }}</span>
+								</label>
+							</div>
+							<div class="d-flex gap-2 flex-wrap">
+								<button type="submit" class="btn btn-primary" style="min-height:44px;">
+									<i class="ti ti-user-check me-2"></i>{{ 'acceptJoinRequest'|trans }}
+								</button>
+								<button type="submit" class="btn btn-outline-secondary" style="min-height:44px;" form="ignore-join-request-{{ joinRequest.id }}">{{ 'ignore'|trans }}</button>
+							</div>
+						</form>
+						<form method="post" id="ignore-join-request-{{ joinRequest.id }}" action="{{ path('club_join_request_ignore', {id: joinRequest.id}) }}">
+							<input type="hidden" name="_token" value="{{ csrf_token('ignore-join-request-' ~ joinRequest.id) }}">
+						</form>
 					</div>
 				{% endfor %}
 			</div>

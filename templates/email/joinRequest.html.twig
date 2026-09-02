@@ -19,15 +19,15 @@
 		</table>
 	{% endif %}
 
-	<p style="margin: 16px 0; color: #4b5563;">Si vous la reconnaissez, invitez-la : le formulaire est prérempli.</p>
+	<p style="margin: 16px 0; color: #4b5563;">Si vous la reconnaissez, acceptez sa demande depuis la page Invitations de votre club : vous choisissez ses rôles et elle rejoint le club aussitôt.</p>
 
 	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 30px 0;">
 		<tr>
 			<td align="center">
-				<a href="{{ inviteUrl }}" style="display: inline-block; padding: 14px 32px; background-color: #345B7C; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Inviter {{ joinRequest.user.firstname }}</a>
+				<a href="{{ requestsUrl }}" style="display: inline-block; padding: 14px 32px; background-color: #345B7C; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Voir la demande</a>
 			</td>
 		</tr>
 	</table>
 
-	<p style="font-size: 14px; color: #667382; margin: 16px 0;">Si vous ne connaissez pas cette personne, ignorez cet e-mail : rien ne se passera sans invitation de votre part.</p>
+	<p style="font-size: 14px; color: #667382; margin: 16px 0;">Si vous ne connaissez pas cette personne, ignorez la demande : rien ne se passera sans votre accord.</p>
 {% endblock %}

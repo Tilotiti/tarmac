@@ -1,0 +1,37 @@
+{% extends 'email/base.html.twig' %}
+
+{% block title %}Bienvenue - Tarmac{% endblock %}
+{% block preheader %}Votre demande a été acceptée : vous êtes membre de {{ club.name }}{% endblock %}
+{% block email_title %}Bienvenue{% endblock %}
+
+{% block email_body %}
+	<h2 style="margin-top: 0; font-size: 20px; color: #111827; font-weight: 600;">Vous êtes membre de {{ club.name }}</h2>
+
+	<p style="margin: 16px 0; color: #4b5563;">Bonjour {{ user.firstname }},</p>
+
+	<p style="margin: 16px 0; color: #4b5563;">Un gestionnaire a accepté votre demande. Vous pouvez dès maintenant vous connecter au club :</p>
+
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 24px 0;">
+		<tr>
+			<td style="background-color: #e3f2fd; border-left: 4px solid #345B7C; border-radius: 6px; padding: 16px;">
+				<p style="margin: 0; color: #1565c0;"><strong>Vos rôles :</strong><br>
+					{% set roles = [] %}
+					{% if membership.isManager %}{% set roles = roles|merge(['Gestionnaire']) %}{% endif %}
+					{% if membership.isInspector %}{% set roles = roles|merge(['Qualifié']) %}{% endif %}
+					{% if membership.isPilote %}{% set roles = roles|merge(['Pilote']) %}{% endif %}
+					{{ roles is empty ? 'Membre' : roles|join(', ') }}</p>
+			</td>
+		</tr>
+	</table>
+
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 30px 0;">
+		<tr>
+			<td align="center">
+				<a href="{{ clubUrl }}" style="display: inline-block; padding: 14px 32px; background-color: #345B7C; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Ouvrir {{ club.name }}</a>
+			</td>
+		</tr>
+	</table>
+
+	<p style="font-size: 13px; color: #667382; margin: 16px 0;">Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br>
+		<a href="{{ clubUrl }}" style="color: #345B7C; word-break: break-all; text-decoration: none;">{{ clubUrl }}</a></p>
+{% endblock %}
