@@ -1,0 +1,26 @@
+{% extends 'email/base.html.twig' %}
+
+{% block title %}Confirmez votre e-mail - Tarmac{% endblock %}
+{% block preheader %}Un clic pour confirmer votre adresse et créer votre club{% endblock %}
+{% block email_title %}Confirmez votre e-mail{% endblock %}
+
+{% block email_body %}
+	<h2 style="margin-top: 0; font-size: 20px; color: #111827; font-weight: 600;">Bonjour {{ user.firstname }},</h2>
+
+	<p style="margin: 16px 0; color: #4b5563;">Cliquez sur le bouton ci-dessous pour confirmer votre adresse e-mail. Vous reprendrez ensuite la création de votre club là où vous l'avez laissée.</p>
+
+	<table cellpadding="0" cellspacing="0" style="width: 100%; margin: 30px 0;">
+		<tr>
+			<td align="center">
+				<a href="{{ signedUrl }}" style="display: inline-block; padding: 14px 32px; background-color: #345B7C; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Confirmer mon adresse</a>
+			</td>
+		</tr>
+	</table>
+
+	<p style="font-size: 14px; color: #667382; margin: 16px 0;">Ce lien est valable jusqu'au {{ expiresAt|date('d/m/Y à H:i') }}. Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.</p>
+
+	<hr style="border: 0; border-top: 1px solid #e8ebee; margin: 30px 0;">
+
+	<p style="font-size: 13px; color: #667382; margin: 16px 0;">Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br>
+		<a href="{{ signedUrl }}" style="color: #345B7C; word-break: break-all; text-decoration: none;">{{ signedUrl }}</a></p>
+{% endblock %}

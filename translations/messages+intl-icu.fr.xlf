@@ -3530,6 +3530,87 @@
         <source>passwordCompromised</source>
         <target>Ce mot de passe apparaît dans des fuites de données connues, choisissez-en un autre</target>
       </trans-unit>
+      <!-- Onboarding : compte et vérification d'e-mail -->
+      <trans-unit id="1739" resname="onboardingStepAccount">
+        <source>onboardingStepAccount</source>
+        <target>1. Votre compte</target>
+      </trans-unit>
+      <trans-unit id="1740" resname="onboardingStepEmail">
+        <source>onboardingStepEmail</source>
+        <target>2. Votre e-mail</target>
+      </trans-unit>
+      <trans-unit id="1741" resname="onboardingStepClub">
+        <source>onboardingStepClub</source>
+        <target>3. Votre club</target>
+      </trans-unit>
+      <trans-unit id="1742" resname="onboardingAccountTitle">
+        <source>onboardingAccountTitle</source>
+        <target>Créez votre compte</target>
+      </trans-unit>
+      <trans-unit id="1743" resname="onboardingAccountLead">
+        <source>onboardingAccountLead</source>
+        <target>Tarmac est gratuit, sans publicité, fait par un pilote bénévole pour les clubs associatifs. Quelques minutes suffisent.</target>
+      </trans-unit>
+      <trans-unit id="1744" resname="onboardingFreeNote">
+        <source>onboardingFreeNote</source>
+        <target>Aucune carte bancaire, aucun engagement. Vos données restent celles de votre club.</target>
+      </trans-unit>
+      <trans-unit id="1745" resname="createMyAccount">
+        <source>createMyAccount</source>
+        <target>Créer mon compte</target>
+      </trans-unit>
+      <trans-unit id="1746" resname="alreadyHaveAccount">
+        <source>alreadyHaveAccount</source>
+        <target>Vous avez déjà un compte ? Connectez-vous</target>
+      </trans-unit>
+      <trans-unit id="1747" resname="emailAlreadyRegistered">
+        <source>emailAlreadyRegistered</source>
+        <target>Un compte existe déjà avec cette adresse</target>
+      </trans-unit>
+      <trans-unit id="1748" resname="loginToContinue">
+        <source>loginToContinue</source>
+        <target>Connectez-vous pour continuer la création de votre club</target>
+      </trans-unit>
+      <trans-unit id="1749" resname="tooManyAttempts">
+        <source>tooManyAttempts</source>
+        <target>Trop de tentatives, réessayez dans une heure</target>
+      </trans-unit>
+      <trans-unit id="1750" resname="onboardingVerifyTitle">
+        <source>onboardingVerifyTitle</source>
+        <target>Confirmez votre e-mail</target>
+      </trans-unit>
+      <trans-unit id="1751" resname="onboardingVerifyBody">
+        <source>onboardingVerifyBody</source>
+        <target>Nous avons envoyé un lien à {email}. Cliquez dessus pour continuer.</target>
+      </trans-unit>
+      <trans-unit id="1752" resname="onboardingVerifyHint">
+        <source>onboardingVerifyHint</source>
+        <target>Rien reçu ? Regardez dans vos courriers indésirables, puis renvoyez le lien.</target>
+      </trans-unit>
+      <trans-unit id="1753" resname="resendVerificationEmail">
+        <source>resendVerificationEmail</source>
+        <target>Renvoyer le lien</target>
+      </trans-unit>
+      <trans-unit id="1754" resname="verificationEmailSent">
+        <source>verificationEmailSent</source>
+        <target>Lien renvoyé, vérifiez votre boîte de réception</target>
+      </trans-unit>
+      <trans-unit id="1755" resname="verificationLinkInvalid">
+        <source>verificationLinkInvalid</source>
+        <target>Ce lien n'est pas valide</target>
+      </trans-unit>
+      <trans-unit id="1756" resname="verificationLinkExpired">
+        <source>verificationLinkExpired</source>
+        <target>Ce lien a expiré, renvoyez-en un nouveau</target>
+      </trans-unit>
+      <trans-unit id="1757" resname="emailVerified">
+        <source>emailVerified</source>
+        <target>Adresse confirmée, créons votre club</target>
+      </trans-unit>
+      <trans-unit id="1758" resname="onboardingClubPlaceholder">
+        <source>onboardingClubPlaceholder</source>
+        <target>Votre e-mail est confirmé. La création de votre club arrive dans la prochaine étape.</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

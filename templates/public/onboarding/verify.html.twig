@@ -1,0 +1,34 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}{{ 'onboardingVerifyTitle'|trans }}{% endblock %}
+
+{% block body %}
+	<div class="page page-center">
+		<div class="container container-tight py-4">
+			<div class="text-center mb-4">
+				<a href="{{ path('public_landing') }}" class="navbar-brand navbar-brand-autodark">
+					<img src="{{ asset('logo.svg') }}" height="48" alt="Tarmac">
+				</a>
+			</div>
+			<div class="tarmac-panel text-center">
+				<div style="font-size:2.5rem;color:var(--td-glow);margin-bottom:0.75rem;"><i class="ti ti-mail-fast"></i></div>
+				<h2 style="font-size:1.4rem;font-weight:800;margin:0 0 0.75rem;letter-spacing:-0.015em;">{{ 'onboardingVerifyTitle'|trans }}</h2>
+				<p class="text-secondary">{{ 'onboardingVerifyBody'|trans({email: email}) }}</p>
+
+				{% for type, messages in app.flashes(['success', 'danger']) %}
+					{% for message in messages %}
+						<div class="alert alert-{{ type }}">{{ message|trans }}</div>
+					{% endfor %}
+				{% endfor %}
+
+				<form method="post" action="{{ path('public_onboarding_verify_resend') }}" class="mt-4">
+					<input type="hidden" name="_token" value="{{ csrf_token('resend-verification') }}">
+					<button type="submit" class="btn btn-outline-primary w-100" style="min-height:48px;">
+						<i class="ti ti-refresh me-2"></i>{{ 'resendVerificationEmail'|trans }}
+					</button>
+				</form>
+				<p class="text-secondary mt-4 mb-0" style="font-size:0.85rem;">{{ 'onboardingVerifyHint'|trans }}</p>
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -3,6 +3,8 @@
 namespace App\Controller\Public;
 
 use App\Controller\ExtendedController;
+use App\Entity\User;
+use App\Form\Onboarding\OnboardingAccountType;
 use App\Repository\ClubRepository;
 use App\Repository\JoinRequestRepository;
 use App\Repository\UserRepository;
@@ -14,13 +16,16 @@ use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 #[Route('/creer-mon-club', host: 'www.%domain%')]
 class OnboardingController extends ExtendedController
@@ -63,5 +68,138 @@ class OnboardingController extends ExtendedController
         }
 
         return $this->json(['available' => true, 'message' => $this->translator->trans('subdomainAvailable')]);
+    }
+
+    #[Route('', name: 'public_onboarding_account', methods: ['GET', 'POST'])]
+    public function account(Request $request): Response
+    {
+        $current = $this->getUser();
+        if ($current instanceof User) {
+            return $this->redirectToRoute($current->isVerified() ? 'public_onboarding_club' : 'public_onboarding_verify');
+        }
+
+        $user = new User();
+        $form = $this->createForm(OnboardingAccountType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            // Honeypot rempli : un robot. On ne crée rien et on ne le dit pas.
+            if ((string) $form->get('website')->getData() !== '') {
+                return $this->redirectToRoute('public_landing');
+            }
+
+            if (!$this->accountLimiter->create((string) $request->getClientIp())->consume()->isAccepted()) {
+                $this->addFlash('danger', 'tooManyAttempts');
+
+                return $this->redirectToRoute('public_onboarding_account');
+            }
+
+            // Vérifié avant isValid() : la contrainte UniqueEntity de l'entité User invalide
+            // déjà le formulaire sur un e-mail existant (message générique « emailUnique »),
+            // ce qui empêcherait jamais d'atteindre cette branche si elle dépendait de isValid().
+            if ($user->getEmail() !== null && $this->userRepository->findOneBy(['email' => $user->getEmail()]) !== null) {
+                $form->get('email')->addError(new FormError($this->translator->trans('emailAlreadyRegistered')));
+                // Après connexion, l'utilisateur reprend à l'étape « Club ».
+                $this->saveTargetPath($request->getSession(), 'main', $this->generateUrl('public_onboarding_club'));
+            } elseif ($form->isValid()) {
+                $user->setPassword($this->passwordHasher->hashPassword($user, (string) $form->get('plainPassword')->getData()));
+                $user->setVerified(false);
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+
+                $this->emailVerification->send($user);
+                $this->security->login($user);
+
+                return $this->redirectToRoute('public_onboarding_verify');
+            }
+        }
+
+        // Vue explicite (pas la FormInterface) : Symfony 7.4 fait passer render() en 422
+        // dès qu'un formulaire soumis-invalide figure dans les paramètres (AbstractController::doRender).
+        // Ici un e-mail déjà utilisé ou un champ manquant reste un succès HTML classique (200),
+        // pas une erreur REST — l'utilisateur revoit simplement son formulaire avec le message d'erreur.
+        return $this->render('public/onboarding/account.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/verification', name: 'public_onboarding_verify', methods: ['GET'])]
+    public function verify(): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->redirectToRoute('public_onboarding_account');
+        }
+        if ($user->isVerified()) {
+            return $this->redirectToRoute('public_onboarding_club');
+        }
+
+        return $this->render('public/onboarding/verify.html.twig', [
+            'email' => $user->getEmail(),
+        ]);
+    }
+
+    #[Route('/verification/renvoyer', name: 'public_onboarding_verify_resend', methods: ['POST'])]
+    public function resend(Request $request): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof User || $user->isVerified()) {
+            return $this->redirectToRoute('public_onboarding_account');
+        }
+        if (!$this->isCsrfTokenValid('resend-verification', (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if (!$this->resendLimiter->create((string) $user->getId())->consume()->isAccepted()) {
+            $this->addFlash('danger', 'tooManyAttempts');
+        } else {
+            $this->emailVerification->send($user);
+            $this->addFlash('success', 'verificationEmailSent');
+        }
+
+        return $this->redirectToRoute('public_onboarding_verify');
+    }
+
+    #[Route('/verification/confirmer', name: 'public_onboarding_verify_confirm', methods: ['GET'])]
+    public function confirm(Request $request): Response
+    {
+        $user = $this->userRepository->find($request->query->getInt('id'));
+        if ($user === null) {
+            $this->addFlash('danger', 'verificationLinkInvalid');
+
+            return $this->redirectToRoute('public_onboarding_account');
+        }
+
+        try {
+            $this->emailVerification->confirm($request, $user);
+        } catch (VerifyEmailExceptionInterface) {
+            $this->addFlash('danger', 'verificationLinkExpired');
+
+            return $this->redirectToRoute($this->getUser() instanceof User ? 'public_onboarding_verify' : 'public_onboarding_account');
+        }
+
+        if ($this->getUser() !== $user) {
+            $this->security->login($user);
+        }
+        $this->addFlash('success', 'emailVerified');
+
+        return $this->redirectToRoute('public_onboarding_club');
+    }
+
+    /**
+     * Étape « Club » : la tâche 10 y ajoute le formulaire de création du club
+     * (OnboardingClubType). Cette version ne fait que valider les pré-conditions
+     * de la tâche 9 (compte créé et e-mail confirmé) et rendre un message d'attente,
+     * nécessaire pour que les redirections de cette tâche résolvent une route réelle.
+     */
+    #[Route('/club', name: 'public_onboarding_club', methods: ['GET', 'POST'])]
+    public function club(): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof User || !$user->isVerified()) {
+            return $this->redirectToRoute('public_onboarding_account');
+        }
+
+        return new Response($this->translator->trans('onboardingClubPlaceholder'));
     }
 }

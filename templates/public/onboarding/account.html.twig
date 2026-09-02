@@ -1,0 +1,65 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}{{ 'onboardingAccountTitle'|trans }}{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		.onboarding-honeypot { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+		.onboarding-steps { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem; font-size: 0.85rem; color: var(--td-ink-3); }
+		.onboarding-steps .is-current { color: var(--td-ink-1); font-weight: 600; }
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="page page-center">
+		<div class="container container-tight py-4">
+			<div class="text-center mb-4">
+				<a href="{{ path('public_landing') }}" class="navbar-brand navbar-brand-autodark">
+					<img src="{{ asset('logo.svg') }}" height="48" alt="Tarmac">
+				</a>
+			</div>
+			<div class="tarmac-panel">
+				<div class="onboarding-steps">
+					<span class="is-current">{{ 'onboardingStepAccount'|trans }}</span><span>·</span>
+					<span>{{ 'onboardingStepEmail'|trans }}</span><span>·</span>
+					<span>{{ 'onboardingStepClub'|trans }}</span>
+				</div>
+				<h2 style="font-size:1.4rem;font-weight:800;text-align:center;margin:0 0 0.5rem;letter-spacing:-0.015em;">{{ 'onboardingAccountTitle'|trans }}</h2>
+				<p class="text-center text-secondary mb-4">{{ 'onboardingAccountLead'|trans }}</p>
+
+				{% for message in app.flashes('danger') %}
+					<div class="alert alert-danger">{{ message|trans }}</div>
+				{% endfor %}
+
+				{{ form_start(form) }}
+				{{ form_errors(form) }}
+				<div class="row">
+					<div class="col-12 col-sm-6">{{ form_row(form.firstname) }}</div>
+					<div class="col-12 col-sm-6">{{ form_row(form.lastname) }}</div>
+				</div>
+				{{ form_row(form.email) }}
+				{% if form.email.vars.errors|length > 0 %}
+					<p class="mb-3" style="font-size:0.9rem;">
+						<a href="{{ path('public_login') }}"><i class="ti ti-login me-1"></i>{{ 'loginToContinue'|trans }}</a>
+					</p>
+				{% endif %}
+				{{ form_row(form.plainPassword.first) }}
+				{{ form_row(form.plainPassword.second) }}
+				{{ form_row(form.website) }}
+
+				<button type="submit" class="btn btn-primary w-100 mt-3" style="min-height: 48px;">
+					<i class="ti ti-check me-2"></i>{{ 'createMyAccount'|trans }}
+				</button>
+				{{ form_end(form) }}
+
+				<p class="text-center text-secondary mt-4 mb-0" style="font-size:0.85rem;">{{ 'onboardingFreeNote'|trans }}</p>
+			</div>
+			<div class="text-center mt-3">
+				<a href="{{ path('public_login') }}" style="color:var(--td-ink-2);font-size:0.85rem;">
+					<i class="ti ti-login me-1"></i>{{ 'alreadyHaveAccount'|trans }}
+				</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}
