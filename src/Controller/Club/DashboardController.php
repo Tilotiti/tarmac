@@ -13,6 +13,7 @@ use App\Entity\Enum\PurchaseStatus;
 use App\Controller\ExtendedController;
 use App\Repository\PlanApplicationRepository;
 use App\Form\WelcomeMessageType;
+use App\Service\HealthCheck\ClubHealthCheck;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,6 +37,7 @@ class DashboardController extends ExtendedController
         private readonly DompdfWrapperInterface $dompdf,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly EntityManagerInterface $entityManager,
+        private readonly ClubHealthCheck $clubHealthCheck,
     ) {
         parent::__construct($subdomainService);
     }
@@ -48,6 +50,17 @@ class DashboardController extends ExtendedController
 
         $isManager = $this->isGranted('MANAGE');
         $isInspector = $this->isGranted('INSPECT');
+
+        $healthReport = null;
+        $showHealthCheck = false;
+        if ($isManager) {
+            if ($request->query->getBoolean('healthCheck') && $club->getHealthCheckDismissedAt() !== null) {
+                $club->setHealthCheckDismissedAt(null);
+                $this->entityManager->flush();
+            }
+            $healthReport = $this->clubHealthCheck->check($club);
+            $showHealthCheck = $this->clubHealthCheck->shouldDisplay($club, $healthReport);
+        }
 
         // === 1. SUBTASKS AWAITING INSPECTION (for inspectors only) ===
         $awaitingInspectionSubTasks = [];
@@ -168,7 +181,23 @@ class DashboardController extends ExtendedController
             'openTasksCount' => $openTasksCount,
             'isManager' => $isManager,
             'isInspector' => $isInspector,
+            'healthReport' => $healthReport,
+            'showHealthCheck' => $showHealthCheck,
         ]);
+    }
+
+    #[Route('/health-check/dismiss', name: 'club_dashboard_dismiss_health_check', methods: ['POST'])]
+    #[IsGranted('MANAGE')]
+    public function dismissHealthCheck(Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('dismiss-health-check', (string) $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $this->clubResolver->resolve()->setHealthCheckDismissedAt(new \DateTimeImmutable());
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('club_dashboard');
     }
 
     #[Route('/print-priority-subtasks', name: 'club_dashboard_print_priority_subtasks', methods: ['GET'])]

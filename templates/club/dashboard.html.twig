@@ -48,6 +48,10 @@
 		</div>
 	</div>
 
+	{% if showHealthCheck and healthReport %}
+		{% include 'club/dashboard/healthCheck.html.twig' with {report: healthReport} %}
+	{% endif %}
+
 	{# Welcome Message — « mot du gestionnaire » #}
 	{% if club.welcomeMessage %}
 		<div class="tarmac-welcome mb-4">

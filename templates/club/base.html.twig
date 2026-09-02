@@ -96,6 +96,13 @@
 						<i class="ti ti-tag me-2"></i>
 						{{ 'specialisations'|trans }}
 					</a>
+					{% set healthReport = club_health_report(club) %}
+					{% if not healthReport.isComplete %}
+						<a href="{{ path('club_dashboard', {healthCheck: 1}) }}" class="dropdown-item">
+							<i class="ti ti-checklist me-2"></i>
+							{{ 'healthCheckMenu'|trans({done: healthReport.doneCount, total: healthReport.total}) }}
+						</a>
+					{% endif %}
 				{% endif %}
 			</div>
 		</div>

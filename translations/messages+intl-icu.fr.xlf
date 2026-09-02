@@ -3810,6 +3810,115 @@
         <source>planExplainReadGuide</source>
         <target>Lire le guide</target>
       </trans-unit>
+      <!-- Checklist de configuration -->
+      <trans-unit id="1813" resname="healthCheckTitle">
+        <source>healthCheckTitle</source>
+        <target>Votre Tarmac est-il prêt ?</target>
+      </trans-unit>
+      <trans-unit id="1814" resname="healthCheckProgress">
+        <source>healthCheckProgress</source>
+        <target>{done} sur {total}</target>
+      </trans-unit>
+      <trans-unit id="1815" resname="healthCheckMenu">
+        <source>healthCheckMenu</source>
+        <target>Configuration {done}/{total}</target>
+      </trans-unit>
+      <trans-unit id="1816" resname="healthCheckShowDone">
+        <source>healthCheckShowDone</source>
+        <target>{count, plural, one {Voir le point terminé} other {Voir les # points terminés}}</target>
+      </trans-unit>
+      <trans-unit id="1817" resname="hide">
+        <source>hide</source>
+        <target>Masquer</target>
+      </trans-unit>
+      <trans-unit id="1818" resname="essential">
+        <source>essential</source>
+        <target>Essentiel</target>
+      </trans-unit>
+      <trans-unit id="1819" resname="healthCheckAerodromeTitle">
+        <source>healthCheckAerodromeTitle</source>
+        <target>Votre aérodrome</target>
+      </trans-unit>
+      <trans-unit id="1820" resname="healthCheckAerodromeWhy">
+        <source>healthCheckAerodromeWhy</source>
+        <target>Il situe votre club et évite qu'un autre président le recrée par erreur.</target>
+      </trans-unit>
+      <trans-unit id="1821" resname="healthCheckAerodromeAction">
+        <source>healthCheckAerodromeAction</source>
+        <target>Indiquer mon terrain</target>
+      </trans-unit>
+      <trans-unit id="1822" resname="healthCheckEquipmentTitle">
+        <source>healthCheckEquipmentTitle</source>
+        <target>Votre matériel</target>
+      </trans-unit>
+      <trans-unit id="1823" resname="healthCheckEquipmentWhy">
+        <source>healthCheckEquipmentWhy</source>
+        <target>Sans matériel, rien à entretenir : commencez par un planeur, un avion ou un treuil.</target>
+      </trans-unit>
+      <trans-unit id="1824" resname="healthCheckEquipmentAction">
+        <source>healthCheckEquipmentAction</source>
+        <target>Ajouter un matériel</target>
+      </trans-unit>
+      <trans-unit id="1825" resname="healthCheckMembersTitle">
+        <source>healthCheckMembersTitle</source>
+        <target>Vos membres</target>
+      </trans-unit>
+      <trans-unit id="1826" resname="healthCheckMembersWhy">
+        <source>healthCheckMembersWhy</source>
+        <target>Chaque membre invité pourra saisir son temps, commenter et signaler une anomalie.</target>
+      </trans-unit>
+      <trans-unit id="1827" resname="healthCheckMembersAction">
+        <source>healthCheckMembersAction</source>
+        <target>Inviter des membres</target>
+      </trans-unit>
+      <trans-unit id="1828" resname="healthCheckSecondManagerTitle">
+        <source>healthCheckSecondManagerTitle</source>
+        <target>Un second gestionnaire</target>
+      </trans-unit>
+      <trans-unit id="1829" resname="healthCheckSecondManagerWhy">
+        <source>healthCheckSecondManagerWhy</source>
+        <target>Pour que le club ne dépende pas d'une seule personne.</target>
+      </trans-unit>
+      <trans-unit id="1830" resname="healthCheckSecondManagerAction">
+        <source>healthCheckSecondManagerAction</source>
+        <target>Choisir un membre</target>
+      </trans-unit>
+      <trans-unit id="1831" resname="healthCheckInspectorTitle">
+        <source>healthCheckInspectorTitle</source>
+        <target>Un qualifié</target>
+      </trans-unit>
+      <trans-unit id="1832" resname="healthCheckInspectorWhy">
+        <source>healthCheckInspectorWhy</source>
+        <target>Sans qualifié, les sous-tâches à inspecter restent bloquées.</target>
+      </trans-unit>
+      <trans-unit id="1833" resname="healthCheckInspectorAction">
+        <source>healthCheckInspectorAction</source>
+        <target>Choisir un membre</target>
+      </trans-unit>
+      <trans-unit id="1834" resname="healthCheckPlanTitle">
+        <source>healthCheckPlanTitle</source>
+        <target>Un plan d'entretien appliqué</target>
+      </trans-unit>
+      <trans-unit id="1835" resname="healthCheckPlanWhy">
+        <source>healthCheckPlanWhy</source>
+        <target>Le plan décrit les opérations récurrentes ; Tarmac génère ensuite les tâches tout seul.</target>
+      </trans-unit>
+      <trans-unit id="1836" resname="healthCheckPlanAction">
+        <source>healthCheckPlanAction</source>
+        <target>Comprendre les plans</target>
+      </trans-unit>
+      <trans-unit id="1837" resname="healthCheckWelcomeMessageTitle">
+        <source>healthCheckWelcomeMessageTitle</source>
+        <target>Un message d'accueil</target>
+      </trans-unit>
+      <trans-unit id="1838" resname="healthCheckWelcomeMessageWhy">
+        <source>healthCheckWelcomeMessageWhy</source>
+        <target>Vos membres le lisent en arrivant : consignes, contacts, ce que vous attendez d'eux.</target>
+      </trans-unit>
+      <trans-unit id="1839" resname="healthCheckWelcomeMessageAction">
+        <source>healthCheckWelcomeMessageAction</source>
+        <target>Rédiger le message</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>
