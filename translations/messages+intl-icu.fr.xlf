@@ -3853,11 +3853,11 @@
       </trans-unit>
       <trans-unit id="1823" resname="healthCheckEquipmentWhy">
         <source>healthCheckEquipmentWhy</source>
-        <target>Tout ce que le club entretient : planeurs, avions, treuil, remorques, hangar. Chaque tâche d'entretien se rattache à un matériel ; sans matériel, Tarmac n'a rien à suivre. Vous pouvez les saisir un par un.</target>
+        <target>Tout ce que le club entretient : planeurs, avions, treuil, remorques, hangar. Chaque tâche d'entretien se rattache à un matériel ; sans matériel, Tarmac n'a rien à suivre. Saisissez-les un par un, ou importez la liste depuis un fichier Excel ou CSV.</target>
       </trans-unit>
       <trans-unit id="1824" resname="healthCheckEquipmentAction">
         <source>healthCheckEquipmentAction</source>
-        <target>Voir et ajouter du matériel</target>
+        <target>Ajouter du matériel</target>
       </trans-unit>
       <trans-unit id="1825" resname="healthCheckMembersTitle">
         <source>healthCheckMembersTitle</source>
@@ -3865,7 +3865,7 @@
       </trans-unit>
       <trans-unit id="1826" resname="healthCheckMembersWhy">
         <source>healthCheckMembersWhy</source>
-        <target>Chaque membre reçoit un e-mail, choisit son mot de passe et accède au club. Il peut ensuite saisir le temps passé sur une tâche, commenter et signaler une anomalie sur un matériel. Vous pouvez inviter un par un ou importer un fichier.</target>
+        <target>Chaque membre reçoit un e-mail d'invitation. Il crée son compte, ou se connecte à son compte s'il en a déjà un dans un autre club, et l'invitation est acceptée. Il peut ensuite saisir le temps passé sur une tâche, commenter et signaler une anomalie. Invitez un par un, ou importez la liste depuis un fichier.</target>
       </trans-unit>
       <trans-unit id="1827" resname="healthCheckMembersAction">
         <source>healthCheckMembersAction</source>
