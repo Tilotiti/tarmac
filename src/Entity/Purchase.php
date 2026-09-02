@@ -28,12 +28,12 @@ class Purchase
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'nameRequired')]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, maxMessage: 'valueTooLong')]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::INTEGER)]
-    #[Assert\NotNull]
-    #[Assert\GreaterThanOrEqual(1)]
+    #[Assert\NotNull(message: 'valueRequired')]
+    #[Assert\GreaterThanOrEqual(1, message: 'quantityMinOne')]
     private int $quantity = 1;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]

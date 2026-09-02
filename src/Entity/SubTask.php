@@ -25,7 +25,7 @@ class SubTask
 
     #[ORM\Column(length: 180)]
     #[Assert\NotBlank(message: 'titleRequired')]
-    #[Assert\Length(max: 180)]
+    #[Assert\Length(max: 180, maxMessage: 'valueTooLong')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -35,7 +35,7 @@ class SubTask
     private ?string $documentation = null;
 
     #[ORM\Column(length: 20)]
-    #[Assert\Choice(choices: ['open', 'done', 'closed', 'cancelled'])]
+    #[Assert\Choice(choices: ['open', 'done', 'closed', 'cancelled'], message: 'valueNotAllowed')]
     private string $status = 'open';
 
     #[ORM\Column(type: Types::SMALLINT)]

@@ -3756,6 +3756,10 @@
         <source>valueTooLong</source>
         <target>Ce texte dépasse {limit} caractères</target>
       </trans-unit>
+      <trans-unit id="1800" resname="valueNotAllowed">
+        <source>valueNotAllowed</source>
+        <target>Cette valeur n'est pas autorisée</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

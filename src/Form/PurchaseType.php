@@ -30,10 +30,6 @@ class PurchaseType extends AbstractType
                 'label' => 'purchaseQuantity',
                 'required' => true,
                 'attr' => ['class' => 'form-control', 'min' => 1],
-                'constraints' => [
-                    new Assert\NotNull(message: 'valueRequired'),
-                    new Assert\GreaterThanOrEqual(1, message: 'quantityMinOne'),
-                ],
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'purchaseDescription',

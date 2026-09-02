@@ -22,7 +22,7 @@ class Equipment
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'nameRequired')]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, maxMessage: 'valueTooLong')]
     private ?string $name = null;
 
     #[ORM\Column(type: 'string', enumType: EquipmentType::class)]

@@ -25,7 +25,7 @@ class Plan
 
     #[ORM\Column(length: 180)]
     #[Assert\NotBlank(message: 'nameRequired')]
-    #[Assert\Length(max: 180)]
+    #[Assert\Length(max: 180, maxMessage: 'valueTooLong')]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]

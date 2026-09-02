@@ -26,7 +26,7 @@ class Specialisation
 
     #[ORM\Column(length: 80)]
     #[Assert\NotBlank(message: 'nameRequired')]
-    #[Assert\Length(max: 80)]
+    #[Assert\Length(max: 80, maxMessage: 'valueTooLong')]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
