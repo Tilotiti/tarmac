@@ -1,0 +1,52 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}{{ definition.titleKey|trans }}{% endblock %}
+
+{% block page_content %}
+	<div class="tarmac-panel" style="max-width:820px;" data-controller="import-mapping" data-import-mapping-samples-value="{{ samples|json_encode }}" data-import-mapping-sample-label-value="{{ 'importSample'|trans }}">
+		{% include 'club/import/_steps.html.twig' with {current: 2} %}
+		<p class="text-secondary">{{ 'importMappingLead'|trans({file: state.originalName}) }}</p>
+
+		<form method="post">
+			<input type="hidden" name="_token" value="{{ csrf_token('import-mapping') }}">
+			<label class="form-check mb-4" style="min-height:44px;">
+				<input type="checkbox" class="form-check-input" name="hasHeader" value="1" {% if state.hasHeader %}checked{% endif %} onchange="this.form.querySelector('[name=toggleHeader]').click()">
+				<span class="form-check-label">{{ 'importHasHeader'|trans }}</span>
+			</label>
+			<button type="submit" name="toggleHeader" value="1" class="visually-hidden" tabindex="-1" aria-hidden="true"></button>
+
+			{% for field in definition.fields %}
+				{% set chosen = state.columnFor(field.key) %}
+				<div class="mb-4">
+					<label class="form-label {% if field.required %}required{% endif %}" for="column-{{ field.key }}">{{ field.labelKey|trans }}</label>
+					<select id="column-{{ field.key }}" name="columns[{{ field.key }}]" class="form-select" style="min-height:44px;"
+							data-action="import-mapping#update" data-import-mapping-target="select" data-field="{{ field.key }}">
+						<option value="">{{ 'importIgnoreColumn'|trans }}</option>
+						{% for index, label in labels %}
+							<option value="{{ index }}" {% if chosen is same as(index) %}selected{% endif %}>{{ label }}</option>
+						{% endfor %}
+					</select>
+					<div class="form-hint" data-import-mapping-target="sample" data-field="{{ field.key }}">
+						{% if chosen is not null and samples[chosen] is not empty %}{{ 'importSample'|trans }} {{ samples[chosen]|join(' · ') }}{% endif %}
+					</div>
+					{% if field.hasChoices %}
+						<div class="mt-2" data-import-mapping-target="fixed" data-field="{{ field.key }}" {% if chosen is not null %}hidden{% endif %}>
+							<label class="form-label" for="fixed-{{ field.key }}">{{ 'importFixedValue'|trans }}</label>
+							<select id="fixed-{{ field.key }}" name="fixed[{{ field.key }}]" class="form-select" style="min-height:44px;">
+								{% if not field.required %}<option value="">{{ 'importNoValue'|trans }}</option>{% endif %}
+								{% for choice in field.choices %}
+									<option value="{{ choice.value }}" {% if (state.fixed[field.key] ?? field.default) == choice.value %}selected{% endif %}>{{ choice.labelKey|trans }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					{% endif %}
+				</div>
+			{% endfor %}
+
+			<div class="d-flex justify-content-between gap-2 mt-3 flex-wrap">
+				<a href="{{ path('club_import_file', {definition: definition.key}) }}" class="btn btn-outline-secondary" style="min-height:44px;"><i class="ti ti-arrow-left me-2"></i>{{ 'importChangeFile'|trans }}</a>
+				<button type="submit" class="btn btn-primary" style="min-height:44px;"><i class="ti ti-arrow-right me-2"></i>{{ 'continue'|trans }}</button>
+			</div>
+		</form>
+	</div>
+{% endblock %}

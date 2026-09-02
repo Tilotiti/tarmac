@@ -3974,6 +3974,163 @@
         <source>aerodromeNotListedSubject</source>
         <target>Mon aérodrome n'est pas dans la liste Tarmac</target>
       </trans-unit>
+      <!-- Assistant d'import -->
+      <trans-unit id="1853" resname="back">
+        <source>back</source>
+        <target>Retour</target>
+      </trans-unit>
+      <trans-unit id="1854" resname="continue">
+        <source>continue</source>
+        <target>Continuer</target>
+      </trans-unit>
+      <trans-unit id="1855" resname="importEquipmentsTitle">
+        <source>importEquipmentsTitle</source>
+        <target>Importer du matériel</target>
+      </trans-unit>
+      <trans-unit id="1856" resname="importStepFile">
+        <source>importStepFile</source>
+        <target>Le fichier</target>
+      </trans-unit>
+      <trans-unit id="1857" resname="importStepMapping">
+        <source>importStepMapping</source>
+        <target>Les colonnes</target>
+      </trans-unit>
+      <trans-unit id="1858" resname="importStepPreview">
+        <source>importStepPreview</source>
+        <target>L'aperçu</target>
+      </trans-unit>
+      <trans-unit id="1859" resname="importFile">
+        <source>importFile</source>
+        <target>Fichier à importer</target>
+      </trans-unit>
+      <trans-unit id="1860" resname="importFileHelp">
+        <source>importFileHelp</source>
+        <target>CSV, XLS ou XLSX, 2 Mo maximum</target>
+      </trans-unit>
+      <trans-unit id="1861" resname="importFileLead">
+        <source>importFileLead</source>
+        <target>Choisissez le fichier qui contient votre liste. À l'étape suivante, vous indiquerez quelle colonne correspond à quoi.</target>
+      </trans-unit>
+      <trans-unit id="1862" resname="importFileFormats">
+        <source>importFileFormats</source>
+        <target>Formats acceptés : CSV, Excel (XLS, XLSX), jusqu'à 2 000 lignes.</target>
+      </trans-unit>
+      <trans-unit id="1863" resname="importFileAnySource">
+        <source>importFileAnySource</source>
+        <target>Le fichier peut venir de n'importe quel logiciel : les colonnes n'ont pas besoin d'avoir un nom précis.</target>
+      </trans-unit>
+      <trans-unit id="1864" resname="importFileNoHeaderOk">
+        <source>importFileNoHeaderOk</source>
+        <target>Un fichier sans ligne de titres fonctionne aussi.</target>
+      </trans-unit>
+      <trans-unit id="1865" resname="importDownloadTemplate">
+        <source>importDownloadTemplate</source>
+        <target>Télécharger un fichier modèle</target>
+      </trans-unit>
+      <trans-unit id="1866" resname="importUnsupportedFormat">
+        <source>importUnsupportedFormat</source>
+        <target>Ce format n'est pas accepté : CSV, XLS ou XLSX seulement</target>
+      </trans-unit>
+      <trans-unit id="1867" resname="importUnreadableFile">
+        <source>importUnreadableFile</source>
+        <target>Le fichier n'a pas pu être lu</target>
+      </trans-unit>
+      <trans-unit id="1868" resname="importTooManyRows">
+        <source>importTooManyRows</source>
+        <target>Le fichier dépasse 2 000 lignes</target>
+      </trans-unit>
+      <trans-unit id="1869" resname="importEmptyFile">
+        <source>importEmptyFile</source>
+        <target>Le fichier est vide</target>
+      </trans-unit>
+      <trans-unit id="1870" resname="importMappingLead">
+        <source>importMappingLead</source>
+        <target>Pour chaque donnée, choisissez la colonne de « {file} » qui la contient. Les premières valeurs s'affichent sous le menu pour vérifier.</target>
+      </trans-unit>
+      <trans-unit id="1871" resname="importHasHeader">
+        <source>importHasHeader</source>
+        <target>La première ligne contient les titres des colonnes</target>
+      </trans-unit>
+      <trans-unit id="1872" resname="importIgnoreColumn">
+        <source>importIgnoreColumn</source>
+        <target>— ne pas importer —</target>
+      </trans-unit>
+      <trans-unit id="1873" resname="importSample">
+        <source>importSample</source>
+        <target>Exemples :</target>
+      </trans-unit>
+      <trans-unit id="1874" resname="importFixedValue">
+        <source>importFixedValue</source>
+        <target>Valeur pour tout le fichier</target>
+      </trans-unit>
+      <trans-unit id="1875" resname="importNoValue">
+        <source>importNoValue</source>
+        <target>— aucune —</target>
+      </trans-unit>
+      <trans-unit id="1876" resname="importChangeFile">
+        <source>importChangeFile</source>
+        <target>Changer de fichier</target>
+      </trans-unit>
+      <trans-unit id="1877" resname="importColumnUsedTwice">
+        <source>importColumnUsedTwice</source>
+        <target>La colonne « {column} » est utilisée deux fois</target>
+      </trans-unit>
+      <trans-unit id="1878" resname="importColumnRequired">
+        <source>importColumnRequired</source>
+        <target>Choisissez une colonne pour « {field} »</target>
+      </trans-unit>
+      <trans-unit id="1879" resname="importFixedValueRequired">
+        <source>importFixedValueRequired</source>
+        <target>Choisissez une valeur pour « {field} »</target>
+      </trans-unit>
+      <trans-unit id="1880" resname="importValuesLead">
+        <source>importValuesLead</source>
+        <target>Le fichier utilise ses propres mots. Faites correspondre chaque valeur trouvée à celle de Tarmac, ou ignorez les lignes concernées.</target>
+      </trans-unit>
+      <trans-unit id="1881" resname="importIgnoreValue">
+        <source>importIgnoreValue</source>
+        <target>— ignorer ces lignes —</target>
+      </trans-unit>
+      <trans-unit id="1882" resname="importCheckPreview">
+        <source>importCheckPreview</source>
+        <target>Vérifier l'aperçu</target>
+      </trans-unit>
+      <trans-unit id="1883" resname="importPreviewSummary">
+        <source>importPreviewSummary</source>
+        <target>{imported, plural, =0 {Aucune ligne ne sera importée} one {# ligne sera importée} other {# lignes seront importées}}, {ignored, plural, =0 {aucune ignorée} one {# ignorée} other {# ignorées}}.</target>
+      </trans-unit>
+      <trans-unit id="1884" resname="importWillImport">
+        <source>importWillImport</source>
+        <target>Sera importé</target>
+      </trans-unit>
+      <trans-unit id="1885" resname="importEditMapping">
+        <source>importEditMapping</source>
+        <target>Modifier le rapprochement</target>
+      </trans-unit>
+      <trans-unit id="1886" resname="importConfirm">
+        <source>importConfirm</source>
+        <target>{count, plural, =0 {Rien à importer} one {Importer # ligne} other {Importer # lignes}}</target>
+      </trans-unit>
+      <trans-unit id="1887" resname="importDone">
+        <source>importDone</source>
+        <target>{imported, plural, =0 {Aucune ligne importée} one {# ligne importée} other {# lignes importées}}, {ignored, plural, =0 {aucune ignorée} one {# ignorée} other {# ignorées}}.</target>
+      </trans-unit>
+      <trans-unit id="1888" resname="importReasonMissing">
+        <source>importReasonMissing</source>
+        <target>Valeur obligatoire manquante</target>
+      </trans-unit>
+      <trans-unit id="1889" resname="importReasonValueNotMapped">
+        <source>importReasonValueNotMapped</source>
+        <target>Valeur non rapprochée</target>
+      </trans-unit>
+      <trans-unit id="1890" resname="importReasonDuplicateInFile">
+        <source>importReasonDuplicateInFile</source>
+        <target>En double dans le fichier</target>
+      </trans-unit>
+      <trans-unit id="1891" resname="importReasonAlreadyExists">
+        <source>importReasonAlreadyExists</source>
+        <target>Existe déjà dans le club</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

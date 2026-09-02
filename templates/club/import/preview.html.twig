@@ -1,0 +1,49 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}{{ definition.titleKey|trans }}{% endblock %}
+
+{% block page_content %}
+	<div class="tarmac-panel">
+		{% include 'club/import/_steps.html.twig' with {current: 3} %}
+		<p class="fw-bold">{{ 'importPreviewSummary'|trans({imported: preview.importableCount, ignored: preview.ignoredCount}) }}</p>
+		<form method="post" action="{{ path('club_import_confirm', {definition: definition.key}) }}">
+			<input type="hidden" name="_token" value="{{ csrf_token('import-confirm') }}">
+			<div class="table-responsive">
+				<table class="table table-vcenter">
+					<thead>
+						<tr>
+							<th>#</th>
+							{% for field in definition.fields %}<th>{{ field.labelKey|trans }}</th>{% endfor %}
+							{% block preview_extra_headers %}{% endblock %}
+							<th>{{ 'status'|trans }}</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for row in preview.rows %}
+							<tr class="{% if not row.isImportable %}text-secondary{% endif %}">
+								<td>{{ row.line }}</td>
+								{% for field in definition.fields %}
+									<td>{% if field.hasChoices and row.values[field.key] != '' and field.choice(row.values[field.key]) %}{{ field.choice(row.values[field.key]).labelKey|trans }}{% else %}{{ row.values[field.key] }}{% endif %}</td>
+								{% endfor %}
+								{% block preview_extra_cells %}{% endblock %}
+								<td>
+									{% if row.isImportable %}
+										<span class="tarmac-badge tarmac-badge--success"><i class="ti ti-check"></i>{{ 'importWillImport'|trans }}</span>
+									{% else %}
+										<span class="tarmac-badge tarmac-badge--secondary" title="{{ row.reason|trans }}"><i class="ti ti-ban"></i>{{ row.reason|trans }}</span>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<div class="d-flex justify-content-between gap-2 mt-3 flex-wrap">
+				<a href="{{ path('club_import_mapping', {definition: definition.key}) }}" class="btn btn-outline-secondary" style="min-height:44px;"><i class="ti ti-arrow-left me-2"></i>{{ 'importEditMapping'|trans }}</a>
+				<button type="submit" class="btn btn-primary" style="min-height:44px;" {% if preview.importableCount == 0 %}disabled{% endif %}>
+					<i class="ti ti-file-import me-2"></i>{{ 'importConfirm'|trans({count: preview.importableCount}) }}
+				</button>
+			</div>
+		</form>
+	</div>
+{% endblock %}

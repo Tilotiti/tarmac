@@ -4,7 +4,8 @@ namespace App\Service\Import;
 
 /**
  * Devine si la première ligne contient des titres : que du texte court, sans vide ni doublon,
- * et au moins une ligne de données dessous.
+ * au moins une ligne de données dessous, et aucune colonne où le titre supposé répète mot pour
+ * mot la valeur de la ligne suivante (un intitulé de colonne ne coïncide pas avec une donnée).
  */
 final class HeaderDetector
 {
@@ -20,6 +21,12 @@ final class HeaderDetector
         }
         foreach ($first as $cell) {
             if (is_numeric($cell) || mb_strlen($cell) > 60) {
+                return false;
+            }
+        }
+        $second = $sheet->rows()[1];
+        foreach ($first as $index => $cell) {
+            if ($cell !== '' && ($second[$index] ?? null) === $cell) {
                 return false;
             }
         }

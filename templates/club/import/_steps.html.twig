@@ -1,0 +1,5 @@
+<div class="d-flex gap-2 justify-content-center mb-4" style="font-size:0.85rem;color:var(--td-ink-3);">
+	{% for step, key in {1: 'importStepFile', 2: 'importStepMapping', 3: 'importStepPreview'} %}
+		<span {% if step == current %}style="color:var(--td-ink);font-weight:600;"{% endif %}>{{ step }}. {{ key|trans }}</span>{% if not loop.last %}<span>·</span>{% endif %}
+	{% endfor %}
+</div>
