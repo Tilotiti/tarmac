@@ -35,6 +35,32 @@ class ClubHealthCheckTest extends TestCase
         $this->assertSame(['b', 'c'], array_map(static fn ($item) => $item->key, $report->todo()));
     }
 
+    public function testCheckIsMemoizedPerClub(): void
+    {
+        $counting = new class implements HealthCheckInterface {
+            public int $calls = 0;
+
+            public function check(Club $club): HealthCheckItem
+            {
+                ++$this->calls;
+
+                return new HealthCheckItem('a', true, 'club_dashboard', [], false);
+            }
+        };
+        $service = new ClubHealthCheck([$counting]);
+        $club = new Club();
+
+        $service->check($club);
+        $service->check($club);
+
+        $this->assertSame(1, $counting->calls);
+
+        $service->reset();
+        $service->check($club);
+
+        $this->assertSame(2, $counting->calls);
+    }
+
     public function testDisplayRules(): void
     {
         $complete = new ClubHealthCheck([$this->check('a', true, true)]);

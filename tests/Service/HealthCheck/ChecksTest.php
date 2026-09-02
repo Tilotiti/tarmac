@@ -59,6 +59,22 @@ class ChecksTest extends TestCase
         $this->assertTrue($check->check($club)->done);
     }
 
+    public function testMembersWithoutCreatorTreatsSingleMembershipAsNoOtherMember(): void
+    {
+        // Club créé depuis l'admin : pas de créateur connu, on ne peut exclure personne par identité.
+        $club = new Club();
+        $memberships = $this->createMock(MembershipRepository::class);
+        $memberships->method('countByClubExcludingUser')->with($club, null)->willReturnOnConsecutiveCalls(1, 2);
+        $invitations = $this->createMock(InvitationRepository::class);
+        $invitations->method('countPendingByClub')->willReturn(0);
+        $check = new MembersCheck($memberships, $invitations);
+
+        // 1 adhésion (le seul membre visible) : personne d'autre, pas de fausse détection.
+        $this->assertFalse($check->check($club)->done);
+        // 2 adhésions : au moins un « autre » membre en plus du premier.
+        $this->assertTrue($check->check($club)->done);
+    }
+
     public function testSecondManagerAndInspector(): void
     {
         $memberships = $this->createMock(MembershipRepository::class);

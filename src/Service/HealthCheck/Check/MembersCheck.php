@@ -19,7 +19,14 @@ final class MembersCheck implements HealthCheckInterface
 
     public function check(Club $club): HealthCheckItem
     {
-        $others = $this->membershipRepository->countByClubExcludingUser($club, $club->getCreatedBy());
+        $creator = $club->getCreatedBy();
+        if ($creator !== null) {
+            $others = $this->membershipRepository->countByClubExcludingUser($club, $creator);
+        } else {
+            // Créateur inconnu (ex. club créé depuis l'admin) : on ne peut pas l'exclure par identité,
+            // mais un club avec une seule adhésion n'a par définition aucun « autre » membre.
+            $others = max(0, $this->membershipRepository->countByClubExcludingUser($club, null) - 1);
+        }
         $pending = $this->invitationRepository->countPendingByClub($club);
 
         return new HealthCheckItem('members', $others + $pending > 0, 'club_invitations', [], true);
