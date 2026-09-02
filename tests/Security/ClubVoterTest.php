@@ -15,8 +15,7 @@ class ClubVoterTest extends TestCase
 {
     private function voterWithoutResolvedClub(): ClubVoter
     {
-        $resolver = $this->createMock(ClubResolver::class);
-        $resolver->method('resolve')->willReturn(null);
+        $resolver = $this->createStub(ClubResolver::class);
 
         return new ClubVoter($resolver);
     }
@@ -42,5 +41,20 @@ class ClubVoterTest extends TestCase
         $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
 
         $this->assertSame(VoterInterface::ACCESS_DENIED, $this->voterWithoutResolvedClub()->vote($token, $club, ['MANAGE']));
+    }
+
+    public function testManagerIsGrantedThroughSubdomainFallbackWhenSubjectIsNotAClub(): void
+    {
+        $user = new User();
+        $club = new Club();
+        $membership = (new Membership())->setUser($user)->setClub($club)->setIsManager(true);
+        $club->addMembership($membership);
+
+        $resolver = $this->createStub(ClubResolver::class);
+        $resolver->method('resolve')->willReturn($club);
+
+        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+
+        $this->assertSame(VoterInterface::ACCESS_GRANTED, (new ClubVoter($resolver))->vote($token, null, ['MANAGE']));
     }
 }
