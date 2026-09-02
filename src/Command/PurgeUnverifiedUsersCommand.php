@@ -1,0 +1,52 @@
+<?php
+
+namespace App\Command;
+
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+
+#[AsCommand(name: 'app:users:purge-unverified', description: 'Supprime les comptes jamais vérifiés, sans club, plus vieux que N jours')]
+final class PurgeUnverifiedUsersCommand extends Command
+{
+    public function __construct(
+        private readonly UserRepository $userRepository,
+        private readonly EntityManagerInterface $entityManager,
+    ) {
+        parent::__construct();
+    }
+
+    protected function configure(): void
+    {
+        $this
+            ->addOption('days', null, InputOption::VALUE_REQUIRED, 'Ancienneté minimale en jours', '7')
+            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Liste sans supprimer');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $io = new SymfonyStyle($input, $output);
+        $before = new \DateTimeImmutable(sprintf('-%d days', (int) $input->getOption('days')));
+        $users = $this->userRepository->findUnverifiedOlderThan($before);
+
+        foreach ($users as $user) {
+            $io->text(sprintf('%s (créé le %s)', $user->getEmail(), $user->getCreatedAt()?->format('d/m/Y')));
+            if (!$input->getOption('dry-run')) {
+                $this->entityManager->remove($user);
+            }
+        }
+
+        if (!$input->getOption('dry-run')) {
+            $this->entityManager->flush();
+        }
+
+        $io->success(sprintf('%d compte%s %s.', count($users), count($users) > 1 ? 's' : '', $input->getOption('dry-run') ? 'à supprimer' : 'supprimé(s)'));
+
+        return Command::SUCCESS;
+    }
+}

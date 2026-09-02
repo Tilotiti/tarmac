@@ -79,6 +79,23 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             static fn (User $user): bool => $user->isAdmin()
         ));
     }
+
+    /**
+     * Comptes jamais vérifiés, sans aucune adhésion, créés avant la date donnée.
+     *
+     * @return User[]
+     */
+    public function findUnverifiedOlderThan(\DateTimeImmutable $before): array
+    {
+        return $this->createQueryBuilder('user')
+            ->leftJoin('user.memberships', 'membership')
+            ->andWhere('user.isVerified = false')
+            ->andWhere('user.createdAt < :before')
+            ->andWhere('membership.id IS NULL')
+            ->setParameter('before', $before)
+            ->getQuery()
+            ->getResult();
+    }
 }
 
 
