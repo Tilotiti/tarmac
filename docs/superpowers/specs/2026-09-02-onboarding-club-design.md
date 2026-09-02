@@ -46,10 +46,11 @@ Contrôleur `App\Controller\Public\OnboardingController`, hôte `www.%domain%`, 
 ### 3.3 Écran « Club » — `public_onboarding_club`
 
 - Accès : utilisateur connecté et vérifié. Sinon, redirection vers l'écran adéquat.
-- Champs : nom du club, aérodrome ou ville (`Club::location`, nouveau champ texte nullable), sous-domaine.
+- Champs : nom du club, aérodrome (obligatoire), sous-domaine.
+- Aérodrome : champ texte avec autocomplétion (Stimulus `aerodrome-search`) sur `GET /creer-mon-club/aerodromes?q=`, qui cherche dans `Aerodrome` par nom, commune et code OACI (préfixe ou sous-chaîne, insensible aux accents) et renvoie dix résultats « Nom (Commune) LFXX ». La sélection remplit un champ caché `aerodrome` (id). Lien « Mon terrain n'est pas dans la liste » : affiche un champ « Commune » en texte libre (`Club::locationLabel`) et vide l'aérodrome ; l'un des deux est obligatoire. Sans aérodrome, le club n'a pas de coordonnées en phase 1 et la détection de doublon retombe sur le nom seul.
 - Le sous-domaine se calcule côté client (Stimulus `subdomain-preview`) à partir du nom : minuscules, accents retirés, caractères hors `[a-z0-9-]` remplacés par un tiret, tirets doublés ou en bordure supprimés, 30 caractères max. L'adresse complète s'affiche sous le champ : « Vos membres se connecteront sur https://<sous-domaine>.tarmac.center ». Le champ reste modifiable ; à chaque changement, une requête `GET /creer-mon-club/sous-domaine?value=` renvoie disponible / pris / interdit.
 - Validation serveur : regex `^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])?$`, unicité, mots réservés : `www`, `app`, `admin`, `api`, `mail`, `smtp`, `imap`, `ftp`, `staging`, `test`, `demo`, `tarmac`. Constante `SubdomainService::RESERVED`.
-- À la soumission valide, `ClubDuplicateFinder::findSimilar(name)` est appelé (voir 3.5). Sans résultat, ou si le formulaire porte `confirmed=1`, `ClubRegistrationService::register()` crée le club et redirige vers « Bienvenue ». Avec résultat, redirection vers l'écran « Doublon ».
+- À la soumission valide, `ClubDuplicateFinder::find(name, aerodrome)` est appelé (voir 3.5). Sans résultat, ou si le formulaire porte `confirmed=1`, `ClubRegistrationService::register()` crée le club et redirige vers « Bienvenue ». Avec résultat, redirection vers l'écran « Doublon ».
 
 ### 3.4 `ClubRegistrationService::register(User $user, Club $club): Club`
 
@@ -57,19 +58,38 @@ Dans une transaction :
 
 1. Persiste le club (`active = true`, `createdBy = $user`).
 2. Crée une `Membership` gestionnaire pour l'utilisateur (`isManager = true`).
-3. Envoie l'e-mail `email/clubCreated.html.twig` à chaque `User` ayant `ROLE_ADMIN` : nom, adresse, aérodrome, créateur (nom, e-mail), date, et la ligne « Proche de : <club> » quand la création a été confirmée malgré un doublon. Lien vers la fiche admin du club.
+3. Envoie l'e-mail `email/clubCreated.html.twig` à chaque `User` ayant `ROLE_ADMIN` : nom, adresse, aérodrome, créateur (nom, e-mail), date, et les lignes « Doublon probable : <club> » ou « Voisin sur le même terrain : <club> » quand la création a été confirmée malgré des résultats. Lien vers la fiche admin du club.
 4. Envoie l'e-mail `email/welcomePresident.html.twig` au créateur : adresse du club, ce que fait la checklist, lien vers le guide, adresse de contact.
 
 Le `createdBy` sert à l'admin et au contrôle « Membres invités » (§4.2).
 
 ### 3.5 Doublon — `public_onboarding_duplicate`
 
-`ClubDuplicateFinder::findSimilar(string $name): array` compare le nom normalisé (minuscules, accents retirés, ponctuation retirée, mots vides `de`, `du`, `des`, `le`, `la`, `les`, `d`, `l`, formes `aeroclub`, `aero club`, `aero-club`, `ac`, `club de vol a voile`, `cvv` ramenées à un jeton commun) à celui de tous les clubs actifs. Match si un nom normalisé contient l'autre, ou si la distance de Levenshtein rapportée à la longueur est inférieure à 0,25. Volume attendu : quelques dizaines de clubs, comparaison en PHP sans index.
+`ClubDuplicateFinder::find(string $name, ?Aerodrome $aerodrome): DuplicateReport` parcourt tous les clubs actifs en PHP (quelques dizaines, pas d'index) et classe chacun selon deux signaux :
 
-Écran : « Ce club existe déjà ? » avec, pour chaque club trouvé, son nom, son aérodrome et son adresse. Aucun nom ni e-mail de gestionnaire n'est affiché. Deux sorties :
+- **Nom proche** : noms normalisés (minuscules, accents et ponctuation retirés, mots vides `de`, `du`, `des`, `le`, `la`, `les`, `d`, `l` retirés, formes `aeroclub`, `aero club`, `aero-club`, `ac`, `club de vol a voile`, `cvv`, `centre de vol a voile` ramenées à un jeton commun) dont l'un contient l'autre, ou dont la distance de Levenshtein rapportée à la longueur est inférieure à 0,25.
+- **Distance** : même aérodrome, ou moins de 25 km entre les coordonnées (formule de Haversine). Un club sans coordonnées n'a pas de signal de distance.
+
+| Nom proche | Distance | Classement |
+|---|---|---|
+| oui | même aérodrome | doublon probable |
+| oui | moins de 25 km | doublon possible |
+| oui | loin ou inconnue | homonyme, ignoré |
+| non | même aérodrome | voisin sur le même terrain |
+| non | autre | ignoré |
+
+Le rapport contient deux listes : `duplicates` (probable et possible) et `neighbours`. Plusieurs clubs cohabitent sur un même aérodrome (aéroclub avion et club planeur, ou deux clubs planeur) : un voisin n'est jamais traité en doublon.
+
+Écran, affiché dès qu'une des listes n'est pas vide, sans nom ni e-mail de gestionnaire :
+
+- Avec des doublons : titre « Ce club existe déjà ? », liste des doublons (nom, aérodrome, adresse).
+- Avec des voisins seulement : titre « D'autres clubs sont déjà sur ce terrain », liste des voisins, phrase « Si votre club est l'un d'eux, demandez à le rejoindre. Sinon, continuez : plusieurs clubs peuvent partager un aérodrome. »
+- Avec les deux : la liste des doublons en premier, puis les voisins sous un sous-titre.
+
+Deux sorties, identiques dans les trois cas :
 
 - **« Demander à rejoindre ce club »** : ouvre `public_onboarding_join_request` (§3.6).
-- **« Ce n'est pas mon club, continuer »** : renvoie le formulaire « Club » avec `confirmed=1` et les valeurs saisies ; la création passe, l'e-mail admin porte la mention « Proche de ».
+- **« Ce n'est pas mon club, continuer »** : renvoie le formulaire « Club » avec `confirmed=1` et les valeurs saisies ; la création passe, l'e-mail admin liste les doublons et les voisins.
 
 ### 3.6 Demande d'adhésion — `JoinRequest`
 
@@ -149,7 +169,8 @@ Formats acceptés : XLSX, XLS, CSV (séparateur `;` ou `,`, détecté). En-tête
 ## 6. Admin
 
 - E-mail de notification à chaque création (§3.4).
-- Fiche club : créateur, aérodrome, date, demandes d'adhésion ouvertes.
+- Fiche club : créateur, aérodrome, date, demandes d'adhésion ouvertes, clubs sur le même terrain.
+- Formulaire admin du club (`ClubType`) : même champ aérodrome avec autocomplétion, pour renseigner les clubs existants.
 - Dashboard admin : bloc « Clubs créés ces 30 derniers jours » avec nom, créateur, matériels, membres, invitations, bouton vers la fiche.
 
 ## 7. Guide utilisateur
@@ -160,7 +181,8 @@ Formats acceptés : XLSX, XLS, CSV (séparateur `;` ou `,`, détecté). En-tête
 
 ## 8. Modèle de données
 
-- `Club` : `location` (string 255, nullable), `createdBy` (ManyToOne User, nullable, `SET NULL`), `healthCheckDismissedAt` (datetimetz immutable, nullable).
+- `Aerodrome` : `icaoCode` (string 4, unique, nullable car certains terrains n'en ont pas), `name`, `municipality` (nullable), `latitude`, `longitude` (float), `sourceId` (id OurAirports, unique). Chargée par la commande `app:aerodromes:import` depuis `airports.csv` d'OurAirports (domaine public), filtre `iso_country = FR` et `type` dans `small_airport`, `medium_airport`, `large_airport` ; relance idempotente sur `sourceId`. Le CSV n'est pas commité : la commande le télécharge depuis `https://davidmegginson.github.io/ourairports-data/airports.csv` ou lit un chemin passé en argument. À lancer une fois en production après la migration.
+- `Club` : `aerodrome` (ManyToOne Aerodrome, nullable, `SET NULL`), `locationLabel` (string 255, nullable, commune saisie quand le terrain n'est pas listé), `latitude` et `longitude` (float, nullables, copiés de l'aérodrome à l'inscription et à chaque changement d'aérodrome), `createdBy` (ManyToOne User, nullable, `SET NULL`), `healthCheckDismissedAt` (datetimetz immutable, nullable). Les clubs existants ont tout à null jusqu'à ce que l'admin renseigne leur aérodrome.
 - `JoinRequest` : voir §3.6.
 - `User` : aucun changement, `isVerified` existe.
 - Une migration Doctrine par lot.
@@ -171,7 +193,7 @@ Toutes les chaînes en clés `lowerCamelCase` ajoutées à la main dans `transla
 
 ## 10. Tests
 
-- Unitaires : `ClubDuplicateFinder` (cas listés en §3.5), chaque contrôle de `ClubHealthCheck`, génération du sous-domaine, mots réservés, `ClubRegistrationService` (club, adhésion, e-mails).
+- Unitaires : `ClubDuplicateFinder` (les cinq lignes de la grille de §3.5, dont deux clubs sur le même terrain avec des noms différents), normalisation des noms, Haversine, chaque contrôle de `ClubHealthCheck`, génération du sous-domaine, mots réservés, `ClubRegistrationService` (club, adhésion, e-mails), parsing du CSV OurAirports sur un extrait fixé dans `tests/fixtures`.
 - Fonctionnels (`WebTestCase`, nouveau dans le projet, base de test à mettre en place) : parcours complet compte → e-mail → club → bienvenue ; parcours doublon → demande d'adhésion ; utilisateur connecté qui crée un second club ; page d'accueil avec les deux états de boutons.
 
 ## 11. Sécurité et abus
@@ -185,10 +207,11 @@ Toutes les chaînes en clés `lowerCamelCase` ajoutées à la main dans `transla
 ## 12. Phasage
 
 Phase 1 : §3 complet, §4.1 à 4.4, §5, §6, §7 (hors import), §8, §10.
-Phase 2 : §4.5, §4.6, guide correspondant.
+Phase 2 : §4.5, §4.6, géocodage de la commune saisie en texte libre via le service Géoplateforme (sans clé, 50 appels par seconde et par IP) pour donner des coordonnées aux clubs sans aérodrome listé, carte des clubs sur la landing, guide correspondant.
 
 ## 13. Dépendances à installer
 
 - `symfonycasts/verify-email-bundle`
 - `symfony/rate-limiter` (et `symfony/lock` s'il n'est pas déjà tiré)
 - Heroku Scheduler pour `app:users:purge-unverified`
+- Données OurAirports (`airports.csv`, domaine public), chargées par `app:aerodromes:import`
