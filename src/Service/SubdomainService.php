@@ -8,10 +8,26 @@ class SubdomainService
 {
     private const WWW_SUBDOMAIN = 'www';
 
+    /** Sous-domaines qu'un club ne peut pas prendre. */
+    public const RESERVED = ['www', 'app', 'admin', 'api', 'mail', 'smtp', 'imap', 'ftp', 'staging', 'test', 'demo', 'tarmac'];
+
+    /** Minuscules, chiffres, tirets internes, 2 à 30 caractères. */
+    public const PATTERN = '/^[a-z0-9][a-z0-9-]{0,28}[a-z0-9]$/';
+
     public function __construct(
         private readonly RequestStack $requestStack,
         private readonly string $domain
     ) {
+    }
+
+    public function isReserved(string $subdomain): bool
+    {
+        return in_array(mb_strtolower($subdomain), self::RESERVED, true);
+    }
+
+    public function isWellFormed(string $subdomain): bool
+    {
+        return preg_match(self::PATTERN, $subdomain) === 1;
     }
 
     /**

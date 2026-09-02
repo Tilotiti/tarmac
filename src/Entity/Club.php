@@ -42,6 +42,24 @@ class Club
     #[ORM\JoinColumn(name: 'welcome_message_updated_by_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?User $welcomeMessageUpdatedBy = null;
 
+    #[ORM\ManyToOne(targetEntity: Aerodrome::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Aerodrome $aerodrome = null;
+
+    /** Commune saisie quand le terrain n'est pas dans la liste. */
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $locationLabel = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $latitude = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $longitude = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'created_by_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $createdBy = null;
+
     /**
      * @var Collection<int, Membership>
      */
@@ -168,6 +186,39 @@ class Club
         $this->welcomeMessageUpdatedBy = $welcomeMessageUpdatedBy;
 
         return $this;
+    }
+
+    public function getAerodrome(): ?Aerodrome { return $this->aerodrome; }
+
+    public function setAerodrome(?Aerodrome $aerodrome): static
+    {
+        $this->aerodrome = $aerodrome;
+        $this->syncCoordinatesFromAerodrome();
+
+        return $this;
+    }
+
+    public function getLocationLabel(): ?string { return $this->locationLabel; }
+    public function setLocationLabel(?string $locationLabel): static { $this->locationLabel = $locationLabel; return $this; }
+    public function getLatitude(): ?float { return $this->latitude; }
+    public function getLongitude(): ?float { return $this->longitude; }
+    public function getCreatedBy(): ?User { return $this->createdBy; }
+    public function setCreatedBy(?User $createdBy): static { $this->createdBy = $createdBy; return $this; }
+
+    public function syncCoordinatesFromAerodrome(): static
+    {
+        if ($this->aerodrome !== null) {
+            $this->latitude = $this->aerodrome->getLatitude();
+            $this->longitude = $this->aerodrome->getLongitude();
+        }
+
+        return $this;
+    }
+
+    /** Libellé du terrain, ou la commune saisie, ou vide. */
+    public function getLocationText(): string
+    {
+        return $this->aerodrome?->getLabel() ?? ($this->locationLabel ?? '');
     }
 
     /**
