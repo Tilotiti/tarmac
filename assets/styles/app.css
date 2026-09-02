@@ -3043,3 +3043,9 @@ h3, .h3 { font-size: 1.2rem; }
         width: auto;
     }
 }
+
+/* Quand le pied de carte est calé en bas (margin-top:auto), sa marge haute disparaît dès que la carte
+   n'a pas de hauteur à distribuer : on garantit l'espace entre les badges et le trait pointillé. */
+.tarmac-card__badges:has(+ .tarmac-card__footer) {
+    margin-bottom: 0.85rem;
+}
