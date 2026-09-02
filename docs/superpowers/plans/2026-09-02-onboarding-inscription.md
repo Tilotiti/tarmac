@@ -35,7 +35,7 @@ Créés :
 - `src/Service/Onboarding/SubdomainSlugger.php`, `ClubNameNormalizer.php`, `GeoDistance.php`, `DuplicateReport.php`, `ClubDuplicateFinder.php`, `ClubRegistrationService.php`, `EmailVerificationService.php`, `JoinRequestService.php`
 - `src/Form/Onboarding/OnboardingAccountType.php`, `OnboardingClubType.php`, `JoinRequestType.php`
 - `src/Form/Type/AerodromeSelectorType.php`, `src/Form/DataTransformer/AerodromeToIdTransformer.php`
-- `src/Controller/Public/OnboardingController.php`
+- `src/Controller/Public/OnboardingController.php`, `src/Controller/AerodromeApiController.php`
 - `src/Command/PurgeUnverifiedUsersCommand.php`
 - `assets/controllers/aerodrome_search_controller.js`, `assets/controllers/subdomain_preview_controller.js`
 - `templates/public/onboarding/account.html.twig`, `verify.html.twig`, `club.html.twig`, `duplicate.html.twig`, `joinRequest.html.twig`, `joinRequestSent.html.twig`, `done.html.twig`
@@ -1857,12 +1857,12 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 ### Task 8 : formulaires, sélecteur d'aérodrome, contrôleurs Stimulus et endpoints JSON
 
 **Files:**
-- Create: `src/Form/DataTransformer/AerodromeToIdTransformer.php`, `src/Form/Type/AerodromeSelectorType.php`, `src/Form/Onboarding/OnboardingAccountType.php`, `src/Form/Onboarding/OnboardingClubType.php`, `templates/component/aerodromeSelector.html.twig`, `assets/controllers/aerodrome_search_controller.js`, `assets/controllers/subdomain_preview_controller.js`, `src/Controller/Public/OnboardingController.php` (squelette + deux endpoints)
+- Create: `src/Form/DataTransformer/AerodromeToIdTransformer.php`, `src/Form/Type/AerodromeSelectorType.php`, `src/Form/Onboarding/OnboardingAccountType.php`, `src/Form/Onboarding/OnboardingClubType.php`, `templates/component/aerodromeSelector.html.twig`, `assets/controllers/aerodrome_search_controller.js`, `assets/controllers/subdomain_preview_controller.js`, `src/Controller/Public/OnboardingController.php` (squelette + endpoint sous-domaine), `src/Controller/AerodromeApiController.php`
 - Test: `tests/Functional/OnboardingApiTest.php`
 
 **Interfaces:**
 - Consumes: `AerodromeRepository::search` (Task 3), `SubdomainService::isWellFormed/isReserved` (Task 4), `ClubRepository::findOneBy`.
-- Produces: routes `public_onboarding_aerodromes` (`GET /creer-mon-club/aerodromes?q=` → `[{id, label}]`), `public_onboarding_subdomain_check` (`GET /creer-mon-club/sous-domaine?value=` → `{available, message}`) ; `AerodromeSelectorType` (champ caché portant l'id, transformé en `Aerodrome`) ; partial `component/aerodromeSelector.html.twig` attendant `aerodromeField`, `locationField`, `searchUrl`.
+- Produces: routes `api_aerodromes` (`GET /api/aerodromes?q=` → `[{id, label}]`, sans contrainte d'hôte pour être appelable depuis `www` et depuis un sous-domaine de club, réservée aux utilisateurs connectés), `public_onboarding_subdomain_check` (`GET /creer-mon-club/sous-domaine?value=` → `{available, message}`) ; `AerodromeSelectorType` (champ caché portant l'id, transformé en `Aerodrome`) ; partial `component/aerodromeSelector.html.twig` attendant `aerodromeField`, `locationField`, `searchUrl`.
 
 - [ ] **Step 1 : test des endpoints**
 
@@ -1882,8 +1882,9 @@ class OnboardingApiTest extends FunctionalTestCase
         $aerodrome = (new Aerodrome())->setSourceId(1)->setName('Megève Altiport')->setMunicipality('Megève')->setIcaoCode('LFHM')->setLatitude(45.8)->setLongitude(6.6)->refreshSearchIndex();
         $this->entityManager()->persist($aerodrome);
         $this->entityManager()->flush();
+        $this->client->loginUser($this->createUser('membre@example.test'));
 
-        $this->client->request('GET', $this->www('/creer-mon-club/aerodromes?q=megeve'));
+        $this->client->request('GET', $this->www('/api/aerodromes?q=megeve'));
 
         $this->assertResponseIsSuccessful();
         $data = json_decode((string) $this->client->getResponse()->getContent(), true);
@@ -2354,8 +2355,6 @@ export default class extends Controller {
 namespace App\Controller\Public;
 
 use App\Controller\ExtendedController;
-use App\Entity\Aerodrome;
-use App\Repository\AerodromeRepository;
 use App\Repository\ClubRepository;
 use App\Repository\JoinRequestRepository;
 use App\Repository\UserRepository;
@@ -2385,7 +2384,6 @@ class OnboardingController extends ExtendedController
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly ClubRepository $clubRepository,
-        private readonly AerodromeRepository $aerodromeRepository,
         private readonly JoinRequestRepository $joinRequestRepository,
         private readonly TranslatorInterface $translator,
         private readonly Security $security,
@@ -2398,20 +2396,6 @@ class OnboardingController extends ExtendedController
         #[Autowire(service: 'limiter.onboarding_resend')] private readonly RateLimiterFactory $resendLimiter,
     ) {
         parent::__construct($subdomainService);
-    }
-
-    #[Route('/aerodromes', name: 'public_onboarding_aerodromes', methods: ['GET'])]
-    public function aerodromes(Request $request): JsonResponse
-    {
-        $query = trim((string) $request->query->get('q', ''));
-        if (mb_strlen($query) < 2) {
-            return $this->json([]);
-        }
-
-        return $this->json(array_map(
-            static fn (Aerodrome $aerodrome): array => ['id' => $aerodrome->getId(), 'label' => $aerodrome->getLabel()],
-            $this->aerodromeRepository->search($query),
-        ));
     }
 
     #[Route('/sous-domaine', name: 'public_onboarding_subdomain_check', methods: ['GET'])]
@@ -2431,6 +2415,40 @@ class OnboardingController extends ExtendedController
         }
 
         return $this->json(['available' => true, 'message' => $this->translator->trans('subdomainAvailable')]);
+    }
+}
+```
+
+`src/Controller/AerodromeApiController.php` (aucun attribut `host` : la même route sert le tunnel sur `www`, l'admin et les pages de réglage des clubs ; `access_control` exige `ROLE_USER` sur `^/`, ce qui convient puisque l'étape « Club » se fait connecté) :
+
+```php
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Aerodrome;
+use App\Repository\AerodromeRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+#[IsGranted('ROLE_USER')]
+final class AerodromeApiController extends AbstractController
+{
+    #[Route('/api/aerodromes', name: 'api_aerodromes', methods: ['GET'])]
+    public function search(Request $request, AerodromeRepository $aerodromeRepository): JsonResponse
+    {
+        $query = trim((string) $request->query->get('q', ''));
+        if (mb_strlen($query) < 2) {
+            return $this->json([]);
+        }
+
+        return $this->json(array_map(
+            static fn (Aerodrome $aerodrome): array => ['id' => $aerodrome->getId(), 'label' => $aerodrome->getLabel()],
+            $aerodromeRepository->search($query),
+        ));
     }
 }
 ```
@@ -2496,7 +2514,7 @@ Expected : 2 tests OK, lint OK.
 - [ ] **Step 9 : commit**
 
 ```bash
-git add src/Form src/Controller/Public/OnboardingController.php src/Service/Onboarding templates/component/aerodromeSelector.html.twig assets/controllers translations config/packages/validator.yaml tests/Functional/OnboardingApiTest.php
+git add src/Form src/Controller/Public/OnboardingController.php src/Controller/AerodromeApiController.php src/Service/Onboarding templates/component/aerodromeSelector.html.twig assets/controllers translations config/packages/validator.yaml tests/Functional/OnboardingApiTest.php
 git commit -m "feat(onboarding): formulaires, sélecteur d'aérodrome et vérification de sous-domaine
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
@@ -3268,7 +3286,7 @@ et les méthodes :
 				{% include 'component/aerodromeSelector.html.twig' with {
 					aerodromeField: form.aerodrome,
 					locationField: form.locationLabel,
-					searchUrl: path('public_onboarding_aerodromes'),
+					searchUrl: path('api_aerodromes'),
 				} %}
 
 				{{ form_widget(form.confirmed) }}
@@ -4131,7 +4149,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Test: `tests/Functional/AdminClubTest.php`
 
 **Interfaces:**
-- Consumes: `AerodromeSelectorType`, partial `component/aerodromeSelector.html.twig`, route `public_onboarding_aerodromes` (Task 8), `JoinRequestRepository::findOpenByClub` (Task 6).
+- Consumes: `AerodromeSelectorType`, partial `component/aerodromeSelector.html.twig`, route `api_aerodromes` (Task 8), `JoinRequestRepository::findOpenByClub` (Task 6).
 - Produces: `ClubRepository::findCreatedSince(\DateTimeImmutable): Club[]`, `findByAerodrome(Aerodrome, ?Club $except = null): Club[]`, filtre `aerodrome` (`with` / `without`) dans `queryByFilters`.
 
 - [ ] **Step 1 : test**
@@ -4262,7 +4280,7 @@ Dans `templates/admin/club/new.html.twig` et `edit.html.twig`, après `{{ form_r
 			{% include 'component/aerodromeSelector.html.twig' with {
 				aerodromeField: form.aerodrome,
 				locationField: form.locationLabel,
-				searchUrl: path('public_onboarding_aerodromes'),
+				searchUrl: path('api_aerodromes'),
 			} %}
 ```
 
