@@ -8,6 +8,7 @@ use App\Entity\Membership;
 use App\Form\ClubType;
 use App\Form\Filter\ClubFilterType;
 use App\Repository\ClubRepository;
+use App\Repository\JoinRequestRepository;
 use App\Repository\Paginator;
 use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,6 +26,7 @@ class ClubController extends ExtendedController
         SubdomainService $subdomainService,
         private readonly ClubRepository $clubRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly JoinRequestRepository $joinRequestRepository,
     ) {
         parent::__construct($subdomainService);
     }
@@ -86,6 +88,8 @@ class ClubController extends ExtendedController
             'club' => $club,
             'domain' => $this->subdomainService->getDomain(),
             'subdomain_service' => $this->subdomainService,
+            'joinRequests' => $this->joinRequestRepository->findOpenByClub($club),
+            'neighbours' => $club->getAerodrome() !== null ? $this->clubRepository->findByAerodrome($club->getAerodrome(), $club) : [],
         ]);
     }
 

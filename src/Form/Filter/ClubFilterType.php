@@ -48,6 +48,13 @@ class ClubFilterType extends AbstractFilterType
                     'class' => 'form-label',
                 ],
             ])
+            ->add('aerodrome', ChoiceType::class, [
+                'label' => 'aerodrome',
+                'choices' => ['all' => '', 'withAerodrome' => 'with', 'withoutAerodrome' => 'without'],
+                'required' => false,
+                'attr' => ['class' => 'form-select'],
+                'label_attr' => ['class' => 'form-label'],
+            ])
         ;
     }
 }

@@ -58,6 +58,10 @@
 										{{ club.memberships|length > 1 ? 'membres' : 'membre' }}
 									</span>
 
+									{% if not club.aerodrome %}
+										<span class="badge bg-warning text-white"><i class="ti ti-map-pin-off me-1"></i>Sans aérodrome</span>
+									{% endif %}
+
 									{# Status badge #}
 									{% if club.active %}
 										<span class="badge bg-success text-white">
@@ -75,6 +79,10 @@
 
 							{# Badges on mobile - full width under avatar #}
 							<div class="d-flex d-md-none gap-2 flex-wrap mt-3">
+								{% if not club.aerodrome %}
+									<span class="badge bg-warning text-white"><i class="ti ti-map-pin-off me-1"></i>Sans aérodrome</span>
+								{% endif %}
+
 								{# Status badge #}
 								{% if club.active %}
 									<span class="badge bg-success text-white">

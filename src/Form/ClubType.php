@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Club;
+use App\Form\Type\AerodromeSelectorType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -28,6 +29,11 @@ class ClubType extends AbstractType
                     'placeholder' => 'subdomainPlaceholder',
                     'class' => 'form-control',
                 ],
+            ])
+            ->add('aerodrome', AerodromeSelectorType::class)
+            ->add('locationLabel', TextType::class, [
+                'label' => 'municipality',
+                'required' => false,
             ])
             ->add('active', CheckboxType::class, [
                 'label' => 'active',

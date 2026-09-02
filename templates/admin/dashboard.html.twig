@@ -16,4 +16,33 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="row mt-3">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header"><h3 class="card-title">Clubs créés ces 30 derniers jours</h3></div>
+				{% if recentClubs is empty %}
+					<div class="card-body text-secondary"><em>Aucune création récente</em></div>
+				{% else %}
+					<div class="list-group list-group-flush">
+						{% for club in recentClubs %}
+							<a href="{{ path('admin_club_show', {id: club.id}) }}" class="list-group-item list-group-item-action">
+								<div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+									<div>
+										<strong>{{ club.name }}</strong> <span class="text-secondary">· {{ club.subdomain }}.{{ domain }}</span><br>
+										<span class="text-secondary small">{{ club.createdAt|date('d/m/Y') }}{% if club.createdBy %} · {{ club.createdBy.fullName }}{% endif %}{% if club.locationText %} · {{ club.locationText }}{% endif %}</span>
+									</div>
+									<div class="d-flex gap-2">
+										<span class="badge bg-blue-lt"><i class="ti ti-plane-tilt me-1"></i>{{ club.equipments|length }}</span>
+										<span class="badge bg-green-lt"><i class="ti ti-users me-1"></i>{{ club.memberships|length }}</span>
+										<span class="badge bg-orange-lt"><i class="ti ti-mail me-1"></i>{{ club.invitations|length }}</span>
+									</div>
+								</div>
+							</a>
+						{% endfor %}
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
 {% endblock %}

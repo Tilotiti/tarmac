@@ -3742,6 +3742,15 @@
         <source>landingFinalPresidentBody</source>
         <target>Créez votre club maintenant. Vous êtes guidé pas à pas, et vos membres vous rejoignent sur invitation.</target>
       </trans-unit>
+      <!-- Admin : aérodrome des clubs -->
+      <trans-unit id="1794" resname="withAerodrome">
+        <source>withAerodrome</source>
+        <target>Avec aérodrome</target>
+      </trans-unit>
+      <trans-unit id="1795" resname="withoutAerodrome">
+        <source>withoutAerodrome</source>
+        <target>Sans aérodrome</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

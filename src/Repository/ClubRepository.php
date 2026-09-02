@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Aerodrome;
 use App\Entity\Club;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -59,7 +60,44 @@ class ClubRepository extends ServiceEntityRepository
                 ->setParameter('active', $filters['active']);
         }
 
+        if (($filters['aerodrome'] ?? '') === 'without') {
+            $qb->andWhere('club.aerodrome IS NULL');
+        } elseif (($filters['aerodrome'] ?? '') === 'with') {
+            $qb->andWhere('club.aerodrome IS NOT NULL');
+        }
+
         return $qb->orderBy('club.name', 'ASC');
+    }
+
+    /**
+     * @return Club[]
+     */
+    public function findCreatedSince(\DateTimeImmutable $since): array
+    {
+        return $this->createQueryBuilder('club')
+            ->andWhere('club.createdAt >= :since')
+            ->setParameter('since', $since)
+            ->orderBy('club.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Club[]
+     */
+    public function findByAerodrome(Aerodrome $aerodrome, ?Club $except = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('club')
+            ->andWhere('club.aerodrome = :aerodrome')
+            ->andWhere('club.active = true')
+            ->setParameter('aerodrome', $aerodrome)
+            ->orderBy('club.name', 'ASC');
+
+        if ($except !== null && $except->getId() !== null) {
+            $queryBuilder->andWhere('club.id != :except')->setParameter('except', $except->getId());
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }
 

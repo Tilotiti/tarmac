@@ -63,6 +63,16 @@
 				<dt class="col-5 col-sm-4">Créé le</dt>
 				<dd class="col-7 col-sm-8">{{ club.createdAt|date('d/m/Y à H:i') }}</dd>
 
+				<dt class="col-5 col-sm-4">Créé par</dt>
+				<dd class="col-7 col-sm-8">
+					{% if club.createdBy %}{{ club.createdBy.fullName }} <span class="text-secondary">({{ club.createdBy.email }})</span>{% else %}<span class="text-secondary">Administration</span>{% endif %}
+				</dd>
+
+				<dt class="col-5 col-sm-4">Terrain</dt>
+				<dd class="col-7 col-sm-8">
+					{% if club.locationText %}{{ club.locationText }}{% else %}<span class="badge bg-warning-lt">Sans aérodrome</span>{% endif %}
+				</dd>
+
 				<dt class="col-5 col-sm-4">Membres</dt>
 				<dd class="col-7 col-sm-8">
 					<span class="badge bg-blue-lt">{{ club.memberships|length }}</span>
@@ -70,4 +80,29 @@
 			</dl>
 		</div>
 	</div>
+
+	{% if neighbours is not empty %}
+		<div class="card mt-3">
+			<div class="card-header"><h3 class="card-title">Sur le même terrain</h3></div>
+			<div class="list-group list-group-flush">
+				{% for other in neighbours %}
+					<a href="{{ path('admin_club_show', {id: other.id}) }}" class="list-group-item list-group-item-action">{{ other.name }} <span class="text-secondary">· {{ other.subdomain }}.{{ domain }}</span></a>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+
+	{% if joinRequests is not empty %}
+		<div class="card mt-3">
+			<div class="card-header"><h3 class="card-title">Demandes d'adhésion ouvertes</h3></div>
+			<div class="list-group list-group-flush">
+				{% for joinRequest in joinRequests %}
+					<div class="list-group-item">
+						<strong>{{ joinRequest.user.fullName }}</strong> <span class="text-secondary">({{ joinRequest.user.email }}) · {{ joinRequest.createdAt|date('d/m/Y') }}</span>
+						{% if joinRequest.message %}<p class="mb-0 mt-1" style="white-space:pre-line;">{{ joinRequest.message }}</p>{% endif %}
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
 {% endblock %}

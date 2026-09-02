@@ -13,6 +13,11 @@
 			{{ form_start(form) }}
 			{{ form_row(form.name) }}
 			{{ form_row(form.subdomain) }}
+			{% include 'component/aerodromeSelector.html.twig' with {
+				aerodromeField: form.aerodrome,
+				locationField: form.locationLabel,
+				searchUrl: path('api_aerodromes'),
+			} %}
 			{{ form_row(form.active) }}
 
 			<div class="mt-3">
