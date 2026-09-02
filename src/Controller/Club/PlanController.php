@@ -147,6 +147,20 @@ class PlanController extends ExtendedController
             ->deleteFileAfterSend(true);
     }
 
+    #[Route('/comprendre', name: 'club_plans_explain', methods: ['GET'])]
+    #[IsGranted('MANAGE')]
+    #[Breadcrumb([
+        ['label' => 'home', 'route' => 'club_dashboard'],
+        ['label' => 'plans', 'route' => 'club_plans'],
+        ['label' => 'understandPlans'],
+    ])]
+    public function explain(): Response
+    {
+        return $this->render('club/plan/explain.html.twig', [
+            'club' => $this->clubResolver->resolve(),
+        ]);
+    }
+
     #[Route('/{id}', name: 'club_plan_show', requirements: ['id' => '\d+'])]
     #[Breadcrumb([
         ['label' => 'home', 'route' => 'club_dashboard'],

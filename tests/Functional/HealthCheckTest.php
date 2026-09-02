@@ -35,4 +35,28 @@ class HealthCheckTest extends FunctionalTestCase
         $this->assertSame('Bailleau', $club->getAerodrome()->getName());
         $this->assertEqualsWithDelta(48.5, $club->getLatitude(), 0.001);
     }
+
+    public function testManagerSeesPlanExplanationPage(): void
+    {
+        $manager = $this->createUser('manager@example.test');
+        $club = $this->createClub('Club', 'club');
+        $club->addMembership((new Membership())->setUser($manager)->setClub($club)->setIsManager(true));
+        $this->entityManager()->flush();
+        $this->client->loginUser($manager);
+
+        $this->client->request('GET', $this->clubUrl($club, '/plans/comprendre'));
+
+        $this->assertResponseIsSuccessful();
+        $this->assertStringContainsString('Comprendre les plans d&#039;entretien', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Créer mon premier plan', $this->client->getResponse()->getContent());
+
+        $member = $this->createUser('member@example.test');
+        $club->addMembership((new Membership())->setUser($member)->setClub($club)->setIsManager(false));
+        $this->entityManager()->flush();
+        $this->client->loginUser($member);
+
+        $this->client->request('GET', $this->clubUrl($club, '/plans/comprendre'));
+
+        $this->assertResponseStatusCodeSame(403);
+    }
 }

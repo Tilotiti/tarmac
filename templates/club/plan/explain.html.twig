@@ -1,0 +1,24 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}{{ 'understandPlans'|trans }}{% endblock %}
+
+{% block page_content %}
+	<div class="row g-3">
+		{% for step in ['Describe', 'Apply', 'Generate'] %}
+			<div class="col-12 col-md-4">
+				<div class="tarmac-panel h-100">
+					<div style="font-size:2rem;color:var(--td-glow);"><i class="ti {{ step == 'Describe' ? 'ti-list-details' : (step == 'Apply' ? 'ti-plane-tilt' : 'ti-refresh') }}"></i></div>
+					<h3 style="font-size:1.05rem;font-weight:800;margin:0.5rem 0;">{{ ('planExplain' ~ step ~ 'Title')|trans }}</h3>
+					<p class="text-secondary mb-0">{{ ('planExplain' ~ step ~ 'Body')|trans }}</p>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+	<div class="tarmac-panel mt-4">
+		<p class="mb-3">{{ 'planExplainNoPlanNote'|trans }}</p>
+		<div class="d-flex gap-2 flex-wrap">
+			<a href="{{ path('club_plan_new') }}" class="btn btn-primary" style="min-height:48px;"><i class="ti ti-plus me-2"></i>{{ 'planExplainCreateFirst'|trans }}</a>
+			<a href="{{ url('public_guide') }}#plans" class="btn btn-outline-secondary" style="min-height:48px;"><i class="ti ti-book-2 me-2"></i>{{ 'planExplainReadGuide'|trans }}</a>
+		</div>
+	</div>
+{% endblock %}

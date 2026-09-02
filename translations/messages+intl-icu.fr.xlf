@@ -3769,6 +3769,47 @@
         <source>aerodromeSaved</source>
         <target>Aérodrome enregistré</target>
       </trans-unit>
+      <!-- Club : page d'explication des plans d'entretien -->
+      <trans-unit id="1803" resname="understandPlans">
+        <source>understandPlans</source>
+        <target>Comprendre les plans d'entretien</target>
+      </trans-unit>
+      <trans-unit id="1804" resname="planExplainDescribeTitle">
+        <source>planExplainDescribeTitle</source>
+        <target>1. Un plan décrit les opérations</target>
+      </trans-unit>
+      <trans-unit id="1805" resname="planExplainDescribeBody">
+        <source>planExplainDescribeBody</source>
+        <target>Pour un type de matériel (planeur, avion, infrastructure), vous listez les tâches récurrentes et leur fréquence : visite annuelle, contrôle des 50 heures, graissage du treuil.</target>
+      </trans-unit>
+      <trans-unit id="1806" resname="planExplainApplyTitle">
+        <source>planExplainApplyTitle</source>
+        <target>2. Vous l'appliquez à chaque appareil</target>
+      </trans-unit>
+      <trans-unit id="1807" resname="planExplainApplyBody">
+        <source>planExplainApplyBody</source>
+        <target>Le même plan sert à tous vos planeurs. Vous l'appliquez à chacun, avec sa date de départ.</target>
+      </trans-unit>
+      <trans-unit id="1808" resname="planExplainGenerateTitle">
+        <source>planExplainGenerateTitle</source>
+        <target>3. Tarmac génère les tâches</target>
+      </trans-unit>
+      <trans-unit id="1809" resname="planExplainGenerateBody">
+        <source>planExplainGenerateBody</source>
+        <target>Les tâches apparaissent au bon moment, chaque membre y contribue, les qualifiés signent, le carnet mécanicien se remplit.</target>
+      </trans-unit>
+      <trans-unit id="1810" resname="planExplainNoPlanNote">
+        <source>planExplainNoPlanNote</source>
+        <target>Vous pouvez aussi créer des tâches ponctuelles sans plan. Le plan sert à ne plus y penser.</target>
+      </trans-unit>
+      <trans-unit id="1811" resname="planExplainCreateFirst">
+        <source>planExplainCreateFirst</source>
+        <target>Créer mon premier plan</target>
+      </trans-unit>
+      <trans-unit id="1812" resname="planExplainReadGuide">
+        <source>planExplainReadGuide</source>
+        <target>Lire le guide</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>
