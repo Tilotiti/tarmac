@@ -61,6 +61,11 @@ final class EquipmentImportDefinition implements ImportDefinitionInterface
         ];
     }
 
+    public function previewFields(): array
+    {
+        return $this->fields();
+    }
+
     public function validate(array $values, ImportContext $context): ?string
     {
         $normalized = ColumnMapper::normalize($values['name']);

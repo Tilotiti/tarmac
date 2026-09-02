@@ -53,6 +53,12 @@ final class InvitationImportDefinition implements ImportDefinitionInterface
         ];
     }
 
+    public function previewFields(): array
+    {
+        // Les rôles sont affichés à part, en cases à cocher (voir preview_extra_cells) : pas de doublon en colonne simple.
+        return array_values(array_filter($this->fields(), static fn (ImportField $field): bool => in_array($field->key, ['email', 'firstname', 'lastname'], true)));
+    }
+
     public function validate(array $values, ImportContext $context): ?string
     {
         $email = mb_strtolower(trim($values['email']));

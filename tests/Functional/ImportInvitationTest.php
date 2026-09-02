@@ -67,6 +67,37 @@ class ImportInvitationTest extends FunctionalTestCase
         $this->assertFalse($invitations[1]->isManager());
     }
 
+    public function testUntickingPreCheckedRoleRemovesIt(): void
+    {
+        $manager = $this->createUser('manager@example.test');
+        $club = $this->createClub('Planeurs de Beauce', 'beauce');
+        $club->addMembership((new Membership())->setUser($manager)->setClub($club)->setIsManager(true));
+        $this->entityManager()->flush();
+        $this->client->loginUser($manager);
+        $host = 'https://beauce.' . static::getContainer()->getParameter('domain');
+
+        $crawler = $this->client->request('GET', $host . '/import/invitations');
+        $form = $crawler->selectButton('Continuer')->form();
+        $form['import_file[file]']->upload($this->upload('membres-givav.csv')->getPathname());
+        $this->client->submit($form);
+        $crawler = $this->client->followRedirect();
+        $this->client->submit($crawler->selectButton('Continuer')->form());
+        $crawler = $this->client->followRedirect();
+        $this->client->submit($crawler->selectButton('Vérifier l\'aperçu')->form());
+        $crawler = $this->client->followRedirect();
+
+        // Le fichier dit « oui » pour le rôle qualifié de Jean : la case est pré-cochée à
+        // l'aperçu. Le gestionnaire la décoche explicitement avant de confirmer l'import.
+        $this->assertTrue($crawler->filter('input[name="rows[1][isInspector]"]')->attr('checked') !== null, 'rôle pré-coché depuis le fichier');
+        $form = $crawler->selectButton('Importer 2 lignes')->form();
+        $form['rows[1][isInspector]']->untick();
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/invitations');
+
+        $jean = $this->entityManager()->getRepository(Invitation::class)->findOneBy(['club' => $club, 'email' => 'jean@example.test']);
+        $this->assertFalse($jean->isInspector(), 'le décochage à l\'aperçu doit primer sur la valeur du fichier');
+    }
+
     public function testOldImportRouteIsGone(): void
     {
         $manager = $this->createUser('manager@example.test');

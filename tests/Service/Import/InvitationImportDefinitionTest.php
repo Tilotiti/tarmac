@@ -40,4 +40,17 @@ class InvitationImportDefinitionTest extends TestCase
 
         $definition->import(['email' => 'jean@example.test', 'firstname' => 'Jean', 'lastname' => 'Dupont', 'isManager' => 'yes', 'isInspector' => '', 'isPilote' => '', '_line' => '1'], $context);
     }
+
+    public function testImportWithSubmittedRowAndNoRoleGrantsNothing(): void
+    {
+        // Ligne soumise (marqueur _submitted présent) mais aucune case de rôle cochée : le fichier
+        // disait « oui » pour isInspector, mais le gestionnaire a décoché à l'aperçu — ne rien accorder.
+        $service = $this->createMock(InvitationService::class);
+        $service->expects($this->once())->method('createInvitation')->with($this->anything(), $this->callback(static fn (array $data): bool => $data['isInspector'] === false && $data['isManager'] === false && $data['isPilote'] === false))->willReturn(new \App\Entity\Invitation());
+        $service->expects($this->once())->method('sendInvitation');
+        $definition = new InvitationImportDefinition($this->createStub(MembershipRepository::class), $this->createStub(InvitationRepository::class), $service);
+        $context = new ImportContext(new Club(), new User(), [1 => ['_submitted' => '1']]);
+
+        $definition->import(['email' => 'jean@example.test', 'firstname' => 'Jean', 'lastname' => 'Dupont', 'isManager' => '', 'isInspector' => 'yes', 'isPilote' => '', '_line' => '1'], $context);
+    }
 }

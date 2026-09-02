@@ -31,6 +31,7 @@ class ImportRowResolverTest extends TestCase
                     new ImportField('note', 'note', false, ['note']),
                 ];
             }
+            public function previewFields(): array { return $this->fields(); }
             public function validate(array $values, ImportContext $context): ?string
             {
                 return $context->markSeen('name:' . mb_strtolower($values['name'])) ? null : 'importReasonDuplicateInFile';

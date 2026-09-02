@@ -21,6 +21,9 @@ interface ImportDefinitionInterface
     /** @return ImportField[] */
     public function fields(): array;
 
+    /** @return ImportField[] champs affichés en colonnes simples dans l'aperçu (sans les rôles à cocher) */
+    public function previewFields(): array;
+
     /** @param array<string, string> $values valeurs résolues par clé de champ ; renvoie la clé de raison d'ignorance, ou null */
     public function validate(array $values, ImportContext $context): ?string;
 

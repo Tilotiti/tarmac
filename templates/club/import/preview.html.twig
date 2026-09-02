@@ -14,7 +14,7 @@
 					<thead>
 						<tr>
 							<th>#</th>
-							{% for field in definition.fields %}<th>{{ field.labelKey|trans }}</th>{% endfor %}
+							{% for field in definition.previewFields %}<th>{{ field.labelKey|trans }}</th>{% endfor %}
 							{% block preview_extra_headers %}{% endblock %}
 							<th>{{ 'status'|trans }}</th>
 						</tr>
@@ -23,7 +23,7 @@
 						{% for row in preview.rows %}
 							<tr class="{% if not row.isImportable %}text-secondary{% endif %}">
 								<td>{{ row.line }}</td>
-								{% for field in definition.fields %}
+								{% for field in definition.previewFields %}
 									<td>{% if field.hasChoices and row.values[field.key] != '' and field.choice(row.values[field.key]) %}{{ field.choice(row.values[field.key]).labelKey|trans }}{% else %}{{ row.values[field.key] }}{% endif %}</td>
 								{% endfor %}
 								{% block preview_extra_cells %}{% endblock %}

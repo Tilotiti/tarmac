@@ -9,6 +9,12 @@
 {% endblock %}
 
 {% block preview_extra_cells %}
+	{% if row.isImportable %}
+		{# Marque la ligne comme soumise même si toutes les cases de rôle sont décochées :
+		   sans elle, une case décochée disparaît du POST et import() retomberait sur les
+		   rôles du fichier au lieu de respecter le décochage. #}
+		<input type="hidden" name="rows[{{ row.line }}][_submitted]" value="1">
+	{% endif %}
 	{% for role in ['isManager', 'isInspector', 'isPilote'] %}
 		<td>
 			{% if row.isImportable %}
