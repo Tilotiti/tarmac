@@ -37,24 +37,25 @@ final class PurgeUnverifiedUsersCommand extends Command
         $users = $this->userRepository->findUnverifiedOlderThan($before);
         $dryRun = (bool) $input->getOption('dry-run');
 
-        $count = 0;
         foreach ($users as $user) {
             $io->text(sprintf('%s (créé le %s)', $user->getEmail(), $user->getCreatedAt()?->format('d/m/Y')));
+        }
 
-            if ($dryRun) {
-                ++$count;
-                continue;
-            }
+        $count = count($users);
 
+        if (!$dryRun) {
             try {
-                // reset_password_request.user_id n'a pas de ON DELETE : purger d'abord les
-                // demandes de réinitialisation, sinon le remove() du user échoue en base.
-                $this->resetPasswordRequestRepository->removeRequests($user);
-                $this->entityManager->remove($user);
+                foreach ($users as $user) {
+                    // reset_password_request.user_id n'a pas de ON DELETE : purger d'abord les
+                    // demandes de réinitialisation, sinon le remove() du user échoue en base.
+                    $this->resetPasswordRequestRepository->removeRequests($user);
+                    $this->entityManager->remove($user);
+                }
                 $this->entityManager->flush();
-                ++$count;
             } catch (\Throwable $e) {
-                $io->warning(sprintf('%s : %s', $user->getEmail(), $e->getMessage()));
+                $io->error(sprintf('Purge interrompue : %s', $e->getMessage()));
+
+                return Command::FAILURE;
             }
         }
 
