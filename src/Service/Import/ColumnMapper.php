@@ -20,13 +20,37 @@ final class ColumnMapper
         $result = [];
         foreach ($fields as $field) {
             $result[$field->key] = null;
+        }
+
+        // Passe 1 : correspondances exactes uniquement, priorité absolue.
+        foreach ($fields as $field) {
             foreach ($field->synonyms as $synonym) {
                 $needle = self::normalize($synonym);
                 foreach ($normalized as $index => $label) {
                     if (isset($used[$index]) || $label === '' || strlen($label) < 2) {
                         continue;
                     }
-                    if ($label === $needle || str_contains($label, $needle)) {
+                    if ($label === $needle) {
+                        $result[$field->key] = $index;
+                        $used[$index] = true;
+                        continue 3;
+                    }
+                }
+            }
+        }
+
+        // Passe 2 : pour les champs encore non affectés, correspondances par inclusion.
+        foreach ($fields as $field) {
+            if ($result[$field->key] !== null) {
+                continue;
+            }
+            foreach ($field->synonyms as $synonym) {
+                $needle = self::normalize($synonym);
+                foreach ($normalized as $index => $label) {
+                    if (isset($used[$index]) || $label === '' || strlen($label) < 2) {
+                        continue;
+                    }
+                    if (str_contains($label, $needle)) {
                         $result[$field->key] = $index;
                         $used[$index] = true;
                         continue 3;

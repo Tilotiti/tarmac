@@ -37,4 +37,16 @@ class ColumnMapperTest extends TestCase
     {
         $this->assertSame(['name' => null], (new ColumnMapper())->suggest(['A', 'B'], [new ImportField('name', 'name', true, ['nom'])]));
     }
+
+    public function testExactMatchesWinOverSubstringsRegardlessOfFieldOrder(): void
+    {
+        $fields = [
+            new ImportField('lastname', 'lastname', true, ['nom']),
+            new ImportField('firstname', 'firstname', true, ['prenom']),
+        ];
+
+        $suggestion = (new ColumnMapper())->suggest(['Prénom', 'Nom'], $fields);
+
+        $this->assertSame(['lastname' => 1, 'firstname' => 0], $suggestion);
+    }
 }
