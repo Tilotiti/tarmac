@@ -15,6 +15,6 @@ final class EquipmentCheck implements HealthCheckInterface
 
     public function check(Club $club): HealthCheckItem
     {
-        return new HealthCheckItem('equipment', $this->equipmentRepository->countActiveByClub($club) > 0, 'club_equipment_new', [], true);
+        return new HealthCheckItem('equipment', $this->equipmentRepository->countActiveByClub($club) > 0, 'club_equipments', [], true);
     }
 }

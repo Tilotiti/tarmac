@@ -41,7 +41,7 @@ class ChecksTest extends TestCase
         $item = $check->check(new Club());
         $this->assertTrue($item->done);
         $this->assertTrue($item->essential);
-        $this->assertSame('club_equipment_new', $item->route);
+        $this->assertSame('club_equipments', $item->route);
     }
 
     public function testMembersCountsInvitationsAndOtherMembershipsThanCreator(): void

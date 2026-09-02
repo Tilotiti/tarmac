@@ -3837,35 +3837,35 @@
       </trans-unit>
       <trans-unit id="1819" resname="healthCheckAerodromeTitle">
         <source>healthCheckAerodromeTitle</source>
-        <target>Votre aérodrome</target>
+        <target>Situer votre club sur son aérodrome</target>
       </trans-unit>
       <trans-unit id="1820" resname="healthCheckAerodromeWhy">
         <source>healthCheckAerodromeWhy</source>
-        <target>Il situe votre club et évite qu'un autre président le recrée par erreur.</target>
+        <target>Le terrain où vous volez. Il permet de reconnaître votre club quand quelqu'un cherche à le rejoindre, et d'éviter qu'un autre président le recrée par erreur.</target>
       </trans-unit>
       <trans-unit id="1821" resname="healthCheckAerodromeAction">
         <source>healthCheckAerodromeAction</source>
-        <target>Indiquer mon terrain</target>
+        <target>Choisir mon aérodrome</target>
       </trans-unit>
       <trans-unit id="1822" resname="healthCheckEquipmentTitle">
         <source>healthCheckEquipmentTitle</source>
-        <target>Votre matériel</target>
+        <target>Déclarer votre matériel</target>
       </trans-unit>
       <trans-unit id="1823" resname="healthCheckEquipmentWhy">
         <source>healthCheckEquipmentWhy</source>
-        <target>Sans matériel, rien à entretenir : commencez par un planeur, un avion ou un treuil.</target>
+        <target>Tout ce que le club entretient : planeurs, avions, treuil, remorques, hangar. Chaque tâche d'entretien se rattache à un matériel ; sans matériel, Tarmac n'a rien à suivre. Vous pouvez les saisir un par un.</target>
       </trans-unit>
       <trans-unit id="1824" resname="healthCheckEquipmentAction">
         <source>healthCheckEquipmentAction</source>
-        <target>Ajouter un matériel</target>
+        <target>Voir et ajouter du matériel</target>
       </trans-unit>
       <trans-unit id="1825" resname="healthCheckMembersTitle">
         <source>healthCheckMembersTitle</source>
-        <target>Vos membres</target>
+        <target>Inviter vos membres</target>
       </trans-unit>
       <trans-unit id="1826" resname="healthCheckMembersWhy">
         <source>healthCheckMembersWhy</source>
-        <target>Chaque membre invité pourra saisir son temps, commenter et signaler une anomalie.</target>
+        <target>Chaque membre reçoit un e-mail, choisit son mot de passe et accède au club. Il peut ensuite saisir le temps passé sur une tâche, commenter et signaler une anomalie sur un matériel. Vous pouvez inviter un par un ou importer un fichier.</target>
       </trans-unit>
       <trans-unit id="1827" resname="healthCheckMembersAction">
         <source>healthCheckMembersAction</source>
@@ -3873,47 +3873,47 @@
       </trans-unit>
       <trans-unit id="1828" resname="healthCheckSecondManagerTitle">
         <source>healthCheckSecondManagerTitle</source>
-        <target>Un second gestionnaire</target>
+        <target>Nommer un second gestionnaire</target>
       </trans-unit>
       <trans-unit id="1829" resname="healthCheckSecondManagerWhy">
         <source>healthCheckSecondManagerWhy</source>
-        <target>Pour que le club ne dépende pas d'une seule personne.</target>
+        <target>Un gestionnaire administre le club : il crée le matériel et les plans d'entretien, invite les membres, attribue les rôles et valide les tâches. Vous l'êtes déjà ; un second évite que tout repose sur vous. Il se désigne depuis la fiche d'un membre.</target>
       </trans-unit>
       <trans-unit id="1830" resname="healthCheckSecondManagerAction">
         <source>healthCheckSecondManagerAction</source>
-        <target>Choisir un membre</target>
+        <target>Choisir parmi les membres</target>
       </trans-unit>
       <trans-unit id="1831" resname="healthCheckInspectorTitle">
         <source>healthCheckInspectorTitle</source>
-        <target>Un qualifié</target>
+        <target>Désigner un membre qualifié</target>
       </trans-unit>
       <trans-unit id="1832" resname="healthCheckInspectorWhy">
         <source>healthCheckInspectorWhy</source>
-        <target>Sans qualifié, les sous-tâches à inspecter restent bloquées.</target>
+        <target>Un membre qualifié détient la qualification PART 66L : lui seul peut inspecter et signer les opérations qui l'exigent. Sans membre qualifié, ces opérations restent en attente. Il se désigne depuis la fiche d'un membre.</target>
       </trans-unit>
       <trans-unit id="1833" resname="healthCheckInspectorAction">
         <source>healthCheckInspectorAction</source>
-        <target>Choisir un membre</target>
+        <target>Choisir parmi les membres</target>
       </trans-unit>
       <trans-unit id="1834" resname="healthCheckPlanTitle">
         <source>healthCheckPlanTitle</source>
-        <target>Un plan d'entretien appliqué</target>
+        <target>Appliquer un plan d'entretien</target>
       </trans-unit>
       <trans-unit id="1835" resname="healthCheckPlanWhy">
         <source>healthCheckPlanWhy</source>
-        <target>Le plan décrit les opérations récurrentes ; Tarmac génère ensuite les tâches tout seul.</target>
+        <target>Un plan d'entretien liste les opérations récurrentes d'un type de matériel (visite annuelle, contrôle des 50 heures…). Appliqué à un appareil, il génère les tâches au bon moment, sans que vous y pensiez. Vous pouvez aussi créer des tâches ponctuelles sans plan.</target>
       </trans-unit>
       <trans-unit id="1836" resname="healthCheckPlanAction">
         <source>healthCheckPlanAction</source>
-        <target>Comprendre les plans</target>
+        <target>Comprendre les plans d'entretien</target>
       </trans-unit>
       <trans-unit id="1837" resname="healthCheckWelcomeMessageTitle">
         <source>healthCheckWelcomeMessageTitle</source>
-        <target>Un message d'accueil</target>
+        <target>Écrire un message d'accueil</target>
       </trans-unit>
       <trans-unit id="1838" resname="healthCheckWelcomeMessageWhy">
         <source>healthCheckWelcomeMessageWhy</source>
-        <target>Vos membres le lisent en arrivant : consignes, contacts, ce que vous attendez d'eux.</target>
+        <target>Il s'affiche en haut du tableau de bord de chaque membre : consignes du club, qui contacter, ce que vous attendez d'eux. Quelques lignes suffisent.</target>
       </trans-unit>
       <trans-unit id="1839" resname="healthCheckWelcomeMessageAction">
         <source>healthCheckWelcomeMessageAction</source>
