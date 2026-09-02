@@ -117,6 +117,11 @@ class InvitationService
             throw new \RuntimeException('Cette invitation n\'est pas pour vous.');
         }
 
+        // Une demande d'adhésion ouverte pour ce club est satisfaite par cette invitation,
+        // quelle que soit la branche empruntée ci-dessous (adhésion déjà existante ou non).
+        $joinRequest = $this->joinRequestRepository->findOpenByUserAndClub($user, $invitation->getClub());
+        $joinRequest?->markHandled($user);
+
         // Check if membership already exists
         $existingMembership = $this->entityManager->getRepository(Membership::class)
             ->findByUserAndClub($user, $invitation->getClub());
@@ -140,10 +145,6 @@ class InvitationService
 
         // Delete the invitation
         $this->entityManager->remove($invitation);
-
-        // Une demande d'adhésion ouverte pour ce club est satisfaite par cette invitation.
-        $joinRequest = $this->joinRequestRepository->findOpenByUserAndClub($user, $invitation->getClub());
-        $joinRequest?->markHandled($user);
 
         $this->entityManager->flush();
 
