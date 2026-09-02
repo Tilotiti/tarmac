@@ -49,29 +49,31 @@ final class ImportAerodromesCommand extends Command
         $created = 0;
         $updated = 0;
 
-        foreach ($this->parser->parse($path) as $row) {
-            $aerodrome = $this->aerodromeRepository->findOneBySourceId($row['sourceId']);
-            if ($aerodrome === null) {
-                $aerodrome = (new Aerodrome())->setSourceId($row['sourceId']);
-                $this->entityManager->persist($aerodrome);
-                $created++;
-            } else {
-                $updated++;
+        try {
+            foreach ($this->parser->parse($path) as $row) {
+                $aerodrome = $this->aerodromeRepository->findOneBySourceId($row['sourceId']);
+                if ($aerodrome === null) {
+                    $aerodrome = (new Aerodrome())->setSourceId($row['sourceId']);
+                    $this->entityManager->persist($aerodrome);
+                    $created++;
+                } else {
+                    $updated++;
+                }
+
+                $aerodrome
+                    ->setIcaoCode($row['icaoCode'])
+                    ->setName($row['name'])
+                    ->setMunicipality($row['municipality'])
+                    ->setLatitude($row['latitude'])
+                    ->setLongitude($row['longitude'])
+                    ->refreshSearchIndex();
             }
 
-            $aerodrome
-                ->setIcaoCode($row['icaoCode'])
-                ->setName($row['name'])
-                ->setMunicipality($row['municipality'])
-                ->setLatitude($row['latitude'])
-                ->setLongitude($row['longitude'])
-                ->refreshSearchIndex();
-        }
-
-        $this->entityManager->flush();
-
-        if ($temporary !== null) {
-            unlink($temporary);
+            $this->entityManager->flush();
+        } finally {
+            if ($temporary !== null) {
+                unlink($temporary);
+            }
         }
 
         $io->success(sprintf('%d aérodromes créés, %d mis à jour.', $created, $updated));
