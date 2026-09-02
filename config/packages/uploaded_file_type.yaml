@@ -21,13 +21,3 @@ uploaded_file_type:
       filesystem: "oneup_flysystem.s3_filesystem"
       base_uri: "%env(AWS_S3_URL)%"
       path: "/anomalies"
-
-# Tiloweb\UploadedFileTypeBundle étend globalement Symfony\...\FileType : la construction de
-# UploadedFileTypeService (et donc la lecture d'AWS_S3_URL) a lieu dès qu'un formulaire de test
-# contient un champ FileType, même sans upload réel (le filesystem S3 est déjà remplacé par
-# l'adaptateur mémoire en test, voir oneup_flysystem.yaml). AWS_S3_URL n'a donc pas besoin d'être
-# une vraie URL en test, seulement définie ; on ne la met pas dans .env.test pour ne pas y placer
-# une valeur qui ressemble à un secret d'environnement.
-when@test:
-    parameters:
-        env(AWS_S3_URL): 'https://static.tarmac.test'

@@ -139,7 +139,11 @@ class ImportController extends ExtendedController
                 }
                 $state->columns[$field->key] = $index;
                 if ($field->hasChoices()) {
-                    $state->fixed[$field->key] = (string) ($fixed[$field->key] ?? ($field->default ?? ''));
+                    // Une valeur fixe absente du référentiel du champ (falsifiée, ou choix devenu
+                    // invalide) est traitée comme vide, jamais transmise telle quelle : sinon elle
+                    // atteint EquipmentType::from() au moment de confirmer, hors de toute validation.
+                    $submittedFixed = (string) ($fixed[$field->key] ?? '');
+                    $state->fixed[$field->key] = $field->choice($submittedFixed) !== null ? $submittedFixed : ($field->default ?? '');
                     if ($index === null && $field->required && $state->fixed[$field->key] === '') {
                         $errors[] = $this->trans('importFixedValueRequired', ['field' => $this->trans($field->labelKey)]);
                     }

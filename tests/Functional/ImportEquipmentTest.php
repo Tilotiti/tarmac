@@ -135,6 +135,32 @@ class ImportEquipmentTest extends FunctionalTestCase
         $this->assertSame(2, static::getContainer()->get(\App\Repository\EquipmentRepository::class)->countActiveByClub($club));
     }
 
+    public function testInvalidFixedValueIsRejected(): void
+    {
+        [$club, $manager] = $this->clubWithManager();
+        $this->client->loginUser($manager);
+        $host = $this->host($club);
+
+        $crawler = $this->client->request('GET', $host . '/import/equipments');
+        $form = $crawler->selectButton('Continuer')->form();
+        $form['import_file[file]']->upload($this->upload('materiel-comma-noheader.csv')->getPathname());
+        $this->client->submit($form);
+        $crawler = $this->client->followRedirect();
+
+        // Valeur fixe falsifiée : absente des choix du champ type (glider/airplane/facility).
+        // disableValidation() car le formulaire du crawler refuse par défaut une valeur de
+        // <select> hors de ses <option> — exactement ce que la requête falsifiée simule.
+        $form = $crawler->selectButton('Continuer')->form();
+        $form->disableValidation();
+        $form['columns[name]'] = '0';
+        $form['columns[type]'] = '';
+        $form['fixed[type]'] = 'xyz';
+        $this->client->submit($form);
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSelectorTextContains('body', 'Choisissez une valeur pour');
+    }
+
     public function testMemberIsForbidden(): void
     {
         $member = $this->createUser('membre@example.test');
