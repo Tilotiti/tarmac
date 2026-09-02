@@ -9,6 +9,8 @@ use App\Repository\MembershipRepository;
 use App\Service\Import\Definition\InvitationImportDefinition;
 use App\Service\Import\ImportContext;
 use App\Service\InvitationService;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use PHPUnit\Framework\TestCase;
 
 class InvitationImportDefinitionTest extends TestCase
@@ -29,12 +31,18 @@ class InvitationImportDefinitionTest extends TestCase
         return $invitations;
     }
 
+    private function logger(): LoggerInterface
+    {
+        return new NullLogger();
+    }
+
     public function testValidateReasons(): void
     {
         $definition = new InvitationImportDefinition(
             $this->memberships(['membre@example.test']),
             $this->invitations(['invite@example.test']),
             $this->createStub(InvitationService::class),
+            $this->logger(),
         );
         $context = new ImportContext(new Club(), new User());
         $base = ['firstname' => 'A', 'lastname' => 'B', 'isManager' => '', 'isInspector' => '', 'isPilote' => ''];
@@ -48,7 +56,7 @@ class InvitationImportDefinitionTest extends TestCase
 
     public function testValidateRejectsValuesTooLong(): void
     {
-        $definition = new InvitationImportDefinition($this->memberships(), $this->invitations(), $this->createStub(InvitationService::class));
+        $definition = new InvitationImportDefinition($this->memberships(), $this->invitations(), $this->createStub(InvitationService::class), $this->logger());
         $context = new ImportContext(new Club(), new User());
         $base = ['email' => 'jean@example.test', 'firstname' => 'A', 'lastname' => 'B', 'isManager' => '', 'isInspector' => '', 'isPilote' => ''];
 
@@ -63,7 +71,7 @@ class InvitationImportDefinitionTest extends TestCase
         $service = $this->createMock(InvitationService::class);
         $service->expects($this->once())->method('createInvitation')->with($this->anything(), $this->callback(static fn (array $data): bool => $data['email'] === 'jean@example.test' && $data['isInspector'] === true && $data['isManager'] === false))->willReturn(new \App\Entity\Invitation());
         $service->expects($this->once())->method('sendInvitation');
-        $definition = new InvitationImportDefinition($this->memberships(), $this->invitations(), $service);
+        $definition = new InvitationImportDefinition($this->memberships(), $this->invitations(), $service, $this->logger());
         $context = new ImportContext(new Club(), new User(), [1 => ['isInspector' => '1']]);
 
         $definition->import(['email' => 'jean@example.test', 'firstname' => 'Jean', 'lastname' => 'Dupont', 'isManager' => 'yes', 'isInspector' => '', 'isPilote' => '', '_line' => '1'], $context);
@@ -78,10 +86,43 @@ class InvitationImportDefinitionTest extends TestCase
         $service = $this->createMock(InvitationService::class);
         $service->expects($this->once())->method('createInvitation')->with($this->anything(), $this->callback(static fn (array $data): bool => $data['isInspector'] === false && $data['isManager'] === false && $data['isPilote'] === false))->willReturn(new \App\Entity\Invitation());
         $service->expects($this->once())->method('sendInvitation');
-        $definition = new InvitationImportDefinition($this->memberships(), $this->invitations(), $service);
+        $definition = new InvitationImportDefinition($this->memberships(), $this->invitations(), $service, $this->logger());
         $context = new ImportContext(new Club(), new User(), [1 => ['_submitted' => '1']]);
 
         $definition->import(['email' => 'jean@example.test', 'firstname' => 'Jean', 'lastname' => 'Dupont', 'isManager' => '', 'isInspector' => 'yes', 'isPilote' => '', '_line' => '1'], $context);
         $definition->finalize($context);
+    }
+
+    public function testFinalizeContinuesAfterOneSendFailsAndReturnsFailureCount(): void
+    {
+        $service = $this->createMock(InvitationService::class);
+        $calls = 0;
+        $service->method('createInvitation')->willReturnCallback(static function () use (&$calls): \App\Entity\Invitation {
+            $calls++;
+            $invitation = new \App\Entity\Invitation();
+            $invitation->setEmail("membre{$calls}@example.test");
+
+            return $invitation;
+        });
+        $sendCalls = 0;
+        $service->expects($this->exactly(3))->method('sendInvitation')->willReturnCallback(function () use (&$sendCalls): void {
+            $sendCalls++;
+            if ($sendCalls === 2) {
+                throw new \RuntimeException('SMTP indisponible');
+            }
+        });
+        $definition = new InvitationImportDefinition($this->memberships(), $this->invitations(), $service, $this->logger());
+        $context = new ImportContext(new Club(), new User());
+        $base = ['firstname' => 'A', 'lastname' => 'B', 'isManager' => '', 'isInspector' => '', 'isPilote' => '', '_line' => '1'];
+
+        // Trois lignes importées avec succès (la transaction est déjà commitée à ce stade).
+        for ($i = 1; $i <= 3; $i++) {
+            $definition->import(['email' => "membre{$i}@example.test"] + $base, $context);
+        }
+
+        $failed = $definition->finalize($context);
+
+        $this->assertSame(1, $failed, "l'échec du deuxième envoi ne doit pas empêcher le troisième");
+        $this->assertSame(3, $sendCalls, 'sendInvitation doit être appelé pour chacune des trois invitations');
     }
 }

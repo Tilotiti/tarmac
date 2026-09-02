@@ -4117,6 +4117,11 @@
         <source>importTooManyValues</source>
         <target>Cette colonne contient plus de 20 valeurs différentes ; seules les 20 premières sont rapprochées, les autres lignes seront ignorées.</target>
       </trans-unit>
+      <!-- Assistant d'import : e-mails tolérants aux échecs après commit (vague 2) -->
+      <trans-unit id="1901" resname="importEmailsFailed">
+        <source>importEmailsFailed</source>
+        <target>{count, plural, one {# invitation enregistrée mais e-mail non envoyé : utilisez « Renvoyer » sur la page Invitations.} other {# invitations enregistrées mais e-mails non envoyés : utilisez « Renvoyer » sur la page Invitations.}}</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

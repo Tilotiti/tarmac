@@ -34,6 +34,11 @@ interface ImportDefinitionInterface
      * Appelé une fois, après que la transaction d'import a été validée (commit inclus), pour les
      * effets de bord qui ne doivent pas participer à la transaction (ex. envoi d'e-mails) : un
      * envoi avant commit enverrait des invitations pour des lignes qu'un rollback effacerait.
+     * L'import lui-même est déjà acquis à ce stade (commit fait) : une erreur ici (ex. un envoi
+     * d'e-mail qui échoue) ne doit ni relancer, ni interrompre les effets suivants pour les autres
+     * lignes — chaque implémentation absorbe ses propres échecs et retourne leur nombre.
+     *
+     * @return int nombre d'éléments dont l'effet de bord a échoué (0 si tout s'est bien passé)
      */
-    public function finalize(ImportContext $context): void;
+    public function finalize(ImportContext $context): int;
 }

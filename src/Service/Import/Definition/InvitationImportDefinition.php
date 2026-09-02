@@ -10,6 +10,7 @@ use App\Service\Import\ImportContext;
 use App\Service\Import\ImportDefinitionInterface;
 use App\Service\Import\ImportField;
 use App\Service\InvitationService;
+use Psr\Log\LoggerInterface;
 
 final class InvitationImportDefinition implements ImportDefinitionInterface
 {
@@ -17,6 +18,7 @@ final class InvitationImportDefinition implements ImportDefinitionInterface
         private readonly MembershipRepository $membershipRepository,
         private readonly InvitationRepository $invitationRepository,
         private readonly InvitationService $invitationService,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -100,15 +102,29 @@ final class InvitationImportDefinition implements ImportDefinitionInterface
         $context->created[] = $invitation;
     }
 
-    public function finalize(ImportContext $context): void
+    public function finalize(ImportContext $context): int
     {
         // Les e-mails ne partent qu'après le commit de la transaction : un envoi pendant celle-ci
-        // enverrait des invitations pour des lignes qu'un rollback effacerait ensuite.
+        // enverrait des invitations pour des lignes qu'un rollback effacerait ensuite. L'import est
+        // acquis à ce stade (commit fait) : l'échec d'un envoi ne doit ni relancer (l'exception
+        // remonterait telle quelle jusqu'au contrôleur), ni empêcher l'envoi des autres invitations.
+        $failed = 0;
         foreach ($context->created as $invitation) {
-            if ($invitation instanceof Invitation) {
+            if (!$invitation instanceof Invitation) {
+                continue;
+            }
+            try {
                 $this->invitationService->sendInvitation($invitation);
+            } catch (\Throwable $exception) {
+                $failed++;
+                $this->logger->error('Invitation import: e-mail non envoyé', [
+                    'email' => $invitation->getEmail(),
+                    'exception' => $exception,
+                ]);
             }
         }
+
+        return $failed;
     }
 
     /**

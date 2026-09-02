@@ -268,13 +268,23 @@ class ImportController extends ExtendedController
                 $def->import($row->values, $context);
             }
         });
-        // Hors transaction, après le commit : un rollback ne doit jamais laisser d'e-mail parti
-        // pour une ligne finalement absente de la base.
-        $def->finalize($context);
 
-        $this->storage->delete($state->fileKey);
-        $this->stateStore->clear($club, $definition);
+        // Hors transaction, après le commit : un rollback ne doit jamais laisser d'e-mail parti
+        // pour une ligne finalement absente de la base. L'import lui-même est déjà acquis ici (le
+        // commit a eu lieu) : quoi qu'il arrive dans finalize() (une définition qui absorbe mal une
+        // exception, par exemple), le fichier et l'état en session doivent toujours être nettoyés —
+        // sans quoi l'assistant resterait bloqué sur un import déjà terminé.
+        try {
+            $failed = $def->finalize($context);
+        } finally {
+            $this->storage->delete($state->fileKey);
+            $this->stateStore->clear($club, $definition);
+        }
+
         $this->addFlash('success', $this->trans('importDone', ['imported' => $preview->importableCount(), 'ignored' => $preview->ignoredCount()]));
+        if ($failed > 0) {
+            $this->addFlash('warning', $this->trans('importEmailsFailed', ['count' => $failed]));
+        }
 
         return $this->redirectToRoute($def->listRoute());
     }
@@ -303,7 +313,7 @@ class ImportController extends ExtendedController
     {
         $this->breadcrumbBuilder
             ->addItem('home', 'club_dashboard')
-            ->addItem($this->trans($def->key()), $def->listRoute())
+            ->addItem($def->key(), $def->listRoute())
             ->addItem('import');
     }
 

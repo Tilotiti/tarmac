@@ -80,8 +80,9 @@ class EquipmentImportDefinitionTest extends TestCase
         $persisted = [];
         $definition = $this->definition([], $persisted);
 
-        $definition->finalize(new ImportContext(new Club(), new User()));
+        $failed = $definition->finalize(new ImportContext(new Club(), new User()));
 
         $this->assertSame([], $persisted);
+        $this->assertSame(0, $failed);
     }
 }
