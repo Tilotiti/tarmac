@@ -210,6 +210,9 @@ class Club
         if ($this->aerodrome !== null) {
             $this->latitude = $this->aerodrome->getLatitude();
             $this->longitude = $this->aerodrome->getLongitude();
+        } else {
+            $this->latitude = null;
+            $this->longitude = null;
         }
 
         return $this;
