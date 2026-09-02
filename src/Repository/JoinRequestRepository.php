@@ -44,4 +44,15 @@ class JoinRequestRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function countOpenByClub(Club $club): int
+    {
+        return (int) $this->createQueryBuilder('join_request')
+            ->select('COUNT(join_request.id)')
+            ->andWhere('join_request.club = :club')
+            ->andWhere('join_request.handledAt IS NULL')
+            ->setParameter('club', $club)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

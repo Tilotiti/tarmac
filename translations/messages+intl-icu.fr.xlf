@@ -3953,6 +3953,10 @@
         <source>acceptJoinRequestTitle</source>
         <target>Accepter la demande d'adhésion</target>
       </trans-unit>
+      <trans-unit id="1848" resname="joinRequestsPending">
+        <source>joinRequestsPending</source>
+        <target>{count, plural, one {# demande d'adhésion en attente} other {# demandes d'adhésion en attente}}</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

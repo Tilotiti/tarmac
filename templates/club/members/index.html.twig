@@ -10,6 +10,9 @@
 			<i class="ti ti-mail me-2"></i>
 			<span class="d-none d-sm-inline">{{ 'invitations'|trans }}</span>
 			<span class="d-inline d-sm-none">{{ 'invitations'|trans }}</span>
+			{% if openJoinRequests > 0 %}
+				<span class="badge bg-orange text-white ms-2" title="{{ 'joinRequestsPending'|trans({count: openJoinRequests}) }}">{{ openJoinRequests }}</span>
+			{% endif %}
 		</a>
 	{% endif %}
 {% endblock %}

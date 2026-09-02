@@ -6,6 +6,7 @@ use App\Entity\Club;
 use App\Entity\Membership;
 use App\Form\MembershipType;
 use App\Form\Filter\MemberFilterType;
+use App\Repository\JoinRequestRepository;
 use App\Repository\MembershipRepository;
 use App\Repository\Paginator;
 use App\Controller\ExtendedController;
@@ -27,6 +28,7 @@ class MemberController extends ExtendedController
         SubdomainService $subdomainService,
         private readonly ClubResolver $clubResolver,
         private readonly MembershipRepository $membershipRepository,
+        private readonly JoinRequestRepository $joinRequestRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly TranslatorInterface $translator,
     ) {
@@ -59,6 +61,7 @@ class MemberController extends ExtendedController
             'memberships' => $memberships,
             'filters' => $filters->createView(),
             'currentMembership' => $currentMembership,
+            'openJoinRequests' => $this->isGranted('MANAGE') ? $this->joinRequestRepository->countOpenByClub($club) : 0,
         ]);
     }
 

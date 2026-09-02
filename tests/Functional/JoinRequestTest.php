@@ -39,6 +39,9 @@ class JoinRequestTest extends FunctionalTestCase
         $this->client->request('GET', 'https://beauce.' . static::getContainer()->getParameter('domain') . '/invitations');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('body', 'candidat@example.test');
+
+        $this->client->request('GET', 'https://beauce.' . static::getContainer()->getParameter('domain') . '/members');
+        $this->assertSelectorTextContains('a[href$="/invitations"] .badge', '1');
     }
 
     public function testSecondRequestIsNotDuplicated(): void
