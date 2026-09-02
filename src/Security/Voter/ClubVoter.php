@@ -40,8 +40,8 @@ class ClubVoter extends Voter
             return true;
         }
 
-        // Resolve club from subdomain
-        $club = $this->clubResolver->resolve();
+        // Sujet explicite (écrans www, admin) sinon résolution par le sous-domaine
+        $club = $subject instanceof Club ? $subject : $this->clubResolver->resolve();
         if (!$club) {
             return false;
         }
