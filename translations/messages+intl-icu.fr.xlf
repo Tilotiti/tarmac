@@ -3919,6 +3919,15 @@
         <source>healthCheckWelcomeMessageAction</source>
         <target>Rédiger le message</target>
       </trans-unit>
+      <!-- Retours utilisateur : page Mes clubs, sous-domaine pris -->
+      <trans-unit id="1840" resname="createClubTileHint">
+        <source>createClubTileHint</source>
+        <target>Gratuit, en quelques minutes</target>
+      </trans-unit>
+      <trans-unit id="1841" resname="requestToJoinNamed">
+        <source>requestToJoinNamed</source>
+        <target>Cette adresse est celle de {club} : demander à le rejoindre</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

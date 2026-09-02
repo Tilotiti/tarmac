@@ -67,8 +67,15 @@ class OnboardingController extends ExtendedController
             return $this->json(['available' => false, 'message' => $this->translator->trans('subdomainReserved')]);
         }
         // findOneBy sans filtre actif : un club désactivé garde son sous-domaine (contrainte unique)
-        if ($this->clubRepository->findOneBy(['subdomain' => $value]) !== null) {
-            return $this->json(['available' => false, 'message' => $this->translator->trans('subdomainTaken')]);
+        $taken = $this->clubRepository->findOneBy(['subdomain' => $value]);
+        if ($taken !== null) {
+            $payload = ['available' => false, 'message' => $this->translator->trans('subdomainTaken')];
+            // Club actif : proposer de le rejoindre plutôt que d'en créer un second
+            if ($taken->isActive()) {
+                $payload['joinUrl'] = $this->generateUrl('public_onboarding_join_request', ['id' => $taken->getId()]);
+            }
+
+            return $this->json($payload);
         }
 
         return $this->json(['available' => true, 'message' => $this->translator->trans('subdomainAvailable')]);
@@ -231,8 +238,15 @@ class OnboardingController extends ExtendedController
             return $this->redirectToRoute('public_onboarding_done', ['id' => $club->getId()]);
         }
 
+        // Sous-domaine déjà pris par un club actif : proposer la demande d'adhésion sous le champ
+        $takenClub = null;
+        if ($form->isSubmitted() && $club->getSubdomain() !== null && $club->getSubdomain() !== '') {
+            $takenClub = $this->clubRepository->findOneBy(['subdomain' => $club->getSubdomain(), 'active' => true]);
+        }
+
         return $this->render('public/onboarding/club.html.twig', [
             'form' => $form,
+            'takenClub' => $takenClub,
             'domain' => $this->subdomainService->getDomain(),
         ]);
     }

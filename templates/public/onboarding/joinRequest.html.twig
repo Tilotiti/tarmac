@@ -5,11 +5,6 @@
 {% block body %}
 	<div class="page page-center">
 		<div class="container container-tight py-4">
-			<div class="text-center mb-4">
-				<a href="{{ path('public_landing') }}" class="navbar-brand navbar-brand-autodark">
-					<img src="{{ asset('logo.svg') }}" height="48" alt="Tarmac">
-				</a>
-			</div>
 			<div class="tarmac-panel">
 				<h2 style="font-size:1.4rem;font-weight:800;text-align:center;margin:0 0 0.5rem;">{{ 'joinRequestTitle'|trans({club: club.name}) }}</h2>
 				<p class="text-center text-secondary mb-4">{{ 'joinRequestLead'|trans }}</p>

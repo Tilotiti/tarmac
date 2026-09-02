@@ -46,18 +46,30 @@ export default class extends Controller {
         this.resultsTarget.innerHTML = '';
         if (items.length === 0) {
             const empty = document.createElement('div');
-            empty.className = 'list-group-item text-secondary';
+            empty.className = 'aerodrome-results__empty';
             empty.textContent = this.emptyTextValue;
             this.resultsTarget.appendChild(empty);
         }
         items.forEach((item) => {
             const button = document.createElement('button');
             button.type = 'button';
-            button.className = 'list-group-item list-group-item-action';
-            button.style.minHeight = '44px';
-            button.textContent = item.label;
+            button.className = 'aerodrome-results__item';
             button.dataset.id = item.id;
+            button.dataset.label = item.label;
             button.dataset.action = 'aerodrome-search#pick';
+
+            const name = document.createElement('span');
+            name.className = 'aerodrome-results__name';
+            name.textContent = item.name;
+            button.appendChild(name);
+
+            const meta = [item.municipality, item.icaoCode].filter(Boolean).join(' · ');
+            if (meta !== '') {
+                const details = document.createElement('span');
+                details.className = 'aerodrome-results__meta';
+                details.textContent = meta;
+                button.appendChild(details);
+            }
             this.resultsTarget.appendChild(button);
         });
         this.resultsTarget.hidden = false;
@@ -66,7 +78,7 @@ export default class extends Controller {
     pick(event) {
         const button = event.currentTarget;
         this.hiddenTarget.value = button.dataset.id;
-        this.queryTarget.value = button.textContent;
+        this.queryTarget.value = button.dataset.label;
         this.clearResults();
         if (this.hasManualTarget) {
             this.manualTarget.hidden = true;

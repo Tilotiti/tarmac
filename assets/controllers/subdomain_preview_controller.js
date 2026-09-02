@@ -9,7 +9,7 @@ import { Controller } from '@hotwired/stimulus';
  */
 export default class extends Controller {
     static targets = ['name', 'subdomain', 'preview', 'status'];
-    static values = { checkUrl: String, domain: String };
+    static values = { checkUrl: String, domain: String, joinLabel: String };
 
     connect() {
         this.edited = this.subdomainTarget.value !== '';
@@ -56,6 +56,14 @@ export default class extends Controller {
         const data = await response.json();
         this.statusTarget.textContent = data.message;
         this.statusTarget.className = data.available ? 'form-hint text-success' : 'form-hint text-danger';
+        if (data.joinUrl) {
+            // Adresse prise par un club actif : proposer de le rejoindre
+            this.statusTarget.append(' ');
+            const link = document.createElement('a');
+            link.href = data.joinUrl;
+            link.textContent = this.joinLabelValue;
+            this.statusTarget.appendChild(link);
+        }
     }
 
     slugify(text) {

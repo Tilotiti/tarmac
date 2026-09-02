@@ -2920,3 +2920,80 @@ h3, .h3 { font-size: 1.2rem; }
 .form-check-label.required::after {
     content: none;
 }
+
+/* ===== Tuile « ajouter » (page Mes clubs) ===== */
+.tarmac-card--add {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.6rem;
+    min-height: 160px;
+    border-style: dashed;
+    border-color: var(--td-border-strong);
+    background: transparent;
+    box-shadow: none;
+    color: var(--td-ink-2);
+}
+.tarmac-card--add:hover,
+.tarmac-card--add:focus {
+    border-color: var(--td-mid);
+    background: var(--td-paper);
+    color: var(--td-deep);
+}
+.tarmac-card--add .tarmac-eqv--add {
+    background: var(--td-cream);
+    color: var(--td-deep);
+}
+
+/* ===== Autocomplétion d'aérodrome : liste flottante sous le champ ===== */
+.aerodrome-search {
+    position: relative;
+}
+.aerodrome-results {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 4px);
+    z-index: 1050;
+    max-height: 280px;
+    overflow-y: auto;
+    padding: 0.25rem;
+    background: var(--td-paper);
+    border: 1px solid var(--td-border-strong);
+    border-radius: var(--td-radius);
+    box-shadow: 0 12px 28px rgba(11, 29, 46, 0.14);
+}
+.aerodrome-results__item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+    width: 100%;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    border: 0;
+    border-radius: var(--td-radius-sm);
+    background: transparent;
+    text-align: left;
+    color: inherit;
+}
+.aerodrome-results__item:hover,
+.aerodrome-results__item:focus {
+    background: var(--td-cream);
+    color: var(--td-deep);
+    outline: none;
+}
+.aerodrome-results__name {
+    font-weight: 600;
+}
+.aerodrome-results__meta {
+    font-size: 0.82rem;
+    color: var(--td-ink-3);
+}
+.aerodrome-results__empty {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.9rem;
+    color: var(--td-ink-3);
+}

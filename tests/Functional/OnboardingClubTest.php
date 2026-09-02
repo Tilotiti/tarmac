@@ -136,4 +136,21 @@ class OnboardingClubTest extends FunctionalTestCase
         $this->assertSelectorTextContains('body', "D'autres clubs sont déjà sur ce terrain");
         $this->assertSelectorTextNotContains('body', 'Ce club existe déjà');
     }
+
+    public function testTakenSubdomainOffersJoinLink(): void
+    {
+        $this->client->loginUser($this->createUser('president@example.test'));
+        $existing = $this->createClub('Planeurs de Beauce', 'beauce');
+        $field = $this->aerodrome('Bailleau', 48.5, 1.6);
+
+        $this->client->request('GET', $this->www('/creer-mon-club/club'));
+        $this->client->submitForm('Créer mon club', [
+            'onboarding_club[name]' => 'Un autre club',
+            'onboarding_club[subdomain]' => 'beauce',
+            'onboarding_club[aerodrome]' => (string) $field->getId(),
+        ]);
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSelectorExists('a[href="/creer-mon-club/rejoindre/' . $existing->getId() . '"]');
+    }
 }

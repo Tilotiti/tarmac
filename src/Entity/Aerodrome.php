@@ -41,7 +41,10 @@ class Aerodrome
 
     public static function normalizeForSearch(string $text): string
     {
-        return u($text)->ascii()->lower()->collapseWhitespace()->toString();
+        $ascii = u($text)->ascii()->lower()->toString();
+
+        // « Bailleau-Armenonville » et « Bailleau Armenonville » doivent se rejoindre : toute ponctuation devient un espace.
+        return trim((string) preg_replace('/[^a-z0-9]+/', ' ', $ascii));
     }
 
     public function getId(): ?int { return $this->id; }

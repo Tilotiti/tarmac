@@ -47,4 +47,10 @@ class AerodromeTest extends TestCase
 
         $this->assertSame('megeve altiport megeve lfhm', $aerodrome->getSearchIndex());
     }
+
+    public function testNormalizeForSearchTreatsPunctuationAsSpaces(): void
+    {
+        $this->assertSame('bailleau armenonville', Aerodrome::normalizeForSearch('Bailleau-Armenonville'));
+        $this->assertSame('saint remy', Aerodrome::normalizeForSearch("Saint-Rémy"));
+    }
 }

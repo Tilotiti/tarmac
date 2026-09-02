@@ -34,4 +34,30 @@ class OnboardingApiTest extends FunctionalTestCase
         $this->client->request('GET', $this->www('/creer-mon-club/sous-domaine?value=nouveau-club'));
         $this->assertTrue(json_decode((string) $this->client->getResponse()->getContent(), true)['available']);
     }
+
+    public function testAerodromeSearchIgnoresHyphens(): void
+    {
+        $aerodrome = (new Aerodrome())->setSourceId(2)->setName('Bailleau-Armenonville')->setMunicipality('Bailleau-Armenonville')->setIcaoCode('LFFL')->setLatitude(48.5)->setLongitude(1.6)->refreshSearchIndex();
+        $this->entityManager()->persist($aerodrome);
+        $this->entityManager()->flush();
+        $this->client->loginUser($this->createUser('membre2@example.test'));
+
+        $this->client->request('GET', $this->www('/api/aerodromes?q=bailleau armenonville'));
+
+        $data = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertCount(1, $data);
+        $this->assertSame('Bailleau-Armenonville', $data[0]['name']);
+        $this->assertSame('LFFL', $data[0]['icaoCode']);
+    }
+
+    public function testSubdomainCheckOffersJoinLinkWhenTakenByActiveClub(): void
+    {
+        $club = $this->createClub('Existant', 'existant');
+
+        $this->client->request('GET', $this->www('/creer-mon-club/sous-domaine?value=existant'));
+
+        $data = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertFalse($data['available']);
+        $this->assertSame('/creer-mon-club/rejoindre/' . $club->getId(), $data['joinUrl']);
+    }
 }

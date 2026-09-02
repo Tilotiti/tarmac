@@ -22,7 +22,13 @@ final class AerodromeApiController extends AbstractController
         }
 
         return $this->json(array_map(
-            static fn (Aerodrome $aerodrome): array => ['id' => $aerodrome->getId(), 'label' => $aerodrome->getLabel()],
+            static fn (Aerodrome $aerodrome): array => [
+                'id' => $aerodrome->getId(),
+                'label' => $aerodrome->getLabel(),
+                'name' => $aerodrome->getName(),
+                'municipality' => $aerodrome->getMunicipality(),
+                'icaoCode' => $aerodrome->getIcaoCode(),
+            ],
             $aerodromeRepository->search($query),
         ));
     }
