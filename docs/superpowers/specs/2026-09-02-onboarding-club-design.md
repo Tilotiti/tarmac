@@ -135,7 +135,7 @@ Récapitulatif : nom, adresse cliquable, « Votre club est prêt. Le tableau de 
 | `plan` | au moins une `PlanApplication` active | `club_plans_explain` | non |
 | `welcomeMessage` | `welcomeMessage` non vide | `club_dashboard_edit_welcome_message` | non |
 
-Chaque contrôle porte deux clés de traduction : `healthCheck.<key>.title` et `healthCheck.<key>.why` (une phrase sur l'utilité, écrite pour le président : « Sans qualifié, les sous-tâches à inspecter restent bloquées »).
+Chaque contrôle porte trois clés de traduction : `healthCheck<Key>Title`, `healthCheck<Key>Why` (une phrase sur l'utilité, écrite pour le président : « Sans qualifié, les sous-tâches à inspecter restent bloquées ») et `healthCheck<Key>Action` (le libellé du bouton).
 
 ### 4.3 Carte sur le tableau de bord
 
