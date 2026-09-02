@@ -163,4 +163,16 @@ class EquipmentRepository extends ServiceEntityRepository
         return (int) $queryBuilder->getQuery()->getSingleScalarResult();
     }
 
+    /** @return string[] */
+    public function findActiveNamesByClub(Club $club): array
+    {
+        $queryBuilder = $this->createQueryBuilder('equipment')
+            ->select('equipment.name')
+            ->andWhere('equipment.club = :club')
+            ->setParameter('club', $club);
+        $this->filterByActive($queryBuilder, true);
+
+        return array_column($queryBuilder->getQuery()->getScalarResult(), 'name');
+    }
+
 }
