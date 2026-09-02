@@ -16,7 +16,6 @@ use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -94,11 +93,10 @@ class OnboardingController extends ExtendedController
                 return $this->redirectToRoute('public_onboarding_account');
             }
 
-            // Vérifié avant isValid() : la contrainte UniqueEntity de l'entité User invalide
-            // déjà le formulaire sur un e-mail existant (message générique « emailUnique »),
-            // ce qui empêcherait jamais d'atteindre cette branche si elle dépendait de isValid().
+            // La contrainte UniqueEntity de l'entité User invalide déjà le formulaire sur un
+            // e-mail existant (message « emailUnique »). On ne fait ici que préparer la reprise
+            // du parcours après connexion, sans dupliquer ce message d'erreur.
             if ($user->getEmail() !== null && $this->userRepository->findOneBy(['email' => $user->getEmail()]) !== null) {
-                $form->get('email')->addError(new FormError($this->translator->trans('emailAlreadyRegistered')));
                 // Après connexion, l'utilisateur reprend à l'étape « Club ».
                 $this->saveTargetPath($request->getSession(), 'main', $this->generateUrl('public_onboarding_club'));
             } elseif ($form->isValid()) {
@@ -114,12 +112,12 @@ class OnboardingController extends ExtendedController
             }
         }
 
-        // Vue explicite (pas la FormInterface) : Symfony 7.4 fait passer render() en 422
-        // dès qu'un formulaire soumis-invalide figure dans les paramètres (AbstractController::doRender).
-        // Ici un e-mail déjà utilisé ou un champ manquant reste un succès HTML classique (200),
-        // pas une erreur REST — l'utilisateur revoit simplement son formulaire avec le message d'erreur.
+        // AbstractController::render() force le statut 422 sur un formulaire soumis-invalide
+        // (convention du projet, cf. Admin\ClubController::new, Public\SecurityController::acceptInvitation) :
+        // Turbo Drive ne réaffiche une réponse à une requête non-GET que sur redirection ou 4xx/5xx,
+        // un 200 laisserait l'utilisateur sans retour visible sur une erreur de validation.
         return $this->render('public/onboarding/account.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form,
         ]);
     }
 

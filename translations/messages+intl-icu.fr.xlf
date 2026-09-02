@@ -3563,10 +3563,6 @@
         <source>alreadyHaveAccount</source>
         <target>Vous avez déjà un compte ? Connectez-vous</target>
       </trans-unit>
-      <trans-unit id="1747" resname="emailAlreadyRegistered">
-        <source>emailAlreadyRegistered</source>
-        <target>Un compte existe déjà avec cette adresse</target>
-      </trans-unit>
       <trans-unit id="1748" resname="loginToContinue">
         <source>loginToContinue</source>
         <target>Connectez-vous pour continuer la création de votre club</target>

@@ -61,8 +61,8 @@ class OnboardingAccountTest extends FunctionalTestCase
             'onboarding_account[plainPassword][second]' => 'Planeur-Beauce-2026',
         ]);
 
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('body', 'Un compte existe déjà avec cette adresse');
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSelectorTextContains('body', 'Un compte existe déjà avec cet e-mail');
     }
 
     public function testVerifiedLoggedInUserSkipsToClubStep(): void
