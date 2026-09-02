@@ -49,7 +49,7 @@ Contrôleur `App\Controller\Public\OnboardingController`, hôte `www.%domain%`, 
 - Champs : nom du club, aérodrome (obligatoire), sous-domaine.
 - Aérodrome : champ texte avec autocomplétion (Stimulus `aerodrome-search`) sur `GET /creer-mon-club/aerodromes?q=`, qui cherche dans `Aerodrome` par nom, commune et code OACI (préfixe ou sous-chaîne, insensible aux accents) et renvoie dix résultats « Nom (Commune) LFXX ». La sélection remplit un champ caché `aerodrome` (id). Lien « Mon terrain n'est pas dans la liste » : affiche un champ « Commune » en texte libre (`Club::locationLabel`) et vide l'aérodrome ; l'un des deux est obligatoire. Sans aérodrome, le club n'a pas de coordonnées en phase 1 et la détection de doublon retombe sur le nom seul.
 - Le sous-domaine se calcule côté client (Stimulus `subdomain-preview`) à partir du nom : minuscules, accents retirés, caractères hors `[a-z0-9-]` remplacés par un tiret, tirets doublés ou en bordure supprimés, 30 caractères max. L'adresse complète s'affiche sous le champ : « Vos membres se connecteront sur https://<sous-domaine>.tarmac.center ». Le champ reste modifiable ; à chaque changement, une requête `GET /creer-mon-club/sous-domaine?value=` renvoie disponible / pris / interdit.
-- Validation serveur : regex `^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])?$`, unicité, mots réservés : `www`, `app`, `admin`, `api`, `mail`, `smtp`, `imap`, `ftp`, `staging`, `test`, `demo`, `tarmac`. Constante `SubdomainService::RESERVED`.
+- Validation serveur : regex `^[a-z0-9][a-z0-9-]{0,28}[a-z0-9]$` (2 à 30 caractères), unicité, mots réservés : `www`, `app`, `admin`, `api`, `mail`, `smtp`, `imap`, `ftp`, `staging`, `test`, `demo`, `tarmac`. Constante `SubdomainService::RESERVED`.
 - À la soumission valide, `ClubDuplicateFinder::find(name, aerodrome)` est appelé (voir 3.5). Sans résultat, ou si le formulaire porte `confirmed=1`, `ClubRegistrationService::register()` crée le club et redirige vers « Bienvenue ». Avec résultat, redirection vers l'écran « Doublon ».
 
 ### 3.4 `ClubRegistrationService::register(User $user, Club $club): Club`
@@ -74,7 +74,8 @@ Le `createdBy` sert à l'admin et au contrôle « Membres invités » (§4.2).
 |---|---|---|
 | oui | même aérodrome | doublon probable |
 | oui | moins de 25 km | doublon possible |
-| oui | loin ou inconnue | homonyme, ignoré |
+| oui | loin | homonyme, ignoré |
+| oui | inconnue (un des deux clubs sans coordonnées) | doublon possible |
 | non | même aérodrome | voisin sur le même terrain |
 | non | autre | ignoré |
 

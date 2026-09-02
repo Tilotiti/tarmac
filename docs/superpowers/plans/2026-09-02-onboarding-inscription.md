@@ -20,7 +20,7 @@
 - Contrôleurs hors `AbstractController` : étendre `App\Controller\ExtendedController`.
 - Commits directement sur `main`, messages en français au format conventional commits, terminés par `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`.
 - Cache : `symfony console cache:clear`. Migrations : `symfony console make:migration` puis relecture du SQL généré, puis `symfony console doctrine:migrations:migrate -n`.
-- Sous-domaine : regex `^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])?$`, 30 caractères max, mots réservés `www app admin api mail smtp imap ftp staging test demo tarmac`.
+- Sous-domaine : regex `^[a-z0-9][a-z0-9-]{0,28}[a-z0-9]$`, 2 à 30 caractères, mots réservés `www app admin api mail smtp imap ftp staging test demo tarmac`.
 - Doublon : nom proche = inclusion ou Levenshtein / longueur < 0,25 ; proche = même aérodrome ou < 25 km.
 - E-mails envoyés depuis `new Address('contact@tarmac.center', 'Tarmac')`.
 - Le guide utilisateur (`templates/public/guide/index.html.twig`) se met à jour dans le même commit que la fonctionnalité qu'il décrit.
