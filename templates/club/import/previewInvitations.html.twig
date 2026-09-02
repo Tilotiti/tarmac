@@ -9,15 +9,15 @@
 {% endblock %}
 
 {% block preview_extra_cells %}
-	{% if row.isImportable %}
-		{# Marque la ligne comme soumise même si toutes les cases de rôle sont décochées :
-		   sans elle, une case décochée disparaît du POST et import() retomberait sur les
-		   rôles du fichier au lieu de respecter le décochage. #}
-		<input type="hidden" name="rows[{{ row.line }}][_submitted]" value="1">
-	{% endif %}
 	{% for role in ['isManager', 'isInspector', 'isPilote'] %}
 		<td>
 			{% if row.isImportable %}
+				{% if loop.first %}
+					{# Marque la ligne comme soumise même si toutes les cases de rôle sont décochées :
+					   sans elle, une case décochée disparaît du POST et import() retomberait sur les
+					   rôles du fichier au lieu de respecter le décochage. #}
+					<input type="hidden" name="rows[{{ row.line }}][_submitted]" value="1">
+				{% endif %}
 				<input type="checkbox" class="form-check-input" name="rows[{{ row.line }}][{{ role }}]" value="1" {% if row.values[role] == 'yes' %}checked{% endif %} aria-label="{{ role == 'isManager' ? 'manager'|trans : (role == 'isInspector' ? 'inspector'|trans : 'pilot'|trans) }}">
 			{% endif %}
 		</td>
