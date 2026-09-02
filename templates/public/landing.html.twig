@@ -121,6 +121,18 @@
 			gap: 0.75rem;
 		}
 
+		.landing-free-note { margin: 1rem 0 0; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); }
+		.landing-values { padding: 2.5rem 1rem 0; }
+		.landing-value { display: flex; gap: 0.9rem; align-items: flex-start; }
+		.landing-value i { font-size: 1.5rem; color: var(--landing-glow); flex: none; }
+		.landing-value h3 { font-size: 1rem; font-weight: 700; margin: 0 0 0.25rem; }
+		.landing-value p { margin: 0; color: #5b6b7b; font-size: 0.92rem; }
+		.landing-final-grid { display: grid; gap: 1.5rem; grid-template-columns: 1fr; text-align: left; }
+		@media (min-width: 768px) { .landing-final-grid { grid-template-columns: 1fr 1fr; } }
+		.landing-final-card { background: #fff; border: 1px solid #e6ebf1; border-radius: 14px; padding: 1.5rem; }
+		.landing-final-card h3 { font-size: 1.1rem; font-weight: 800; margin: 0 0 0.5rem; }
+		.landing-final-card p { color: #5b6b7b; margin: 0 0 1rem; }
+
 		.landing-btn,
 		.landing-btn:hover,
 		.landing-btn:focus,
@@ -548,6 +560,19 @@
 			padding: 2rem 1rem 1rem;
 			font-style: italic;
 		}
+
+		/* .landing-final-card hérite du texte blanc de .landing-final : ré-affirmer les couleurs sombres */
+		.landing-final-card h3 { color: var(--landing-deep); }
+		.landing-final-card p { color: #5b6b7b; }
+		.landing-final-card .landing-btn-ghost {
+			background: rgba(11, 29, 46, 0.05);
+			color: var(--landing-deep);
+			border-color: rgba(11, 29, 46, 0.15);
+		}
+		.landing-final-card .landing-btn-ghost:hover {
+			background: rgba(11, 29, 46, 0.1);
+			color: var(--landing-deep);
+		}
 	</style>
 {% endblock %}
 
@@ -572,17 +597,22 @@
 									<i class="ti ti-building-community"></i>
 									{{ 'myClubs'|trans }}
 								</a>
+								<a href="{{ path('public_onboarding_account') }}" class="landing-btn landing-btn-ghost">
+									<i class="ti ti-windsock"></i>
+									{{ 'createClub'|trans }}
+								</a>
 							{% else %}
-								<a href="{{ path('public_login') }}" class="landing-btn landing-btn-primary">
+								<a href="{{ path('public_onboarding_account') }}" class="landing-btn landing-btn-primary">
+									<i class="ti ti-windsock"></i>
+									{{ 'createMyClub'|trans }}
+								</a>
+								<a href="{{ path('public_login') }}" class="landing-btn landing-btn-ghost">
 									<i class="ti ti-login"></i>
 									{{ 'signIn'|trans }}
 								</a>
 							{% endif %}
-							<a href="{{ path('public_guide') }}" class="landing-btn landing-btn-ghost">
-								<i class="ti ti-book-2"></i>
-								{{ 'exploreGuide'|trans }}
-							</a>
 						</div>
+						<p class="landing-free-note">{{ 'landingFreeNote'|trans }}</p>
 					</div>
 
 					{# Stacked task-card mockups #}
@@ -626,6 +656,32 @@
 						</div>
 					</div>
 
+				</div>
+			</div>
+		</section>
+
+		{# ========== VALEURS ========== #}
+		<section class="landing-values">
+			<div class="container-xl">
+				<div class="row g-4">
+					<div class="col-12 col-md-4">
+						<div class="landing-value">
+							<i class="ti ti-code"></i>
+							<div><h3>{{ 'landingValueOpenSource'|trans }}</h3><p>{{ 'landingValueOpenSourceBody'|trans }}</p></div>
+						</div>
+					</div>
+					<div class="col-12 col-md-4">
+						<div class="landing-value">
+							<i class="ti ti-heart-handshake"></i>
+							<div><h3>{{ 'landingValueVolunteer'|trans }}</h3><p>{{ 'landingValueVolunteerBody'|trans }}</p></div>
+						</div>
+					</div>
+					<div class="col-12 col-md-4">
+						<div class="landing-value">
+							<i class="ti ti-eye-off"></i>
+							<div><h3>{{ 'landingValueNoAds'|trans }}</h3><p>{{ 'landingValueNoAdsBody'|trans }}</p></div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -705,44 +761,42 @@
 			</div>
 		</section>
 
+		{# ========== CTA FINAL : deux publics ========== #}
+		<section class="landing-section">
+			<div class="container-xl">
+				<div class="landing-final">
+					<h2>{{ 'landingFinalCtaTitle'|trans|raw }}</h2>
+					<div class="landing-final-grid mt-4">
+						<div class="landing-final-card">
+							<h3>{{ 'landingFinalMemberTitle'|trans }}</h3>
+							<p>{{ 'landingFinalMemberBody'|trans }}</p>
+							<a href="{{ path('public_guide') }}" class="landing-btn landing-btn-ghost">
+								<i class="ti ti-book-2"></i>{{ 'readUserGuide'|trans }}
+							</a>
+						</div>
+						<div class="landing-final-card">
+							<h3>{{ 'landingFinalPresidentTitle'|trans }}</h3>
+							<p>{{ 'landingFinalPresidentBody'|trans }}</p>
+							<a href="{{ path('public_onboarding_account') }}" class="landing-btn landing-btn-primary">
+								<i class="ti ti-windsock"></i>{{ 'createMyClub'|trans }}
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
 		{# ========== CONTACT ========== #}
-		<section class="landing-section" style="padding-bottom: 0;">
+		<section class="landing-section" style="padding-top: 0;">
 			<div class="container-xl">
 				<div class="landing-contact">
 					<span class="landing-contact-eyebrow">{{ 'landingContactEyebrow'|trans|raw }}</span>
 					<h2>{{ 'landingContactTitle'|trans }}</h2>
 					<p>{{ 'landingContactBody'|trans }}</p>
-					<a href="mailto:contact@tarmac.center?subject=Mettre%20mon%20club%20sur%20Tarmac" class="landing-contact-btn">
+					<a href="mailto:contact@tarmac.center?subject=Question%20sur%20Tarmac" class="landing-contact-btn">
 						<i class="ti ti-mail"></i>
 						{{ 'landingContactCta'|trans }}
 					</a>
-				</div>
-			</div>
-		</section>
-
-		{# ========== FINAL CTA ========== #}
-		<section class="landing-section">
-			<div class="container-xl">
-				<div class="landing-final">
-					<h2>{{ 'landingFinalCtaTitle'|trans|raw }}</h2>
-					<p>{{ 'landingFinalCtaBody'|trans }}</p>
-					<div class="landing-cta-row justify-content-center">
-						<a href="{{ path('public_guide') }}" class="landing-btn landing-btn-primary">
-							<i class="ti ti-book-2"></i>
-							{{ 'readUserGuide'|trans }}
-						</a>
-						{% if app.user %}
-							<a href="{{ path('public_clubs') }}" class="landing-btn landing-btn-ghost">
-								<i class="ti ti-building-community"></i>
-								{{ 'myClubs'|trans }}
-							</a>
-						{% else %}
-							<a href="{{ path('public_login') }}" class="landing-btn landing-btn-ghost">
-								<i class="ti ti-login"></i>
-								{{ 'signIn'|trans }}
-							</a>
-						{% endif %}
-					</div>
 				</div>
 				<p class="landing-footnote">{{ 'landingMadeWith'|trans }}</p>
 			</div>

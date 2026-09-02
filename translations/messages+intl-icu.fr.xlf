@@ -2800,35 +2800,35 @@
       </trans-unit>
       <trans-unit id="859" resname="landingStep1Title">
         <source>landingStep1Title</source>
-        <target>Déclarez vos matériels</target>
+        <target>Créez votre club</target>
       </trans-unit>
       <trans-unit id="860" resname="landingStep1Body">
         <source>landingStep1Body</source>
-        <target>Planeurs, avions, treuils, remorques — tout ce qui demande de l'entretien.</target>
+        <target>Votre compte, votre e-mail, le nom du club et son terrain. Cinq minutes.</target>
       </trans-unit>
       <trans-unit id="861" resname="landingStep2Title">
         <source>landingStep2Title</source>
-        <target>Construisez vos plans</target>
+        <target>Déclarez votre matériel</target>
       </trans-unit>
       <trans-unit id="862" resname="landingStep2Body">
         <source>landingStep2Body</source>
-        <target>Les opérations récurrentes, par type de matériel. Une fois pour toutes.</target>
+        <target>Planeurs, avions, treuils, remorques : tout ce qui demande de l'entretien.</target>
       </trans-unit>
       <trans-unit id="863" resname="landingStep3Title">
         <source>landingStep3Title</source>
-        <target>Appliquez, déléguez</target>
+        <target>Invitez vos membres</target>
       </trans-unit>
       <trans-unit id="864" resname="landingStep3Body">
         <source>landingStep3Body</source>
-        <target>Tarmac génère les tâches. Chaque membre contribue, commente, signale.</target>
+        <target>Un fichier Excel ou une saisie à la main. Chacun reçoit un lien et choisit son mot de passe.</target>
       </trans-unit>
       <trans-unit id="865" resname="landingStep4Title">
         <source>landingStep4Title</source>
-        <target>Signez, ou faites signer</target>
+        <target>Appliquez vos plans d'entretien</target>
       </trans-unit>
       <trans-unit id="866" resname="landingStep4Body">
         <source>landingStep4Body</source>
-        <target>Des tâches classiques aux tâches critiques, le carnet mécanicien se remplit tout seul.</target>
+        <target>Tarmac génère les tâches, chacun contribue, les qualifiés signent.</target>
       </trans-unit>
       <trans-unit id="867" resname="landingFinalCtaTitle">
         <source>landingFinalCtaTitle</source>
@@ -2848,15 +2848,15 @@
       </trans-unit>
       <trans-unit id="871" resname="landingContactEyebrow">
         <source>landingContactEyebrow</source>
-        <target>Vous présidez ou gérez un club ?</target>
+        <target>Une question ?</target>
       </trans-unit>
       <trans-unit id="872" resname="landingContactTitle">
         <source>landingContactTitle</source>
-        <target>Mettons votre club sur Tarmac.</target>
+        <target>Besoin d'un coup de main ?</target>
       </trans-unit>
       <trans-unit id="873" resname="landingContactBody">
         <source>landingContactBody</source>
-        <target>Envoyez-moi un mot, on configure votre instance ensemble. C'est gratuit, sans engagement, et je vous accompagne pour démarrer.</target>
+        <target>Écrivez-moi, je réponds et je vous aide à démarrer. C'est gratuit et sans engagement.</target>
       </trans-unit>
       <trans-unit id="874" resname="landingContactCta">
         <source>landingContactCta</source>
@@ -3716,6 +3716,31 @@
       <trans-unit id="1787" resname="joinRequestIgnored">
         <source>joinRequestIgnored</source>
         <target>Demande ignorée</target>
+      </trans-unit>
+      <!-- Landing : inscription autonome -->
+      <trans-unit id="1788" resname="createClub">
+        <source>createClub</source>
+        <target>Créer un club</target>
+      </trans-unit>
+      <trans-unit id="1789" resname="landingFreeNote">
+        <source>landingFreeNote</source>
+        <target>Gratuit pour les associations. Aucune carte bancaire, aucun engagement.</target>
+      </trans-unit>
+      <trans-unit id="1790" resname="landingFinalMemberTitle">
+        <source>landingFinalMemberTitle</source>
+        <target>Vous êtes membre d'un club ?</target>
+      </trans-unit>
+      <trans-unit id="1791" resname="landingFinalMemberBody">
+        <source>landingFinalMemberBody</source>
+        <target>Demandez une invitation à votre club. En attendant, le guide explique tout ce que vous pourrez y faire.</target>
+      </trans-unit>
+      <trans-unit id="1792" resname="landingFinalPresidentTitle">
+        <source>landingFinalPresidentTitle</source>
+        <target>Vous présidez ou gérez un club ?</target>
+      </trans-unit>
+      <trans-unit id="1793" resname="landingFinalPresidentBody">
+        <source>landingFinalPresidentBody</source>
+        <target>Créez votre club maintenant. Vous êtes guidé pas à pas, et vos membres vous rejoignent sur invitation.</target>
       </trans-unit>
     </body>
 </file>

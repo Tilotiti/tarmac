@@ -53,9 +53,13 @@
 									{# Libellé masqué sous 576px : sinon le header passe sur deux lignes #}
 									<span class="nav-link-title d-none d-sm-inline">{{ 'userGuide'|trans }}</span>
 								</a>
-								<a href="{{ path('public_login') }}" class="btn btn-primary" style="min-height: 44px;">
-									<i class="ti ti-login me-2"></i>
-									{{ 'signIn'|trans }}
+								<a href="{{ path('public_login') }}" class="nav-link px-2 me-1" style="min-height: 44px;">
+									<span class="nav-link-icon d-md-none d-lg-inline-block"><i class="ti ti-login"></i></span>
+									<span class="nav-link-title d-none d-sm-inline">{{ 'signIn'|trans }}</span>
+								</a>
+								<a href="{{ path('public_onboarding_account') }}" class="btn btn-primary" style="min-height: 44px;">
+									<i class="ti ti-windsock me-2"></i>
+									{{ 'createMyClub'|trans }}
 								</a>
 							{% endblock %}
 						{% else %}
