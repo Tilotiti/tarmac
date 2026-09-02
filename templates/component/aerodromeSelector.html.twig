@@ -1,7 +1,11 @@
-{# Sélecteur d'aérodrome : recherche + champ caché + repli « commune » #}
+{# Sélecteur d'aérodrome : recherche + champ caché.
+   Le lien « Mon terrain n'est pas dans la liste » ouvre soit la commune en texte libre (manualFallback: true, admin),
+   soit une note invitant à contacter l'administrateur (par défaut). #}
+{% set manualFallback = manualFallback|default(false) %}
 {% set currentAerodrome = aerodromeField.parent.vars.data ? aerodromeField.parent.vars.data.aerodrome : null %}
 <div data-controller="aerodrome-search"
 	 data-aerodrome-search-url-value="{{ searchUrl }}"
+	 data-aerodrome-search-manual-mode-value="{{ manualFallback ? 'true' : 'false' }}"
 	 data-aerodrome-search-empty-text-value="{{ 'aerodromeNoResult'|trans }}">
 	<div class="mb-3">
 		<label class="form-label required" for="aerodrome-query">{{ 'aerodrome'|trans }}</label>
@@ -16,10 +20,25 @@
 		{{ form_widget(aerodromeField, {attr: {'data-aerodrome-search-target': 'hidden'}}) }}
 		{{ form_errors(aerodromeField) }}
 		<div class="form-hint">{{ 'aerodromeHelp'|trans }}</div>
-		<a href="#" class="d-inline-block mt-2" style="min-height:44px;line-height:44px;"
-		   data-action="aerodrome-search#toggleManual">{{ 'aerodromeNotListed'|trans }}</a>
+		<a href="#" class="form-hint d-inline-flex align-items-center gap-1 mt-1" style="min-height:44px;text-decoration:none;"
+		   data-action="aerodrome-search#toggleManual">
+			<i class="ti ti-help-circle"></i>{{ 'aerodromeNotListed'|trans }}
+		</a>
 	</div>
-	<div data-aerodrome-search-target="manual" {% if not locationField.vars.value %}hidden{% endif %}>
-		{{ form_row(locationField, {attr: {'data-aerodrome-search-target': 'manualField'}}) }}
-	</div>
+	{% if manualFallback %}
+		<div data-aerodrome-search-target="manual" {% if not locationField.vars.value %}hidden{% endif %}>
+			{{ form_row(locationField, {attr: {'data-aerodrome-search-target': 'manualField'}}) }}
+		</div>
+	{% else %}
+		<div class="tarmac-join-callout mb-3" data-aerodrome-search-target="manual" hidden>
+			<span class="tarmac-join-callout__icon"><i class="ti ti-mail"></i></span>
+			<div class="tarmac-join-callout__body">
+				<div class="tarmac-join-callout__title">{{ 'aerodromeNotListedTitle'|trans }}</div>
+				<div class="tarmac-join-callout__hint" style="margin-bottom:0;">{{ 'aerodromeNotListedContact'|trans }}</div>
+				<a href="mailto:contact@tarmac.center?subject={{ 'aerodromeNotListedSubject'|trans|url_encode }}" class="btn btn-outline-primary mt-2" style="min-height:44px;">
+					<i class="ti ti-mail me-2"></i>contact@tarmac.center
+				</a>
+			</div>
+		</div>
+	{% endif %}
 </div>

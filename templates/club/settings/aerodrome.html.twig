@@ -10,7 +10,6 @@
 				{{ form_start(form) }}
 				{% include 'component/aerodromeSelector.html.twig' with {
 					aerodromeField: form.aerodrome,
-					locationField: form.locationLabel,
 					searchUrl: path('api_aerodromes'),
 				} %}
 				<button type="submit" class="btn btn-primary w-100" style="min-height:48px;">

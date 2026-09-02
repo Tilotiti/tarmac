@@ -13,6 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -43,11 +44,8 @@ class OnboardingClubType extends AbstractType
                     }),
                 ],
             ])
-            ->add('aerodrome', AerodromeSelectorType::class)
-            ->add('locationLabel', TextType::class, [
-                'label' => 'municipality',
-                'required' => false,
-                'attr' => ['placeholder' => 'municipalityPlaceholder'],
+            ->add('aerodrome', AerodromeSelectorType::class, [
+                'constraints' => [new NotNull(message: 'aerodromeRequired')],
             ])
             ->add('confirmed', HiddenType::class, ['mapped' => false, 'required' => false])
         ;
@@ -57,13 +55,6 @@ class OnboardingClubType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Club::class,
-            'constraints' => [
-                new Callback(static function (Club $club, ExecutionContextInterface $context): void {
-                    if ($club->getAerodrome() === null && trim((string) $club->getLocationLabel()) === '') {
-                        $context->buildViolation('aerodromeOrMunicipalityRequired')->atPath('locationLabel')->addViolation();
-                    }
-                }),
-            ],
         ]);
     }
 }

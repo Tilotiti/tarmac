@@ -154,4 +154,18 @@ class OnboardingClubTest extends FunctionalTestCase
         $this->assertSelectorExists('.tarmac-join-callout:not([hidden]) a[href="/creer-mon-club/rejoindre/' . $existing->getId() . '"]');
         $this->assertSelectorTextContains('.tarmac-join-callout', 'Planeurs de Beauce');
     }
+
+    public function testMissingAerodromeIsRejected(): void
+    {
+        $this->client->loginUser($this->createUser('president@example.test'));
+
+        $this->client->request('GET', $this->www('/creer-mon-club/club'));
+        $this->client->submitForm('Créer mon club', [
+            'onboarding_club[name]' => 'Planeurs de Beauce',
+            'onboarding_club[subdomain]' => 'beauce',
+        ]);
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSelectorTextContains('body', 'Choisissez votre aérodrome dans la liste');
+    }
 }

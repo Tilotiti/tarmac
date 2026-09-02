@@ -10,7 +10,7 @@ import { Controller } from '@hotwired/stimulus';
  */
 export default class extends Controller {
     static targets = ['query', 'hidden', 'results', 'manual', 'manualField'];
-    static values = { url: String, emptyText: String };
+    static values = { url: String, emptyText: String, manualMode: Boolean };
 
     connect() {
         this.timer = null;
@@ -82,6 +82,8 @@ export default class extends Controller {
         this.clearResults();
         if (this.hasManualTarget) {
             this.manualTarget.hidden = true;
+        }
+        if (this.hasManualFieldTarget) {
             this.manualFieldTarget.value = '';
         }
     }
@@ -89,10 +91,14 @@ export default class extends Controller {
     toggleManual(event) {
         event.preventDefault();
         this.manualTarget.hidden = !this.manualTarget.hidden;
-        if (!this.manualTarget.hidden) {
-            this.hiddenTarget.value = '';
-            this.queryTarget.value = '';
-            this.clearResults();
+        // Mode contact (public) : on montre la note sans toucher à la sélection en cours
+        if (!this.manualModeValue || this.manualTarget.hidden) {
+            return;
+        }
+        this.hiddenTarget.value = '';
+        this.queryTarget.value = '';
+        this.clearResults();
+        if (this.hasManualFieldTarget) {
             this.manualFieldTarget.focus();
         }
     }

@@ -3957,6 +3957,23 @@
         <source>joinRequestsPending</source>
         <target>{count, plural, one {# demande d'adhésion en attente} other {# demandes d'adhésion en attente}}</target>
       </trans-unit>
+      <!-- Aérodrome absent de la liste : contact plutôt que saisie libre -->
+      <trans-unit id="1849" resname="aerodromeRequired">
+        <source>aerodromeRequired</source>
+        <target>Choisissez votre aérodrome dans la liste</target>
+      </trans-unit>
+      <trans-unit id="1850" resname="aerodromeNotListedTitle">
+        <source>aerodromeNotListedTitle</source>
+        <target>Votre terrain manque à la liste ?</target>
+      </trans-unit>
+      <trans-unit id="1851" resname="aerodromeNotListedContact">
+        <source>aerodromeNotListedContact</source>
+        <target>Écrivez-nous en indiquant le nom du terrain et sa commune : nous l'ajoutons et nous finissons la création de votre club avec vous.</target>
+      </trans-unit>
+      <trans-unit id="1852" resname="aerodromeNotListedSubject">
+        <source>aerodromeNotListedSubject</source>
+        <target>Mon aérodrome n'est pas dans la liste Tarmac</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

@@ -43,7 +43,6 @@
 				{{ form_start(form, {action: path('public_onboarding_club')}) }}
 				<input type="hidden" name="{{ field_name(form.name) }}" value="{{ field_value(form.name) }}">
 				<input type="hidden" name="{{ field_name(form.subdomain) }}" value="{{ field_value(form.subdomain) }}">
-				<input type="hidden" name="{{ field_name(form.locationLabel) }}" value="{{ field_value(form.locationLabel) }}">
 				{{ form_widget(form.aerodrome) }}
 				<input type="hidden" name="{{ field_name(form.confirmed) }}" value="1">
 				{{ form_widget(form._token) }}
