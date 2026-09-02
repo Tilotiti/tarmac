@@ -1,0 +1,23 @@
+{# Sélecteur d'aérodrome : recherche + champ caché + repli « commune » #}
+{% set currentAerodrome = aerodromeField.parent.vars.data ? aerodromeField.parent.vars.data.aerodrome : null %}
+<div data-controller="aerodrome-search"
+	 data-aerodrome-search-url-value="{{ searchUrl }}"
+	 data-aerodrome-search-empty-text-value="{{ 'aerodromeNoResult'|trans }}">
+	<div class="mb-3">
+		<label class="form-label required" for="aerodrome-query">{{ 'aerodrome'|trans }}</label>
+		<input type="text" id="aerodrome-query" class="form-control" style="min-height:44px;"
+			   placeholder="{{ 'aerodromeSearchPlaceholder'|trans }}" autocomplete="off"
+			   value="{{ currentAerodrome ? currentAerodrome.label : '' }}"
+			   data-aerodrome-search-target="query"
+			   data-action="input->aerodrome-search#search">
+		{{ form_widget(aerodromeField, {attr: {'data-aerodrome-search-target': 'hidden'}}) }}
+		{{ form_errors(aerodromeField) }}
+		<div class="list-group mt-1" data-aerodrome-search-target="results" hidden></div>
+		<div class="form-hint">{{ 'aerodromeHelp'|trans }}</div>
+		<a href="#" class="d-inline-block mt-2" style="min-height:44px;line-height:44px;"
+		   data-action="aerodrome-search#toggleManual">{{ 'aerodromeNotListed'|trans }}</a>
+	</div>
+	<div data-aerodrome-search-target="manual" {% if not locationField.vars.value %}hidden{% endif %}>
+		{{ form_row(locationField, {attr: {'data-aerodrome-search-target': 'manualField'}}) }}
+	</div>
+</div>

@@ -3457,6 +3457,79 @@
         <source>noTasks</source>
         <target>Aucune tâche</target>
       </trans-unit>
+      <!-- Onboarding : sélecteur d'aérodrome et sous-domaine -->
+      <trans-unit id="1721" resname="aerodrome">
+        <source>aerodrome</source>
+        <target>Votre aérodrome</target>
+      </trans-unit>
+      <trans-unit id="1722" resname="aerodromeSearchPlaceholder">
+        <source>aerodromeSearchPlaceholder</source>
+        <target>Nom du terrain, commune ou code OACI</target>
+      </trans-unit>
+      <trans-unit id="1723" resname="aerodromeHelp">
+        <source>aerodromeHelp</source>
+        <target>Tapez les premières lettres et choisissez dans la liste.</target>
+      </trans-unit>
+      <trans-unit id="1724" resname="aerodromeNoResult">
+        <source>aerodromeNoResult</source>
+        <target>Aucun terrain trouvé</target>
+      </trans-unit>
+      <trans-unit id="1725" resname="aerodromeNotListed">
+        <source>aerodromeNotListed</source>
+        <target>Mon terrain n'est pas dans la liste</target>
+      </trans-unit>
+      <trans-unit id="1726" resname="aerodromeUnknown">
+        <source>aerodromeUnknown</source>
+        <target>Ce terrain n'existe pas dans la liste</target>
+      </trans-unit>
+      <trans-unit id="1727" resname="aerodromeOrMunicipalityRequired">
+        <source>aerodromeOrMunicipalityRequired</source>
+        <target>Indiquez votre aérodrome, ou à défaut votre commune</target>
+      </trans-unit>
+      <trans-unit id="1728" resname="municipality">
+        <source>municipality</source>
+        <target>Commune</target>
+      </trans-unit>
+      <trans-unit id="1729" resname="municipalityPlaceholder">
+        <source>municipalityPlaceholder</source>
+        <target>Ex. : Saint-Rémy-de-Provence</target>
+      </trans-unit>
+      <trans-unit id="1730" resname="clubAddress">
+        <source>clubAddress</source>
+        <target>Adresse de votre club</target>
+      </trans-unit>
+      <trans-unit id="1731" resname="clubNameRequired">
+        <source>clubNameRequired</source>
+        <target>Indiquez le nom de votre club</target>
+      </trans-unit>
+      <trans-unit id="1732" resname="subdomainRequired">
+        <source>subdomainRequired</source>
+        <target>Indiquez l'adresse de votre club</target>
+      </trans-unit>
+      <trans-unit id="1733" resname="subdomainInvalid">
+        <source>subdomainInvalid</source>
+        <target>Lettres minuscules, chiffres et tirets seulement, 2 à 30 caractères</target>
+      </trans-unit>
+      <trans-unit id="1734" resname="subdomainReserved">
+        <source>subdomainReserved</source>
+        <target>Cette adresse est réservée</target>
+      </trans-unit>
+      <trans-unit id="1735" resname="subdomainTaken">
+        <source>subdomainTaken</source>
+        <target>Cette adresse est déjà prise</target>
+      </trans-unit>
+      <trans-unit id="1736" resname="subdomainAvailable">
+        <source>subdomainAvailable</source>
+        <target>Adresse disponible</target>
+      </trans-unit>
+      <trans-unit id="1737" resname="passwordTooWeak">
+        <source>passwordTooWeak</source>
+        <target>Ce mot de passe est trop simple, allongez-le ou mélangez lettres et chiffres</target>
+      </trans-unit>
+      <trans-unit id="1738" resname="passwordCompromised">
+        <source>passwordCompromised</source>
+        <target>Ce mot de passe apparaît dans des fuites de données connues, choisissez-en un autre</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>
