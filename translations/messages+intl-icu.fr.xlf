@@ -3924,9 +3924,13 @@
         <source>createClubTileHint</source>
         <target>Gratuit, en quelques minutes</target>
       </trans-unit>
-      <trans-unit id="1841" resname="requestToJoinNamed">
-        <source>requestToJoinNamed</source>
-        <target>Cette adresse est celle de {club} : demander à le rejoindre</target>
+      <trans-unit id="1841" resname="subdomainTakenCallout">
+        <source>subdomainTakenCallout</source>
+        <target>Cette adresse est déjà celle de</target>
+      </trans-unit>
+      <trans-unit id="1842" resname="subdomainTakenCalloutHint">
+        <source>subdomainTakenCalloutHint</source>
+        <target>Si c'est votre club, inutile d'en créer un second : demandez à le rejoindre, ses gestionnaires vous enverront une invitation.</target>
       </trans-unit>
     </body>
 </file>

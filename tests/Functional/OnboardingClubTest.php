@@ -151,6 +151,7 @@ class OnboardingClubTest extends FunctionalTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSelectorExists('a[href="/creer-mon-club/rejoindre/' . $existing->getId() . '"]');
+        $this->assertSelectorExists('.tarmac-join-callout:not([hidden]) a[href="/creer-mon-club/rejoindre/' . $existing->getId() . '"]');
+        $this->assertSelectorTextContains('.tarmac-join-callout', 'Planeurs de Beauce');
     }
 }

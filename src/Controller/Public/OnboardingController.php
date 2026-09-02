@@ -73,6 +73,7 @@ class OnboardingController extends ExtendedController
             // Club actif : proposer de le rejoindre plutôt que d'en créer un second
             if ($taken->isActive()) {
                 $payload['joinUrl'] = $this->generateUrl('public_onboarding_join_request', ['id' => $taken->getId()]);
+                $payload['clubName'] = $taken->getName();
             }
 
             return $this->json($payload);

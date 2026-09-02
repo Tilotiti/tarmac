@@ -17,7 +17,6 @@
 					'data-controller': 'subdomain-preview',
 					'data-subdomain-preview-check-url-value': path('public_onboarding_subdomain_check'),
 					'data-subdomain-preview-domain-value': domain,
-					'data-subdomain-preview-join-label-value': 'requestToJoin'|trans,
 					'data-turbo': 'false',
 				}}) }}
 				{{ form_errors(form) }}
@@ -32,13 +31,19 @@
 						<span class="input-group-text">.{{ domain }}</span>
 					</div>
 					{{ form_errors(form.subdomain) }}
-					{% if takenClub %}
-						<a href="{{ path('public_onboarding_join_request', {id: takenClub.id}) }}" class="d-inline-block mt-1" style="min-height:44px;line-height:44px;">
-							<i class="ti ti-door-enter me-1"></i>{{ 'requestToJoinNamed'|trans({club: takenClub.name}) }}
-						</a>
-					{% endif %}
 					<div class="form-hint">{{ 'clubAddressHelp'|trans }} <strong data-subdomain-preview-target="preview"></strong></div>
 					<div class="form-hint" data-subdomain-preview-target="status"></div>
+					{# Adresse déjà prise par un club actif : encart d'adhésion (rempli par le serveur après soumission, ou par le JS en direct) #}
+					<div class="tarmac-join-callout mt-2" data-subdomain-preview-target="join" {% if not takenClub %}hidden{% endif %}>
+						<span class="tarmac-join-callout__icon"><i class="ti ti-users-group"></i></span>
+						<div class="tarmac-join-callout__body">
+							<div class="tarmac-join-callout__title">{{ 'subdomainTakenCallout'|trans }} <strong data-subdomain-preview-target="joinClub">{{ takenClub ? takenClub.name : '' }}</strong></div>
+							<div class="tarmac-join-callout__hint">{{ 'subdomainTakenCalloutHint'|trans }}</div>
+							<a href="{{ takenClub ? path('public_onboarding_join_request', {id: takenClub.id}) : '#' }}" class="btn btn-primary tarmac-join-callout__btn" data-subdomain-preview-target="joinLink">
+								<i class="ti ti-door-enter me-2"></i>{{ 'requestToJoin'|trans }}
+							</a>
+						</div>
+					</div>
 				</div>
 
 				{% include 'component/aerodromeSelector.html.twig' with {

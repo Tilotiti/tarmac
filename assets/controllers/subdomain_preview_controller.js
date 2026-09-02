@@ -8,8 +8,8 @@ import { Controller } from '@hotwired/stimulus';
  * targets name, subdomain, preview, status.
  */
 export default class extends Controller {
-    static targets = ['name', 'subdomain', 'preview', 'status'];
-    static values = { checkUrl: String, domain: String, joinLabel: String };
+    static targets = ['name', 'subdomain', 'preview', 'status', 'join', 'joinClub', 'joinLink'];
+    static values = { checkUrl: String, domain: String };
 
     connect() {
         this.edited = this.subdomainTarget.value !== '';
@@ -38,6 +38,9 @@ export default class extends Controller {
         const value = this.subdomainTarget.value.trim().toLowerCase();
         this.previewTarget.textContent = `https://${value || '…'}.${this.domainValue}`;
         clearTimeout(this.timer);
+        if (this.hasJoinTarget) {
+            this.joinTarget.hidden = true;
+        }
         if (value === '') {
             this.statusTarget.textContent = '';
             return;
@@ -56,13 +59,20 @@ export default class extends Controller {
         const data = await response.json();
         this.statusTarget.textContent = data.message;
         this.statusTarget.className = data.available ? 'form-hint text-success' : 'form-hint text-danger';
+        this.toggleJoin(data);
+    }
+
+    /** Adresse prise par un club actif : l'encart « demander à rejoindre » s'affiche, sinon il se cache. */
+    toggleJoin(data) {
+        if (!this.hasJoinTarget) {
+            return;
+        }
         if (data.joinUrl) {
-            // Adresse prise par un club actif : proposer de le rejoindre
-            this.statusTarget.append(' ');
-            const link = document.createElement('a');
-            link.href = data.joinUrl;
-            link.textContent = this.joinLabelValue;
-            this.statusTarget.appendChild(link);
+            this.joinClubTarget.textContent = data.clubName || '';
+            this.joinLinkTarget.href = data.joinUrl;
+            this.joinTarget.hidden = false;
+        } else {
+            this.joinTarget.hidden = true;
         }
     }
 

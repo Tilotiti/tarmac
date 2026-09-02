@@ -2997,3 +2997,49 @@ h3, .h3 { font-size: 1.2rem; }
     font-size: 0.9rem;
     color: var(--td-ink-3);
 }
+
+/* ===== Encart « demander à rejoindre » (adresse de club déjà prise) ===== */
+.tarmac-join-callout {
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+    padding: 0.9rem 1rem;
+    background: var(--td-cream);
+    border: 1px solid var(--td-border-strong);
+    border-radius: var(--td-radius);
+    color: var(--td-deep);
+}
+.tarmac-join-callout__icon {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--td-paper);
+    color: var(--td-mid);
+    font-size: 1.25rem;
+}
+.tarmac-join-callout__body {
+    flex: 1;
+    min-width: 0;
+}
+.tarmac-join-callout__title {
+    font-weight: 600;
+    line-height: 1.35;
+}
+.tarmac-join-callout__hint {
+    margin: 0.2rem 0 0.75rem;
+    font-size: 0.9rem;
+    color: var(--td-ink-2);
+}
+.tarmac-join-callout__btn {
+    min-height: 44px;
+    width: 100%;
+}
+@media (min-width: 576px) {
+    .tarmac-join-callout__btn {
+        width: auto;
+    }
+}

@@ -59,5 +59,6 @@ class OnboardingApiTest extends FunctionalTestCase
         $data = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertFalse($data['available']);
         $this->assertSame('/creer-mon-club/rejoindre/' . $club->getId(), $data['joinUrl']);
+        $this->assertSame('Existant', $data['clubName']);
     }
 }
