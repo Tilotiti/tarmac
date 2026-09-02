@@ -78,12 +78,15 @@ class ImportEquipmentTest extends FunctionalTestCase
         $this->client->submit($crawler->selectButton('Continuer')->form());
         $this->assertResponseRedirects('/import/equipments/valeurs');
 
-        // Écran 2b : valeurs du type et du propriétaire
+        // Écran 2b : valeurs du type et du propriétaire. Les sélecteurs sont indexés par position
+        // (0 = Planeur, 1 = Avion, 2 = Treuil pour le type ; 0 = Club, 1 = Privé pour le
+        // propriétaire), pas par valeur brute — voir ImportController::values().
         $crawler = $this->client->followRedirect();
         $this->assertResponseIsSuccessful();
-        $this->assertSame('glider', $crawler->filter('select[name="values[type][Planeur]"] option[selected]')->attr('value'));
-        $this->assertSame('facility', $crawler->filter('select[name="values[type][Treuil]"] option[selected]')->attr('value'));
-        $this->assertSame('private', $crawler->filter('select[name="values[owner][Privé]"] option[selected]')->attr('value'));
+        $this->assertSelectorTextContains('body', 'Planeur');
+        $this->assertSame('glider', $crawler->filter('select[name="values[type][0]"] option[selected]')->attr('value'));
+        $this->assertSame('facility', $crawler->filter('select[name="values[type][2]"] option[selected]')->attr('value'));
+        $this->assertSame('private', $crawler->filter('select[name="values[owner][1]"] option[selected]')->attr('value'));
         $this->client->submit($crawler->selectButton('Vérifier l\'aperçu')->form());
         $this->assertResponseRedirects('/import/equipments/apercu');
 
@@ -172,5 +175,91 @@ class ImportEquipmentTest extends FunctionalTestCase
         $this->client->request('GET', $this->host($club) . '/import/equipments');
 
         $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testMissingS3FileRedirectsToFileStep(): void
+    {
+        [$club, $manager] = $this->clubWithManager();
+        $this->client->loginUser($manager);
+        $host = $this->host($club);
+
+        $crawler = $this->client->request('GET', $host . '/import/equipments');
+        $form = $crawler->selectButton('Continuer')->form();
+        $form['import_file[file]']->upload($this->upload('materiel-semicolon.csv')->getPathname());
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/import/equipments/colonnes');
+
+        // Le fichier disparaît de S3 (purge, suppression manuelle…) entre deux requêtes de
+        // l'assistant : on simule ça en le supprimant directement dans le filesystem en mémoire.
+        /** @var FilesystemOperator $s3 */
+        $s3 = static::getContainer()->get('oneup_flysystem.s3_filesystem');
+        foreach ($s3->listContents('imports', true) as $item) {
+            if ($item->isFile()) {
+                $s3->delete($item->path());
+            }
+        }
+
+        $this->client->request('GET', $host . '/import/equipments/colonnes');
+        $this->assertResponseRedirects('/import/equipments');
+        $crawler = $this->client->followRedirect();
+        $this->assertSelectorTextContains('.alert-danger, .tarmac-alert--danger, body', "n'est plus disponible");
+    }
+
+    public function testCancelClearsStateAndS3File(): void
+    {
+        [$club, $manager] = $this->clubWithManager();
+        $this->client->loginUser($manager);
+        $host = $this->host($club);
+
+        $crawler = $this->client->request('GET', $host . '/import/equipments');
+        $form = $crawler->selectButton('Continuer')->form();
+        $form['import_file[file]']->upload($this->upload('materiel-semicolon.csv')->getPathname());
+        $this->client->submit($form);
+        $crawler = $this->client->followRedirect();
+
+        $this->client->submit($crawler->selectButton("Abandonner l'import")->form());
+        $this->assertResponseRedirects('/equipments');
+
+        /** @var FilesystemOperator $s3 */
+        $s3 = static::getContainer()->get('oneup_flysystem.s3_filesystem');
+        $this->assertCount(0, iterator_to_array($s3->listContents('imports', true)), "le fichier est supprimé à l'abandon");
+
+        $this->client->request('GET', $host . '/import/equipments/colonnes');
+        $this->assertResponseRedirects('/import/equipments', null, 'plus de session à reprendre après abandon');
+    }
+
+    public function testBracketInRawValueIsImportableAfterMapping(): void
+    {
+        [$club, $manager] = $this->clubWithManager();
+        $this->client->loginUser($manager);
+        $host = $this->host($club);
+
+        $crawler = $this->client->request('GET', $host . '/import/equipments');
+        $form = $crawler->selectButton('Continuer')->form();
+        $form['import_file[file]']->upload($this->upload('materiel-brackets.csv')->getPathname());
+        $this->client->submit($form);
+        $crawler = $this->client->followRedirect();
+
+        $this->client->submit($crawler->selectButton('Continuer')->form());
+        $crawler = $this->client->followRedirect(); // écran des valeurs
+
+        $this->assertSelectorTextContains('body', 'Planeur [ancien]');
+        // « Planeur [ancien] » contient « planeur » : déjà rapproché de « glider » par le
+        // ValueMapper. Le champ est indexé par position (values[type][0]), jamais par la valeur
+        // brute — un crochet dans un nom de champ HTML casserait le parsing des tableaux imbriqués.
+        $select = $crawler->filter('select[name^="values[type]"]')->first();
+        $this->assertMatchesRegularExpression('/^values\[type\]\[\d+\]$/', $select->attr('name'));
+        $this->assertSame('glider', $select->filter('option[selected]')->attr('value'));
+
+        $this->client->submit($crawler->selectButton("Vérifier l'aperçu")->form());
+        $crawler = $this->client->followRedirect();
+        $this->assertSelectorTextContains('body', '2 lignes seront importées');
+
+        $this->client->submit($crawler->selectButton('Importer 2 lignes')->form());
+        $this->assertResponseRedirects('/equipments');
+
+        $names = static::getContainer()->get(\App\Repository\EquipmentRepository::class)->findActiveNamesByClub($club);
+        sort($names);
+        $this->assertSame(['F-CGAB', 'F-CHXY'], $names);
     }
 }

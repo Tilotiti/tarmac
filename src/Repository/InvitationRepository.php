@@ -71,6 +71,24 @@ class InvitationRepository extends ServiceEntityRepository
     }
 
     /**
+     * Adresses e-mail (en minuscules) des invitations en attente du club, pour un pré-chargement
+     * en une requête (évite une requête par ligne dans les validations d'import).
+     *
+     * @return string[]
+     */
+    public function findPendingEmailsByClub(Club $club): array
+    {
+        $queryBuilder = $this->createQueryBuilder('invitation')
+            ->select('LOWER(invitation.email) AS email')
+            ->where('invitation.club = :club')
+            ->andWhere('invitation.expiresAt > :now')
+            ->setParameter('club', $club)
+            ->setParameter('now', new \DateTimeImmutable());
+
+        return array_column($queryBuilder->getQuery()->getScalarResult(), 'email');
+    }
+
+    /**
      * Query pending invitations by club with filters
      */
     public function queryPendingByClub(Club $club, array $filters = []): QueryBuilder

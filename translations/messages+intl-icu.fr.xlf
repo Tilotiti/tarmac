@@ -4152,6 +4152,23 @@
         <source>importInvitationsPreviewHint</source>
         <target>Cochez les rôles de chaque personne avant d'envoyer : les invitations partent à la confirmation.</target>
       </trans-unit>
+      <!-- Assistant d'import : robustesse (fichier absent, abandon, longueurs, valeurs multiples) -->
+      <trans-unit id="1897" resname="importReasonTooLong">
+        <source>importReasonTooLong</source>
+        <target>Valeur trop longue</target>
+      </trans-unit>
+      <trans-unit id="1898" resname="importFileGone">
+        <source>importFileGone</source>
+        <target>Le fichier de l'import n'est plus disponible, recommencez.</target>
+      </trans-unit>
+      <trans-unit id="1899" resname="importAbandon">
+        <source>importAbandon</source>
+        <target>Abandonner l'import</target>
+      </trans-unit>
+      <trans-unit id="1900" resname="importTooManyValues">
+        <source>importTooManyValues</source>
+        <target>Cette colonne contient plus de 20 valeurs différentes ; seules les 20 premières sont rapprochées, les autres lignes seront ignorées.</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

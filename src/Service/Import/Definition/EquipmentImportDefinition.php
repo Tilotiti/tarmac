@@ -15,9 +15,6 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class EquipmentImportDefinition implements ImportDefinitionInterface
 {
-    /** @var array<int, array<string, true>> noms existants normalisés, par club */
-    private array $existingNames = [];
-
     public function __construct(
         private readonly EquipmentRepository $equipmentRepository,
         private readonly EntityManagerInterface $entityManager,
@@ -68,6 +65,9 @@ final class EquipmentImportDefinition implements ImportDefinitionInterface
 
     public function validate(array $values, ImportContext $context): ?string
     {
+        if (mb_strlen($values['name']) > 255) {
+            return 'importReasonTooLong';
+        }
         $normalized = ColumnMapper::normalize($values['name']);
         if (isset($this->existingNames($context)[$normalized])) {
             return 'importReasonAlreadyExists';
@@ -97,17 +97,16 @@ final class EquipmentImportDefinition implements ImportDefinitionInterface
         // Rien à faire après commit pour les équipements : pas d'effet de bord externe.
     }
 
-    /** @return array<string, true> */
+    /** @return array<string, true> noms actifs du club, normalisés */
     private function existingNames(ImportContext $context): array
     {
-        $id = spl_object_id($context);
-        if (!isset($this->existingNames[$id])) {
-            $this->existingNames[$id] = [];
+        return $context->remember('equipment.existingNames', function () use ($context): array {
+            $names = [];
             foreach ($this->equipmentRepository->findActiveNamesByClub($context->club) as $name) {
-                $this->existingNames[$id][ColumnMapper::normalize($name)] = true;
+                $names[ColumnMapper::normalize($name)] = true;
             }
-        }
 
-        return $this->existingNames[$id];
+            return $names;
+        });
     }
 }

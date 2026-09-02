@@ -11,6 +11,8 @@ final class ImportState
     public array $values = [];
     /** @var array<string, string> valeur unique par champ à choix sans colonne */
     public array $fixed = [];
+    /** @var array<string, mixed> données annexes (ex. extra['distinctCounts'][champ] : nombre de valeurs distinctes réelles) */
+    public array $extra = [];
 
     public function __construct(
         public string $definition,
@@ -37,6 +39,7 @@ final class ImportState
         $state->columns = $data['columns'] ?? [];
         $state->values = $data['values'] ?? [];
         $state->fixed = $data['fixed'] ?? [];
+        $state->extra = $data['extra'] ?? [];
 
         return $state;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Service\Import\Definition;
 
+use App\Entity\Invitation;
 use App\Repository\InvitationRepository;
 use App\Repository\MembershipRepository;
 use App\Service\Import\ImportChoice;
@@ -61,14 +62,17 @@ final class InvitationImportDefinition implements ImportDefinitionInterface
 
     public function validate(array $values, ImportContext $context): ?string
     {
+        if (mb_strlen($values['email']) > 180 || mb_strlen($values['firstname']) > 255 || mb_strlen($values['lastname']) > 255) {
+            return 'importReasonTooLong';
+        }
         $email = mb_strtolower(trim($values['email']));
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             return 'importReasonInvalidEmail';
         }
-        if ($this->membershipRepository->findByEmailAndClub($email, $context->club) !== null) {
+        if (in_array($email, $this->existingMemberEmails($context), true)) {
             return 'importReasonAlreadyMember';
         }
-        if ($this->invitationRepository->findPendingByEmailAndClub($email, $context->club) !== null) {
+        if (in_array($email, $this->pendingInvitationEmails($context), true)) {
             return 'importReasonPendingInvitation';
         }
         if (!$context->markSeen('email:' . $email)) {
@@ -101,9 +105,30 @@ final class InvitationImportDefinition implements ImportDefinitionInterface
         // Les e-mails ne partent qu'après le commit de la transaction : un envoi pendant celle-ci
         // enverrait des invitations pour des lignes qu'un rollback effacerait ensuite.
         foreach ($context->created as $invitation) {
-            if ($invitation instanceof \App\Entity\Invitation) {
+            if ($invitation instanceof Invitation) {
                 $this->invitationService->sendInvitation($invitation);
             }
         }
+    }
+
+    /**
+     * Adresses e-mail des membres actuels du club, préchargées en une requête pour tout l'import
+     * (la mémoïsation vit sur le contexte, un par import — jamais sur la définition, un service).
+     *
+     * @return string[]
+     */
+    private function existingMemberEmails(ImportContext $context): array
+    {
+        return $context->remember('invitation.existingMemberEmails', fn (): array => $this->membershipRepository->findEmailsByClub($context->club));
+    }
+
+    /**
+     * Adresses e-mail des invitations du club encore en attente, préchargées en une requête.
+     *
+     * @return string[]
+     */
+    private function pendingInvitationEmails(ImportContext $context): array
+    {
+        return $context->remember('invitation.pendingInvitationEmails', fn (): array => $this->invitationRepository->findPendingEmailsByClub($context->club));
     }
 }

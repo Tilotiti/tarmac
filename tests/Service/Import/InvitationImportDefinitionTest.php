@@ -13,13 +13,29 @@ use PHPUnit\Framework\TestCase;
 
 class InvitationImportDefinitionTest extends TestCase
 {
-    public function testValidateReasons(): void
+    private function memberships(array $emails = []): MembershipRepository
     {
         $memberships = $this->createStub(MembershipRepository::class);
-        $memberships->method('findByEmailAndClub')->willReturnCallback(static fn (string $email) => $email === 'membre@example.test' ? new \App\Entity\Membership() : null);
+        $memberships->method('findEmailsByClub')->willReturn($emails);
+
+        return $memberships;
+    }
+
+    private function invitations(array $pendingEmails = []): InvitationRepository
+    {
         $invitations = $this->createStub(InvitationRepository::class);
-        $invitations->method('findPendingByEmailAndClub')->willReturnCallback(static fn (string $email) => $email === 'invite@example.test' ? new \App\Entity\Invitation() : null);
-        $definition = new InvitationImportDefinition($memberships, $invitations, $this->createStub(InvitationService::class));
+        $invitations->method('findPendingEmailsByClub')->willReturn($pendingEmails);
+
+        return $invitations;
+    }
+
+    public function testValidateReasons(): void
+    {
+        $definition = new InvitationImportDefinition(
+            $this->memberships(['membre@example.test']),
+            $this->invitations(['invite@example.test']),
+            $this->createStub(InvitationService::class),
+        );
         $context = new ImportContext(new Club(), new User());
         $base = ['firstname' => 'A', 'lastname' => 'B', 'isManager' => '', 'isInspector' => '', 'isPilote' => ''];
 
@@ -30,12 +46,24 @@ class InvitationImportDefinitionTest extends TestCase
         $this->assertSame('importReasonDuplicateInFile', $definition->validate(['email' => 'JEAN@example.test'] + $base, $context));
     }
 
+    public function testValidateRejectsValuesTooLong(): void
+    {
+        $definition = new InvitationImportDefinition($this->memberships(), $this->invitations(), $this->createStub(InvitationService::class));
+        $context = new ImportContext(new Club(), new User());
+        $base = ['email' => 'jean@example.test', 'firstname' => 'A', 'lastname' => 'B', 'isManager' => '', 'isInspector' => '', 'isPilote' => ''];
+
+        $this->assertSame('importReasonTooLong', $definition->validate(['email' => str_repeat('a', 175) . '@example.test'] + $base, $context));
+        $this->assertSame('importReasonTooLong', $definition->validate(['firstname' => str_repeat('a', 256)] + $base, $context));
+        $this->assertSame('importReasonTooLong', $definition->validate(['lastname' => str_repeat('a', 256)] + $base, $context));
+        $this->assertNull($definition->validate($base, $context));
+    }
+
     public function testImportUsesOverridesForRoles(): void
     {
         $service = $this->createMock(InvitationService::class);
         $service->expects($this->once())->method('createInvitation')->with($this->anything(), $this->callback(static fn (array $data): bool => $data['email'] === 'jean@example.test' && $data['isInspector'] === true && $data['isManager'] === false))->willReturn(new \App\Entity\Invitation());
         $service->expects($this->once())->method('sendInvitation');
-        $definition = new InvitationImportDefinition($this->createStub(MembershipRepository::class), $this->createStub(InvitationRepository::class), $service);
+        $definition = new InvitationImportDefinition($this->memberships(), $this->invitations(), $service);
         $context = new ImportContext(new Club(), new User(), [1 => ['isInspector' => '1']]);
 
         $definition->import(['email' => 'jean@example.test', 'firstname' => 'Jean', 'lastname' => 'Dupont', 'isManager' => 'yes', 'isInspector' => '', 'isPilote' => '', '_line' => '1'], $context);
@@ -50,7 +78,7 @@ class InvitationImportDefinitionTest extends TestCase
         $service = $this->createMock(InvitationService::class);
         $service->expects($this->once())->method('createInvitation')->with($this->anything(), $this->callback(static fn (array $data): bool => $data['isInspector'] === false && $data['isManager'] === false && $data['isPilote'] === false))->willReturn(new \App\Entity\Invitation());
         $service->expects($this->once())->method('sendInvitation');
-        $definition = new InvitationImportDefinition($this->createStub(MembershipRepository::class), $this->createStub(InvitationRepository::class), $service);
+        $definition = new InvitationImportDefinition($this->memberships(), $this->invitations(), $service);
         $context = new ImportContext(new Club(), new User(), [1 => ['_submitted' => '1']]);
 
         $definition->import(['email' => 'jean@example.test', 'firstname' => 'Jean', 'lastname' => 'Dupont', 'isManager' => '', 'isInspector' => 'yes', 'isPilote' => '', '_line' => '1'], $context);

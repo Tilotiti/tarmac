@@ -32,7 +32,11 @@ final class SpreadsheetReader
                 $spreadsheet = $reader->load($path);
             } else {
                 file_put_contents($path, $contents);
-                $spreadsheet = IOFactory::load($path, 0, [$extension === 'xls' ? IOFactory::READER_XLS : IOFactory::READER_XLSX]);
+                // setReadDataOnly() ignore les styles, fusions et mises en forme : seules les
+                // valeurs nous intéressent, et c'est nettement plus rapide sur un gros fichier.
+                $reader = IOFactory::createReader($extension === 'xls' ? 'Xls' : 'Xlsx');
+                $reader->setReadDataOnly(true);
+                $spreadsheet = $reader->load($path);
             }
         } catch (\Throwable $exception) {
             throw new ImportReadException('unreadableFile', 0, $exception);

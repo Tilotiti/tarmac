@@ -13,11 +13,13 @@ class ImportStateTest extends TestCase
         $state->columns = ['name' => 0, 'type' => 1, 'description' => null];
         $state->values = ['type' => ['Planeur' => 'glider']];
         $state->fixed = ['owner' => 'club'];
+        $state->extra = ['distinctCounts' => ['type' => 25]];
 
         $copy = ImportState::fromArray($state->toArray());
 
         $this->assertEquals($state, $copy);
         $this->assertSame(1, $copy->columnFor('type'));
         $this->assertNull($copy->columnFor('missing'));
+        $this->assertSame(25, $copy->extra['distinctCounts']['type']);
     }
 }

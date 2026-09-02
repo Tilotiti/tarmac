@@ -11,11 +11,14 @@
 			{% for field in definition.fields %}
 				{% if state.values[field.key] is defined %}
 					<h3 style="font-size:1rem;font-weight:700;margin:1rem 0 0.5rem;">{{ field.labelKey|trans }}</h3>
+					{% if (state.extra.distinctCounts[field.key] ?? 0) > 20 %}
+						<div class="alert alert-warning" role="alert">{{ 'importTooManyValues'|trans }}</div>
+					{% endif %}
 					{% for raw, current in state.values[field.key] %}
 						<div class="row g-2 align-items-center mb-2">
 							<div class="col-12 col-sm-5"><code>{{ raw }}</code></div>
 							<div class="col-12 col-sm-7">
-								<select name="values[{{ field.key }}][{{ raw }}]" class="form-select" style="min-height:44px;">
+								<select name="values[{{ field.key }}][{{ loop.index0 }}]" class="form-select" style="min-height:44px;">
 									<option value="">{{ 'importIgnoreValue'|trans }}</option>
 									{% for choice in field.choices %}
 										<option value="{{ choice.value }}" {% if current == choice.value %}selected{% endif %}>{{ choice.labelKey|trans }}</option>
@@ -31,5 +34,6 @@
 				<button type="submit" class="btn btn-primary" style="min-height:44px;"><i class="ti ti-arrow-right me-2"></i>{{ 'importCheckPreview'|trans }}</button>
 			</div>
 		</form>
+		{% include 'club/import/_cancel.html.twig' %}
 	</div>
 {% endblock %}

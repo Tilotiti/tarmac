@@ -9,6 +9,7 @@ use App\Entity\User;
 final class ImportContext
 {
     private array $seen = [];
+    private array $memo = [];
 
     /** @var array<int, object> entités créées pendant import(), traitées ensuite par finalize() (ex. invitations à envoyer) */
     public array $created = [];
@@ -27,5 +28,18 @@ final class ImportContext
         $this->seen[$key] = true;
 
         return true;
+    }
+
+    /**
+     * Mémoïse le résultat de $factory pour la durée du contexte (un import) : évite de relancer
+     * une requête coûteuse (ex. e-mails existants) à chaque ligne.
+     */
+    public function remember(string $key, callable $factory): mixed
+    {
+        if (!array_key_exists($key, $this->memo)) {
+            $this->memo[$key] = $factory();
+        }
+
+        return $this->memo[$key];
     }
 }

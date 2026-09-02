@@ -3,6 +3,7 @@
 namespace App\Controller\Club;
 
 use App\Controller\ExtendedController;
+use App\Entity\Club;
 use App\Form\Import\ImportFileType;
 use App\Service\ClubResolver;
 use App\Service\Import\ColumnMapper;
@@ -21,6 +22,7 @@ use App\Service\Import\SpreadsheetReader;
 use App\Service\Import\ValueMapper;
 use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\FilesystemException;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -106,7 +108,10 @@ class ImportController extends ExtendedController
         if ($state === null) {
             return $this->redirectToRoute('club_import_file', ['definition' => $definition]);
         }
-        $sheet = $this->sheet($state);
+        $sheet = $this->sheetOrRedirect($club, $definition, $state);
+        if ($sheet instanceof Response) {
+            return $sheet;
+        }
 
         if ($request->isMethod('POST')) {
             $this->checkCsrf($request, 'import-mapping');
@@ -158,12 +163,16 @@ class ImportController extends ExtendedController
                 foreach ($def->fields() as $field) {
                     if ($field->hasChoices() && $state->columnFor($field->key) !== null) {
                         $needsValues = true;
-                        $distinct = $sheet->distinctValues($state->columnFor($field->key), 20, $state->hasHeader);
+                        $column = $state->columnFor($field->key);
+                        $distinct = $sheet->distinctValues($column, 20, $state->hasHeader);
                         $suggested = $this->valueMapper->suggest($distinct, $field);
                         // Conserver les choix déjà faits pour les valeurs encore présentes
                         $state->values[$field->key] = array_replace($suggested, array_intersect_key($state->values[$field->key] ?? [], $suggested));
+                        // Nombre réel de valeurs distinctes, au-delà des 20 rapprochées ci-dessus :
+                        // sert à avertir sur l'écran des valeurs (les lignes en trop seront ignorées).
+                        $state->extra['distinctCounts'][$field->key] = count($sheet->distinctValues($column, PHP_INT_MAX, $state->hasHeader));
                     } else {
-                        unset($state->values[$field->key]);
+                        unset($state->values[$field->key], $state->extra['distinctCounts'][$field->key]);
                     }
                 }
                 $this->stateStore->save($club, $state);
@@ -200,8 +209,11 @@ class ImportController extends ExtendedController
             $submitted = $request->request->all('values');
             foreach ($state->values as $fieldKey => $map) {
                 $field = $this->field($def, $fieldKey);
-                foreach ($map as $raw => $current) {
-                    $choice = (string) ($submitted[$fieldKey][$raw] ?? '');
+                // Les sélecteurs sont indexés par position (values[champ][i]), jamais par valeur
+                // brute : une valeur brute peut contenir des caractères invalides en nom de champ
+                // HTML (crochets, points…). On retrouve la valeur brute via array_keys($map).
+                foreach (array_keys($map) as $i => $raw) {
+                    $choice = (string) ($submitted[$fieldKey][$i] ?? '');
                     $state->values[$fieldKey][$raw] = $choice !== '' && $field?->choice($choice) !== null ? $choice : null;
                 }
             }
@@ -223,7 +235,11 @@ class ImportController extends ExtendedController
         if ($state === null) {
             return $this->redirectToRoute('club_import_file', ['definition' => $definition]);
         }
-        $preview = $this->resolver->resolve($this->sheet($state), $state, $def, new ImportContext($club, $this->getUser()));
+        $sheet = $this->sheetOrRedirect($club, $definition, $state);
+        if ($sheet instanceof Response) {
+            return $sheet;
+        }
+        $preview = $this->resolver->resolve($sheet, $state, $def, new ImportContext($club, $this->getUser()));
 
         return $this->render($def->previewTemplate(), ['club' => $club, 'definition' => $def, 'state' => $state, 'preview' => $preview]);
     }
@@ -238,9 +254,13 @@ class ImportController extends ExtendedController
         if ($state === null) {
             return $this->redirectToRoute('club_import_file', ['definition' => $definition]);
         }
+        $sheet = $this->sheetOrRedirect($club, $definition, $state);
+        if ($sheet instanceof Response) {
+            return $sheet;
+        }
 
         $context = new ImportContext($club, $this->getUser(), $request->request->all('rows'));
-        $preview = $this->resolver->resolve($this->sheet($state), $state, $def, $context);
+        $preview = $this->resolver->resolve($sheet, $state, $def, $context);
 
         $this->entityManager->wrapInTransaction(function () use ($preview, $def, $context): void {
             foreach ($preview->importable() as $row) {
@@ -291,6 +311,22 @@ class ImportController extends ExtendedController
     private function sheet(ImportState $state): ImportSheet
     {
         return $this->reader->read($this->storage->read($state->fileKey), $state->extension);
+    }
+
+    /**
+     * Relit le fichier depuis S3, ou renvoie une redirection propre si le fichier n'est plus là
+     * (expiré, purgé, ou objet supprimé côté S3) ou n'est plus lisible.
+     */
+    private function sheetOrRedirect(Club $club, string $definition, ImportState $state): ImportSheet|Response
+    {
+        try {
+            return $this->sheet($state);
+        } catch (FilesystemException|ImportReadException) {
+            $this->stateStore->clear($club, $definition);
+            $this->addFlash('danger', $this->trans('importFileGone'));
+
+            return $this->redirectToRoute('club_import_file', ['definition' => $definition]);
+        }
     }
 
     /** @return array<int, string[]> trois valeurs d'exemple par colonne, pour l'aperçu sous chaque menu */

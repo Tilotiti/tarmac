@@ -44,6 +44,16 @@ class EquipmentImportDefinitionTest extends TestCase
         $this->assertSame('importReasonDuplicateInFile', $definition->validate(['name' => 'F-CHXY', 'type' => 'airplane', 'description' => '', 'owner' => 'club'], $context));
     }
 
+    public function testValidateRejectsNameTooLong(): void
+    {
+        $persisted = [];
+        $definition = $this->definition([], $persisted);
+        $context = new ImportContext(new Club(), new User());
+
+        $this->assertSame('importReasonTooLong', $definition->validate(['name' => str_repeat('a', 256), 'type' => 'glider', 'description' => '', 'owner' => 'club'], $context));
+        $this->assertNull($definition->validate(['name' => str_repeat('a', 255), 'type' => 'glider', 'description' => '', 'owner' => 'club'], $context));
+    }
+
     public function testImportCreatesEquipment(): void
     {
         $persisted = [];

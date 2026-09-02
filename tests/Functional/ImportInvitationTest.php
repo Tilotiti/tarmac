@@ -45,8 +45,9 @@ class ImportInvitationTest extends FunctionalTestCase
         $this->assertSame('0', $crawler->filter('select[name="columns[lastname]"] option[selected]')->attr('value'));
         $this->assertSame('3', $crawler->filter('select[name="columns[isInspector]"] option[selected]')->attr('value'));
         $this->client->submit($crawler->selectButton('Continuer')->form());
-        $crawler = $this->client->followRedirect(); // valeurs : « oui » → yes
-        $this->assertSame('yes', $crawler->filter('select[name="values[isInspector][oui]"] option[selected]')->attr('value'));
+        $crawler = $this->client->followRedirect(); // valeurs : « oui » (seule valeur distincte, index 0) → yes
+        $this->assertSelectorTextContains('body', 'oui');
+        $this->assertSame('yes', $crawler->filter('select[name="values[isInspector][0]"] option[selected]')->attr('value'));
         $this->client->submit($crawler->selectButton('Vérifier l\'aperçu')->form());
         $crawler = $this->client->followRedirect();
 

@@ -43,6 +43,23 @@ class MembershipRepository extends ServiceEntityRepository
     }
 
     /**
+     * Adresses e-mail (en minuscules) de tous les membres du club, pour un pré-chargement en
+     * une requête (évite une requête par ligne dans les validations d'import).
+     *
+     * @return string[]
+     */
+    public function findEmailsByClub(Club $club): array
+    {
+        $queryBuilder = $this->createQueryBuilder('membership')
+            ->select('LOWER(user.email) AS email')
+            ->innerJoin('membership.user', 'user')
+            ->where('membership.club = :club')
+            ->setParameter('club', $club);
+
+        return array_column($queryBuilder->getQuery()->getScalarResult(), 'email');
+    }
+
+    /**
      * Query memberships by club with filters
      */
     public function queryByClubAndFilters(Club $club, array $filters = []): QueryBuilder
