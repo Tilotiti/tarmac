@@ -87,6 +87,23 @@ class OnboardingAccountTest extends FunctionalTestCase
         $this->assertTrue($user->isVerified());
     }
 
+    public function testResendRequiresCsrfAndSendsEmail(): void
+    {
+        $user = $this->createUser('arenvoyer@example.test', verified: false);
+        $this->client->loginUser($user);
+
+        $this->client->request('POST', $this->www('/creer-mon-club/verification/renvoyer'));
+        $this->assertResponseStatusCodeSame(403);
+        $this->assertEmailCount(0);
+
+        $crawler = $this->client->request('GET', $this->www('/creer-mon-club/verification'));
+        $token = $crawler->filter('input[name="_token"]')->attr('value');
+        $this->client->request('POST', $this->www('/creer-mon-club/verification/renvoyer'), ['_token' => $token]);
+
+        $this->assertResponseRedirects('/creer-mon-club/verification');
+        $this->assertEmailCount(1);
+    }
+
     public function testTamperedConfirmationLinkIsRejected(): void
     {
         $user = $this->createUser('averifier2@example.test', verified: false);

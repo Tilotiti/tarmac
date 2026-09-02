@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Tests\Functional\FunctionalTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 class PurgeUnverifiedUsersCommandTest extends FunctionalTestCase
 {
@@ -32,6 +33,23 @@ class PurgeUnverifiedUsersCommandTest extends FunctionalTestCase
         $this->assertNotNull($repository->findOneBy(['email' => 'recent@example.test']));
         $this->assertNotNull($repository->findOneBy(['email' => 'verifie@example.test']));
         $this->assertNotNull($repository->findOneBy(['email' => 'membre@example.test']));
+        $this->assertStringContainsString('1 compte', $tester->getDisplay());
+    }
+
+    public function testPurgesUserWithPendingResetPasswordRequestWithoutError(): void
+    {
+        $old = $this->createUser('oublie@example.test', verified: false);
+        $old->setCreatedAt(new \DateTimeImmutable('-10 days'));
+        $this->entityManager()->flush();
+
+        static::getContainer()->get(ResetPasswordHelperInterface::class)->generateResetToken($old);
+
+        $tester = new CommandTester((new Application(static::$kernel))->find('app:users:purge-unverified'));
+        $tester->execute([]);
+
+        $tester->assertCommandIsSuccessful();
+        $this->assertStringNotContainsString('WARNING', $tester->getDisplay());
+        $this->assertNull($this->entityManager()->getRepository(User::class)->findOneBy(['email' => 'oublie@example.test']));
         $this->assertStringContainsString('1 compte', $tester->getDisplay());
     }
 }

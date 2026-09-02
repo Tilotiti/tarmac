@@ -222,7 +222,6 @@ class OnboardingController extends ExtendedController
             if (!$report->isEmpty() && !$confirmed) {
                 return $this->render('public/onboarding/duplicate.html.twig', [
                     'form' => $form,
-                    'club' => $club,
                     'report' => $report,
                 ]);
             }
@@ -252,6 +251,10 @@ class OnboardingController extends ExtendedController
     #[Route('/rejoindre/{id}', name: 'public_onboarding_join_request', methods: ['GET', 'POST'])]
     public function joinRequest(Request $request, Club $club): Response
     {
+        if (!$club->isActive()) {
+            throw $this->createNotFoundException();
+        }
+
         $user = $this->verifiedUserOrRedirect();
         if ($user instanceof Response) {
             return $user;

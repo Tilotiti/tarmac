@@ -2746,10 +2746,6 @@
         <source>landingCtaTitle</source>
         <target>Pas encore membre ?</target>
       </trans-unit>
-      <trans-unit id="846" resname="landingCtaBody">
-        <source>landingCtaBody</source>
-        <target>Tarmac fonctionne sur invitation. Demandez à votre club de vous ajouter, ou explorez le guide pour comprendre comment ça marche.</target>
-      </trans-unit>
       <trans-unit id="847" resname="readUserGuide">
         <source>readUserGuide</source>
         <target>Lire le guide utilisateur</target>
@@ -2834,17 +2830,9 @@
         <source>landingFinalCtaTitle</source>
         <target>Prêt à décoller ?</target>
       </trans-unit>
-      <trans-unit id="868" resname="landingFinalCtaBody">
-        <source>landingFinalCtaBody</source>
-        <target>Tarmac fonctionne sur invitation. Demandez à votre club de vous ajouter, ou explorez le guide pour comprendre comment ça marche.</target>
-      </trans-unit>
       <trans-unit id="869" resname="landingMadeWith">
         <source>landingMadeWith</source>
         <target>Fait avec passion, quelque part entre deux vols.</target>
-      </trans-unit>
-      <trans-unit id="870" resname="exploreGuide">
-        <source>exploreGuide</source>
-        <target>Explorer le guide</target>
       </trans-unit>
       <trans-unit id="871" resname="landingContactEyebrow">
         <source>landingContactEyebrow</source>

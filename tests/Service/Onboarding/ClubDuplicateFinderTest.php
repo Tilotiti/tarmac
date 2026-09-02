@@ -80,4 +80,14 @@ class ClubDuplicateFinderTest extends TestCase
 
         $this->assertSame([$existing], $report->duplicates);
     }
+
+    public function testCloseNameWithExistingClubWithoutCoordinatesIsDuplicate(): void
+    {
+        $field = $this->aerodrome('Bailleau', 48.5, 1.6);
+        $existing = $this->club('Planeurs de Beauce', null);
+
+        $report = $this->finder([$existing])->find('Les Planeurs de Beauce', $field);
+
+        $this->assertSame([$existing], $report->duplicates);
+    }
 }

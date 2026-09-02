@@ -66,7 +66,10 @@ class Aerodrome
         return $this;
     }
 
-    /** « Megève Altiport (Megève) · LFHM » ; la commune n'est pas répétée si le nom la contient. */
+    /**
+     * Ex. si le nom contient la commune : « Megève Altiport · LFHM ».
+     * Ex. sinon, la commune est ajoutée entre parenthèses : « Altiport (Megève) · LFHM ».
+     */
     public function getLabel(): string
     {
         $label = $this->name;

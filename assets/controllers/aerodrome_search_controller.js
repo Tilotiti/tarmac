@@ -16,6 +16,10 @@ export default class extends Controller {
         this.timer = null;
     }
 
+    disconnect() {
+        clearTimeout(this.timer);
+    }
+
     search() {
         clearTimeout(this.timer);
         this.hiddenTarget.value = '';
@@ -29,6 +33,9 @@ export default class extends Controller {
 
     async fetchResults(query) {
         const response = await fetch(`${this.urlValue}?q=${encodeURIComponent(query)}`, { headers: { Accept: 'application/json' } });
+        if (!this.element.isConnected) {
+            return;
+        }
         if (!response.ok) {
             return;
         }

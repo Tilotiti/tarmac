@@ -21,5 +21,6 @@ class LandingTest extends FunctionalTestCase
 
         $this->assertSame(1, $crawler->filter('.landing-hero a.landing-btn-primary')->count());
         $this->assertStringContainsString('/clubs', $crawler->filter('.landing-hero a.landing-btn-primary')->attr('href'));
+        $this->assertGreaterThanOrEqual(1, $crawler->filter('.dropdown-menu a[href$="/creer-mon-club"]')->count());
     }
 }

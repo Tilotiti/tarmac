@@ -55,6 +55,20 @@ class JoinRequestTest extends FunctionalTestCase
         $this->assertSame(1, $this->entityManager()->getRepository(JoinRequest::class)->count(['user' => $requester, 'club' => $club]));
     }
 
+    public function testRequestOnInactiveClubReturns404(): void
+    {
+        $club = $this->createClub('Planeurs de Beauce', 'beauce');
+        $club->setActive(false);
+        $this->entityManager()->flush();
+
+        $requester = $this->createUser('candidat@example.test');
+        $this->client->loginUser($requester);
+
+        $this->client->request('GET', $this->www('/creer-mon-club/rejoindre/' . $club->getId()));
+
+        $this->assertResponseStatusCodeSame(404);
+    }
+
     public function testMemberIsRedirectedAway(): void
     {
         $member = $this->createUser('membre@example.test');
@@ -95,6 +109,52 @@ class JoinRequestTest extends FunctionalTestCase
         $this->assertNotNull($joinRequest);
         $this->assertFalse($joinRequest->isOpen());
         $this->assertSame($requester, $joinRequest->getHandledBy());
+    }
+
+    public function testManagerCanIgnoreJoinRequest(): void
+    {
+        $manager = $this->createUser('manager4@example.test');
+        $club = $this->createClub('Planeurs de Beauce', 'beauce');
+        $club->addMembership((new Membership())->setUser($manager)->setClub($club)->setIsManager(true));
+        $this->entityManager()->flush();
+
+        $requester = $this->createUser('candidat4@example.test');
+        /** @var JoinRequestService $joinRequestService */
+        $joinRequestService = static::getContainer()->get(JoinRequestService::class);
+        $joinRequestService->submit($requester, $club, null);
+        $joinRequest = $this->entityManager()->getRepository(JoinRequest::class)->findOneBy(['user' => $requester, 'club' => $club]);
+
+        $this->client->loginUser($manager);
+        $host = 'https://beauce.' . static::getContainer()->getParameter('domain');
+        $crawler = $this->client->request('GET', $host . '/invitations');
+        $token = $crawler->filter('form[action$="/invitations/demandes/' . $joinRequest->getId() . '/ignorer"] input[name="_token"]')->attr('value');
+        $this->client->request('POST', $host . '/invitations/demandes/' . $joinRequest->getId() . '/ignorer', ['_token' => $token]);
+
+        $this->assertResponseRedirects('/invitations');
+        $reloaded = $this->entityManager()->getRepository(JoinRequest::class)->find($joinRequest->getId());
+        $this->assertFalse($reloaded->isOpen());
+    }
+
+    public function testIgnoringJoinRequestWithWrongTokenIsForbidden(): void
+    {
+        $manager = $this->createUser('manager5@example.test');
+        $club = $this->createClub('Planeurs de Beauce', 'beauce');
+        $club->addMembership((new Membership())->setUser($manager)->setClub($club)->setIsManager(true));
+        $this->entityManager()->flush();
+
+        $requester = $this->createUser('candidat5@example.test');
+        /** @var JoinRequestService $joinRequestService */
+        $joinRequestService = static::getContainer()->get(JoinRequestService::class);
+        $joinRequestService->submit($requester, $club, null);
+        $joinRequest = $this->entityManager()->getRepository(JoinRequest::class)->findOneBy(['user' => $requester, 'club' => $club]);
+
+        $this->client->loginUser($manager);
+        $host = 'https://beauce.' . static::getContainer()->getParameter('domain');
+        $this->client->request('POST', $host . '/invitations/demandes/' . $joinRequest->getId() . '/ignorer', ['_token' => 'wrong-token']);
+
+        $this->assertResponseStatusCodeSame(403);
+        $reloaded = $this->entityManager()->getRepository(JoinRequest::class)->find($joinRequest->getId());
+        $this->assertTrue($reloaded->isOpen());
     }
 
     public function testAcceptingInvitationClosesOpenJoinRequestAndCreatesMembership(): void

@@ -19,12 +19,12 @@
 					<h2 class="page-title">
 						{{ 'myClubs'|trans }}
 					</h2>
-					<a href="{{ path('public_onboarding_account') }}" class="btn btn-outline-primary" style="min-height:44px;">
-						<i class="ti ti-windsock me-2"></i>{{ 'createClub'|trans }}
-					</a>
 					<div class="text-secondary mt-1">
 						{{ 'helloUser'|trans({name: app.user.firstname ?: app.user.fullName})|default('Bonjour ' ~ app.user.fullName ~ ' !') }}
 					</div>
+					<a href="{{ path('public_onboarding_account') }}" class="btn btn-outline-primary" style="min-height:44px;">
+						<i class="ti ti-windsock me-2"></i>{{ 'createClub'|trans }}
+					</a>
 				</div>
 			</div>
 		</div>

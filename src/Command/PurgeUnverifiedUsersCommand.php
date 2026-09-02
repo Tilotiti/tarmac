@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Repository\ResetPasswordRequestRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -16,6 +17,7 @@ final class PurgeUnverifiedUsersCommand extends Command
 {
     public function __construct(
         private readonly UserRepository $userRepository,
+        private readonly ResetPasswordRequestRepository $resetPasswordRequestRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
@@ -33,19 +35,30 @@ final class PurgeUnverifiedUsersCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $before = new \DateTimeImmutable(sprintf('-%d days', (int) $input->getOption('days')));
         $users = $this->userRepository->findUnverifiedOlderThan($before);
+        $dryRun = (bool) $input->getOption('dry-run');
 
+        $count = 0;
         foreach ($users as $user) {
             $io->text(sprintf('%s (créé le %s)', $user->getEmail(), $user->getCreatedAt()?->format('d/m/Y')));
-            if (!$input->getOption('dry-run')) {
+
+            if ($dryRun) {
+                ++$count;
+                continue;
+            }
+
+            try {
+                // reset_password_request.user_id n'a pas de ON DELETE : purger d'abord les
+                // demandes de réinitialisation, sinon le remove() du user échoue en base.
+                $this->resetPasswordRequestRepository->removeRequests($user);
                 $this->entityManager->remove($user);
+                $this->entityManager->flush();
+                ++$count;
+            } catch (\Throwable $e) {
+                $io->warning(sprintf('%s : %s', $user->getEmail(), $e->getMessage()));
             }
         }
 
-        if (!$input->getOption('dry-run')) {
-            $this->entityManager->flush();
-        }
-
-        $io->success(sprintf('%d compte%s %s.', count($users), count($users) > 1 ? 's' : '', $input->getOption('dry-run') ? 'à supprimer' : 'supprimé(s)'));
+        $io->success(sprintf('%d compte%s %s.', $count, $count > 1 ? 's' : '', $dryRun ? 'à supprimer' : 'supprimé(s)'));
 
         return Command::SUCCESS;
     }

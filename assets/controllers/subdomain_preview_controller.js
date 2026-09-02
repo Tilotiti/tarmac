@@ -17,6 +17,10 @@ export default class extends Controller {
         this.update();
     }
 
+    disconnect() {
+        clearTimeout(this.timer);
+    }
+
     fromName() {
         if (this.edited) {
             return;
@@ -43,6 +47,9 @@ export default class extends Controller {
 
     async check(value) {
         const response = await fetch(`${this.checkUrlValue}?value=${encodeURIComponent(value)}`, { headers: { Accept: 'application/json' } });
+        if (!this.element.isConnected) {
+            return;
+        }
         if (!response.ok) {
             return;
         }
