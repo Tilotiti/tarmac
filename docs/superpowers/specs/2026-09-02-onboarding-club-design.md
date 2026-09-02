@@ -126,6 +126,7 @@ Récapitulatif : nom, adresse cliquable, « Votre club est prêt. Le tableau de 
 
 | Clé | Condition « fait » | Action | Essentiel |
 |---|---|---|---|
+| `aerodrome` | `Club::aerodrome` non nul | `club_settings_aerodrome` | non |
 | `equipment` | au moins un `Equipment` actif | `club_equipment_new` | oui |
 | `members` | au moins une `Invitation` ou une `Membership` dont l'utilisateur n'est pas `createdBy` | `club_invitations` | oui |
 | `secondManager` | au moins deux `Membership` avec `isManager` | `club_members` | non |
@@ -137,21 +138,25 @@ Chaque contrôle porte deux clés de traduction : `healthCheck.<key>.title` et `
 
 ### 4.3 Carte sur le tableau de bord
 
-Visible des gestionnaires seulement (`is_granted('MANAGE')`), placée au-dessus des sections existantes. Titre « Votre Tarmac est-il prêt ? », sous-titre « 3 sur 6 », une ligne par contrôle avec icône d'état, titre, phrase d'utilité et bouton d'action (44 px de haut). Les contrôles faits sont repliés sous un lien « Voir ce qui est fait ».
+Visible des gestionnaires seulement (`is_granted('MANAGE')`), placée au-dessus des sections existantes. Titre « Votre Tarmac est-il prêt ? », sous-titre « 3 sur 7 », une ligne par contrôle avec icône d'état, titre, phrase d'utilité et bouton d'action (44 px de haut). Les contrôles faits sont repliés sous un lien « Voir ce qui est fait ».
 
-Masquage : bouton « Masquer », qui pose `Club::healthCheckDismissedAt`. La carte masquée revient quand un contrôle essentiel est `todo` et que le masquage date de plus de 30 jours. Un badge « Configuration 3/6 » reste dans le menu Club tant que tout n'est pas fait, et rouvre la carte (`?healthCheck=1` remet `healthCheckDismissedAt` à null).
+Masquage : bouton « Masquer », qui pose `Club::healthCheckDismissedAt`. La carte masquée revient quand un contrôle essentiel est `todo` et que le masquage date de plus de 30 jours. Un badge « Configuration 3/7 » reste dans le menu Club tant que tout n'est pas fait, et rouvre la carte (`?healthCheck=1` remet `healthCheckDismissedAt` à null).
 
 La carte disparaît d'elle-même quand tous les contrôles sont faits.
 
-### 4.4 Page « Comprendre les plans d'entretien » — `club_plans_explain`
+### 4.4 Page « Votre aérodrome » — `club_settings_aerodrome`
+
+Route sur le sous-domaine, réservée aux gestionnaires. Un seul champ, le même sélecteur d'aérodrome que l'inscription (§3.3), avec le lien « Mon terrain n'est pas dans la liste » et la commune en texte libre. L'enregistrement copie latitude et longitude depuis l'aérodrome. C'est par cette page que les clubs déjà présents sur Tarmac renseignent leur terrain, sans passer par l'admin : pour eux, la carte de checklist réapparaît avec ce seul item.
+
+### 4.5 Page « Comprendre les plans d'entretien » — `club_plans_explain`
 
 Route sur le sous-domaine, réservée aux gestionnaires. Trois cartes en deux phrases chacune : un plan décrit les opérations d'un type de matériel ; on l'applique à chaque appareil ; Tarmac génère les tâches et les renouvelle. Lien vers la section « Plans d'entretien » du guide. Bouton « Créer mon premier plan » vers `club_plan_new`. Mention : « Vous pouvez aussi créer des tâches ponctuelles sans plan. »
 
-### 4.5 Contrôles de santé courante (phase 2)
+### 4.6 Contrôles de santé courante (phase 2)
 
 Même mécanisme, priorité inférieure, non essentiels : matériel actif sans plan appliqué, tâche en retard, sous-tâches en attente d'inspection sans qualifié actif, invitations expirées non renouvelées.
 
-### 4.6 Import d'invitations en deux temps (phase 2)
+### 4.7 Import d'invitations en deux temps (phase 2)
 
 `InvitationImportService` se scinde en `analyse(UploadedFile, Club): ImportPreview` (lignes retenues avec e-mail, prénom, nom ; lignes ignorées avec raison) et `send(ImportPreview, Club, array $roles)`. Le contrôleur `club_invitation_import` affiche l'aperçu après l'envoi du fichier, l'aperçu étant conservé en session, puis un second formulaire avec, par ligne retenue, les cases gestionnaire, qualifié, pilote, et le bouton « Envoyer les invitations ». Les rôles sont reportés sur chaque `Invitation` ; `acceptInvitation` les copie déjà sur la `Membership`.
 
@@ -171,6 +176,7 @@ Formats acceptés : XLSX, XLS, CSV (séparateur `;` ou `,`, détecté). En-tête
 - E-mail de notification à chaque création (§3.4).
 - Fiche club : créateur, aérodrome, date, demandes d'adhésion ouvertes, clubs sur le même terrain.
 - Formulaire admin du club (`ClubType`) : même champ aérodrome avec autocomplétion, pour renseigner les clubs existants.
+- Liste admin des clubs : badge « Sans aérodrome » sur les clubs concernés et filtre correspondant, pour suivre la reprise. La reprise se fait soit par l'admin, soit par les gestionnaires du club via la checklist (§4.4).
 - Dashboard admin : bloc « Clubs créés ces 30 derniers jours » avec nom, créateur, matériels, membres, invitations, bouton vers la fiche.
 
 ## 7. Guide utilisateur
@@ -206,8 +212,8 @@ Toutes les chaînes en clés `lowerCamelCase` ajoutées à la main dans `transla
 
 ## 12. Phasage
 
-Phase 1 : §3 complet, §4.1 à 4.4, §5, §6, §7 (hors import), §8, §10.
-Phase 2 : §4.5, §4.6, géocodage de la commune saisie en texte libre via le service Géoplateforme (sans clé, 50 appels par seconde et par IP) pour donner des coordonnées aux clubs sans aérodrome listé, carte des clubs sur la landing, guide correspondant.
+Phase 1 : §3 complet, §4.1 à 4.5, §5, §6, §7 (hors import), §8, §10.
+Phase 2 : §4.6, §4.7, géocodage de la commune saisie en texte libre via le service Géoplateforme (sans clé, 50 appels par seconde et par IP) pour donner des coordonnées aux clubs sans aérodrome listé, carte des clubs sur la landing, guide correspondant.
 
 ## 13. Dépendances à installer
 
