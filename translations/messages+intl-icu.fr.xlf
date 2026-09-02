@@ -3603,9 +3603,70 @@
         <source>emailVerified</source>
         <target>Adresse confirmée, créons votre club</target>
       </trans-unit>
-      <trans-unit id="1758" resname="onboardingClubPlaceholder">
-        <source>onboardingClubPlaceholder</source>
-        <target>Votre e-mail est confirmé. La création de votre club arrive dans la prochaine étape.</target>
+      <!-- Onboarding : club, doublon, bienvenue -->
+      <trans-unit id="1759" resname="onboardingClubTitle">
+        <source>onboardingClubTitle</source>
+        <target>Votre club</target>
+      </trans-unit>
+      <trans-unit id="1760" resname="onboardingClubLead">
+        <source>onboardingClubLead</source>
+        <target>Le nom tel que vos membres le connaissent, et le terrain où vous volez.</target>
+      </trans-unit>
+      <trans-unit id="1761" resname="clubAddressHelp">
+        <source>clubAddressHelp</source>
+        <target>Vos membres se connecteront sur</target>
+      </trans-unit>
+      <trans-unit id="1762" resname="createMyClub">
+        <source>createMyClub</source>
+        <target>Créer mon club</target>
+      </trans-unit>
+      <trans-unit id="1763" resname="onboardingDuplicateTitle">
+        <source>onboardingDuplicateTitle</source>
+        <target>Ce club existe déjà ?</target>
+      </trans-unit>
+      <trans-unit id="1764" resname="onboardingDuplicateLead">
+        <source>onboardingDuplicateLead</source>
+        <target>Un club au nom proche est déjà sur Tarmac, tout près de chez vous. Si c'est le vôtre, demandez à le rejoindre plutôt que d'en créer un second.</target>
+      </trans-unit>
+      <trans-unit id="1765" resname="onboardingNeighboursTitle">
+        <source>onboardingNeighboursTitle</source>
+        <target>D'autres clubs sont déjà sur ce terrain</target>
+      </trans-unit>
+      <trans-unit id="1766" resname="onboardingNeighboursHint">
+        <source>onboardingNeighboursHint</source>
+        <target>Si votre club est l'un d'eux, demandez à le rejoindre. Sinon, continuez : plusieurs clubs peuvent partager un aérodrome.</target>
+      </trans-unit>
+      <trans-unit id="1767" resname="onboardingNeighboursSubtitle">
+        <source>onboardingNeighboursSubtitle</source>
+        <target>Également sur ce terrain</target>
+      </trans-unit>
+      <trans-unit id="1768" resname="requestToJoin">
+        <source>requestToJoin</source>
+        <target>Demander à rejoindre ce club</target>
+      </trans-unit>
+      <trans-unit id="1769" resname="notMyClubContinue">
+        <source>notMyClubContinue</source>
+        <target>Ce n'est pas mon club, continuer</target>
+      </trans-unit>
+      <trans-unit id="1770" resname="onboardingDoneTitle">
+        <source>onboardingDoneTitle</source>
+        <target>{club} est prêt</target>
+      </trans-unit>
+      <trans-unit id="1771" resname="onboardingDoneAddress">
+        <source>onboardingDoneAddress</source>
+        <target>Vos membres se connecteront à cette adresse, notez-la :</target>
+      </trans-unit>
+      <trans-unit id="1772" resname="onboardingDoneBody">
+        <source>onboardingDoneBody</source>
+        <target>Le tableau de bord vous indique ce qu'il reste à configurer. Prenez les points dans l'ordre, chacun prend quelques minutes.</target>
+      </trans-unit>
+      <trans-unit id="1773" resname="openMyClub">
+        <source>openMyClub</source>
+        <target>Ouvrir mon club</target>
+      </trans-unit>
+      <trans-unit id="1774" resname="onboardingJoinRequestPlaceholder">
+        <source>onboardingJoinRequestPlaceholder</source>
+        <target>Cette fonctionnalité arrive dans la prochaine étape.</target>
       </trans-unit>
     </body>
 </file>

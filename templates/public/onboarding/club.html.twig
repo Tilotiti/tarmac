@@ -1,0 +1,58 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}{{ 'onboardingClubTitle'|trans }}{% endblock %}
+
+{% block body %}
+	<div class="page page-center">
+		<div class="container container-tight py-4">
+			<div class="text-center mb-4">
+				<a href="{{ path('public_landing') }}" class="navbar-brand navbar-brand-autodark">
+					<img src="{{ asset('logo.svg') }}" height="48" alt="Tarmac">
+				</a>
+			</div>
+			<div class="tarmac-panel">
+				<h2 style="font-size:1.4rem;font-weight:800;text-align:center;margin:0 0 0.5rem;letter-spacing:-0.015em;">{{ 'onboardingClubTitle'|trans }}</h2>
+				<p class="text-center text-secondary mb-4">{{ 'onboardingClubLead'|trans }}</p>
+
+				{% for message in app.flashes('success') %}
+					<div class="alert alert-success">{{ message|trans }}</div>
+				{% endfor %}
+
+				{{ form_start(form, {attr: {
+					'data-controller': 'subdomain-preview',
+					'data-subdomain-preview-check-url-value': path('public_onboarding_subdomain_check'),
+					'data-subdomain-preview-domain-value': domain,
+					'data-turbo': 'false',
+				}}) }}
+				{{ form_errors(form) }}
+
+				{{ form_row(form.name, {attr: {'data-subdomain-preview-target': 'name', 'data-action': 'input->subdomain-preview#fromName'}}) }}
+
+				<div class="mb-3">
+					{{ form_label(form.subdomain) }}
+					<div class="input-group" style="min-height:44px;">
+						<span class="input-group-text">https://</span>
+						{{ form_widget(form.subdomain, {attr: {'data-subdomain-preview-target': 'subdomain', 'data-action': 'input->subdomain-preview#fromSubdomain'}}) }}
+						<span class="input-group-text">.{{ domain }}</span>
+					</div>
+					{{ form_errors(form.subdomain) }}
+					<div class="form-hint">{{ 'clubAddressHelp'|trans }} <strong data-subdomain-preview-target="preview"></strong></div>
+					<div class="form-hint" data-subdomain-preview-target="status"></div>
+				</div>
+
+				{% include 'component/aerodromeSelector.html.twig' with {
+					aerodromeField: form.aerodrome,
+					locationField: form.locationLabel,
+					searchUrl: path('api_aerodromes'),
+				} %}
+
+				{{ form_widget(form.confirmed) }}
+
+				<button type="submit" class="btn btn-primary w-100 mt-3" style="min-height: 48px;">
+					<i class="ti ti-windsock me-2"></i>{{ 'createMyClub'|trans }}
+				</button>
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+{% endblock %}

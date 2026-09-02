@@ -1,0 +1,62 @@
+{% extends 'public/base.html.twig' %}
+
+{% block title %}{{ report.duplicates is not empty ? 'onboardingDuplicateTitle'|trans : 'onboardingNeighboursTitle'|trans }}{% endblock %}
+
+{% block body %}
+	<div class="page page-center">
+		<div class="container container-tight py-4">
+			<div class="text-center mb-4">
+				<a href="{{ path('public_landing') }}" class="navbar-brand navbar-brand-autodark">
+					<img src="{{ asset('logo.svg') }}" height="48" alt="Tarmac">
+				</a>
+			</div>
+			<div class="tarmac-panel">
+				{% if report.duplicates is not empty %}
+					<h2 style="font-size:1.4rem;font-weight:800;text-align:center;margin:0 0 0.5rem;">{{ 'onboardingDuplicateTitle'|trans }}</h2>
+					<p class="text-center text-secondary mb-4">{{ 'onboardingDuplicateLead'|trans }}</p>
+					<div class="list-group mb-4">
+						{% for other in report.duplicates %}
+							<div class="list-group-item">
+								<div class="fw-bold">{{ other.name }}</div>
+								<div class="text-secondary" style="font-size:0.9rem;">{{ other.locationText }}{% if other.locationText %} · {% endif %}{{ other.subdomain }}.{{ subdomainService.domain }}</div>
+								<a href="{{ path('public_onboarding_join_request', {id: other.id}) }}" class="btn btn-outline-primary mt-2" style="min-height:44px;">
+									<i class="ti ti-door-enter me-2"></i>{{ 'requestToJoin'|trans }}
+								</a>
+							</div>
+						{% endfor %}
+					</div>
+				{% else %}
+					<h2 style="font-size:1.4rem;font-weight:800;text-align:center;margin:0 0 0.5rem;">{{ 'onboardingNeighboursTitle'|trans }}</h2>
+					<p class="text-center text-secondary mb-4">{{ 'onboardingNeighboursHint'|trans }}</p>
+				{% endif %}
+
+				{% if report.neighbours is not empty %}
+					{% if report.duplicates is not empty %}<h3 style="font-size:1rem;">{{ 'onboardingNeighboursSubtitle'|trans }}</h3>{% endif %}
+					<div class="list-group mb-4">
+						{% for other in report.neighbours %}
+							<div class="list-group-item">
+								<div class="fw-bold">{{ other.name }}</div>
+								<div class="text-secondary" style="font-size:0.9rem;">{{ other.subdomain }}.{{ subdomainService.domain }}</div>
+								<a href="{{ path('public_onboarding_join_request', {id: other.id}) }}" class="btn btn-outline-primary mt-2" style="min-height:44px;">
+									<i class="ti ti-door-enter me-2"></i>{{ 'requestToJoin'|trans }}
+								</a>
+							</div>
+						{% endfor %}
+					</div>
+				{% endif %}
+
+				{{ form_start(form, {action: path('public_onboarding_club')}) }}
+				<input type="hidden" name="{{ field_name(form.name) }}" value="{{ field_value(form.name) }}">
+				<input type="hidden" name="{{ field_name(form.subdomain) }}" value="{{ field_value(form.subdomain) }}">
+				<input type="hidden" name="{{ field_name(form.locationLabel) }}" value="{{ field_value(form.locationLabel) }}">
+				{{ form_widget(form.aerodrome) }}
+				<input type="hidden" name="{{ field_name(form.confirmed) }}" value="1">
+				{{ form_widget(form._token) }}
+				<button type="submit" class="btn btn-primary w-100" style="min-height:48px;">
+					<i class="ti ti-arrow-right me-2"></i>{{ 'notMyClubContinue'|trans }}
+				</button>
+				{{ form_end(form, {render_rest: false}) }}
+			</div>
+		</div>
+	</div>
+{% endblock %}

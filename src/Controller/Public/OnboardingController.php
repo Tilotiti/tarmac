@@ -3,13 +3,16 @@
 namespace App\Controller\Public;
 
 use App\Controller\ExtendedController;
+use App\Entity\Club;
 use App\Entity\User;
 use App\Form\Onboarding\OnboardingAccountType;
+use App\Form\Onboarding\OnboardingClubType;
 use App\Repository\ClubRepository;
 use App\Repository\JoinRequestRepository;
 use App\Repository\UserRepository;
 use App\Service\Onboarding\ClubDuplicateFinder;
 use App\Service\Onboarding\ClubRegistrationService;
+use App\Service\Onboarding\DuplicateReport;
 use App\Service\Onboarding\EmailVerificationService;
 use App\Service\Onboarding\JoinRequestService;
 use App\Service\SubdomainService;
@@ -184,20 +187,80 @@ class OnboardingController extends ExtendedController
         return $this->redirectToRoute('public_onboarding_club');
     }
 
-    /**
-     * Étape « Club » : la tâche 10 y ajoute le formulaire de création du club
-     * (OnboardingClubType). Cette version ne fait que valider les pré-conditions
-     * de la tâche 9 (compte créé et e-mail confirmé) et rendre un message d'attente,
-     * nécessaire pour que les redirections de cette tâche résolvent une route réelle.
-     */
-    #[Route('/club', name: 'public_onboarding_club', methods: ['GET', 'POST'])]
-    public function club(): Response
+    /** Renvoie l'utilisateur connecté et vérifié, ou la redirection vers l'écran adéquat. */
+    private function verifiedUserOrRedirect(): User|Response
     {
         $user = $this->getUser();
-        if (!$user instanceof User || !$user->isVerified()) {
+        if (!$user instanceof User) {
             return $this->redirectToRoute('public_onboarding_account');
         }
+        if (!$user->isVerified()) {
+            return $this->redirectToRoute('public_onboarding_verify');
+        }
 
-        return new Response($this->translator->trans('onboardingClubPlaceholder'));
+        return $user;
+    }
+
+    #[Route('/club', name: 'public_onboarding_club', methods: ['GET', 'POST'])]
+    public function club(Request $request): Response
+    {
+        $user = $this->verifiedUserOrRedirect();
+        if ($user instanceof Response) {
+            return $user;
+        }
+
+        $club = new Club();
+        $form = $this->createForm(OnboardingClubType::class, $club);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $report = $this->duplicateFinder->find((string) $club->getName(), $club->getAerodrome());
+            $confirmed = $form->get('confirmed')->getData() === '1';
+
+            if (!$report->isEmpty() && !$confirmed) {
+                return $this->render('public/onboarding/duplicate.html.twig', [
+                    'form' => $form,
+                    'club' => $club,
+                    'report' => $report,
+                ]);
+            }
+
+            $this->registration->register($user, $club, $confirmed ? $report : new DuplicateReport());
+
+            return $this->redirectToRoute('public_onboarding_done', ['id' => $club->getId()]);
+        }
+
+        return $this->render('public/onboarding/club.html.twig', [
+            'form' => $form,
+            'domain' => $this->subdomainService->getDomain(),
+        ]);
+    }
+
+    #[Route('/bienvenue/{id}', name: 'public_onboarding_done', methods: ['GET'])]
+    public function done(Club $club): Response
+    {
+        $this->denyAccessUnlessGranted('MANAGE', $club);
+
+        return $this->render('public/onboarding/done.html.twig', [
+            'club' => $club,
+            'clubUrl' => $this->subdomainService->generateClubUrl((string) $club->getSubdomain()),
+        ]);
+    }
+
+    /**
+     * Route provisoire : la tâche 11 remplace cette action par le vrai tunnel de
+     * demande d'adhésion (JoinRequestService, JoinRequestType). Nécessaire ici
+     * uniquement pour que les liens « Demander à rejoindre » de duplicate.html.twig
+     * résolvent une route réelle — ils ne sont jamais suivis avant la tâche 11.
+     */
+    #[Route('/rejoindre/{id}', name: 'public_onboarding_join_request', methods: ['GET', 'POST'])]
+    public function joinRequest(Club $club): Response
+    {
+        $user = $this->verifiedUserOrRedirect();
+        if ($user instanceof Response) {
+            return $user;
+        }
+
+        return new Response($this->translator->trans('onboardingJoinRequestPlaceholder'));
     }
 }
