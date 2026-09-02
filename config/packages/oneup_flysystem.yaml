@@ -19,3 +19,9 @@ oneup_flysystem:
             adapter: s3_adapter
         console:
             adapter: console_adapter
+
+when@test:
+    oneup_flysystem:
+        adapters:
+            s3_adapter:
+                memory: ~

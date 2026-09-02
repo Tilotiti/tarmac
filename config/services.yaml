@@ -34,6 +34,10 @@ services:
         arguments:
             $s3Filesystem: '@oneup_flysystem.s3_filesystem'
 
+    App\Service\Import\ImportFileStorage:
+        arguments:
+            $s3Filesystem: '@oneup_flysystem.s3_filesystem'
+
     # PDO Session Handler
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
