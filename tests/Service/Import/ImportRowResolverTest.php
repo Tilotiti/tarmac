@@ -37,6 +37,7 @@ class ImportRowResolverTest extends TestCase
                 return $context->markSeen('name:' . mb_strtolower($values['name'])) ? null : 'importReasonDuplicateInFile';
             }
             public function import(array $values, ImportContext $context): void { $this->imported[] = $values; }
+            public function finalize(ImportContext $context): void {}
         };
     }
 

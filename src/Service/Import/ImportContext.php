@@ -10,6 +10,9 @@ final class ImportContext
 {
     private array $seen = [];
 
+    /** @var array<int, object> entités créées pendant import(), traitées ensuite par finalize() (ex. invitations à envoyer) */
+    public array $created = [];
+
     /** @param array<int, array<string, mixed>> $overrides choix faits sur l'écran d'aperçu, par numéro de ligne */
     public function __construct(public readonly Club $club, public readonly User $user, public array $overrides = [])
     {

@@ -92,6 +92,11 @@ final class EquipmentImportDefinition implements ImportDefinitionInterface
         $this->entityManager->persist($equipment);
     }
 
+    public function finalize(ImportContext $context): void
+    {
+        // Rien à faire après commit pour les équipements : pas d'effet de bord externe.
+    }
+
     /** @return array<string, true> */
     private function existingNames(ImportContext $context): array
     {

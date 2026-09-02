@@ -247,6 +247,9 @@ class ImportController extends ExtendedController
                 $def->import($row->values, $context);
             }
         });
+        // Hors transaction, après le commit : un rollback ne doit jamais laisser d'e-mail parti
+        // pour une ligne finalement absente de la base.
+        $def->finalize($context);
 
         $this->storage->delete($state->fileKey);
         $this->stateStore->clear($club, $definition);

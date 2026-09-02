@@ -39,6 +39,8 @@ class InvitationImportDefinitionTest extends TestCase
         $context = new ImportContext(new Club(), new User(), [1 => ['isInspector' => '1']]);
 
         $definition->import(['email' => 'jean@example.test', 'firstname' => 'Jean', 'lastname' => 'Dupont', 'isManager' => 'yes', 'isInspector' => '', 'isPilote' => '', '_line' => '1'], $context);
+        // import() ne doit rien envoyer avant que finalize() ne soit appelé (après le commit).
+        $definition->finalize($context);
     }
 
     public function testImportWithSubmittedRowAndNoRoleGrantsNothing(): void
@@ -52,5 +54,6 @@ class InvitationImportDefinitionTest extends TestCase
         $context = new ImportContext(new Club(), new User(), [1 => ['_submitted' => '1']]);
 
         $definition->import(['email' => 'jean@example.test', 'firstname' => 'Jean', 'lastname' => 'Dupont', 'isManager' => '', 'isInspector' => 'yes', 'isPilote' => '', '_line' => '1'], $context);
+        $definition->finalize($context);
     }
 }

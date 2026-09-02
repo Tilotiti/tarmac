@@ -29,4 +29,11 @@ interface ImportDefinitionInterface
 
     /** @param array<string, string> $values */
     public function import(array $values, ImportContext $context): void;
+
+    /**
+     * Appelé une fois, après que la transaction d'import a été validée (commit inclus), pour les
+     * effets de bord qui ne doivent pas participer à la transaction (ex. envoi d'e-mails) : un
+     * envoi avant commit enverrait des invitations pour des lignes qu'un rollback effacerait.
+     */
+    public function finalize(ImportContext $context): void;
 }

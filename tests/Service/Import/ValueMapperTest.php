@@ -21,4 +21,23 @@ class ValueMapperTest extends TestCase
 
         $this->assertSame(['PLANEUR' => 'glider', 'Avion remorqueur' => 'airplane', 'Treuil n°2' => 'facility', 'Cuisine' => null], $suggestion);
     }
+
+    public function testYesNoValuesMatchExactlyBeforeInclusion(): void
+    {
+        $field = new ImportField('isManager', 'manager', false, ['gestionnaire'], [
+            new ImportChoice('yes', 'yes', ['oui', 'yes', 'x', '1', 'vrai', 'true']),
+            new ImportChoice('no', 'no', ['non', 'no', '0', 'faux', 'false']),
+        ]);
+
+        $suggestion = (new ValueMapper())->suggest(['faux', 'FAUX', 'vrai', 'Expert', 'x', 'X'], $field);
+
+        $this->assertSame([
+            'faux' => 'no',
+            'FAUX' => 'no',
+            'vrai' => 'yes',
+            'Expert' => null,
+            'x' => 'yes',
+            'X' => 'yes',
+        ], $suggestion);
+    }
 }

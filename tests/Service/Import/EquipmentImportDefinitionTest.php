@@ -64,4 +64,14 @@ class EquipmentImportDefinitionTest extends TestCase
         $this->assertSame($user, $equipment->getCreatedBy());
         $this->assertTrue($equipment->isActive());
     }
+
+    public function testFinalizeDoesNothing(): void
+    {
+        $persisted = [];
+        $definition = $this->definition([], $persisted);
+
+        $definition->finalize(new ImportContext(new Club(), new User()));
+
+        $this->assertSame([], $persisted);
+    }
 }

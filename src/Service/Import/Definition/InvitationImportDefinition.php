@@ -93,6 +93,17 @@ final class InvitationImportDefinition implements ImportDefinitionInterface
             'isInspector' => $role('isInspector'),
             'isPilote' => $role('isPilote'),
         ]);
-        $this->invitationService->sendInvitation($invitation);
+        $context->created[] = $invitation;
+    }
+
+    public function finalize(ImportContext $context): void
+    {
+        // Les e-mails ne partent qu'après le commit de la transaction : un envoi pendant celle-ci
+        // enverrait des invitations pour des lignes qu'un rollback effacerait ensuite.
+        foreach ($context->created as $invitation) {
+            if ($invitation instanceof \App\Entity\Invitation) {
+                $this->invitationService->sendInvitation($invitation);
+            }
+        }
     }
 }
