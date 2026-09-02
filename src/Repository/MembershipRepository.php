@@ -80,5 +80,41 @@ class MembershipRepository extends ServiceEntityRepository
 
         return $qb;
     }
+
+    public function countByClubExcludingUser(Club $club, ?User $user): int
+    {
+        $queryBuilder = $this->createQueryBuilder('membership')
+            ->select('COUNT(membership.id)')
+            ->andWhere('membership.club = :club')
+            ->setParameter('club', $club);
+
+        if ($user !== null) {
+            $queryBuilder->andWhere('membership.user != :user')->setParameter('user', $user);
+        }
+
+        return (int) $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
+    public function countManagersByClub(Club $club): int
+    {
+        return (int) $this->createQueryBuilder('membership')
+            ->select('COUNT(membership.id)')
+            ->andWhere('membership.club = :club')
+            ->andWhere('membership.isManager = true')
+            ->setParameter('club', $club)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countInspectorsByClub(Club $club): int
+    {
+        return (int) $this->createQueryBuilder('membership')
+            ->select('COUNT(membership.id)')
+            ->andWhere('membership.club = :club')
+            ->andWhere('membership.isInspector = true')
+            ->setParameter('club', $club)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
 

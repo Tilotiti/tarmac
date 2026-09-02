@@ -152,4 +152,15 @@ class EquipmentRepository extends ServiceEntityRepository
         return $dql;
     }
 
+    public function countActiveByClub(Club $club): int
+    {
+        $queryBuilder = $this->createQueryBuilder('equipment')
+            ->select('COUNT(equipment.id)')
+            ->andWhere('equipment.club = :club')
+            ->setParameter('club', $club);
+        $this->filterByActive($queryBuilder, true);
+
+        return (int) $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
 }

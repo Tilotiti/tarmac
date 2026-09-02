@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Club;
 use App\Entity\Equipment;
 use App\Entity\Enum\EquipmentType;
 use App\Entity\Plan;
@@ -98,6 +99,18 @@ class PlanApplicationRepository extends ServiceEntityRepository
         return $qb
             ->addOrderBy('planApplication.dueAt', $direction)
             ->addOrderBy('planApplication.appliedAt', 'DESC');
+    }
+
+    public function countActiveByClub(Club $club): int
+    {
+        $queryBuilder = $this->createQueryBuilder('planApplication')
+            ->select('COUNT(planApplication.id)')
+            ->join('planApplication.equipment', 'equipment')
+            ->andWhere('equipment.club = :club')
+            ->setParameter('club', $club);
+        $this->filterByCancelled($queryBuilder, false);
+
+        return (int) $queryBuilder->getQuery()->getSingleScalarResult();
     }
 }
 

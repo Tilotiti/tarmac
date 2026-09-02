@@ -60,6 +60,10 @@ class Club
     #[ORM\JoinColumn(name: 'created_by_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?User $createdBy = null;
 
+    /** Date à laquelle un gestionnaire a masqué la carte « Votre Tarmac est-il prêt ? ». */
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $healthCheckDismissedAt = null;
+
     /**
      * @var Collection<int, Membership>
      */
@@ -204,6 +208,8 @@ class Club
     public function getLongitude(): ?float { return $this->longitude; }
     public function getCreatedBy(): ?User { return $this->createdBy; }
     public function setCreatedBy(?User $createdBy): static { $this->createdBy = $createdBy; return $this; }
+    public function getHealthCheckDismissedAt(): ?\DateTimeImmutable { return $this->healthCheckDismissedAt; }
+    public function setHealthCheckDismissedAt(?\DateTimeImmutable $at): static { $this->healthCheckDismissedAt = $at; return $this; }
 
     public function syncCoordinatesFromAerodrome(): static
     {

@@ -105,5 +105,17 @@ class InvitationRepository extends ServiceEntityRepository
 
         return $qb;
     }
+
+    public function countPendingByClub(Club $club): int
+    {
+        return (int) $this->createQueryBuilder('invitation')
+            ->select('COUNT(invitation.id)')
+            ->andWhere('invitation.club = :club')
+            ->andWhere('invitation.expiresAt > :now')
+            ->setParameter('club', $club)
+            ->setParameter('now', new \DateTimeImmutable())
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
 
