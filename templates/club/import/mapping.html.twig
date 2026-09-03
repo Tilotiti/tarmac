@@ -58,7 +58,6 @@
 										<option value="{{ choice.value }}" {% if (state.fixed[field.key] ?? field.default) == choice.value %}selected{% endif %}>{{ choice.labelKey|trans }}</option>
 									{% endfor %}
 								</select>
-								<div class="form-hint">{{ 'importFixedValueHelp'|trans }}</div>
 							</div>
 						{% endif %}
 					</div>

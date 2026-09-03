@@ -4126,10 +4126,6 @@
         <source>importFilePreview</source>
         <target>Les premières lignes de votre fichier</target>
       </trans-unit>
-      <trans-unit id="1903" resname="importFixedValueHelp">
-        <source>importFixedValueHelp</source>
-        <target>Utilisée si aucune colonne n'est choisie, ou quand la cellule est vide.</target>
-      </trans-unit>
     </body>
 </file>
 </xliff>
