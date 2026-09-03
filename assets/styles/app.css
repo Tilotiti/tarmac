@@ -3049,3 +3049,38 @@ h3, .h3 { font-size: 1.2rem; }
 .tarmac-card__badges:has(+ .tarmac-card__footer) {
     margin-bottom: 0.85rem;
 }
+
+/* ===== Pied de panneau (assistant d'import) : action principale à droite, retour et abandon à gauche ===== */
+.tarmac-panel__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin: 1.25rem -1.25rem -1.1rem;
+    padding: 0.9rem 1.25rem;
+    background: rgba(11, 29, 46, 0.03);
+    border-top: 1px solid var(--td-border);
+    border-radius: 0 0 var(--td-radius) var(--td-radius);
+}
+.tarmac-panel__footer .btn {
+    min-height: 44px;
+}
+.tarmac-panel__footer-secondary {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+@media (min-width: 768px) {
+    .tarmac-panel__footer {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .tarmac-panel__footer-secondary {
+        order: -1;
+        justify-content: flex-start;
+    }
+    .tarmac-panel__footer-primary .btn {
+        width: auto !important;
+    }
+}

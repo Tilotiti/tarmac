@@ -14,10 +14,7 @@
 		<p><a href="{{ asset('downloads/modele-import-' ~ (definition.key == 'equipments' ? 'materiel' : 'membres') ~ '.csv') }}" class="form-hint d-inline-flex align-items-center gap-1"><i class="ti ti-download"></i>{{ 'importDownloadTemplate'|trans }}</a></p>
 		{{ form_start(form) }}
 		{{ form_row(form.file) }}
-		<div class="d-flex justify-content-end gap-2 mt-3">
-			<a href="{{ path(definition.listRoute) }}" class="btn btn-outline-secondary" style="min-height:44px;">{{ 'cancel'|trans }}</a>
-			<button type="submit" class="btn btn-primary" style="min-height:44px;"><i class="ti ti-arrow-right me-2"></i>{{ 'continue'|trans }}</button>
-		</div>
+		{% include 'club/import/_footer.html.twig' with {submitLabel: 'continue', backUrl: path(definition.listRoute), backLabel: 'cancel'} %}
 		{{ form_end(form) }}
 	</div>
 {% endblock %}

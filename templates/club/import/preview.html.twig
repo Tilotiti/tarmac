@@ -39,12 +39,7 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="d-flex justify-content-between gap-2 mt-3 flex-wrap">
-				<a href="{{ path('club_import_mapping', {definition: definition.key}) }}" class="btn btn-outline-secondary" style="min-height:44px;"><i class="ti ti-arrow-left me-2"></i>{{ 'importEditMapping'|trans }}</a>
-				<button type="submit" class="btn btn-primary" style="min-height:44px;" {% if preview.importableCount == 0 %}disabled{% endif %}>
-					<i class="ti ti-file-import me-2"></i>{{ 'importConfirm'|trans({count: preview.importableCount}) }}
-				</button>
-			</div>
+			{% include 'club/import/_footer.html.twig' with {submitLabel: 'importConfirm', submitParams: {count: preview.importableCount}, submitIcon: 'ti-file-import', submitDisabled: preview.importableCount == 0, backUrl: path('club_import_mapping', {definition: definition.key}), backLabel: 'importEditMapping', showAbandon: true} %}
 		</form>
 		{% include 'club/import/_cancel.html.twig' %}
 	</div>
