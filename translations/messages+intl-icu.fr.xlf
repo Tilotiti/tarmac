@@ -4009,7 +4009,7 @@
       </trans-unit>
       <trans-unit id="1874" resname="importFixedValue">
         <source>importFixedValue</source>
-        <target>Valeur pour tout le fichier</target>
+        <target>Valeur par défaut</target>
       </trans-unit>
       <trans-unit id="1875" resname="importNoValue">
         <source>importNoValue</source>
@@ -4125,6 +4125,10 @@
       <trans-unit id="1902" resname="importFilePreview">
         <source>importFilePreview</source>
         <target>Les premières lignes de votre fichier</target>
+      </trans-unit>
+      <trans-unit id="1903" resname="importFixedValueHelp">
+        <source>importFixedValueHelp</source>
+        <target>Utilisée si aucune colonne n'est choisie, ou quand la cellule est vide.</target>
       </trans-unit>
     </body>
 </file>

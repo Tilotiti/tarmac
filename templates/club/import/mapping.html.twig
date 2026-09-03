@@ -35,28 +35,33 @@
 			{% for field in definition.fields %}
 				{% set chosen = state.columnFor(field.key) %}
 				<div class="mb-4">
-					<label class="form-label {% if field.required %}required{% endif %}" for="column-{{ field.key }}">{{ field.labelKey|trans }}</label>
-					<select id="column-{{ field.key }}" name="columns[{{ field.key }}]" class="form-select" style="min-height:44px;"
-							data-action="import-mapping#update" data-import-mapping-target="select" data-field="{{ field.key }}">
-						<option value="">{{ 'importIgnoreColumn'|trans }}</option>
-						{% for index, label in labels %}
-							<option value="{{ index }}" {% if chosen is same as(index) %}selected{% endif %}>{{ label }}{% if samples[index] is not empty %} — {{ samples[index][0]|u.truncate(30, '…') }}{% endif %}</option>
-						{% endfor %}
-					</select>
-					<div class="form-hint" data-import-mapping-target="sample" data-field="{{ field.key }}">
-						{% if chosen is not null and samples[chosen] is not empty %}{{ 'importSample'|trans }} {{ samples[chosen]|join(' · ') }}{% endif %}
-					</div>
-					{% if field.hasChoices %}
-						<div class="mt-2" data-import-mapping-target="fixed" data-field="{{ field.key }}" {% if chosen is not null %}hidden{% endif %}>
-							<label class="form-label" for="fixed-{{ field.key }}">{{ 'importFixedValue'|trans }}</label>
-							<select id="fixed-{{ field.key }}" name="fixed[{{ field.key }}]" class="form-select" style="min-height:44px;">
-								{% if not field.required %}<option value="">{{ 'importNoValue'|trans }}</option>{% endif %}
-								{% for choice in field.choices %}
-									<option value="{{ choice.value }}" {% if (state.fixed[field.key] ?? field.default) == choice.value %}selected{% endif %}>{{ choice.labelKey|trans }}</option>
+					<div class="row g-2">
+						<div class="{% if field.hasChoices %}col-12 col-md-7{% else %}col-12{% endif %}">
+							<label class="form-label {% if field.required %}required{% endif %}" for="column-{{ field.key }}">{{ field.labelKey|trans }}</label>
+							<select id="column-{{ field.key }}" name="columns[{{ field.key }}]" class="form-select" style="min-height:44px;"
+									data-action="import-mapping#update" data-import-mapping-target="select" data-field="{{ field.key }}">
+								<option value="">{{ 'importIgnoreColumn'|trans }}</option>
+								{% for index, label in labels %}
+									<option value="{{ index }}" {% if chosen is same as(index) %}selected{% endif %}>{{ label }}{% if samples[index] is not empty %} — {{ samples[index][0]|u.truncate(30, '…') }}{% endif %}</option>
 								{% endfor %}
 							</select>
+							<div class="form-hint" data-import-mapping-target="sample" data-field="{{ field.key }}">
+								{% if chosen is not null and samples[chosen] is not empty %}{{ 'importSample'|trans }} {{ samples[chosen]|join(' · ') }}{% endif %}
+							</div>
 						</div>
-					{% endif %}
+						{% if field.hasChoices %}
+							<div class="col-12 col-md-5">
+								<label class="form-label" for="fixed-{{ field.key }}">{{ 'importFixedValue'|trans }}</label>
+								<select id="fixed-{{ field.key }}" name="fixed[{{ field.key }}]" class="form-select" style="min-height:44px;">
+									{% if not field.required %}<option value="">{{ 'importNoValue'|trans }}</option>{% endif %}
+									{% for choice in field.choices %}
+										<option value="{{ choice.value }}" {% if (state.fixed[field.key] ?? field.default) == choice.value %}selected{% endif %}>{{ choice.labelKey|trans }}</option>
+									{% endfor %}
+								</select>
+								<div class="form-hint">{{ 'importFixedValueHelp'|trans }}</div>
+							</div>
+						{% endif %}
+					</div>
 				</div>
 			{% endfor %}
 

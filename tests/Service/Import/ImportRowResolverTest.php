@@ -92,4 +92,16 @@ class ImportRowResolverTest extends TestCase
         $this->assertSame('airplane', $preview->rows[0]->values['type']);
         $this->assertSame(1, $preview->rows[0]->line, 'numéro de ligne du fichier, à partir de 1');
     }
+
+    public function testFixedValueAppliesToEmptyCellsWhenColumnIsMapped(): void
+    {
+        $state = $this->state();
+        $state->fixed = ['type' => 'airplane'];
+        $sheet = new ImportSheet([['Nom', 'Type'], ['F-GKLM', '']]);
+
+        $preview = (new ImportRowResolver())->resolve($sheet, $state, $this->definition(), $this->context());
+
+        $this->assertNull($preview->rows[0]->reason);
+        $this->assertSame('airplane', $preview->rows[0]->values['type']);
+    }
 }

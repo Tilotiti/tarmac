@@ -26,10 +26,9 @@ final class ImportRowResolver
                 $cell = $column === null ? '' : ($raw[$column] ?? '');
 
                 if ($field->hasChoices()) {
-                    if ($column === null) {
+                    // Valeur par défaut choisie à l'écran des colonnes : sans colonne, ou quand la cellule est vide
+                    if ($column === null || $cell === '') {
                         $value = $state->fixed[$field->key] ?? $field->default ?? '';
-                    } elseif ($cell === '') {
-                        $value = $field->default ?? '';
                     } else {
                         $value = $state->values[$field->key][$cell] ?? null;
                         if ($value === null && $reason === null) {
