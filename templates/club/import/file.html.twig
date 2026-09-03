@@ -3,7 +3,7 @@
 {% block page_title %}{{ definition.titleKey|trans }}{% endblock %}
 
 {% block page_content %}
-	<div class="tarmac-panel" style="max-width:720px;">
+	<div class="tarmac-panel mx-auto" style="max-width:720px;">
 		{% include 'club/import/_steps.html.twig' with {current: 1} %}
 		<p class="text-secondary">{{ 'importFileLead'|trans }}</p>
 		<ul class="text-secondary" style="font-size:0.9rem;">

@@ -3,7 +3,7 @@
 {% block page_title %}{{ definition.titleKey|trans }}{% endblock %}
 
 {% block page_content %}
-	<div class="tarmac-panel" style="max-width:820px;" data-controller="import-mapping" data-import-mapping-samples-value="{{ samples|json_encode }}" data-import-mapping-sample-label-value="{{ 'importSample'|trans }}">
+	<div class="tarmac-panel mx-auto" style="max-width:820px;" data-controller="import-mapping" data-import-mapping-samples-value="{{ samples|json_encode }}" data-import-mapping-sample-label-value="{{ 'importSample'|trans }}">
 		{% include 'club/import/_steps.html.twig' with {current: 2} %}
 		<p class="text-secondary">{{ 'importMappingLead'|trans({file: state.originalName}) }}</p>
 
