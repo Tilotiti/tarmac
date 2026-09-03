@@ -191,6 +191,8 @@ class ImportController extends ExtendedController
             'state' => $state,
             'labels' => $sheet->columnLabels($state->hasHeader),
             'samples' => $this->samples($sheet, $state->hasHeader),
+            // Trois premières lignes de données : pour voir ce que contiennent les colonnes avant de choisir
+            'firstRows' => array_slice($sheet->rows(), $state->hasHeader ? 1 : 0, 3),
         ], $request->isMethod('POST') ? new Response(status: 422) : null);
     }
 

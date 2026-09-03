@@ -4122,6 +4122,10 @@
         <source>importEmailsFailed</source>
         <target>{count, plural, one {# invitation enregistrée mais e-mail non envoyé : utilisez « Renvoyer » sur la page Invitations.} other {# invitations enregistrées mais e-mails non envoyés : utilisez « Renvoyer » sur la page Invitations.}}</target>
       </trans-unit>
+      <trans-unit id="1902" resname="importFilePreview">
+        <source>importFilePreview</source>
+        <target>Les premières lignes de votre fichier</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

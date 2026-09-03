@@ -7,6 +7,23 @@
 		{% include 'club/import/_steps.html.twig' with {current: 2} %}
 		<p class="text-secondary">{{ 'importMappingLead'|trans({file: state.originalName}) }}</p>
 
+		{# Aperçu brut du fichier : indispensable quand il n'y a pas de titres #}
+		<div class="mb-4">
+			<div class="form-label">{{ 'importFilePreview'|trans }}</div>
+			<div class="table-responsive" style="border:1px solid var(--td-border);border-radius:var(--td-radius-sm);">
+				<table class="table table-sm table-vcenter mb-0" style="font-size:0.85rem;white-space:nowrap;">
+					<thead>
+						<tr>{% for label in labels %}<th>{{ label }}</th>{% endfor %}</tr>
+					</thead>
+					<tbody>
+						{% for row in firstRows %}
+							<tr>{% for index, label in labels %}<td>{{ row[index]|default('') }}</td>{% endfor %}</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
 		<form method="post">
 			<input type="hidden" name="_token" value="{{ csrf_token('import-mapping') }}">
 			<label class="form-check mb-4" style="min-height:44px;">
@@ -23,7 +40,7 @@
 							data-action="import-mapping#update" data-import-mapping-target="select" data-field="{{ field.key }}">
 						<option value="">{{ 'importIgnoreColumn'|trans }}</option>
 						{% for index, label in labels %}
-							<option value="{{ index }}" {% if chosen is same as(index) %}selected{% endif %}>{{ label }}</option>
+							<option value="{{ index }}" {% if chosen is same as(index) %}selected{% endif %}>{{ label }}{% if samples[index] is not empty %} — {{ samples[index][0]|u.truncate(30, '…') }}{% endif %}</option>
 						{% endfor %}
 					</select>
 					<div class="form-hint" data-import-mapping-target="sample" data-field="{{ field.key }}">
