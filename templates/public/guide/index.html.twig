@@ -102,11 +102,11 @@
 								<ol>
 									<li><strong>Votre compte.</strong> Prénom, nom, e-mail et mot de passe. Si vous avez déjà un compte Tarmac (parce qu'un autre club vous a invité), connectez-vous, puis choisissez « Créer un club » dans le menu de votre avatar.</li>
 									<li><strong>Votre e-mail.</strong> Nous vous envoyons un lien. Cliquez dessus&nbsp;: vous reprenez là où vous en étiez. Rien reçu&nbsp;? Regardez dans les courriers indésirables, puis « Renvoyer le lien ».</li>
-									<li><strong>Votre club.</strong> Son nom, son adresse Tarmac (proposée d'après le nom, vous pouvez la changer) et votre aérodrome, à choisir dans la liste. Si votre terrain n'y figure pas, écrivez-nous à contact@tarmac.center : nous l'ajoutons et nous terminons la création avec vous.</li>
-									<li><strong>Ce club existe déjà&nbsp;?</strong> Si un club au nom proche est déjà sur Tarmac près de chez vous, nous vous le montrons. Si c'est le vôtre, cliquez sur « Demander à rejoindre ce club »&nbsp;: ses gestionnaires reçoivent votre nom et votre e-mail et vous invitent. Si ce n'est pas le vôtre, continuez. Plusieurs clubs peuvent partager un même aérodrome.</li>
+									<li><strong>Votre club.</strong> Son nom, son adresse Tarmac (proposée d'après le nom, vous pouvez la changer) et votre aérodrome, à choisir dans la liste. Si votre terrain n'y figure pas, écrivez-nous à contact@tarmac.center : nous l'ajoutons et nous terminons la création avec vous. Si l'adresse que vous tapez est déjà celle d'un club, Tarmac vous propose aussitôt de demander à le rejoindre.</li>
+									<li><strong>Ce club existe déjà&nbsp;?</strong> Si un club au nom proche est déjà sur Tarmac près de chez vous, nous vous le montrons. Si c'est le vôtre, cliquez sur « Demander à rejoindre ce club »&nbsp;: ses gestionnaires reçoivent votre nom, votre e-mail et votre message, choisissent vos rôles et vous ajoutent au club en un clic ; vous recevez alors l'adresse du club par e-mail. Si ce n'est pas le vôtre, continuez. Plusieurs clubs peuvent partager un même aérodrome.</li>
 									<li><strong>C'est prêt.</strong> Vous êtes gestionnaire de votre club. Notez son adresse, elle est aussi dans l'e-mail de bienvenue. Le tableau de bord vous indique ensuite ce qu'il reste à configurer.</li>
 								</ol>
-								<p>Vous ne dévoilez rien sur les autres clubs, et rien ne se passe dans un club existant sans invitation de ses gestionnaires.</p>
+								<p>Vous ne dévoilez rien sur les autres clubs, et rien ne se passe dans un club existant sans l'accord de ses gestionnaires.</p>
 							</section>
 
 							<hr>
@@ -207,11 +207,11 @@
 									<li><strong>Votre matériel</strong>&nbsp;: au moins un planeur, un avion ou une infrastructure.</li>
 									<li><strong>Vos membres</strong>&nbsp;: invitez-les par fichier ou un par un.</li>
 									<li><strong>Un second gestionnaire</strong>, à désigner sur la fiche d'un membre, pour que le club ne dépende pas d'une seule personne.</li>
-									<li><strong>Un qualifié</strong>, à désigner sur la fiche d'un membre : sans lui, les sous-tâches à inspecter restent bloquées.</li>
+									<li><strong>Un membre qualifié</strong>, à désigner sur la fiche d'un membre : sans lui, les opérations à inspecter restent bloquées.</li>
 									<li><strong>Un plan d'entretien</strong> appliqué à un matériel. La page « Comprendre les plans » explique le principe en trois cartes.</li>
 									<li><strong>Un message d'accueil</strong> pour vos membres.</li>
 								</ol>
-								<p>Les points marqués <strong>Essentiel</strong> — le matériel, les membres et un qualifié — sont ceux sans lesquels Tarmac ne peut pas fonctionner. La carte disparaît quand tout est fait. Vous pouvez la masquer&nbsp;; elle reste accessible depuis le menu <strong>Club</strong> (« Configuration 3/7 ») et revient d'elle-même au bout d'un mois s'il manque un point essentiel.</p>
+								<p>Les points marqués <strong>Essentiel</strong> — le matériel, les membres et un membre qualifié — sont ceux sans lesquels Tarmac ne peut pas fonctionner. La carte disparaît quand tout est fait. Vous pouvez la masquer&nbsp;; elle reste accessible depuis le menu <strong>Club</strong> (« Configuration 3/7 ») et revient d'elle-même au bout d'un mois s'il manque un point essentiel.</p>
 							</section>
 
 							<hr>
@@ -251,8 +251,12 @@
 									fichier CSV ou Excel, avec ou sans ligne de titres&nbsp;: un fichier modèle, à
 									télécharger juste en dessous, montre le format attendu. Sur le deuxième, associez
 									chaque colonne du fichier à un champ (nom, type, description, propriétaire)&nbsp;:
-									un exemple tiré de votre fichier s'affiche sous chaque choix, et une case à cocher
-									précise si la première ligne contient des titres ou déjà une donnée. Si vous
+									les premières lignes du fichier sont affichées en haut de l'écran, un exemple
+									tiré de votre fichier s'affiche sous chaque choix, et une case à cocher précise si
+									la première ligne contient des titres ou déjà une donnée. Pour le type et le
+									propriétaire, une <strong>valeur par défaut</strong> se choisit à droite du menu&nbsp;:
+									elle s'applique aux lignes dont la cellule est vide, ou à tout le fichier si aucune
+									colonne n'est associée. Si vous
 									associez une colonne à un champ dont les valeurs sont limitées à quelques choix
 									(le type de matériel, par exemple)&nbsp;: un écran supplémentaire apparaît pour
 									indiquer, pour chaque valeur distincte trouvée dans le fichier (« Planeur »,
@@ -665,8 +669,9 @@
 								<p>
 									Le <strong>bouton Importer</strong> de la page Invitations ouvre le même assistant
 									que pour le matériel. Sur le deuxième écran, associez les colonnes e-mail, prénom,
-									nom, et éventuellement les rôles (gestionnaire, qualifié, pilote)&nbsp;; un fichier
-									modèle est téléchargeable sur le premier écran. Si une colonne de rôle est
+									nom, et éventuellement les rôles (gestionnaire, membre qualifié, pilote)&nbsp;; pour
+									chaque rôle, une valeur par défaut (oui ou non) s'applique aux lignes sans indication.
+									Un fichier modèle est téléchargeable sur le premier écran. Si une colonne de rôle est
 									associée, un écran supplémentaire apparaît pour indiquer ce que signifie chaque
 									valeur trouvée dans le fichier (« oui », « x »…) — oui ou non&nbsp;; une
 									correspondance est déjà proposée quand elle est reconnaissable. Le dernier écran
@@ -681,7 +686,7 @@
 									reconnues automatiquement.
 								</p>
 								<h3>Demandes d'adhésion</h3>
-								<p>Quand quelqu'un tente de créer un club qui ressemble au vôtre, Tarmac lui propose de vous rejoindre à la place. Vous recevez alors un e-mail avec son nom, son adresse et son message, et la demande apparaît en haut de la page <strong>Invitations</strong>. Si vous reconnaissez la personne, cochez ses rôles (gestionnaire, qualifié, pilote, ou aucun pour un simple membre) et cliquez sur <strong>Accepter</strong>&nbsp;: elle devient membre immédiatement et reçoit un e-mail avec l'adresse du club. Sinon, <strong>Ignorer</strong>.</p>
+								<p>Quand quelqu'un tente de créer un club qui ressemble au vôtre, Tarmac lui propose de vous rejoindre à la place. Vous recevez alors un e-mail avec son nom, son adresse et son message, et la demande apparaît en haut de la page <strong>Invitations</strong> (le bouton « Invitations » de la page Membres affiche le nombre de demandes en attente). Si vous reconnaissez la personne, cochez ses rôles (gestionnaire, membre qualifié, pilote, ou aucun pour un simple membre) et cliquez sur <strong>Accepter</strong>&nbsp;: elle devient membre immédiatement et reçoit un e-mail avec l'adresse du club. Sinon, <strong>Ignorer</strong>.</p>
 							</section>
 
 							<hr>
