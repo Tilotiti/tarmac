@@ -387,7 +387,7 @@ class SecurityController extends AbstractController
     private function processSendingPasswordResetEmail(string $emailFormData, MailerInterface $mailer): RedirectResponse
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy([
-            'email' => $emailFormData,
+            'email' => mb_strtolower($emailFormData),
         ]);
 
         // Always show the same message to prevent email enumeration attacks

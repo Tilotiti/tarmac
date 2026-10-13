@@ -25,6 +25,20 @@ class InvitationLoginTest extends FunctionalTestCase
         $this->assertMembershipCreated($user);
     }
 
+    public function testEmailCaseIsIgnored(): void
+    {
+        [$user, $token] = $this->inviteExistingUser('Pilote@Example.TEST');
+
+        $this->client->request('GET', $this->www('/invitation/' . $token));
+        $this->assertResponseRedirects($this->www('/login?invitation=' . $token));
+
+        $this->client->followRedirect();
+        $this->client->submitForm('Se connecter', ['_username' => 'PILOTE@example.test', '_password' => 'motdepasse']);
+
+        $this->assertResponseRedirects($this->www('/invitation/' . $token));
+        $this->assertMembershipCreated($user);
+    }
+
     public function testAccountCreatedAfterTheInvitationGoesToLogin(): void
     {
         $club = $this->createClub('Planeurs de Beauce', 'beauce');
@@ -65,7 +79,7 @@ class InvitationLoginTest extends FunctionalTestCase
     /**
      * @return array{User, string}
      */
-    private function inviteExistingUser(): array
+    private function inviteExistingUser(string $invitedEmail = 'pilote@example.test'): array
     {
         $user = $this->createUser('pilote@example.test');
         $hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
@@ -74,7 +88,7 @@ class InvitationLoginTest extends FunctionalTestCase
 
         $club = $this->createClub('Planeurs de Beauce', 'beauce');
         $invitation = static::getContainer()->get(InvitationService::class)
-            ->createInvitation($club, ['email' => 'pilote@example.test']);
+            ->createInvitation($club, ['email' => $invitedEmail]);
 
         return [$user, $invitation->getToken()];
     }

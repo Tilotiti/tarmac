@@ -91,7 +91,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setEmail(string $email): static
     {
-        $this->email = $email;
+        // Toujours en minuscules : les recherches par e-mail comparent la valeur exacte
+        $this->email = mb_strtolower($email);
 
         return $this;
     }

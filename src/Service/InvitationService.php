@@ -46,7 +46,7 @@ class InvitationService
         $invitation->setToken($token);
 
         // Check if email belongs to an existing user
-        $existingUser = $this->userRepository->findOneBy(['email' => $data['email']]);
+        $existingUser = $this->userRepository->findOneBy(['email' => $invitation->getEmail()]);
         if ($existingUser) {
             $invitation->setAcceptedBy($existingUser);
         }
