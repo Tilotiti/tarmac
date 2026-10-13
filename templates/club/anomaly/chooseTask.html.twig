@@ -1,0 +1,44 @@
+{% extends 'club/base.html.twig' %}
+
+{% block page_title %}
+	{{ 'anomalyLinkChooseTask'|trans }}
+{% endblock %}
+
+{% block page_pretitle %}
+	<a href="{{ path('club_anomaly_show', {id: anomaly.id}) }}" class="tarmac-page-eyebrow">
+		<i class="ti ti-alert-triangle me-1"></i>{{ anomaly.title }}
+	</a>
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		{% for task in openTasks %}
+			{% include 'component/taskCard.html.twig' with {'task': task, 'href': path('club_anomaly_link_subtasks', {id: anomaly.id, taskId: task.id})} %}
+		{% endfor %}
+
+		{# Tuile « ajouter » : même gabarit qu'une carte de tâche, en pointillés #}
+		<div class="col-12 col-lg-6 mb-3 d-flex">
+			<a href="{{ path('club_task_new', {anomaly: anomaly.id}) }}" class="tarmac-card tarmac-card--add w-100">
+				<span class="tarmac-eqv tarmac-eqv--add"><i class="ti ti-plus"></i></span>
+				<div>
+					<h3 class="tarmac-card__title" style="margin:0;">{{ 'anomalyLinkNewDedicatedTask'|trans }}</h3>
+					<p class="tarmac-card__meta" style="margin:0.25rem 0 0;">{{ 'anomalyLinkNewDedicatedTaskHelp'|trans }}</p>
+				</div>
+			</a>
+		</div>
+	</div>
+
+	{# Une anomalie signalée après la réparation se rattache à une tâche déjà close #}
+	{% if closedTasks is not empty %}
+		<details class="tarmac-disclosure">
+			<summary>
+				<i class="ti ti-chevron-right"></i>{{ 'anomalyLinkShowClosedTasks'|trans({'count': closedTasks|length}) }}
+			</summary>
+			<div class="row mt-2">
+				{% for task in closedTasks %}
+					{% include 'component/taskCard.html.twig' with {'task': task, 'href': path('club_anomaly_link_subtasks', {id: anomaly.id, taskId: task.id})} %}
+				{% endfor %}
+			</div>
+		</details>
+	{% endif %}
+{% endblock %}

@@ -4143,6 +4143,87 @@
         <source>subTaskUnlinkedFromAnomaly</source>
         <target>a détaché cette sous-tâche d'une anomalie</target>
       </trans-unit>
+      <!-- Anomalies rattachées aux sous-tâches : parcours « Lier des sous-tâches » -->
+      <trans-unit id="1907" resname="anomalyLinkSubTasks">
+        <source>anomalyLinkSubTasks</source>
+        <target>Lier des sous-tâches</target>
+      </trans-unit>
+      <trans-unit id="1908" resname="anomalyLinkedSubTasks">
+        <source>anomalyLinkedSubTasks</source>
+        <target>Sous-tâches liées</target>
+      </trans-unit>
+      <trans-unit id="1909" resname="anomalyNoLinkedSubTask">
+        <source>anomalyNoLinkedSubTask</source>
+        <target>Aucune sous-tâche ne répare encore cette anomalie.</target>
+      </trans-unit>
+      <trans-unit id="1910" resname="anomalyLinkChooseTask">
+        <source>anomalyLinkChooseTask</source>
+        <target>Dans quelle tâche ?</target>
+      </trans-unit>
+      <trans-unit id="1911" resname="anomalyLinkShowClosedTasks">
+        <source>anomalyLinkShowClosedTasks</source>
+        <target>Afficher les tâches closes ({count})</target>
+      </trans-unit>
+      <trans-unit id="1912" resname="anomalyLinkNewDedicatedTask">
+        <source>anomalyLinkNewDedicatedTask</source>
+        <target>Nouvelle tâche dédiée</target>
+      </trans-unit>
+      <trans-unit id="1913" resname="anomalyLinkNewDedicatedTaskHelp">
+        <source>anomalyLinkNewDedicatedTaskHelp</source>
+        <target>Une tâche à part, pré-remplie avec l'anomalie.</target>
+      </trans-unit>
+      <trans-unit id="1914" resname="anomalyLinkChooseSubTasks">
+        <source>anomalyLinkChooseSubTasks</source>
+        <target>Quelles sous-tâches réparent l'anomalie ?</target>
+      </trans-unit>
+      <trans-unit id="1915" resname="anomalyLinkCreateSubTask">
+        <source>anomalyLinkCreateSubTask</source>
+        <target>Créer une sous-tâche dans cette tâche</target>
+      </trans-unit>
+      <trans-unit id="1916" resname="anomalyLinkFilterPlaceholder">
+        <source>anomalyLinkFilterPlaceholder</source>
+        <target>Filtrer les sous-tâches…</target>
+      </trans-unit>
+      <trans-unit id="1917" resname="anomalyLinkGroupTodo">
+        <source>anomalyLinkGroupTodo</source>
+        <target>À faire</target>
+      </trans-unit>
+      <trans-unit id="1918" resname="anomalyLinkGroupClosed">
+        <source>anomalyLinkGroupClosed</source>
+        <target>Déjà closes</target>
+      </trans-unit>
+      <trans-unit id="1919" resname="anomalyLinkAlreadyLinked">
+        <source>anomalyLinkAlreadyLinked</source>
+        <target>Déjà liée</target>
+      </trans-unit>
+      <trans-unit id="1920" resname="anomalyLinkSubmit">
+        <source>anomalyLinkSubmit</source>
+        <target>Lier la sélection</target>
+      </trans-unit>
+      <trans-unit id="1921" resname="anomalyLinkNoSubTaskSelected">
+        <source>anomalyLinkNoSubTaskSelected</source>
+        <target>Cochez au moins une sous-tâche.</target>
+      </trans-unit>
+      <trans-unit id="1922" resname="anomalySubTasksLinkedFlash">
+        <source>anomalySubTasksLinkedFlash</source>
+        <target>{count, plural, one {# sous-tâche rattachée à l'anomalie.} other {# sous-tâches rattachées à l'anomalie.}}</target>
+      </trans-unit>
+      <trans-unit id="1923" resname="anomalySubTaskUnlinkedFlash">
+        <source>anomalySubTaskUnlinkedFlash</source>
+        <target>La sous-tâche a été détachée de l'anomalie.</target>
+      </trans-unit>
+      <trans-unit id="1924" resname="anomalyUnlinkSubTask">
+        <source>anomalyUnlinkSubTask</source>
+        <target>Détacher la sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="1925" resname="anomalyUnlinkSubTaskConfirm">
+        <source>anomalyUnlinkSubTaskConfirm</source>
+        <target>Détacher cette sous-tâche de l'anomalie ?</target>
+      </trans-unit>
+      <trans-unit id="1926" resname="viewSubTask">
+        <source>viewSubTask</source>
+        <target>Voir la sous-tâche</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

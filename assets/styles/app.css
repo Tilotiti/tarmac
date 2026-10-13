@@ -3084,3 +3084,81 @@ h3, .h3 { font-size: 1.2rem; }
         width: auto !important;
     }
 }
+
+/* ===== Rattachement d'une anomalie : tâches closes repliées, liste à cocher ===== */
+.tarmac-disclosure > summary {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    color: var(--td-mid);
+}
+.tarmac-disclosure > summary::-webkit-details-marker {
+    display: none;
+}
+.tarmac-disclosure > summary .ti {
+    transition: transform .18s ease;
+}
+.tarmac-disclosure[open] > summary .ti {
+    transform: rotate(90deg);
+}
+
+.tarmac-checklist__group {
+    margin: 1rem 0 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--td-ink-3);
+}
+.tarmac-checklist__item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 44px;
+    margin-bottom: 0.4rem;
+    padding: 0.55rem 0.75rem;
+    background: var(--td-paper);
+    border: 1px solid var(--td-border);
+    border-radius: var(--td-radius-sm);
+    cursor: pointer;
+}
+.tarmac-checklist__item:has(input:checked) {
+    background: var(--td-mid-soft);
+    border-color: var(--td-mid);
+}
+.tarmac-checklist__item.is-linked {
+    cursor: default;
+    opacity: 0.6;
+}
+.tarmac-checklist__title {
+    flex: 1;
+    min-width: 0;
+}
+.tarmac-checklist__create,
+.tarmac-checklist__create:hover,
+.tarmac-checklist__create:focus,
+.tarmac-checklist__create:active {
+    text-decoration: none;
+}
+.tarmac-checklist__create {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    margin-bottom: 1rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px dashed var(--td-border-strong);
+    border-radius: var(--td-radius-sm);
+    font-weight: 600;
+    color: var(--td-deep);
+}
+.tarmac-checklist__create:hover,
+.tarmac-checklist__create:focus {
+    background: var(--td-paper);
+    border-color: var(--td-mid);
+    color: var(--td-deep);
+}

@@ -9,6 +9,7 @@ use App\Entity\Enum\ActivityType;
 use App\Entity\Enum\AnomalyImpact;
 use App\Entity\Enum\AnomalyStatus;
 use App\Entity\Equipment;
+use App\Entity\SubTask;
 use App\Entity\Task;
 use App\Form\ActivityFormType;
 use App\Form\AnomalyLinkTaskType;
@@ -24,11 +25,14 @@ use App\Service\SubdomainService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
+use SlopeIt\BreadcrumbBundle\Service\BreadcrumbBuilder;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Tiloweb\UploadedFileTypeBundle\UploadedFileTypeService;
 
 #[Route('/anomalies', host: '{subdomain}.%domain%', requirements: ['subdomain' => '(?!www|app).*'])]
@@ -61,6 +65,7 @@ class AnomalyController extends ExtendedController
         private readonly Filesystem $s3Filesystem,
         private readonly UploadedFileTypeService $uploadedFileTypeService,
         private readonly CommentNotificationService $commentNotificationService,
+        private readonly TranslatorInterface $translator,
     ) {
         parent::__construct($subdomainService);
     }
@@ -181,19 +186,11 @@ class AnomalyController extends ExtendedController
             ])->createView();
         }
 
-        $linkTaskForm = null;
-        if ($this->isGranted(AnomalyVoter::LINK_TASK, $anomaly)) {
-            $linkTaskForm = $this->createForm(AnomalyLinkTaskType::class, null, [
-                'anomaly' => $anomaly,
-            ])->createView();
-        }
-
         return $this->render('club/anomaly/show.html.twig', [
             'club' => $club,
             'anomaly' => $anomaly,
             'anomalyImpacts' => AnomalyImpact::cases(),
             'commentForm' => $commentForm,
-            'linkTaskForm' => $linkTaskForm,
             // One instance per modal so each renders its own field ids
             'treatForm' => $this->createForm(ActivityFormType::class)->createView(),
             'ignoreForm' => $this->createForm(ActivityFormType::class)->createView(),
@@ -406,6 +403,128 @@ class AnomalyController extends ExtendedController
         $this->anomalyStatusService->handleUnlinkTask($anomaly, $task, $this->getUser());
 
         $this->addFlash('success', 'anomalyTaskUnlinkedFlash');
+
+        return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
+    }
+
+    /**
+     * Écran 1 du rattachement : choisir la tâche du matériel où ranger la réparation.
+     */
+    #[Route('/{id}/link', name: 'club_anomaly_link', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[IsGranted(AnomalyVoter::LINK_TASK, 'anomaly')]
+    #[Breadcrumb([
+        ['label' => 'home', 'route' => 'club_dashboard'],
+        ['label' => 'anomalies', 'route' => 'club_anomalies'],
+        ['label' => '$anomaly.title', 'route' => 'club_anomaly_show', 'routeParameters' => ['id' => '$anomaly.id']],
+        ['label' => 'anomalyLinkSubTasks'],
+    ])]
+    public function chooseTask(Anomaly $anomaly): Response
+    {
+        $tasks = $this->entityManager->getRepository(Task::class)->createQueryBuilder('task')
+            ->where('task.equipment = :equipment')
+            ->andWhere('task.status != :cancelledStatus')
+            ->setParameter('equipment', $anomaly->getEquipment())
+            ->setParameter('cancelledStatus', 'cancelled')
+            ->orderBy('task.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('club/anomaly/chooseTask.html.twig', [
+            'club' => $this->clubResolver->resolve(),
+            'anomaly' => $anomaly,
+            'openTasks' => array_values(array_filter($tasks, static fn (Task $task): bool => !$task->isClosed())),
+            'closedTasks' => array_values(array_filter($tasks, static fn (Task $task): bool => $task->isClosed())),
+        ]);
+    }
+
+    /**
+     * Écran 2 du rattachement : cocher les sous-tâches de la tâche choisie qui
+     * réparent l'anomalie.
+     */
+    #[Route('/{id}/link/{taskId}', name: 'club_anomaly_link_subtasks', requirements: ['id' => '\d+', 'taskId' => '\d+'], methods: ['GET', 'POST'])]
+    #[IsGranted(AnomalyVoter::LINK_TASK, 'anomaly')]
+    public function linkSubTasks(
+        Anomaly $anomaly,
+        #[MapEntity(id: 'taskId')] Task $task,
+        Request $request,
+        BreadcrumbBuilder $breadcrumbBuilder
+    ): Response {
+        // Vérifier le matériel suffit à écarter une tâche d'un autre club
+        if ($task->isCancelled() || $task->getEquipment() !== $anomaly->getEquipment()) {
+            $this->addFlash('error', 'anomalyTaskEquipmentMismatch');
+
+            return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
+        }
+
+        $candidates = $task->getSubTasks()->filter(
+            static fn (SubTask $subTask): bool => !$subTask->isCancelled()
+        );
+
+        if ($request->isMethod('POST')) {
+            if (!$this->isCsrfTokenValid('anomaly_link_subtasks_' . $anomaly->getId(), (string) $request->request->get('_token'))) {
+                $this->addFlash('error', 'invalidRequest');
+
+                return $this->redirectToRoute('club_anomaly_link_subtasks', ['id' => $anomaly->getId(), 'taskId' => $task->getId()]);
+            }
+
+            // Seules les sous-tâches de cette tâche comptent : un id trafiqué est ignoré
+            $requestedIds = array_map('intval', $request->request->all('subTaskIds'));
+            $selected = $candidates->filter(
+                static fn (SubTask $subTask): bool => in_array($subTask->getId(), $requestedIds, true)
+            );
+
+            if ($selected->isEmpty()) {
+                $this->addFlash('error', 'anomalyLinkNoSubTaskSelected');
+
+                return $this->redirectToRoute('club_anomaly_link_subtasks', ['id' => $anomaly->getId(), 'taskId' => $task->getId()]);
+            }
+
+            $linked = $this->anomalyStatusService->handleLinkSubTasks($anomaly, $selected, $this->getUser());
+
+            $this->addFlash('success', $this->translator->trans('anomalySubTasksLinkedFlash', ['count' => $linked]));
+
+            return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
+        }
+
+        $breadcrumbBuilder
+            ->addItem('home', 'club_dashboard')
+            ->addItem('anomalies', 'club_anomalies')
+            ->addItem($anomaly->getTitle(), 'club_anomaly_show', ['id' => $anomaly->getId()])
+            ->addItem('anomalyLinkSubTasks', 'club_anomaly_link', ['id' => $anomaly->getId()])
+            ->addItem($task->getTitle());
+
+        return $this->render('club/anomaly/linkSubTasks.html.twig', [
+            'club' => $this->clubResolver->resolve(),
+            'anomaly' => $anomaly,
+            'task' => $task,
+            'todoSubTasks' => $candidates->filter(static fn (SubTask $subTask): bool => !$subTask->isClosed()),
+            'closedSubTasks' => $candidates->filter(static fn (SubTask $subTask): bool => $subTask->isClosed()),
+        ]);
+    }
+
+    #[Route('/{id}/subtasks/{subTaskId}/unlink', name: 'club_anomaly_unlink_subtask', requirements: ['id' => '\d+', 'subTaskId' => '\d+'], methods: ['POST'])]
+    #[IsGranted(AnomalyVoter::LINK_TASK, 'anomaly')]
+    public function unlinkSubTask(Anomaly $anomaly, int $subTaskId, Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('anomaly_unlink_subtask_' . $anomaly->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('error', 'invalidRequest');
+
+            return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
+        }
+
+        $subTask = $anomaly->getSubTasks()->findFirst(
+            static fn (int $key, SubTask $candidate): bool => $candidate->getId() === $subTaskId
+        );
+
+        if ($subTask === null) {
+            $this->addFlash('error', 'invalidRequest');
+
+            return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
+        }
+
+        $this->anomalyStatusService->handleUnlinkSubTask($anomaly, $subTask, $this->getUser());
+
+        $this->addFlash('success', 'anomalySubTaskUnlinkedFlash');
 
         return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
     }

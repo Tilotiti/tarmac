@@ -28,10 +28,10 @@
 	{% endif %}
 
 	{% if canLinkTask %}
-		<a href="{{ path('club_task_new', {anomaly: anomaly.id}) }}" class="btn btn-primary">
-			<i class="ti ti-plus me-2"></i>
-			<span class="d-none d-sm-inline">{{ 'anomalyCreateTask'|trans }}</span>
-			<span class="d-inline d-sm-none">{{ 'task'|trans }}</span>
+		<a href="{{ path('club_anomaly_link', {id: anomaly.id}) }}" class="btn btn-primary">
+			<i class="ti ti-link me-2"></i>
+			<span class="d-none d-sm-inline">{{ 'anomalyLinkSubTasks'|trans }}</span>
+			<span class="d-inline d-sm-none">{{ 'subTasks'|trans }}</span>
 		</a>
 	{% endif %}
 
@@ -110,48 +110,48 @@
 				{% endif %}
 			</div>
 
-			{# Tâches liées #}
+			{# Sous-tâches liées #}
 			<div class="tarmac-panel mb-3">
 				<div class="tarmac-panel__title">
 					<i class="ti ti-checklist"></i>
-					{{ 'anomalyLinkedTasks'|trans }}
-					{% if anomaly.tasks|length > 0 %}
-						<span class="tarmac-section-bar__count">{{ anomaly.tasks|length }}</span>
+					{{ 'anomalyLinkedSubTasks'|trans }}
+					{% if anomaly.subTasks|length > 0 %}
+						<span class="tarmac-section-bar__count">{{ anomaly.subTasks|length }}</span>
 					{% endif %}
 					{% if canLinkTask %}
-						<a href="{{ path('club_task_new', {anomaly: anomaly.id}) }}" class="btn btn-primary btn-sm ms-auto">
-							<i class="ti ti-plus me-1"></i>{{ 'anomalyCreateTask'|trans }}
+						<a href="{{ path('club_anomaly_link', {id: anomaly.id}) }}" class="btn btn-primary btn-sm ms-auto">
+							<i class="ti ti-link me-1"></i>{{ 'anomalyLinkSubTasks'|trans }}
 						</a>
 					{% endif %}
 				</div>
 
-				{% if anomaly.tasks|length > 0 %}
+				{% if anomaly.subTasks|length > 0 %}
 					<ul class="tarmac-meta-list">
-						{% for task in anomaly.tasks %}
+						{% for subTask in anomaly.subTasks %}
+							{% set subTaskUrl = path('club_subtask_show', {taskId: subTask.task.id, id: subTask.id}) %}
 							<li class="d-flex align-items-center justify-content-between gap-2">
-								<a href="{{ path('club_task_show', {id: task.id}) }}" class="flex-fill text-truncate">
-									{{ task.title }}
+								<a href="{{ subTaskUrl }}" class="flex-fill" style="min-width:0;text-decoration:none;">
+									<span class="d-block text-truncate" style="font-weight:600;color:var(--td-mid);">{{ subTask.title }}</span>
+									<span class="d-block text-truncate text-secondary" style="font-size:0.8rem;">{{ subTask.task.title }}</span>
 								</a>
-								<span class="d-flex align-items-center gap-2">
-									{% if task.status == 'cancelled' %}
-										<span class="tarmac-badge tarmac-badge--status-cancelled"><i class="ti ti-x"></i>{{ task.status|trans }}</span>
-									{% elseif task.status == 'closed' %}
-										<span class="tarmac-badge tarmac-badge--status-closed"><i class="ti ti-circle-check"></i>{{ task.status|trans }}</span>
-									{% else %}
-										<span class="tarmac-badge tarmac-badge--status-open"><i class="ti ti-circle"></i>{{ task.status|trans }}</span>
-									{% endif %}
+								<span class="d-flex align-items-center gap-2 flex-shrink-0">
+									{% include 'component/subTaskStatusBadge.html.twig' with {'subTask': subTask} only %}
 
-									<a href="{{ path('club_task_show', {id: task.id}) }}"
+									<a href="{{ subTaskUrl }}"
 										class="btn btn-sm btn-outline-primary"
-										title="{{ 'viewTask'|trans }}"
-										aria-label="{{ 'viewTask'|trans }}">
+										title="{{ 'viewSubTask'|trans }}"
+										aria-label="{{ 'viewSubTask'|trans }}">
 										<i class="ti ti-arrow-right"></i>
 									</a>
 
 									{% if canLinkTask %}
-										<form method="post" action="{{ path('club_anomaly_unlink_task', {id: anomaly.id, taskId: task.id}) }}" data-turbo="false">
-											<input type="hidden" name="_token" value="{{ csrf_token('anomaly_unlink_task_' ~ anomaly.id) }}">
-											<button type="submit" class="btn btn-sm btn-outline-secondary" data-confirm="{{ 'anomalyUnlinkTaskConfirm'|trans }}" title="{{ 'anomalyUnlinkTask'|trans }}">
+										<form method="post" action="{{ path('club_anomaly_unlink_subtask', {id: anomaly.id, subTaskId: subTask.id}) }}" data-turbo="false">
+											<input type="hidden" name="_token" value="{{ csrf_token('anomaly_unlink_subtask_' ~ anomaly.id) }}">
+											<button type="submit"
+												class="btn btn-sm btn-outline-secondary"
+												data-confirm="{{ 'anomalyUnlinkSubTaskConfirm'|trans }}"
+												title="{{ 'anomalyUnlinkSubTask'|trans }}"
+												aria-label="{{ 'anomalyUnlinkSubTask'|trans }}">
 												<i class="ti ti-unlink"></i>
 											</button>
 										</form>
@@ -162,21 +162,8 @@
 					</ul>
 				{% else %}
 					<p class="text-secondary" style="margin:0;font-size:0.9rem;">
-						<em>{{ 'anomalyNoLinkedTask'|trans }}</em>
+						<em>{{ 'anomalyNoLinkedSubTask'|trans }}</em>
 					</p>
-				{% endif %}
-
-				{% if linkTaskForm %}
-					<hr style="border-color: var(--td-border); margin: 1.25rem 0;">
-					{{ form_start(linkTaskForm, {
-						action: path('club_anomaly_link_task', {id: anomaly.id}),
-						attr: {'data-turbo': 'false'}
-					}) }}
-					<div class="mb-3">{{ form_row(linkTaskForm.task) }}</div>
-					<button type="submit" class="btn btn-outline-primary btn-sm">
-						<i class="ti ti-link me-1"></i>{{ 'anomalyLinkExistingTask'|trans }}
-					</button>
-					{{ form_end(linkTaskForm) }}
 				{% endif %}
 			</div>
 

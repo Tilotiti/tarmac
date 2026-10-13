@@ -3,12 +3,13 @@
 
     Paramètres :
     - task: l'entité Task à afficher
+    - href (facultatif) : cible du lien, la fiche de la tâche par défaut
 #}
 {% set isCancelled = task.status == 'cancelled' %}
 {% set isWaitingApproval = task.isWaitingForApproval %}
 
 <div class="col-12 col-lg-6 mb-3 d-flex">
-	<a href="{{ path('club_task_show', {id: task.id}) }}" class="tarmac-card w-100{% if isCancelled %} tarmac-card--dimmed{% endif %}">
+	<a href="{{ href ?? path('club_task_show', {id: task.id}) }}" class="tarmac-card w-100{% if isCancelled %} tarmac-card--dimmed{% endif %}">
 
 		<div class="tarmac-card__head">
 			<span class="tarmac-eqv tarmac-eqv--{{ task.equipment.type.color }}">

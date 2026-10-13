@@ -1,0 +1,15 @@
+{#
+    Badge de statut d'une sous-tâche, version courte de celui de subTaskCard.
+
+    Paramètres :
+    - subTask: l'entité SubTask
+#}
+{% if subTask.isWaitingForApproval %}
+	<span class="tarmac-badge tarmac-badge--status-inspection"><i class="ti ti-hourglass"></i>{{ 'waitingForApproval'|trans }}</span>
+{% elseif subTask.status == 'closed' %}
+	<span class="tarmac-badge tarmac-badge--status-closed"><i class="ti ti-circle-check"></i>{{ subTask.status|trans }}</span>
+{% elseif subTask.status == 'cancelled' %}
+	<span class="tarmac-badge tarmac-badge--status-cancelled"><i class="ti ti-x"></i>{{ subTask.status|trans }}</span>
+{% else %}
+	<span class="tarmac-badge tarmac-badge--status-open"><i class="ti ti-circle"></i>{{ subTask.status|trans }}</span>
+{% endif %}
