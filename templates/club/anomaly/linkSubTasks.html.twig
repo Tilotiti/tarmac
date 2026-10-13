@@ -13,14 +13,9 @@
 {% block page_content %}
 	<div class="row g-3">
 		<div class="col-12 col-lg-8 mx-auto">
-			<form method="post"
-				action="{{ path('club_anomaly_link_subtasks', {id: anomaly.id, taskId: task.id}) }}"
-				class="tarmac-panel"
-				data-turbo="false"
-				data-controller="checklist-filter"
-				data-action="change->checklist-filter#updateCount">
-				<input type="hidden" name="_token" value="{{ csrf_token('anomaly_link_subtasks_' ~ anomaly.id) }}">
-
+			{# Le filtre reste hors du <form> : la touche « Rechercher » d'un clavier mobile
+			   soumettrait sinon une sélection incomplète #}
+			<div class="tarmac-panel" data-controller="checklist-filter">
 				<div class="tarmac-panel__title">
 					<i class="ti ti-checklist"></i>{{ task.title }}
 				</div>
@@ -42,49 +37,56 @@
 						data-action="input->checklist-filter#filter">
 				</div>
 
-				{% if todoSubTasks is empty and closedSubTasks is empty %}
-					<p class="text-secondary" style="margin:0;"><em>{{ 'noSubTasks'|trans }}</em></p>
-				{% endif %}
+				<form method="post"
+					action="{{ path('club_anomaly_link_subtasks', {id: anomaly.id, taskId: task.id}) }}"
+					data-turbo="false"
+					data-action="change->checklist-filter#updateCount">
+					<input type="hidden" name="_token" value="{{ csrf_token('anomaly_link_subtasks_' ~ anomaly.id) }}">
 
-				{% for group in [
-					{'label': 'anomalyLinkGroupTodo', 'subTasks': todoSubTasks},
-					{'label': 'anomalyLinkGroupClosed', 'subTasks': closedSubTasks}
-				] %}
-					{% if group.subTasks is not empty %}
-						<div class="tarmac-checklist__group">{{ group.label|trans }}</div>
-						{% for subTask in group.subTasks %}
-							{% if anomaly.subTasks.contains(subTask) %}
-								<div class="tarmac-checklist__item is-linked" data-checklist-filter-target="item">
-									<i class="ti ti-check"></i>
-									<span class="tarmac-checklist__title">{{ subTask.title }}</span>
-									<span class="tarmac-badge tarmac-badge--secondary">{{ 'anomalyLinkAlreadyLinked'|trans }}</span>
-								</div>
-							{% else %}
-								<label class="tarmac-checklist__item" data-checklist-filter-target="item">
-									<input type="checkbox" class="form-check-input m-0" name="subTaskIds[]" value="{{ subTask.id }}">
-									<span class="tarmac-checklist__title">{{ subTask.title }}</span>
-									{% include 'component/subTaskStatusBadge.html.twig' with {'subTask': subTask} only %}
-								</label>
-							{% endif %}
-						{% endfor %}
+					{% if todoSubTasks is empty and closedSubTasks is empty %}
+						<p class="text-secondary" style="margin:0;"><em>{{ 'noSubTasks'|trans }}</em></p>
 					{% endif %}
-				{% endfor %}
 
-				<div class="tarmac-panel__footer">
-					<div class="tarmac-panel__footer-primary">
-						{# Pas de « disabled » dans le HTML : sans JavaScript, le bouton reste utilisable #}
-						<button type="submit" class="btn btn-primary w-100" data-checklist-filter-target="submit">
-							<i class="ti ti-link me-2"></i>{{ 'anomalyLinkSubmit'|trans }}
-							<span class="badge bg-white text-primary ms-2" data-checklist-filter-target="count">0</span>
-						</button>
+					{% for group in [
+						{'label': 'anomalyLinkGroupTodo', 'subTasks': todoSubTasks},
+						{'label': 'anomalyLinkGroupClosed', 'subTasks': closedSubTasks}
+					] %}
+						{% if group.subTasks is not empty %}
+							<div class="tarmac-checklist__group">{{ group.label|trans }}</div>
+							{% for subTask in group.subTasks %}
+								{% if anomaly.subTasks.contains(subTask) %}
+									<div class="tarmac-checklist__item is-linked" data-checklist-filter-target="item">
+										<i class="ti ti-check"></i>
+										<span class="tarmac-checklist__title">{{ subTask.title }}</span>
+										<span class="tarmac-badge tarmac-badge--secondary">{{ 'anomalyLinkAlreadyLinked'|trans }}</span>
+									</div>
+								{% else %}
+									<label class="tarmac-checklist__item" data-checklist-filter-target="item">
+										<input type="checkbox" class="form-check-input m-0" name="subTaskIds[]" value="{{ subTask.id }}">
+										<span class="tarmac-checklist__title">{{ subTask.title }}</span>
+										{% include 'component/subTaskStatusBadge.html.twig' with {'subTask': subTask} only %}
+									</label>
+								{% endif %}
+							{% endfor %}
+						{% endif %}
+					{% endfor %}
+
+					<div class="tarmac-panel__footer">
+						<div class="tarmac-panel__footer-primary">
+							{# Pas de « disabled » dans le HTML : sans JavaScript, le bouton reste utilisable #}
+							<button type="submit" class="btn btn-primary w-100" data-checklist-filter-target="submit">
+								<i class="ti ti-link me-2"></i>{{ 'anomalyLinkSubmit'|trans }}
+								<span class="badge bg-white text-primary ms-2" data-checklist-filter-target="count">0</span>
+							</button>
+						</div>
+						<div class="tarmac-panel__footer-secondary">
+							<a href="{{ path('club_anomaly_link', {id: anomaly.id}) }}" class="btn btn-outline-secondary">
+								<i class="ti ti-arrow-left me-2"></i>{{ 'back'|trans }}
+							</a>
+						</div>
 					</div>
-					<div class="tarmac-panel__footer-secondary">
-						<a href="{{ path('club_anomaly_link', {id: anomaly.id}) }}" class="btn btn-outline-secondary">
-							<i class="ti ti-arrow-left me-2"></i>{{ 'back'|trans }}
-						</a>
-					</div>
-				</div>
-			</form>
+				</form>
+			</div>
 		</div>
 	</div>
 {% endblock %}

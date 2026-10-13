@@ -128,7 +128,7 @@ class AnomalySubTaskLinkTest extends FunctionalTestCase
     {
         $crawler = $this->client->request('GET', $this->anomalyUrl('/link/' . $this->visit->getId()));
 
-        return $crawler->filter('form[data-controller~="checklist-filter"] input[name="_token"]')->attr('value');
+        return $crawler->filter('[data-controller~="checklist-filter"] form input[name="_token"]')->attr('value');
     }
 
     public function testManagerLinksTwoSubTasksFromScreenTwo(): void
@@ -145,7 +145,7 @@ class AnomalySubTaskLinkTest extends FunctionalTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextNotContains('body', 'Ancienne étape');
 
-        $form = $crawler->filter('form[data-controller~="checklist-filter"]')->form();
+        $form = $crawler->filter('[data-controller~="checklist-filter"] form')->form();
         $form['subTaskIds'][0]->tick();
         $form['subTaskIds'][1]->tick();
         $this->client->submit($form);
@@ -257,5 +257,34 @@ class AnomalySubTaskLinkTest extends FunctionalTestCase
         $this->client->request('GET', $this->host . '/anomalies');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('body', '1 sous-tâche');
+    }
+
+    /**
+     * Les textes d'aide du traitement décrivaient la règle des tâches entières.
+     */
+    public function testTreatmentHelpTextsDescribeTheSubTaskRule(): void
+    {
+        $translator = static::getContainer()->get('translator');
+
+        foreach (['anomalyTreatHelp', 'anomalyCannotBeTreated', 'anomalyStatusHelp', 'anomalyBulkTreatHelp'] as $key) {
+            $text = $translator->trans($key, [], 'messages', 'fr');
+            $this->assertStringContainsString('sous-tâche', $text, $key);
+            $this->assertDoesNotMatchRegularExpression('/(?<!sous-)tâches? (liées?|ouverte|en cours|fermées?|sont)/u', $text, $key);
+        }
+    }
+
+    /**
+     * Sur mobile, la touche « Rechercher » du clavier soumettait le formulaire avec
+     * une sélection incomplète : le filtre doit vivre hors du formulaire.
+     */
+    public function testFilterFieldCannotSubmitTheLinkForm(): void
+    {
+        $this->scenario();
+
+        $this->client->request('GET', $this->anomalyUrl('/link/' . $this->visit->getId()));
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('[data-controller~="checklist-filter"] input[type="search"]');
+        $this->assertSelectorNotExists('form input[type="search"]');
     }
 }

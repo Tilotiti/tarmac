@@ -3013,7 +3013,7 @@
       </trans-unit>
       <trans-unit id="1626" resname="anomalyStatusHelp">
         <source>anomalyStatusHelp</source>
-        <target>Relevé : aucune tâche ouverte. Pris en compte : au moins une tâche en cours. Traité : confirmé par un gestionnaire une fois toutes les tâches fermées.</target>
+        <target>Relevé : aucune sous-tâche liée. Pris en compte : au moins une sous-tâche liée. Traité : confirmé par un gestionnaire une fois toutes les sous-tâches liées closes.</target>
       </trans-unit>
       <trans-unit id="1627" resname="anomalyImpact">
         <source>anomalyImpact</source>
@@ -3133,7 +3133,7 @@
       </trans-unit>
       <trans-unit id="1666" resname="anomalyTreatHelp">
         <source>anomalyTreatHelp</source>
-        <target>Toutes les tâches liées sont fermées. Confirmez que l'anomalie est bien résolue.</target>
+        <target>Toutes les sous-tâches liées sont closes. Confirmez que le problème constaté a disparu.</target>
       </trans-unit>
       <trans-unit id="1667" resname="anomalyMarkedAsTreated">
         <source>anomalyMarkedAsTreated</source>
@@ -3141,7 +3141,7 @@
       </trans-unit>
       <trans-unit id="1668" resname="anomalyCannotBeTreated">
         <source>anomalyCannotBeTreated</source>
-        <target>L'anomalie ne peut pas être marquée comme traitée : il faut au moins une tâche liée, et toutes doivent être fermées.</target>
+        <target>L'anomalie ne peut pas être marquée comme traitée : il faut au moins une sous-tâche liée, et toutes doivent être closes.</target>
       </trans-unit>
       <trans-unit id="1669" resname="anomalyIgnore">
         <source>anomalyIgnore</source>
@@ -3177,7 +3177,7 @@
       </trans-unit>
       <trans-unit id="1679" resname="anomalyBulkTreatHelp">
         <source>anomalyBulkTreatHelp</source>
-        <target>Seules les anomalies dont toutes les tâches sont fermées seront traitées. Les autres sont ignorées.</target>
+        <target>Seules les anomalies dont toutes les sous-tâches liées sont closes seront traitées. Les autres restent inchangées.</target>
       </trans-unit>
       <trans-unit id="1680" resname="anomalyBulkIgnoreHelp">
         <source>anomalyBulkIgnoreHelp</source>
