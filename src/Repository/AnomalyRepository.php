@@ -123,8 +123,10 @@ class AnomalyRepository extends ServiceEntityRepository
      * a SQL condition, and the conditions are OR-ed together.
      *
      *  - treated / ignored  -> the stored resolution
-     *  - acknowledged       -> unresolved, with at least one non-cancelled task
-     *  - reported           -> unresolved, without any non-cancelled task
+     *  - acknowledged       -> unresolved, with at least one active subtask
+     *  - reported           -> unresolved, without any active subtask
+     *
+     * An active subtask is neither cancelled itself nor filed under a cancelled task.
      *
      * @param string|array<string> $status Single status or array of statuses (multi-select)
      */
@@ -162,18 +164,20 @@ class AnomalyRepository extends ServiceEntityRepository
         $wantsReported = in_array(AnomalyStatus::REPORTED->value, $statuses, true);
 
         if ($wantsAcknowledged && $wantsReported) {
-            // Together they cover every unresolved anomaly, so the task subquery
+            // Together they cover every unresolved anomaly, so the subtask subquery
             // is pointless — and injecting it twice would clash on its alias.
             $conditions[] = 'anomaly.resolution IS NULL';
         } elseif ($wantsAcknowledged || $wantsReported) {
-            $subQuery = $this->createQueryBuilder('anomaly_with_task')
+            $subQuery = $this->createQueryBuilder('anomaly_with_subtask')
                 ->select('1')
-                ->join('anomaly_with_task.tasks', 'linked_task')
-                ->where('linked_task.status != :cancelledTaskStatus')
-                ->andWhere('anomaly_with_task.id = anomaly.id')
+                ->join('anomaly_with_subtask.subTasks', 'linked_subtask')
+                ->join('linked_subtask.task', 'linked_subtask_task')
+                ->where('linked_subtask.status != :cancelledStatus')
+                ->andWhere('linked_subtask_task.status != :cancelledStatus')
+                ->andWhere('anomaly_with_subtask.id = anomaly.id')
                 ->getDQL();
 
-            $qb->setParameter('cancelledTaskStatus', 'cancelled');
+            $qb->setParameter('cancelledStatus', 'cancelled');
 
             $conditions[] = $wantsAcknowledged
                 ? '(anomaly.resolution IS NULL AND EXISTS (' . $subQuery . '))'

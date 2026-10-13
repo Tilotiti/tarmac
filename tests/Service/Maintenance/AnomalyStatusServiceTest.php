@@ -7,6 +7,7 @@ use App\Entity\Anomaly;
 use App\Entity\Enum\ActivityType;
 use App\Entity\Enum\AnomalyImpact;
 use App\Entity\Enum\AnomalyResolution;
+use App\Entity\SubTask;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Service\CommentNotificationService;
@@ -57,6 +58,19 @@ class AnomalyStatusServiceTest extends TestCase
         $task->setTitle($title);
 
         return $task;
+    }
+
+    /**
+     * A subtask filed under an open task, as it is in real life.
+     */
+    private function createSubTask(string $status = 'open', string $title = 'Changer le pneu'): SubTask
+    {
+        $subTask = new SubTask();
+        $subTask->setStatus($status);
+        $subTask->setTitle($title);
+        $this->createTask('open')->addSubTask($subTask);
+
+        return $subTask;
     }
 
     public function testCreateLogsAnActivity(): void
@@ -195,7 +209,7 @@ class AnomalyStatusServiceTest extends TestCase
 
         $service = $this->createService(null, $entityManager);
         $anomaly = $this->createAnomaly();
-        $anomaly->addTask($this->createTask('open'));
+        $anomaly->addSubTask($this->createSubTask('open'));
 
         $this->assertFalse($service->handleMarkTreated($anomaly, new User()));
         $this->assertNull($anomaly->getResolution());
@@ -205,7 +219,7 @@ class AnomalyStatusServiceTest extends TestCase
     {
         $service = $this->createService();
         $anomaly = $this->createAnomaly();
-        $anomaly->addTask($this->createTask('closed'));
+        $anomaly->addSubTask($this->createSubTask('closed'));
         $user = new User();
 
         $this->assertTrue($service->handleMarkTreated($anomaly, $user, 'Vérifié au sol'));

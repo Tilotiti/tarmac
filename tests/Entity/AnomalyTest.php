@@ -6,6 +6,7 @@ use App\Entity\Anomaly;
 use App\Entity\Enum\AnomalyImpact;
 use App\Entity\Enum\AnomalyResolution;
 use App\Entity\Enum\AnomalyStatus;
+use App\Entity\SubTask;
 use App\Entity\Task;
 use PHPUnit\Framework\TestCase;
 
@@ -15,45 +16,48 @@ use PHPUnit\Framework\TestCase;
  */
 class AnomalyTest extends TestCase
 {
-    private function createTask(string $status): Task
+    private function createSubTask(string $status, string $taskStatus = 'open'): SubTask
     {
         $task = new Task();
-        $task->setStatus($status);
+        $task->setStatus($taskStatus);
+        $subTask = new SubTask();
+        $subTask->setStatus($status);
+        $task->addSubTask($subTask);
 
-        return $task;
+        return $subTask;
     }
 
-    public function testStatusIsReportedWithoutAnyTask(): void
+    public function testStatusIsReportedWithoutAnySubTask(): void
     {
         $anomaly = new Anomaly();
 
         $this->assertSame(AnomalyStatus::REPORTED, $anomaly->getStatus());
     }
 
-    public function testStatusIsReportedWhenEveryLinkedTaskIsCancelled(): void
+    public function testStatusIsReportedWhenEveryLinkedSubTaskIsCancelled(): void
     {
         $anomaly = new Anomaly();
-        $anomaly->addTask($this->createTask('cancelled'));
-        $anomaly->addTask($this->createTask('cancelled'));
+        $anomaly->addSubTask($this->createSubTask('cancelled'));
+        $anomaly->addSubTask($this->createSubTask('cancelled'));
 
         $this->assertSame(AnomalyStatus::REPORTED, $anomaly->getStatus());
     }
 
-    public function testStatusIsAcknowledgedWithAtLeastOneActiveTask(): void
+    public function testStatusIsAcknowledgedWithAtLeastOneActiveSubTask(): void
     {
         $anomaly = new Anomaly();
-        $anomaly->addTask($this->createTask('cancelled'));
-        $anomaly->addTask($this->createTask('open'));
+        $anomaly->addSubTask($this->createSubTask('cancelled'));
+        $anomaly->addSubTask($this->createSubTask('open'));
 
         $this->assertSame(AnomalyStatus::ACKNOWLEDGED, $anomaly->getStatus());
     }
 
-    public function testStatusStaysAcknowledgedWhenAllTasksAreClosedButNotConfirmed(): void
+    public function testStatusStaysAcknowledgedWhenAllSubTasksAreClosedButNotConfirmed(): void
     {
         $anomaly = new Anomaly();
-        $anomaly->addTask($this->createTask('closed'));
+        $anomaly->addSubTask($this->createSubTask('closed'));
 
-        // Closing the tasks only unlocks the button — a manager still confirms
+        // Closing the subtasks only unlocks the button — a manager still confirms
         $this->assertSame(AnomalyStatus::ACKNOWLEDGED, $anomaly->getStatus());
         $this->assertTrue($anomaly->canBeMarkedAsTreated());
     }
@@ -61,7 +65,7 @@ class AnomalyTest extends TestCase
     public function testTreatedResolutionWins(): void
     {
         $anomaly = new Anomaly();
-        $anomaly->addTask($this->createTask('open'));
+        $anomaly->addSubTask($this->createSubTask('open'));
         $anomaly->setResolution(AnomalyResolution::TREATED);
 
         $this->assertSame(AnomalyStatus::TREATED, $anomaly->getStatus());
@@ -70,41 +74,41 @@ class AnomalyTest extends TestCase
     public function testIgnoredResolutionWinsOverEverything(): void
     {
         $anomaly = new Anomaly();
-        $anomaly->addTask($this->createTask('open'));
+        $anomaly->addSubTask($this->createSubTask('open'));
         $anomaly->setResolution(AnomalyResolution::IGNORED);
 
         $this->assertSame(AnomalyStatus::IGNORED, $anomaly->getStatus());
     }
 
-    public function testCannotBeTreatedWithoutAnyTask(): void
+    public function testCannotBeTreatedWithoutAnySubTask(): void
     {
         $anomaly = new Anomaly();
 
         $this->assertFalse($anomaly->canBeMarkedAsTreated());
     }
 
-    public function testCannotBeTreatedWhenEveryTaskIsCancelled(): void
+    public function testCannotBeTreatedWhenEverySubTaskIsCancelled(): void
     {
         $anomaly = new Anomaly();
-        $anomaly->addTask($this->createTask('cancelled'));
+        $anomaly->addSubTask($this->createSubTask('cancelled'));
 
         $this->assertFalse($anomaly->canBeMarkedAsTreated());
     }
 
-    public function testCannotBeTreatedWhileOneTaskIsStillOpen(): void
+    public function testCannotBeTreatedWhileOneSubTaskIsStillOpen(): void
     {
         $anomaly = new Anomaly();
-        $anomaly->addTask($this->createTask('closed'));
-        $anomaly->addTask($this->createTask('open'));
+        $anomaly->addSubTask($this->createSubTask('closed'));
+        $anomaly->addSubTask($this->createSubTask('open'));
 
         $this->assertFalse($anomaly->canBeMarkedAsTreated());
     }
 
-    public function testCancelledTasksDoNotBlockTreatment(): void
+    public function testCancelledSubTasksDoNotBlockTreatment(): void
     {
         $anomaly = new Anomaly();
-        $anomaly->addTask($this->createTask('closed'));
-        $anomaly->addTask($this->createTask('cancelled'));
+        $anomaly->addSubTask($this->createSubTask('closed'));
+        $anomaly->addSubTask($this->createSubTask('cancelled'));
 
         $this->assertTrue($anomaly->canBeMarkedAsTreated());
     }
@@ -112,10 +116,44 @@ class AnomalyTest extends TestCase
     public function testCannotBeTreatedTwice(): void
     {
         $anomaly = new Anomaly();
-        $anomaly->addTask($this->createTask('closed'));
+        $anomaly->addSubTask($this->createSubTask('closed'));
         $anomaly->setResolution(AnomalyResolution::TREATED);
 
         $this->assertFalse($anomaly->canBeMarkedAsTreated());
+    }
+
+    public function testCannotBeTreatedWhileOneSubTaskAwaitsInspection(): void
+    {
+        $anomaly = new Anomaly();
+        $anomaly->addSubTask($this->createSubTask('closed'));
+        $anomaly->addSubTask($this->createSubTask('done'));
+
+        $this->assertSame(AnomalyStatus::ACKNOWLEDGED, $anomaly->getStatus());
+        $this->assertFalse($anomaly->canBeMarkedAsTreated());
+    }
+
+    public function testSubTasksOfACancelledTaskDoNotCount(): void
+    {
+        // handleCancelTask n'annule que les sous-tâches ouvertes : une sous-tâche close
+        // d'une tâche annulée garde son statut, mais ne doit plus compter.
+        $anomaly = new Anomaly();
+        $anomaly->addSubTask($this->createSubTask('closed', 'cancelled'));
+
+        $this->assertSame(AnomalyStatus::REPORTED, $anomaly->getStatus());
+        $this->assertFalse($anomaly->canBeMarkedAsTreated());
+    }
+
+    public function testLinkIsMaintainedOnBothSides(): void
+    {
+        $anomaly = new Anomaly();
+        $subTask = $this->createSubTask('open');
+        $anomaly->addSubTask($subTask);
+
+        $this->assertTrue($subTask->getAnomalies()->contains($anomaly));
+
+        $anomaly->removeSubTask($subTask);
+
+        $this->assertFalse($subTask->getAnomalies()->contains($anomaly));
     }
 
     public function testIsGroundingOnlyWhileUnresolved(): void

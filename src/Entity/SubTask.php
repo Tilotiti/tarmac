@@ -109,6 +109,12 @@ class SubTask
     #[ORM\JoinTable(name: 'sub_task_specialisation')]
     private Collection $specialisations;
 
+    /**
+     * @var Collection<int, Anomaly>
+     */
+    #[ORM\ManyToMany(targetEntity: Anomaly::class, mappedBy: 'subTasks')]
+    private Collection $anomalies;
+
     public function __construct()
     {
         $this->status = 'open';
@@ -119,6 +125,7 @@ class SubTask
         $this->activities = new ArrayCollection();
         $this->contributions = new ArrayCollection();
         $this->specialisations = new ArrayCollection();
+        $this->anomalies = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -524,5 +531,33 @@ class SubTask
 
         return $this;
     }
-}
 
+    /**
+     * Anomalies this subtask repairs.
+     *
+     * @return Collection<int, Anomaly>
+     */
+    public function getAnomalies(): Collection
+    {
+        return $this->anomalies;
+    }
+
+    /**
+     * Inverse side: only Anomaly::addSubTask() should call this.
+     */
+    public function addAnomaly(Anomaly $anomaly): static
+    {
+        if (!$this->anomalies->contains($anomaly)) {
+            $this->anomalies->add($anomaly);
+        }
+
+        return $this;
+    }
+
+    public function removeAnomaly(Anomaly $anomaly): static
+    {
+        $this->anomalies->removeElement($anomaly);
+
+        return $this;
+    }
+}

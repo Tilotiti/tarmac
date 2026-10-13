@@ -94,6 +94,16 @@ class Anomaly
     private Collection $tasks;
 
     /**
+     * Les sous-tâches qui réparent l'anomalie. Une visite compte des dizaines
+     * d'étapes : on rattache celle qui répare, pas la visite entière.
+     *
+     * @var Collection<int, SubTask>
+     */
+    #[ORM\ManyToMany(targetEntity: SubTask::class, inversedBy: 'anomalies')]
+    #[ORM\JoinTable(name: 'anomaly_sub_task')]
+    private Collection $subTasks;
+
+    /**
      * @var Collection<int, Activity>
      */
     #[ORM\OneToMany(targetEntity: Activity::class, mappedBy: 'anomaly', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -105,6 +115,7 @@ class Anomaly
         $this->createdAt = new \DateTimeImmutable();
         $this->reportedAt = new \DateTimeImmutable('today');
         $this->tasks = new ArrayCollection();
+        $this->subTasks = new ArrayCollection();
         $this->activities = new ArrayCollection();
     }
 
@@ -346,6 +357,48 @@ class Anomaly
     }
 
     /**
+     * @return Collection<int, SubTask>
+     */
+    public function getSubTasks(): Collection
+    {
+        return $this->subTasks;
+    }
+
+    public function addSubTask(SubTask $subTask): static
+    {
+        if (!$this->subTasks->contains($subTask)) {
+            $this->subTasks->add($subTask);
+            $subTask->addAnomaly($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubTask(SubTask $subTask): static
+    {
+        if ($this->subTasks->removeElement($subTask)) {
+            $subTask->removeAnomaly($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Linked subtasks that still count: neither the subtask nor its task is
+     * cancelled. Cancelling a task only cancels its open subtasks, so a done or
+     * closed subtask of a cancelled task must be filtered out here.
+     *
+     * @return Collection<int, SubTask>
+     */
+    public function getActiveSubTasks(): Collection
+    {
+        return $this->subTasks->filter(
+            static fn (SubTask $subTask): bool => !$subTask->isCancelled()
+                && $subTask->getTask()?->isCancelled() !== true
+        );
+    }
+
+    /**
      * @return Collection<int, Activity>
      */
     public function getActivities(): Collection
@@ -365,14 +418,14 @@ class Anomaly
 
     /**
      * Displayed status, always derived — never stored, so it can never drift
-     * away from the linked tasks.
+     * away from the linked subtasks.
      */
     public function getStatus(): AnomalyStatus
     {
         return match (true) {
             $this->resolution === AnomalyResolution::IGNORED => AnomalyStatus::IGNORED,
             $this->resolution === AnomalyResolution::TREATED => AnomalyStatus::TREATED,
-            !$this->getActiveTasks()->isEmpty() => AnomalyStatus::ACKNOWLEDGED,
+            !$this->getActiveSubTasks()->isEmpty() => AnomalyStatus::ACKNOWLEDGED,
             default => AnomalyStatus::REPORTED,
         };
     }
@@ -393,8 +446,9 @@ class Anomaly
     }
 
     /**
-     * A manager may confirm the anomaly as treated once every linked task is
-     * closed — and provided at least one task was actually opened for it.
+     * A manager may confirm the anomaly as treated once every active linked
+     * subtask is closed (inspection included) — and provided at least one was
+     * actually linked.
      */
     public function canBeMarkedAsTreated(): bool
     {
@@ -402,14 +456,14 @@ class Anomaly
             return false;
         }
 
-        $activeTasks = $this->getActiveTasks();
+        $activeSubTasks = $this->getActiveSubTasks();
 
-        if ($activeTasks->isEmpty()) {
+        if ($activeSubTasks->isEmpty()) {
             return false;
         }
 
-        foreach ($activeTasks as $task) {
-            if (!$task->isClosed()) {
+        foreach ($activeSubTasks as $subTask) {
+            if (!$subTask->isClosed()) {
                 return false;
             }
         }
