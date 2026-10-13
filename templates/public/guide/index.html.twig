@@ -454,23 +454,26 @@
 								</p>
 
 								<h3>Le cycle de vie</h3>
-								<p>Le statut d'une anomalie se déduit tout seul des tâches qui lui sont rattachées&nbsp;:</p>
+								<p>Le statut d'une anomalie se déduit tout seul des sous-tâches qui lui sont rattachées&nbsp;:</p>
 								<ul>
-									<li><span class="badge bg-yellow-lt text-yellow">Relevé</span> — l'anomalie est signalée,
-										mais aucune tâche n'a encore été ouverte pour la traiter.</li>
-									<li><span class="badge bg-blue-lt text-blue">Pris en compte</span> — au moins une tâche a
-										été créée ou rattachée&nbsp;: le club s'en occupe.</li>
-									<li><span class="badge bg-green-lt text-green">Traité</span> — toutes les tâches sont
-										clôturées <em>et</em> un gestionnaire a confirmé que le problème est bien résolu.</li>
-									<li><span class="badge bg-secondary-lt text-secondary">Ignoré</span> — un doublon, une
-										fausse alerte, ou un constat qui ne nécessite finalement aucune action.</li>
+									<li><span class="badge bg-yellow-lt text-yellow">Relevé</span>&nbsp;: l'anomalie est signalée,
+										mais aucune sous-tâche ne la répare encore.</li>
+									<li><span class="badge bg-blue-lt text-blue">Pris en compte</span>&nbsp;: au moins une
+										sous-tâche lui est rattachée, le club s'en occupe.</li>
+									<li><span class="badge bg-green-lt text-green">Traité</span>&nbsp;: toutes les sous-tâches
+										rattachées sont closes <em>et</em> un gestionnaire a confirmé que le problème a disparu.</li>
+									<li><span class="badge bg-secondary-lt text-secondary">Ignoré</span>&nbsp;: un doublon, une
+										fausse alerte, ou un constat qui ne demande finalement aucune action.</li>
 								</ul>
 								<p>
-									Point important&nbsp;: <strong>clôturer les tâches ne suffit pas</strong> à clore
+									Point important&nbsp;: <strong>clore les sous-tâches ne suffit pas</strong> à clore
 									l'anomalie. Le bouton «&nbsp;Marquer comme traité&nbsp;» ne devient actif que lorsque
-									toutes les tâches liées sont fermées, et c'est un gestionnaire qui appuie dessus. C'est
-									une vérification volontaire&nbsp;: on veut que quelqu'un confirme que le problème constaté
-									a bien disparu, pas seulement que le travail a été fait.
+									toutes les sous-tâches rattachées sont closes, inspection comprise quand elles en
+									demandent une, et c'est un gestionnaire qui appuie dessus. En appuyant, il confirme que
+									le problème constaté a disparu.
+								</p>
+								<p>
+									Les sous-tâches annulées ne comptent plus, ni celles d'une tâche annulée.
 								</p>
 								<p>
 									Une anomalie n'est jamais supprimée. Si elle n'a pas lieu d'être, on l'ignore — ce qui
@@ -478,18 +481,38 @@
 									été classée à tort.
 								</p>
 
-								<h3>Faire le lien avec les tâches</h3>
+								<h3>Faire le lien avec les sous-tâches</h3>
 								<p>
-									Depuis la fiche d'une anomalie, un gestionnaire dispose de deux boutons&nbsp;:
-									<strong>créer une tâche</strong> (le matériel et le titre sont préremplis, et le lien est
-									posé automatiquement), ou <strong>rattacher une tâche existante</strong> du même matériel.
-									Une anomalie peut être couverte par plusieurs tâches, et une même tâche peut résoudre
-									plusieurs anomalies.
+									Une visite annuelle compte des dizaines d'étapes. Si le pneu de la roulette de queue est
+									usé, vous rattachez l'anomalie à la seule étape qui change le pneu. Dès que cette étape
+									est close, un gestionnaire peut traiter l'anomalie, sans attendre la fin de la visite.
 								</p>
 								<p>
-									Le lien se voit dans les deux sens&nbsp;: la fiche d'une tâche affiche les anomalies
-									qu'elle traite, et chaque rattachement est inscrit dans les deux journaux — celui de
-									l'anomalie et celui de la tâche.
+									Depuis la fiche d'une anomalie, un gestionnaire appuie sur
+									<strong>«&nbsp;Lier des sous-tâches&nbsp;»</strong>, puis&nbsp;:
+								</p>
+								<ol>
+									<li><strong>Il choisit la tâche</strong> parmi celles en cours sur le matériel. Les tâches
+										déjà closes restent accessibles en dessous, repliées&nbsp;: elles servent quand
+										l'anomalie est signalée après la réparation.</li>
+									<li><strong>Il coche les sous-tâches</strong> qui réparent l'anomalie, une ou plusieurs.
+										Un champ de recherche aide à retrouver une étape dans une longue visite. Si l'étape
+										n'existe pas encore, le lien «&nbsp;Créer une sous-tâche dans cette tâche&nbsp;» ouvre
+										le formulaire, prérempli avec le titre et la description de l'anomalie.</li>
+									<li>Pour une réparation à part, il choisit <strong>«&nbsp;Nouvelle tâche dédiée&nbsp;»</strong>.
+										Tarmac préremplit le matériel et le titre, puis rattache à l'anomalie toutes les
+										sous-tâches de cette nouvelle tâche.</li>
+								</ol>
+								<p>
+									Pour rattacher des étapes de plusieurs tâches, recommencez depuis la fiche de l'anomalie.
+									Plusieurs sous-tâches peuvent réparer une même anomalie, et une sous-tâche peut en
+									réparer plusieurs. Sur chaque ligne, le bouton de détachement retire une sous-tâche
+									rattachée par erreur.
+								</p>
+								<p>
+									Le lien se voit des deux côtés&nbsp;: la fiche d'une sous-tâche affiche les anomalies
+									qu'elle répare, la fiche de sa tâche les reprend, et Tarmac inscrit chaque rattachement
+									dans le journal de l'anomalie et dans celui de la sous-tâche.
 								</p>
 
 								<h3>Retrouver les anomalies</h3>
