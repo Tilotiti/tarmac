@@ -4126,6 +4126,23 @@
         <source>importFilePreview</source>
         <target>Les premières lignes de votre fichier</target>
       </trans-unit>
+      <!-- Anomalies rattachées aux sous-tâches : journal -->
+      <trans-unit id="1903" resname="anomalySubTaskLinked">
+        <source>anomalySubTaskLinked</source>
+        <target>a rattaché une sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="1904" resname="anomalySubTaskUnlinked">
+        <source>anomalySubTaskUnlinked</source>
+        <target>a détaché une sous-tâche</target>
+      </trans-unit>
+      <trans-unit id="1905" resname="subTaskLinkedToAnomaly">
+        <source>subTaskLinkedToAnomaly</source>
+        <target>a rattaché cette sous-tâche à une anomalie</target>
+      </trans-unit>
+      <trans-unit id="1906" resname="subTaskUnlinkedFromAnomaly">
+        <source>subTaskUnlinkedFromAnomaly</source>
+        <target>a détaché cette sous-tâche d'une anomalie</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

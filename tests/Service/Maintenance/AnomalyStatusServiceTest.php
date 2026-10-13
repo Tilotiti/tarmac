@@ -180,6 +180,64 @@ class AnomalyStatusServiceTest extends TestCase
         $this->assertSame(ActivityType::TASK_UNLINKED, $this->activityForTask($task)?->getType());
     }
 
+    public function testLinkSubTasksIsIdempotent(): void
+    {
+        $service = $this->createService();
+        $anomaly = $this->createAnomaly();
+        $subTask = $this->createSubTask();
+
+        $this->assertSame(1, $service->handleLinkSubTasks($anomaly, [$subTask], new User()));
+        $this->assertSame(0, $service->handleLinkSubTasks($anomaly, [$subTask], new User()));
+
+        $this->assertCount(1, $anomaly->getSubTasks());
+        // Une entrée de chaque côté, et rien de plus au second appel
+        $this->assertCount(2, $this->persisted);
+    }
+
+    public function testLinkSubTasksIsLoggedOnBothSides(): void
+    {
+        $service = $this->createService();
+        $anomaly = $this->createAnomaly();
+        $first = $this->createSubTask('open', 'Changer le pneu');
+        $second = $this->createSubTask('open', 'Contrôler la jante');
+
+        $service->handleLinkSubTasks($anomaly, [$first, $second], new User());
+
+        $this->assertCount(4, $this->persisted);
+
+        $onSubTask = $this->activityForSubTask($first);
+        $this->assertSame(ActivityType::SUBTASK_LINKED, $onSubTask?->getType());
+        $this->assertSame($anomaly->getTitle(), $onSubTask->getMessage());
+        // L'entrée miroir porte aussi la tâche, comme les autres entrées de sous-tâche
+        $this->assertSame($first->getTask(), $onSubTask->getTask());
+        $this->assertSame('subTaskLinkedToAnomaly', $onSubTask->getTypeLabel());
+
+        $onAnomaly = array_values(array_filter(
+            $this->persisted,
+            static fn (Activity $activity) => $activity->getAnomaly() === $anomaly
+        ));
+        $this->assertEqualsCanonicalizing(
+            ['Changer le pneu', 'Contrôler la jante'],
+            array_map(static fn (Activity $activity) => $activity->getMessage(), $onAnomaly)
+        );
+        $this->assertSame('anomalySubTaskLinked', $onAnomaly[0]->getTypeLabel());
+    }
+
+    public function testUnlinkSubTaskDetachesAndLogsBothSides(): void
+    {
+        $service = $this->createService();
+        $anomaly = $this->createAnomaly();
+        $subTask = $this->createSubTask();
+        $anomaly->addSubTask($subTask);
+
+        $service->handleUnlinkSubTask($anomaly, $subTask, new User());
+
+        $this->assertCount(0, $anomaly->getSubTasks());
+        $this->assertCount(0, $subTask->getAnomalies());
+        $this->assertSame(ActivityType::SUBTASK_UNLINKED, $this->activityFor($anomaly)?->getType());
+        $this->assertSame(ActivityType::SUBTASK_UNLINKED, $this->activityForSubTask($subTask)?->getType());
+    }
+
     private function activityFor(Anomaly $anomaly): ?Activity
     {
         foreach ($this->persisted as $activity) {
@@ -271,5 +329,16 @@ class AnomalyStatusServiceTest extends TestCase
 
         $this->assertFalse($service->handleReopen($this->createAnomaly(), new User()));
         $this->assertCount(0, $this->persisted);
+    }
+
+    private function activityForSubTask(SubTask $subTask): ?Activity
+    {
+        foreach ($this->persisted as $activity) {
+            if ($activity->getSubTask() === $subTask) {
+                return $activity;
+            }
+        }
+
+        return null;
     }
 }

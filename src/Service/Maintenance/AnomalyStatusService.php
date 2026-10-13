@@ -7,6 +7,7 @@ use App\Entity\Anomaly;
 use App\Entity\Enum\ActivityType;
 use App\Entity\Enum\AnomalyImpact;
 use App\Entity\Enum\AnomalyResolution;
+use App\Entity\SubTask;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Service\CommentNotificationService;
@@ -81,6 +82,50 @@ class AnomalyStatusService
 
         $this->log($anomaly, ActivityType::TASK_UNLINKED, $user, $task->getTitle());
         $this->logOnTask($task, ActivityType::TASK_UNLINKED, $user, $anomaly->getTitle());
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Links every subtask not linked yet, with one log entry on each side per
+     * subtask, and a single flush.
+     *
+     * @param iterable<SubTask> $subTasks
+     *
+     * @return int the number of subtasks newly linked
+     */
+    public function handleLinkSubTasks(Anomaly $anomaly, iterable $subTasks, User $user): int
+    {
+        $linked = 0;
+
+        foreach ($subTasks as $subTask) {
+            if ($anomaly->getSubTasks()->contains($subTask)) {
+                continue;
+            }
+
+            $anomaly->addSubTask($subTask);
+
+            $this->log($anomaly, ActivityType::SUBTASK_LINKED, $user, $subTask->getTitle());
+            $this->logOnSubTask($subTask, ActivityType::SUBTASK_LINKED, $user, $anomaly->getTitle());
+            $linked++;
+        }
+
+        if ($linked > 0) {
+            $this->entityManager->flush();
+        }
+
+        return $linked;
+    }
+
+    public function handleUnlinkSubTask(Anomaly $anomaly, SubTask $subTask, User $user): void
+    {
+        if (!$anomaly->getSubTasks()->contains($subTask)) {
+            return;
+        }
+
+        $anomaly->removeSubTask($subTask);
+
+        $this->log($anomaly, ActivityType::SUBTASK_UNLINKED, $user, $subTask->getTitle());
+        $this->logOnSubTask($subTask, ActivityType::SUBTASK_UNLINKED, $user, $anomaly->getTitle());
         $this->entityManager->flush();
     }
 
@@ -164,6 +209,24 @@ class AnomalyStatusService
     {
         $activity = new Activity();
         $activity->setTask($task);
+        $activity->setType($type);
+        $activity->setUser($user);
+        $activity->setMessage($message);
+
+        $this->entityManager->persist($activity);
+
+        return $activity;
+    }
+
+    /**
+     * Entrée miroir dans le journal de la sous-tâche, rangée aussi sous sa tâche
+     * comme les autres entrées de sous-tâche.
+     */
+    private function logOnSubTask(SubTask $subTask, ActivityType $type, User $user, ?string $message = null): Activity
+    {
+        $activity = new Activity();
+        $activity->setTask($subTask->getTask());
+        $activity->setSubTask($subTask);
         $activity->setType($type);
         $activity->setUser($user);
         $activity->setMessage($message);

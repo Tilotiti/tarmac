@@ -18,6 +18,8 @@ enum ActivityType: string
     case IMPACT_CHANGED = 'impact_changed';
     case TASK_LINKED = 'task_linked';
     case TASK_UNLINKED = 'task_unlinked';
+    case SUBTASK_LINKED = 'subtask_linked';
+    case SUBTASK_UNLINKED = 'subtask_unlinked';
     case REOPENED = 'reopened';
 }
 

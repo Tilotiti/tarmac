@@ -194,6 +194,8 @@ class Activity
                 ActivityType::IMPACT_CHANGED => 'anomalyImpactChanged',
                 ActivityType::TASK_LINKED => 'anomalyTaskLinked',
                 ActivityType::TASK_UNLINKED => 'anomalyTaskUnlinked',
+                ActivityType::SUBTASK_LINKED => 'anomalySubTaskLinked',
+                ActivityType::SUBTASK_UNLINKED => 'anomalySubTaskUnlinked',
                 ActivityType::CLOSED => 'anomalyTreated',
                 ActivityType::CANCELLED => 'anomalyIgnored',
                 ActivityType::REOPENED => 'anomalyReopened',
@@ -229,6 +231,8 @@ class Activity
             // Entrées miroir posées sur la tâche lors d'un (dé)rattachement d'anomalie
             ActivityType::TASK_LINKED => 'taskLinkedToAnomaly',
             ActivityType::TASK_UNLINKED => 'taskUnlinkedFromAnomaly',
+            ActivityType::SUBTASK_LINKED => 'subTaskLinkedToAnomaly',
+            ActivityType::SUBTASK_UNLINKED => 'subTaskUnlinkedFromAnomaly',
             default => $this->type?->value ?? 'unknown',
         };
     }
@@ -247,8 +251,8 @@ class Activity
             ActivityType::CLOSED => 'ti-lock',
             ActivityType::CANCELLED, ActivityType::APPLICATION_CANCELLED => 'ti-ban',
             ActivityType::IMPACT_CHANGED => 'ti-alert-triangle',
-            ActivityType::TASK_LINKED => 'ti-link',
-            ActivityType::TASK_UNLINKED => 'ti-unlink',
+            ActivityType::TASK_LINKED, ActivityType::SUBTASK_LINKED => 'ti-link',
+            ActivityType::TASK_UNLINKED, ActivityType::SUBTASK_UNLINKED => 'ti-unlink',
             ActivityType::REOPENED => 'ti-rotate',
             default => 'ti-circle',
         };
@@ -266,8 +270,8 @@ class Activity
             ActivityType::INSPECTED_APPROVED, ActivityType::CLOSED => 'success',
             ActivityType::INSPECTED_REJECTED, ActivityType::CANCELLED, ActivityType::APPLICATION_CANCELLED => 'danger',
             ActivityType::IMPACT_CHANGED => 'orange',
-            ActivityType::TASK_LINKED => 'info',
-            ActivityType::TASK_UNLINKED => 'secondary',
+            ActivityType::TASK_LINKED, ActivityType::SUBTASK_LINKED => 'info',
+            ActivityType::TASK_UNLINKED, ActivityType::SUBTASK_UNLINKED => 'secondary',
             ActivityType::REOPENED => 'yellow',
             default => 'secondary',
         };
