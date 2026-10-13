@@ -56,6 +56,11 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
     {
         $this->logger->info('onAuthenticationSuccess called');
 
+        // Connexion depuis une invitation : on revient sur la page d'acceptation, qui crée l'adhésion
+        if ($invitationToken = $this->getInvitationToken($request)) {
+            return new RedirectResponse($this->urlGenerator->generate('public_invitation_accept', ['token' => $invitationToken], UrlGeneratorInterface::ABSOLUTE_URL));
+        }
+
         // First, check if there's a saved target path
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             $this->logger->info('Using saved target path: ' . $targetPath);
@@ -81,7 +86,17 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator
 
     protected function getLoginUrl(Request $request): string
     {
-        return $this->urlGenerator->generate(self::LOGIN_ROUTE, [], UrlGeneratorInterface::ABSOLUTE_URL);
+        // Conserve l'invitation après un mot de passe erroné
+        $parameters = array_filter(['invitation' => $this->getInvitationToken($request)]);
+
+        return $this->urlGenerator->generate(self::LOGIN_ROUTE, $parameters, UrlGeneratorInterface::ABSOLUTE_URL);
+    }
+
+    private function getInvitationToken(Request $request): ?string
+    {
+        $token = $request->query->getString('invitation');
+
+        return ctype_xdigit($token) ? $token : null;
     }
 }
 
