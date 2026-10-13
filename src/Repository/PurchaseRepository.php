@@ -153,11 +153,6 @@ class PurchaseRepository extends ServiceEntityRepository
         return $qb->addOrderBy('purchase.createdAt', $direction);
     }
 
-    public function countPurchasesWaitingDelivery(Club $club): int
-    {
-        return $this->countByStatus($club, PurchaseStatus::PURCHASED);
-    }
-
     public function countByStatus(Club $club, PurchaseStatus $status): int
     {
         return (int) $this->createQueryBuilder('purchase')

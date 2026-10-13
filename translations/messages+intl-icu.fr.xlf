@@ -2214,10 +2214,6 @@
         <source>markAsReimbursed</source>
         <target>Marquer comme remboursé</target>
       </trans-unit>
-      <trans-unit id="386" resname="purchasesWaitingDelivery">
-        <source>purchasesWaitingDelivery</source>
-        <target>Achats en attente de livraison</target>
-      </trans-unit>
       <trans-unit id="387" resname="myRequests">
         <source>myRequests</source>
         <target>Mes demandes</target>
@@ -4198,6 +4194,11 @@
       <trans-unit id="1931" resname="youLeftClub">
         <source>youLeftClub</source>
         <target>Vous avez quitté {clubName}.</target>
+      </trans-unit>
+      <!-- Dashboard: approved purchases not yet bought -->
+      <trans-unit id="1932" resname="purchasesToBuy">
+        <source>purchasesToBuy</source>
+        <target>Achats à réaliser</target>
       </trans-unit>
     </body>
 </file>

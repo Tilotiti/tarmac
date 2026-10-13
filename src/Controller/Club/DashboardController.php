@@ -143,15 +143,16 @@ class DashboardController extends ExtendedController
             ->setMaxResults(20);
         $priorityTasks = $priorityQb->getQuery()->getResult();
 
-        // === 4. PURCHASES WAITING FOR DELIVERY ===
-        $purchasesWaitingDeliveryQb = $this->purchaseRepository->queryAll();
-        $purchasesWaitingDeliveryQb->andWhere('purchase.status = :purchasedStatus')
-            ->setParameter('purchasedStatus', PurchaseStatus::PURCHASED)
-            ->orderBy('purchase.purchasedAt', 'ASC')
-            ->setMaxResults(5);
-
-        $purchasesWaitingDelivery = $purchasesWaitingDeliveryQb->getQuery()->getResult();
-        $purchasesWaitingDeliveryCount = $this->purchaseRepository->countPurchasesWaitingDelivery($club);
+        // === 4. PURCHASES TO BUY (approved, not yet purchased) ===
+        // approvedAt is null for manager-created purchases, so order by createdAt
+        $purchasesToBuy = $this->purchaseRepository->queryAll()
+            ->andWhere('purchase.status = :approvedStatus')
+            ->setParameter('approvedStatus', PurchaseStatus::APPROVED)
+            ->orderBy('purchase.createdAt', 'ASC')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult();
+        $purchasesToBuyCount = $this->purchaseRepository->countByStatus($club, PurchaseStatus::APPROVED);
 
         // === 5. KPI : nombre total de tâches ouvertes (pour la bande en haut) ===
         $openTasksQb = $this->taskRepository->createQueryBuilder('task')
@@ -178,8 +179,8 @@ class DashboardController extends ExtendedController
             'priorityTasksCount' => $priorityTasksCount,
             'awaitingInspectionSubTasks' => $awaitingInspectionSubTasks,
             'awaitingInspectionCount' => $awaitingInspectionCount,
-            'purchasesWaitingDelivery' => $purchasesWaitingDelivery,
-            'purchasesWaitingDeliveryCount' => $purchasesWaitingDeliveryCount,
+            'purchasesToBuy' => $purchasesToBuy,
+            'purchasesToBuyCount' => $purchasesToBuyCount,
             'openTasksCount' => $openTasksCount,
             'isManager' => $isManager,
             'isInspector' => $isInspector,

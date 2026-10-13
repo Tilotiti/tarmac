@@ -40,10 +40,10 @@
 			</div>
 		{% endif %}
 		<div class="col-6 col-md-3{% if not isInspector %} col-md-6{% endif %}">
-			<a href="{{ path('club_purchases', {'status': 'purchased'}) }}" class="tarmac-kpi tarmac-kpi--purple">
-				<span class="tarmac-kpi__icon"><i class="ti ti-truck"></i></span>
-				<div class="tarmac-kpi__label">{{ 'purchasesWaitingDelivery'|trans }}</div>
-				<div class="tarmac-kpi__value">{{ purchasesWaitingDeliveryCount }}</div>
+			<a href="{{ path('club_purchases', {'status': ['approved']}) }}" class="tarmac-kpi tarmac-kpi--purple">
+				<span class="tarmac-kpi__icon"><i class="ti ti-shopping-cart"></i></span>
+				<div class="tarmac-kpi__label">{{ 'purchasesToBuy'|trans }}</div>
+				<div class="tarmac-kpi__value">{{ purchasesToBuyCount }}</div>
 			</a>
 		</div>
 	</div>
@@ -284,25 +284,25 @@
 		</div>
 	{% endif %}
 
-	{# Purchases Waiting for Delivery #}
-	{% if purchasesWaitingDelivery is not empty %}
+	{# Purchases to buy (approved, not yet purchased) #}
+	{% if purchasesToBuy is not empty %}
 		<div class="mb-4">
 			<div class="tarmac-section-bar">
 				<h3 class="tarmac-section-bar__title">
-					<i class="ti ti-truck"></i>
-					{{ 'purchasesWaitingDelivery'|trans }}
-					<span class="tarmac-section-bar__count">{{ purchasesWaitingDeliveryCount }}</span>
+					<i class="ti ti-shopping-cart"></i>
+					{{ 'purchasesToBuy'|trans }}
+					<span class="tarmac-section-bar__count">{{ purchasesToBuyCount }}</span>
 				</h3>
 				<div class="tarmac-section-bar__actions">
-					{% if purchasesWaitingDeliveryCount > 5 %}
-						<a href="{{ path('club_purchases', {'status': 'purchased'}) }}" class="btn btn-sm btn-outline-secondary">
+					{% if purchasesToBuyCount > 5 %}
+						<a href="{{ path('club_purchases', {'status': ['approved']}) }}" class="btn btn-sm btn-outline-secondary">
 							<i class="ti ti-arrow-right me-1"></i><span class="btn-text">{{ 'seeAll'|trans }}</span>
 						</a>
 					{% endif %}
 				</div>
 			</div>
 			<div class="row">
-				{% for purchase in purchasesWaitingDelivery %}
+				{% for purchase in purchasesToBuy %}
 					<div class="col-12 col-md-6 col-lg-4 mb-3 d-flex">
 						<a href="{{ path('club_purchase_show', {id: purchase.id}) }}" class="tarmac-card w-100">
 							<div class="tarmac-card__eyebrow">
@@ -310,11 +310,11 @@
 								{{ 'purchaseQuantity'|trans }} : {{ purchase.quantity }}
 							</div>
 							<h4 class="tarmac-card__title">{{ purchase.name }}</h4>
-							{% if purchase.purchasedBy %}
+							{% if purchase.createdBy %}
 								<div class="tarmac-card__meta">
 									<i class="ti ti-user"></i>
-									{{ purchase.purchasedBy.fullName ?? purchase.purchasedBy.email }} ·
-									{{ purchase.purchasedAt|date('d/m/Y') }}
+									{{ purchase.createdBy.fullName ?? purchase.createdBy.email }} ·
+									{{ purchase.createdAt|date('d/m/Y') }}
 								</div>
 							{% endif %}
 						</a>
@@ -325,7 +325,7 @@
 	{% endif %}
 
 	{# Empty state #}
-	{% if priorityTasks is empty and purchasesWaitingDelivery is empty and (not is_granted('INSPECT') or awaitingInspectionSubTasks is empty) %}
+	{% if priorityTasks is empty and purchasesToBuy is empty and (not is_granted('INSPECT') or awaitingInspectionSubTasks is empty) %}
 		<div class="empty">
 			<div class="empty-icon">
 				<i class="ti ti-clipboard-check"></i>
