@@ -4186,6 +4186,19 @@
         <source>anomalyLinkedSubTasksCount</source>
         <target>{count, plural, one {# sous-tâche} other {# sous-tâches}}</target>
       </trans-unit>
+      <!-- Membres : quitter le club depuis sa propre fiche -->
+      <trans-unit id="1929" resname="leaveClub">
+        <source>leaveClub</source>
+        <target>Quitter le club</target>
+      </trans-unit>
+      <trans-unit id="1930" resname="confirmLeaveClub">
+        <source>confirmLeaveClub</source>
+        <target>Quitter {clubName} ? Vous perdrez votre accès au club.</target>
+      </trans-unit>
+      <trans-unit id="1931" resname="youLeftClub">
+        <source>youLeftClub</source>
+        <target>Vous avez quitté {clubName}.</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

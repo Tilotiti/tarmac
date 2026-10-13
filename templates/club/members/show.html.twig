@@ -14,15 +14,13 @@
 {% endblock %}
 
 {% block page_actions %}
-	{% if is_granted('MANAGE', club) or (currentMembership is defined and (currentMembership.isManager or currentMembership.isInspector)) %}
+	{% if is_granted('MANAGE', club) or is_granted('INSPECT', club) %}
 		<div class="btn-list">
-			{% if currentMembership is defined and (currentMembership.isManager or currentMembership.isInspector) %}
-				<a href="{{ path('club_member_logbook', {id: membership.id}) }}" class="btn btn-outline-secondary">
-					<i class="ti ti-notebook me-2"></i>
-					<span class="d-none d-sm-inline">{{ 'mechanicLogbook'|trans }}</span>
-					<span class="d-inline d-sm-none">{{ 'logbook'|trans }}</span>
-				</a>
-			{% endif %}
+			<a href="{{ path('club_member_logbook', {id: membership.id}) }}" class="btn btn-outline-secondary">
+				<i class="ti ti-notebook me-2"></i>
+				<span class="d-none d-sm-inline">{{ 'mechanicLogbook'|trans }}</span>
+				<span class="d-inline d-sm-none">{{ 'logbook'|trans }}</span>
+			</a>
 
 			{% if is_granted('MANAGE', club) %}
 				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-edit-roles">
@@ -36,11 +34,19 @@
 						<i class="ti ti-dots-vertical"></i>
 					</button>
 					<div class="dropdown-menu dropdown-menu-end" data-dropdown-target="menu">
-						<form method="post" action="{{ path('club_member_delete', {id: membership.id}) }}" onsubmit="return confirm('{{ 'confirmRemoveFromClub'|trans({'memberName': membership.user.fullname}) }}');">
-							<button type="submit" class="dropdown-item text-danger">
-								<i class="ti ti-trash me-2"></i>{{ 'removeFromClub'|trans }}
-							</button>
-						</form>
+						{% if membership.user is same as(app.user) %}
+							<form method="post" action="{{ path('club_member_delete', {id: membership.id}) }}" onsubmit="return confirm('{{ 'confirmLeaveClub'|trans({'clubName': club.name})|e('js') }}');">
+								<button type="submit" class="dropdown-item text-danger">
+									<i class="ti ti-logout me-2"></i>{{ 'leaveClub'|trans }}
+								</button>
+							</form>
+						{% else %}
+							<form method="post" action="{{ path('club_member_delete', {id: membership.id}) }}" onsubmit="return confirm('{{ 'confirmRemoveFromClub'|trans({'memberName': membership.user.fullname})|e('js') }}');">
+								<button type="submit" class="dropdown-item text-danger">
+									<i class="ti ti-trash me-2"></i>{{ 'removeFromClub'|trans }}
+								</button>
+							</form>
+						{% endif %}
 					</div>
 				</div>
 			{% endif %}

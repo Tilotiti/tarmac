@@ -77,8 +77,8 @@ class MemberController extends ExtendedController
         }
 
         // Prevent removing self if last manager
-        $user = $this->getUser();
-        if ($membership->getUser() === $user && $membership->isManager()) {
+        $isSelf = $membership->getUser() === $this->getUser();
+        if ($isSelf && $membership->isManager()) {
             $managerCount = $this->membershipRepository->queryByClubAndFilters($club, ['role' => 'manager'])
                 ->resetDQLPart('orderBy')
                 ->select('COUNT(membership.id)')
@@ -95,6 +95,12 @@ class MemberController extends ExtendedController
         $this->entityManager->remove($membership);
         $this->entityManager->flush();
 
+        // Plus membre : la liste du club deviendrait inaccessible
+        if ($isSelf) {
+            $this->addFlash('success', $this->translator->trans('youLeftClub', ['clubName' => $club->getName()]));
+            return $this->redirectToRoute('public_clubs');
+        }
+
         $message = $this->translator->trans('memberRemoved', ['memberName' => $userName]);
         $this->addFlash('success', $message);
 
@@ -110,11 +116,6 @@ class MemberController extends ExtendedController
     public function show(Request $request, Membership $membership): Response
     {
         $club = $this->clubResolver->resolve();
-
-        $currentMembership = $this->membershipRepository->findOneBy([
-            'user' => $this->getUser(),
-            'club' => $club,
-        ]);
 
         // Ensure membership belongs to this club
         if ($membership->getClub() !== $club) {
@@ -161,7 +162,6 @@ class MemberController extends ExtendedController
             'membership' => $membership,
             'form' => $form,
             'openModal' => $openModal,
-            'currentMembership' => $currentMembership,
         ]);
     }
 }
