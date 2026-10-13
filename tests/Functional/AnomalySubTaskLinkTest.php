@@ -4,6 +4,7 @@ namespace App\Tests\Functional;
 
 use App\Entity\Anomaly;
 use App\Entity\Club;
+use App\Entity\Contribution;
 use App\Entity\Enum\AnomalyResolution;
 use App\Entity\Enum\EquipmentOwner;
 use App\Entity\Enum\EquipmentType;
@@ -286,5 +287,83 @@ class AnomalySubTaskLinkTest extends FunctionalTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('[data-controller~="checklist-filter"] input[type="search"]');
         $this->assertSelectorNotExists('form input[type="search"]');
+    }
+
+    /**
+     * Chaque carte de tâche lit ses sous-tâches et leurs contributeurs : sans
+     * jointure, un matériel chargé d'historique coûtait plusieurs centaines de requêtes.
+     */
+    public function testChooseTaskQueryCountDoesNotGrowWithHistory(): void
+    {
+        $this->scenario();
+
+        // Second matériel : 3 tâches ouvertes, 20 closes, 5 sous-tâches chacune,
+        // un mécanicien différent par tâche
+        $glider = $this->createEquipment('F-CHIS');
+        for ($i = 1; $i <= 23; ++$i) {
+            $mechanic = $this->createUser("mecano{$i}@example.test");
+            $membership = new Membership();
+            $this->club->addMembership($membership);
+            $mechanic->addMembership($membership);
+
+            $task = $this->createTask($glider, "Visite {$i}", $i <= 3 ? 'open' : 'closed');
+            for ($j = 1; $j <= 5; ++$j) {
+                $subTask = $this->createSubTask($task, "Étape {$j}", $i <= 3 ? 'open' : 'closed');
+                $contribution = (new Contribution())->setMembership($membership)->setTimeSpent('1.50');
+                $subTask->addContribution($contribution);
+                $this->entityManager()->persist($contribution);
+            }
+        }
+
+        $history = new Anomaly();
+        $history->setClub($this->club);
+        $history->setEquipment($glider);
+        $history->setTitle('Verrière fêlée');
+        $history->setDescription('Fêlure au coin avant gauche.');
+        $history->setReportedBy($this->manager);
+        $this->entityManager()->persist($history);
+        $this->entityManager()->flush();
+
+        // La première requête partage le gestionnaire d'entités du scénario, déjà rempli
+        $this->client->request('GET', $this->anomalyUrl('/link'));
+
+        $baseline = $this->linkPageQueryCount($this->anomaly);
+        $withHistory = $this->linkPageQueryCount($history);
+
+        $this->assertSelectorTextContains('details', 'Visite 23');
+        $this->assertSame($baseline, $withHistory);
+    }
+
+    /**
+     * Task::getAnomalies() parcourt les sous-tâches : sans préchargement, la fiche
+     * tâche interrogeait la table de liaison une fois par sous-tâche.
+     */
+    public function testTaskPageLoadsAnomaliesInOneQuery(): void
+    {
+        $this->scenario();
+        $this->anomaly->addSubTask($this->tyreSubTask);
+        $this->entityManager()->flush();
+
+        $taskUrl = $this->host . '/tasks/' . $this->visit->getId();
+        // La première requête partage le gestionnaire d'entités du scénario, déjà rempli
+        $this->client->request('GET', $taskUrl);
+
+        $this->client->enableProfiler();
+        $this->client->request('GET', $taskUrl);
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('a[href$="/anomalies/' . $this->anomaly->getId() . '"]', 'Pneu usé');
+
+        $queries = $this->client->getProfile()->getCollector('db')->getQueries()['default'];
+        $anomalyQueries = array_filter($queries, static fn (array $query): bool => str_contains($query['sql'], 'anomaly_sub_task'));
+        $this->assertCount(1, $anomalyQueries);
+    }
+
+    private function linkPageQueryCount(Anomaly $anomaly): int
+    {
+        $this->client->enableProfiler();
+        $this->client->request('GET', $this->host . '/anomalies/' . $anomaly->getId() . '/link');
+        $this->assertResponseIsSuccessful();
+
+        return $this->client->getProfile()->getCollector('db')->getQueryCount();
     }
 }

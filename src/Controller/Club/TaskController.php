@@ -261,6 +261,18 @@ class TaskController extends ExtendedController
             'placeholder' => 'optionalReason',
         ]);
 
+        // Une requête remplit les anomalies des sous-tâches et les sous-tâches de ces
+        // anomalies, que lisent Task::getAnomalies() et Anomaly::getStatus(). On ignore
+        // le résultat : seules comptent les collections hydratées.
+        $this->entityManager->getRepository(SubTask::class)->createQueryBuilder('subtask')
+            ->leftJoin('subtask.anomalies', 'anomaly')
+            ->leftJoin('anomaly.subTasks', 'anomaly_subtask')
+            ->addSelect('anomaly', 'anomaly_subtask')
+            ->where('subtask.task = :task')
+            ->setParameter('task', $task)
+            ->getQuery()
+            ->getResult();
+
         return $this->render('club/task/show.html.twig', [
             'club' => $club,
             'task' => $task,

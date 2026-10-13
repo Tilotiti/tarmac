@@ -362,7 +362,14 @@ class AnomalyController extends ExtendedController
     ])]
     public function chooseTask(Anomaly $anomaly): Response
     {
+        // Fetch-join de ce que lit chaque carte (progression, contributeurs) :
+        // sinon une requête par tâche, puis une par sous-tâche
         $tasks = $this->entityManager->getRepository(Task::class)->createQueryBuilder('task')
+            ->leftJoin('task.subTasks', 'subtask')
+            ->leftJoin('subtask.contributions', 'contribution')
+            ->leftJoin('contribution.membership', 'membership')
+            ->leftJoin('membership.user', 'contributor')
+            ->addSelect('subtask', 'contribution', 'membership', 'contributor')
             ->where('task.equipment = :equipment')
             ->andWhere('task.status != :cancelledStatus')
             ->setParameter('equipment', $anomaly->getEquipment())
