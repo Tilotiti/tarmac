@@ -87,13 +87,6 @@ class Anomaly
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
-     * @var Collection<int, Task>
-     */
-    #[ORM\ManyToMany(targetEntity: Task::class, inversedBy: 'anomalies')]
-    #[ORM\JoinTable(name: 'anomaly_task')]
-    private Collection $tasks;
-
-    /**
      * Les sous-tâches qui réparent l'anomalie. Une visite compte des dizaines
      * d'étapes : on rattache celle qui répare, pas la visite entière.
      *
@@ -114,7 +107,6 @@ class Anomaly
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->reportedAt = new \DateTimeImmutable('today');
-        $this->tasks = new ArrayCollection();
         $this->subTasks = new ArrayCollection();
         $this->activities = new ArrayCollection();
     }
@@ -314,46 +306,6 @@ class Anomaly
         $this->createdAt = $createdAt;
 
         return $this;
-    }
-
-    /**
-     * @return Collection<int, Task>
-     */
-    public function getTasks(): Collection
-    {
-        return $this->tasks;
-    }
-
-    public function addTask(Task $task): static
-    {
-        if (!$this->tasks->contains($task)) {
-            $this->tasks->add($task);
-            $task->addAnomaly($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTask(Task $task): static
-    {
-        if ($this->tasks->removeElement($task)) {
-            $task->removeAnomaly($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Linked tasks that have not been cancelled. Cancelled tasks never count,
-     * neither towards "acknowledged" nor towards the "all closed" check.
-     *
-     * @return Collection<int, Task>
-     */
-    public function getActiveTasks(): Collection
-    {
-        return $this->tasks->filter(
-            static fn (Task $task): bool => !$task->isCancelled()
-        );
     }
 
     /**

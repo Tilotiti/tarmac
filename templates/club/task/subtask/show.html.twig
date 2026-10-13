@@ -190,6 +190,13 @@
 				</div>
 			{% endif %}
 
+			{# Anomalies que cette sous-tâche répare #}
+			{% if subTask.anomalies|length > 0 %}
+				<div class="mb-3">
+					{% include 'component/anomalyLinks.html.twig' with {'anomalies': subTask.anomalies} only %}
+				</div>
+			{% endif %}
+
 			{# Activity & comments (panel compact, comme task/show) #}
 			<div class="tarmac-panel">
 				<div class="tarmac-panel__title">

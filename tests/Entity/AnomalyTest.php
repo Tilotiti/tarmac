@@ -186,4 +186,19 @@ class AnomalyTest extends TestCase
         // Re-indexed so the JSON column stays a list, not an object
         $this->assertSame(['https://static.example/anomalies/b.jpg'], $anomaly->getPhotos());
     }
+
+    public function testTaskListsTheAnomaliesOfItsSubTasksOnce(): void
+    {
+        $task = new Task();
+        $first = new SubTask();
+        $second = new SubTask();
+        $task->addSubTask($first);
+        $task->addSubTask($second);
+        $anomaly = new Anomaly();
+        $anomaly->addSubTask($first);
+        $anomaly->addSubTask($second);
+
+        $this->assertCount(1, $task->getAnomalies());
+        $this->assertSame($anomaly, $task->getAnomalies()->first());
+    }
 }

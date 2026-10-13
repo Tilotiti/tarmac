@@ -88,19 +88,12 @@ class Task
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     private Collection $activities;
 
-    /**
-     * @var Collection<int, Anomaly>
-     */
-    #[ORM\ManyToMany(targetEntity: Anomaly::class, mappedBy: 'tasks')]
-    private Collection $anomalies;
-
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->status = 'open';
         $this->subTasks = new ArrayCollection();
         $this->activities = new ArrayCollection();
-        $this->anomalies = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -506,27 +499,24 @@ class Task
     }
 
     /**
+     * Anomalies repaired by this task's subtasks, each listed once. Derived:
+     * anomalies link to subtasks, never to a whole task.
+     *
      * @return Collection<int, Anomaly>
      */
     public function getAnomalies(): Collection
     {
-        return $this->anomalies;
-    }
+        $anomalies = new ArrayCollection();
 
-    public function addAnomaly(Anomaly $anomaly): static
-    {
-        if (!$this->anomalies->contains($anomaly)) {
-            $this->anomalies->add($anomaly);
+        foreach ($this->subTasks as $subTask) {
+            foreach ($subTask->getAnomalies() as $anomaly) {
+                if (!$anomalies->contains($anomaly)) {
+                    $anomalies->add($anomaly);
+                }
+            }
         }
 
-        return $this;
-    }
-
-    public function removeAnomaly(Anomaly $anomaly): static
-    {
-        $this->anomalies->removeElement($anomaly);
-
-        return $this;
+        return $anomalies;
     }
 
     /**

@@ -1,0 +1,49 @@
+{#
+    Panneau « Anomalies » des fiches tâche et sous-tâche : les anomalies que
+    ces sous-tâches réparent. Rien n'est rendu si la liste est vide.
+
+    Paramètres :
+    - anomalies: Collection<Anomaly>
+#}
+{% if anomalies|length > 0 %}
+	<div class="tarmac-panel">
+		<div class="tarmac-panel__title">
+			<i class="ti ti-alert-triangle"></i>
+			{{ 'anomalies'|trans }}
+			<span class="tarmac-section-bar__count">{{ anomalies|length }}</span>
+		</div>
+		<ul class="tarmac-meta-list">
+			{% for anomaly in anomalies %}
+				{% set anomalyStatus = anomaly.status %}
+				<li style="display:block;">
+					{# Bouton explicite : le titre seul ne se lit pas comme cliquable #}
+					<div class="d-flex align-items-start gap-2">
+						<a href="{{ path('club_anomaly_show', {id: anomaly.id}) }}"
+							class="flex-fill"
+							style="font-weight:600;color:var(--td-mid);text-decoration:none;">
+							{{ anomaly.title }}
+						</a>
+						<a href="{{ path('club_anomaly_show', {id: anomaly.id}) }}"
+							class="btn btn-sm btn-outline-primary flex-shrink-0"
+							title="{{ 'viewAnomaly'|trans }}"
+							aria-label="{{ 'viewAnomaly'|trans }}">
+							<i class="ti ti-arrow-right"></i>
+						</a>
+					</div>
+					<div class="tarmac-card__badges" style="margin-top:0.4rem;">
+						<span class="tarmac-badge tarmac-badge--{{ anomalyStatus.color }}">
+							<i class="ti {{ anomalyStatus.icon }}"></i>
+							{{ anomalyStatus.label|trans }}
+						</span>
+						{% if anomaly.isGrounding %}
+							<span class="tarmac-badge tarmac-badge--danger">
+								<i class="ti {{ anomaly.impact.icon }}"></i>
+								{{ anomaly.impact.label|trans }}
+							</span>
+						{% endif %}
+					</div>
+				</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endif %}

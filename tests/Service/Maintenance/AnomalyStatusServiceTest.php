@@ -128,58 +128,6 @@ class AnomalyStatusServiceTest extends TestCase
         $this->assertSame('Aile déposée', $this->persisted[0]->getMessage());
     }
 
-    public function testLinkTaskIsIdempotent(): void
-    {
-        $service = $this->createService();
-        $anomaly = $this->createAnomaly();
-        $task = $this->createTask('open');
-
-        $service->handleLinkTask($anomaly, $task, new User());
-        $service->handleLinkTask($anomaly, $task, new User());
-
-        $this->assertCount(1, $anomaly->getTasks());
-        // Une entrée de chaque côté, et rien de plus au second appel
-        $this->assertCount(2, $this->persisted);
-    }
-
-    public function testLinkTaskIsLoggedOnBothSides(): void
-    {
-        $service = $this->createService();
-        $anomaly = $this->createAnomaly();
-        $task = $this->createTask('open', 'Remplacer la rotule');
-
-        $service->handleLinkTask($anomaly, $task, new User());
-
-        $onAnomaly = $this->activityFor($anomaly);
-        $onTask = $this->activityForTask($task);
-
-        $this->assertNotNull($onAnomaly, 'le journal de l\'anomalie doit être alimenté');
-        $this->assertNotNull($onTask, 'le journal de la tâche doit être alimenté');
-
-        $this->assertSame(ActivityType::TASK_LINKED, $onAnomaly->getType());
-        $this->assertSame(ActivityType::TASK_LINKED, $onTask->getType());
-
-        // Chaque côté nomme l'autre
-        $this->assertSame('Remplacer la rotule', $onAnomaly->getMessage());
-        $this->assertSame($anomaly->getTitle(), $onTask->getMessage());
-    }
-
-    public function testUnlinkTaskDetachesBothSidesAndLogsBothSides(): void
-    {
-        $service = $this->createService();
-        $anomaly = $this->createAnomaly();
-        $task = $this->createTask('open');
-        $anomaly->addTask($task);
-
-        $service->handleUnlinkTask($anomaly, $task, new User());
-
-        $this->assertCount(0, $anomaly->getTasks());
-        $this->assertCount(0, $task->getAnomalies());
-
-        $this->assertSame(ActivityType::TASK_UNLINKED, $this->activityFor($anomaly)?->getType());
-        $this->assertSame(ActivityType::TASK_UNLINKED, $this->activityForTask($task)?->getType());
-    }
-
     public function testLinkSubTasksIsIdempotent(): void
     {
         $service = $this->createService();
@@ -242,17 +190,6 @@ class AnomalyStatusServiceTest extends TestCase
     {
         foreach ($this->persisted as $activity) {
             if ($activity->getAnomaly() === $anomaly) {
-                return $activity;
-            }
-        }
-
-        return null;
-    }
-
-    private function activityForTask(Task $task): ?Activity
-    {
-        foreach ($this->persisted as $activity) {
-            if ($activity->getTask() === $task) {
                 return $activity;
             }
         }

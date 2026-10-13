@@ -12,7 +12,6 @@ use App\Entity\Equipment;
 use App\Entity\SubTask;
 use App\Entity\Task;
 use App\Form\ActivityFormType;
-use App\Form\AnomalyLinkTaskType;
 use App\Form\AnomalyType;
 use App\Form\Filter\AnomalyFilterType;
 use App\Repository\AnomalyRepository;
@@ -346,63 +345,6 @@ class AnomalyController extends ExtendedController
 
             $this->addFlash('success', 'commentAdded');
         }
-
-        return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
-    }
-
-    #[Route('/{id}/tasks/link', name: 'club_anomaly_link_task', requirements: ['id' => '\d+'], methods: ['POST'])]
-    #[IsGranted(AnomalyVoter::LINK_TASK, 'anomaly')]
-    public function linkTask(Anomaly $anomaly, Request $request): Response
-    {
-        $form = $this->createForm(AnomalyLinkTaskType::class, null, ['anomaly' => $anomaly]);
-        $form->handleRequest($request);
-
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            $this->addFlash('error', 'invalidRequest');
-
-            return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
-        }
-
-        /** @var Task $task */
-        $task = $form->getData()['task'];
-
-        // The query builder already scopes to the equipment, this guards against tampering
-        if ($task->getEquipment() !== $anomaly->getEquipment()) {
-            $this->addFlash('error', 'anomalyTaskEquipmentMismatch');
-
-            return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
-        }
-
-        $this->anomalyStatusService->handleLinkTask($anomaly, $task, $this->getUser());
-
-        $this->addFlash('success', 'anomalyTaskLinkedFlash');
-
-        return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
-    }
-
-    #[Route('/{id}/tasks/{taskId}/unlink', name: 'club_anomaly_unlink_task', requirements: ['id' => '\d+', 'taskId' => '\d+'], methods: ['POST'])]
-    #[IsGranted(AnomalyVoter::LINK_TASK, 'anomaly')]
-    public function unlinkTask(Anomaly $anomaly, int $taskId, Request $request): Response
-    {
-        if (!$this->isCsrfTokenValid('anomaly_unlink_task_' . $anomaly->getId(), (string) $request->request->get('_token'))) {
-            $this->addFlash('error', 'invalidRequest');
-
-            return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
-        }
-
-        $task = $anomaly->getTasks()->findFirst(
-            static fn (int $key, Task $candidate): bool => $candidate->getId() === $taskId
-        );
-
-        if ($task === null) {
-            $this->addFlash('error', 'invalidRequest');
-
-            return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
-        }
-
-        $this->anomalyStatusService->handleUnlinkTask($anomaly, $task, $this->getUser());
-
-        $this->addFlash('success', 'anomalyTaskUnlinkedFlash');
 
         return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
     }

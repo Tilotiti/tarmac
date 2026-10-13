@@ -79,8 +79,8 @@
 					{% endif %}
 				</span>
 				<span class="d-flex align-items-center flex-shrink-0" style="gap:0.85rem;">
-					{% if anomaly.tasks|length > 0 %}
-						<span><i class="ti ti-checklist me-1"></i>{{ 'anomalyLinkedTasksCount'|trans({'count': anomaly.tasks|length}) }}</span>
+					{% if anomaly.subTasks|length > 0 %}
+						<span><i class="ti ti-checklist me-1"></i>{{ 'anomalyLinkedSubTasksCount'|trans({'count': anomaly.subTasks|length}) }}</span>
 					{% endif %}
 					{% if anomaly.photos|length > 0 %}
 						<span><i class="ti ti-photo me-1"></i>{{ anomaly.photos|length }}</span>

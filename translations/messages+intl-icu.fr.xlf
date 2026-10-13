@@ -3119,46 +3119,6 @@
         <source>invalidImageFormat</source>
         <target>Format d'image non pris en charge.</target>
       </trans-unit>
-      <trans-unit id="1653" resname="anomalyLinkedTasks">
-        <source>anomalyLinkedTasks</source>
-        <target>Tâches liées</target>
-      </trans-unit>
-      <trans-unit id="1654" resname="anomalyLinkedTasksCount">
-        <source>anomalyLinkedTasksCount</source>
-        <target>{count, plural, one {# tâche} other {# tâches}}</target>
-      </trans-unit>
-      <trans-unit id="1655" resname="anomalyNoLinkedTask">
-        <source>anomalyNoLinkedTask</source>
-        <target>Aucune tâche liée pour l'instant.</target>
-      </trans-unit>
-      <trans-unit id="1656" resname="anomalyCreateTask">
-        <source>anomalyCreateTask</source>
-        <target>Créer une tâche</target>
-      </trans-unit>
-      <trans-unit id="1657" resname="anomalyLinkTask">
-        <source>anomalyLinkTask</source>
-        <target>Tâche existante</target>
-      </trans-unit>
-      <trans-unit id="1658" resname="anomalyLinkTaskPlaceholder">
-        <source>anomalyLinkTaskPlaceholder</source>
-        <target>Choisir une tâche du même matériel</target>
-      </trans-unit>
-      <trans-unit id="1659" resname="anomalyLinkExistingTask">
-        <source>anomalyLinkExistingTask</source>
-        <target>Rattacher la tâche</target>
-      </trans-unit>
-      <trans-unit id="1660" resname="anomalyUnlinkTask">
-        <source>anomalyUnlinkTask</source>
-        <target>Détacher la tâche</target>
-      </trans-unit>
-      <trans-unit id="1661" resname="anomalyUnlinkTaskConfirm">
-        <source>anomalyUnlinkTaskConfirm</source>
-        <target>Détacher cette tâche de l'anomalie ?</target>
-      </trans-unit>
-      <trans-unit id="1662" resname="anomalyTaskRequired">
-        <source>anomalyTaskRequired</source>
-        <target>Sélectionnez une tâche.</target>
-      </trans-unit>
       <trans-unit id="1663" resname="anomalyTaskEquipmentMismatch">
         <source>anomalyTaskEquipmentMismatch</source>
         <target>Cette tâche ne concerne pas le même matériel.</target>
@@ -3214,14 +3174,6 @@
       <trans-unit id="1676" resname="anomalyUpdated">
         <source>anomalyUpdated</source>
         <target>L'anomalie a été mise à jour.</target>
-      </trans-unit>
-      <trans-unit id="1677" resname="anomalyTaskLinkedFlash">
-        <source>anomalyTaskLinkedFlash</source>
-        <target>La tâche a été rattachée à l'anomalie.</target>
-      </trans-unit>
-      <trans-unit id="1678" resname="anomalyTaskUnlinkedFlash">
-        <source>anomalyTaskUnlinkedFlash</source>
-        <target>La tâche a été détachée de l'anomalie.</target>
       </trans-unit>
       <trans-unit id="1679" resname="anomalyBulkTreatHelp">
         <source>anomalyBulkTreatHelp</source>
@@ -4228,6 +4180,11 @@
       <trans-unit id="1927" resname="subTaskWillBeLinkedToAnomaly">
         <source>subTaskWillBeLinkedToAnomaly</source>
         <target>Cette sous-tâche sera rattachée à l'anomalie.</target>
+      </trans-unit>
+      <!-- Anomalies rattachées aux sous-tâches : carte d'anomalie -->
+      <trans-unit id="1928" resname="anomalyLinkedSubTasksCount">
+        <source>anomalyLinkedSubTasksCount</source>
+        <target>{count, plural, one {# sous-tâche} other {# sous-tâches}}</target>
       </trans-unit>
     </body>
 </file>

@@ -8,7 +8,6 @@ use App\Entity\Enum\ActivityType;
 use App\Entity\Enum\AnomalyImpact;
 use App\Entity\Enum\AnomalyResolution;
 use App\Entity\SubTask;
-use App\Entity\Task;
 use App\Entity\User;
 use App\Service\CommentNotificationService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,34 +54,6 @@ class AnomalyStatusService
         if ($anomaly->isGrounding()) {
             $this->notificationService->sendAnomalyGroundedNotification($anomaly, $user);
         }
-    }
-
-    public function handleLinkTask(Anomaly $anomaly, Task $task, User $user): void
-    {
-        if ($anomaly->getTasks()->contains($task)) {
-            return;
-        }
-
-        $anomaly->addTask($task);
-
-        // Tracé des deux côtés : le rattachement intéresse autant celui qui suit
-        // l'anomalie que celui qui travaille sur la tâche.
-        $this->log($anomaly, ActivityType::TASK_LINKED, $user, $task->getTitle());
-        $this->logOnTask($task, ActivityType::TASK_LINKED, $user, $anomaly->getTitle());
-        $this->entityManager->flush();
-    }
-
-    public function handleUnlinkTask(Anomaly $anomaly, Task $task, User $user): void
-    {
-        if (!$anomaly->getTasks()->contains($task)) {
-            return;
-        }
-
-        $anomaly->removeTask($task);
-
-        $this->log($anomaly, ActivityType::TASK_UNLINKED, $user, $task->getTitle());
-        $this->logOnTask($task, ActivityType::TASK_UNLINKED, $user, $anomaly->getTitle());
-        $this->entityManager->flush();
     }
 
     /**
@@ -193,22 +164,6 @@ class AnomalyStatusService
     {
         $activity = new Activity();
         $activity->setAnomaly($anomaly);
-        $activity->setType($type);
-        $activity->setUser($user);
-        $activity->setMessage($message);
-
-        $this->entityManager->persist($activity);
-
-        return $activity;
-    }
-
-    /**
-     * Entrée miroir dans le journal de la tâche.
-     */
-    private function logOnTask(Task $task, ActivityType $type, User $user, ?string $message = null): Activity
-    {
-        $activity = new Activity();
-        $activity->setTask($task);
         $activity->setType($type);
         $activity->setUser($user);
         $activity->setMessage($message);
