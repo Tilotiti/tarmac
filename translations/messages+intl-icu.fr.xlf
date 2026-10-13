@@ -3165,7 +3165,7 @@
       </trans-unit>
       <trans-unit id="1664" resname="taskWillBeLinkedToAnomaly">
         <source>taskWillBeLinkedToAnomaly</source>
-        <target>Cette tâche portera sur {equipment} et sera rattachée à l'anomalie.</target>
+        <target>Cette tâche portera sur {equipment}, et toutes ses sous-tâches seront rattachées à l'anomalie.</target>
       </trans-unit>
       <trans-unit id="1665" resname="anomalyMarkAsTreated">
         <source>anomalyMarkAsTreated</source>
@@ -4223,6 +4223,11 @@
       <trans-unit id="1926" resname="viewSubTask">
         <source>viewSubTask</source>
         <target>Voir la sous-tâche</target>
+      </trans-unit>
+      <!-- Anomalies rattachées aux sous-tâches : création depuis l'anomalie -->
+      <trans-unit id="1927" resname="subTaskWillBeLinkedToAnomaly">
+        <source>subTaskWillBeLinkedToAnomaly</source>
+        <target>Cette sous-tâche sera rattachée à l'anomalie.</target>
       </trans-unit>
     </body>
 </file>

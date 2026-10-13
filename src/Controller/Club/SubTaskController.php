@@ -3,6 +3,7 @@
 namespace App\Controller\Club;
 
 use App\Controller\ExtendedController;
+use App\Entity\Anomaly;
 use App\Entity\Contribution;
 use App\Entity\Enum\ActivityType;
 use App\Entity\SubTask;
@@ -15,9 +16,11 @@ use App\Form\ContributionAddFormType;
 use App\Form\SubTaskCompleteFormType;
 use App\Repository\ContributionRepository;
 use App\Repository\MembershipRepository;
+use App\Security\Voter\AnomalyVoter;
 use App\Security\Voter\SubTaskVoter;
 use App\Security\Voter\TaskVoter;
 use App\Service\ClubResolver;
+use App\Service\Maintenance\AnomalyStatusService;
 use App\Service\Maintenance\SubTaskOrderer;
 use App\Service\Maintenance\TaskStatusService;
 use App\Service\SubdomainService;
@@ -48,6 +51,7 @@ class SubTaskController extends ExtendedController
         private readonly Filesystem $s3Filesystem,
         private readonly TranslatorInterface $translator,
         private readonly CommentNotificationService $commentNotificationService,
+        private readonly AnomalyStatusService $anomalyStatusService,
     ) {
         parent::__construct($subdomainService);
     }
@@ -76,6 +80,14 @@ class SubTaskController extends ExtendedController
         // If task is priority, inherit to new subtask
         if ($task->isPriority()) {
             $subTask->setPriority(true);
+        }
+
+        // Created from an anomaly: pre-filled from it, linked to it once saved
+        $anomaly = $this->resolveRequestedAnomaly($request, $task);
+
+        if ($anomaly !== null) {
+            $subTask->setTitle($anomaly->getTitle());
+            $subTask->setDescription($anomaly->getDescription());
         }
 
         $existingSubTasks = $task->getSubTasks()->toArray();
@@ -132,6 +144,12 @@ class SubTaskController extends ExtendedController
 
             $this->addFlash('success', 'subTaskCreated');
 
+            if ($anomaly !== null) {
+                $this->anomalyStatusService->handleLinkSubTasks($anomaly, [$subTask], $this->getUser());
+
+                return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
+            }
+
             return $this->redirectToRoute('club_task_show', ['id' => $task->getId()]);
         }
 
@@ -139,8 +157,34 @@ class SubTaskController extends ExtendedController
             'club' => $club,
             'task' => $task,
             'subTask' => $subTask,
+            'anomaly' => $anomaly,
             'form' => $form,
         ]);
+    }
+
+    /**
+     * Anomaly this subtask is being created for, when reached from an anomaly.
+     * Returns null unless the user may link subtasks to it and it concerns the
+     * same equipment as the task.
+     */
+    private function resolveRequestedAnomaly(Request $request, Task $task): ?Anomaly
+    {
+        $anomalyId = $request->query->getInt('anomaly');
+
+        if ($anomalyId <= 0) {
+            return null;
+        }
+
+        $anomaly = $this->entityManager->getRepository(Anomaly::class)->find($anomalyId);
+
+        if (!$anomaly instanceof Anomaly
+            || $anomaly->getEquipment() !== $task->getEquipment()
+            || !$this->isGranted(AnomalyVoter::LINK_TASK, $anomaly)
+        ) {
+            return null;
+        }
+
+        return $anomaly;
     }
 
     #[Route('/{id}/edit', name: 'club_subtask_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]

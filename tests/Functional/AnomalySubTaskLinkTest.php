@@ -34,7 +34,8 @@ class AnomalySubTaskLinkTest extends FunctionalTestCase
         $this->manager = $this->createUser('manager@example.test');
         $this->club = $this->createClub('Planeurs de Beauce', 'beauce');
         // Des deux côtés : le voter lit les adhésions de l'utilisateur, déjà en mémoire
-        $membership = (new Membership())->setIsManager(true);
+        // Pilote aussi : créer une tâche sur un planeur l'exige
+        $membership = (new Membership())->setIsManager(true)->setIsPilote(true);
         $this->club->addMembership($membership);
         $this->manager->addMembership($membership);
 
@@ -205,5 +206,37 @@ class AnomalySubTaskLinkTest extends FunctionalTestCase
 
         $this->assertResponseRedirects('/anomalies/' . $this->anomaly->getId());
         $this->assertSame([], $this->linkedSubTaskTitles());
+    }
+
+    public function testSubTaskCreatedFromTheAnomalyIsPrefilledAndLinked(): void
+    {
+        $this->scenario();
+
+        $crawler = $this->client->request('GET', $this->host . '/tasks/' . $this->visit->getId() . '/subtasks/new?anomaly=' . $this->anomaly->getId());
+        $this->assertResponseIsSuccessful();
+        $form = $crawler->selectButton('Enregistrer')->form();
+        $this->assertSame('Pneu usé', $form['sub_task[title]']->getValue());
+
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects('/anomalies/' . $this->anomaly->getId());
+        $this->assertSame(['Pneu usé'], $this->linkedSubTaskTitles());
+    }
+
+    public function testEverySubTaskOfADedicatedTaskIsLinked(): void
+    {
+        $this->scenario();
+
+        $crawler = $this->client->request('GET', $this->host . '/tasks/new?anomaly=' . $this->anomaly->getId());
+        $this->assertResponseIsSuccessful();
+        $form = $crawler->selectButton('Enregistrer')->form();
+        $values = $form->getPhpValues();
+        $values['task']['subTasks'][0]['title'] = 'Déposer la roulette';
+        $values['task']['subTasks'][1] = $values['task']['subTasks'][0];
+        $values['task']['subTasks'][1]['title'] = 'Monter le pneu neuf';
+        $this->client->request('POST', $form->getUri(), $values);
+
+        $this->assertResponseRedirects('/anomalies/' . $this->anomaly->getId());
+        $this->assertSame(['Déposer la roulette', 'Monter le pneu neuf'], $this->linkedSubTaskTitles());
     }
 }

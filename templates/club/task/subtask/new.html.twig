@@ -7,12 +7,19 @@
 {% endblock %}
 
 {% block page_pretitle %}
-	<a href="{{ path('club_task_show', {id: task.id}) }}" class="tarmac-page-eyebrow">
-		<span class="tarmac-eqv tarmac-eqv--{{ task.equipment.type.color }}">
-			<i class="ti {{ task.equipment.type.icon }}"></i>
-		</span>
-		{{ task.equipment.name }} · {{ task.title }}
-	</a>
+	{# Créée depuis une anomalie : on rappelle l'anomalie, le fil d'Ariane nomme déjà la tâche #}
+	{% if anomaly %}
+		<a href="{{ path('club_anomaly_show', {id: anomaly.id}) }}" class="tarmac-page-eyebrow">
+			<i class="ti ti-alert-triangle me-1"></i>{{ anomaly.title }}
+		</a>
+	{% else %}
+		<a href="{{ path('club_task_show', {id: task.id}) }}" class="tarmac-page-eyebrow">
+			<span class="tarmac-eqv tarmac-eqv--{{ task.equipment.type.color }}">
+				<i class="ti {{ task.equipment.type.icon }}"></i>
+			</span>
+			{{ task.equipment.name }} · {{ task.title }}
+		</a>
+	{% endif %}
 {% endblock %}
 
 {% block page_content %}
@@ -22,6 +29,11 @@
 				<div class="tarmac-panel__title">
 					<i class="ti ti-plus"></i>{{ 'newSubTask'|trans }}
 				</div>
+				{% if anomaly %}
+					<div class="alert alert-info" role="status">
+						<i class="ti ti-link me-2"></i>{{ 'subTaskWillBeLinkedToAnomaly'|trans }}
+					</div>
+				{% endif %}
 				{{ form_start(form) }}
 				{{ form_row(form.title) }}
 				{{ form_row(form.description) }}
@@ -52,7 +64,7 @@
 				} %}
 
 				<div class="d-flex justify-content-end gap-2 mt-3">
-					<a href="{{ path('club_task_show', {id: task.id}) }}" class="btn btn-outline-secondary">{{ 'cancel'|trans }}</a>
+					<a href="{{ anomaly ? path('club_anomaly_show', {id: anomaly.id}) : path('club_task_show', {id: task.id}) }}" class="btn btn-outline-secondary">{{ 'cancel'|trans }}</a>
 					<button type="submit" class="btn btn-primary">
 						<i class="ti ti-check me-2"></i>{{ 'save'|trans }}
 					</button>

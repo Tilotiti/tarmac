@@ -162,7 +162,8 @@ class TaskController extends ExtendedController
             $this->addFlash('success', 'taskCreated');
 
             if ($anomaly !== null) {
-                $this->anomalyStatusService->handleLinkTask($anomaly, $task, $this->getUser());
+                // A dedicated task serves this repair: each of its subtasks is linked
+                $this->anomalyStatusService->handleLinkSubTasks($anomaly, $task->getSubTasks(), $this->getUser());
 
                 return $this->redirectToRoute('club_anomaly_show', ['id' => $anomaly->getId()]);
             }
