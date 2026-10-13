@@ -87,10 +87,11 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         // Check if there's an invitation token to preserve
-        $invitationToken = $request->query->get('invitation');
+        $invitationToken = $request->query->getString('invitation');
+        $invitation = $invitationToken !== '' ? $this->invitationRepository->findValidByToken($invitationToken) : null;
 
         return $this->render('public/security/login.html.twig', [
-            'last_username' => $lastUsername,
+            'last_username' => $lastUsername ?: $invitation?->getEmail(),
             'error' => $error,
             'invitation_token' => $invitationToken,
         ]);
@@ -133,7 +134,12 @@ class SecurityController extends AbstractController
             }
         }
 
-        // User not logged in - show registration or login option
+        // Compte existant (déjà lié à l'invitation, ou créé depuis) : la connexion revient ici pour créer l'adhésion
+        if ($invitation->isLocked() || $this->entityManager->getRepository(User::class)->findOneBy(['email' => $invitation->getEmail()])) {
+            return $this->redirectToRoute('public_login', ['invitation' => $token]);
+        }
+
+        // User not logged in - show registration form
         $form = $this->createForm(RegistrationFormType::class, null, [
             'include_firstname' => !$invitation->getFirstname(),
             'include_lastname' => !$invitation->getLastname(),

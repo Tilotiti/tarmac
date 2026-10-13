@@ -13,12 +13,40 @@ class InvitationLoginTest extends FunctionalTestCase
     {
         [$user, $token] = $this->inviteExistingUser();
 
-        $crawler = $this->client->request('GET', $this->www('/invitation/' . $token));
-        $this->client->click($crawler->selectLink("Connectez-vous pour accepter l'invitation")->link());
-        $this->client->submitForm('Se connecter', ['_username' => 'pilote@example.test', '_password' => 'motdepasse']);
+        $this->client->request('GET', $this->www('/invitation/' . $token));
+        $this->assertResponseRedirects($this->www('/login?invitation=' . $token));
+
+        $crawler = $this->client->followRedirect();
+        $this->assertSame('pilote@example.test', $crawler->filter('input[name="_username"]')->attr('value'));
+
+        $this->client->submitForm('Se connecter', ['_password' => 'motdepasse']);
 
         $this->assertResponseRedirects($this->www('/invitation/' . $token));
         $this->assertMembershipCreated($user);
+    }
+
+    public function testAccountCreatedAfterTheInvitationGoesToLogin(): void
+    {
+        $club = $this->createClub('Planeurs de Beauce', 'beauce');
+        $invitation = static::getContainer()->get(InvitationService::class)
+            ->createInvitation($club, ['email' => 'pilote@example.test']);
+        $this->createUser('pilote@example.test');
+
+        $this->client->request('GET', $this->www('/invitation/' . $invitation->getToken()));
+
+        $this->assertResponseRedirects($this->www('/login?invitation=' . $invitation->getToken()));
+    }
+
+    public function testNewEmailStillGetsTheRegistrationForm(): void
+    {
+        $club = $this->createClub('Planeurs de Beauce', 'beauce');
+        $invitation = static::getContainer()->get(InvitationService::class)
+            ->createInvitation($club, ['email' => 'nouveau@example.test']);
+
+        $this->client->request('GET', $this->www('/invitation/' . $invitation->getToken()));
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('button[type="submit"]', 'Créer mon compte et rejoindre');
     }
 
     public function testInvitationSurvivesAWrongPassword(): void

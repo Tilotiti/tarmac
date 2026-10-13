@@ -28,13 +28,7 @@
 					</div>
 				{% endif %}
 
-				<p class="text-center text-secondary mb-4">
-					{% if invitation is defined and invitation.isLocked %}
-						Vous avez déjà un compte. <a href="{{ loginUrl }}">Connectez-vous pour accepter l'invitation</a>
-					{% else %}
-						Créez votre compte pour accepter l'invitation
-					{% endif %}
-				</p>
+				<p class="text-center text-secondary mb-4">Créez votre compte pour accepter l'invitation</p>
 
 				{{ form_start(registrationForm) }}
 				{{ form_errors(registrationForm) }}
