@@ -7,6 +7,7 @@ use App\Repository\TaskRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -469,7 +470,7 @@ class Task
     {
         $criteria = Criteria::create()
             ->where(Criteria::expr()->isNull('subTask'))
-            ->orderBy(['createdAt' => Criteria::ASC]);
+            ->orderBy(['createdAt' => Order::Ascending]);
 
         // ArrayCollection implements Selectable which provides the matching() method
         /** @var \Doctrine\Common\Collections\Selectable $activities */

@@ -239,4 +239,23 @@ class AnomalySubTaskLinkTest extends FunctionalTestCase
         $this->assertResponseRedirects('/anomalies/' . $this->anomaly->getId());
         $this->assertSame(['Déposer la roulette', 'Monter le pneu neuf'], $this->linkedSubTaskTitles());
     }
+
+    public function testTaskAndSubTaskPagesListTheLinkedAnomaly(): void
+    {
+        $this->scenario();
+        $this->anomaly->addSubTask($this->tyreSubTask);
+        $this->entityManager()->flush();
+
+        $this->client->request('GET', $this->host . '/tasks/' . $this->visit->getId() . '/subtasks/' . $this->tyreSubTask->getId());
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('a[href$="/anomalies/' . $this->anomaly->getId() . '"]', 'Pneu usé');
+
+        $this->client->request('GET', $this->host . '/tasks/' . $this->visit->getId());
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('a[href$="/anomalies/' . $this->anomaly->getId() . '"]', 'Pneu usé');
+
+        $this->client->request('GET', $this->host . '/anomalies');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('body', '1 sous-tâche');
+    }
 }
