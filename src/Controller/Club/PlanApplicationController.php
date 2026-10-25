@@ -6,6 +6,7 @@ use App\Entity\PlanApplication;
 use App\Form\ActivityFormType;
 use App\Repository\Paginator;
 use App\Service\ClubResolver;
+use App\Service\PdfRenderer;
 use App\Service\SubdomainService;
 use App\Repository\TaskRepository;
 use App\Controller\ExtendedController;
@@ -18,7 +19,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 
 #[Route('/plans/applications', host: '{subdomain}.%domain%', requirements: ['subdomain' => '(?!www|app).*'])]
 #[IsGranted('ROLE_USER')]
@@ -31,7 +31,7 @@ class PlanApplicationController extends ExtendedController
         private readonly TaskRepository $taskRepository,
         private readonly TaskStatusService $taskStatusService,
         private readonly EntityManagerInterface $entityManager,
-        private readonly DompdfWrapperInterface $dompdf,
+        private readonly PdfRenderer $pdfRenderer,
     ) {
         parent::__construct($subdomainService);
     }
@@ -175,19 +175,6 @@ class PlanApplicationController extends ExtendedController
             $application->getEquipment()->getName()
         );
 
-        $response = $this->dompdf->getStreamResponse($html, $filename, [
-            'format' => 'A4',
-            'orientation' => 'landscape',
-            'margin-top' => '20mm',
-            'margin-right' => '15mm',
-            'margin-bottom' => '20mm',
-            'margin-left' => '15mm',
-            'Attachment' => false,
-        ]);
-
-        $response->headers->set('Content-Type', 'application/pdf');
-        $response->headers->set('Content-Disposition', 'inline; filename="' . $filename . '"');
-
-        return $response;
+        return $this->pdfRenderer->inlineResponse($html, $filename, 55, 8);
     }
 }

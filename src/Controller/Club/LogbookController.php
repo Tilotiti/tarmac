@@ -9,8 +9,8 @@ use App\Repository\ContributionRepository;
 use App\Repository\MembershipRepository;
 use App\Repository\Paginator;
 use App\Service\ClubResolver;
+use App\Service\PdfRenderer;
 use App\Service\SubdomainService;
-use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use SlopeIt\BreadcrumbBundle\Attribute\Breadcrumb;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +27,7 @@ class LogbookController extends ExtendedController
         private readonly ClubResolver $clubResolver,
         private readonly MembershipRepository $membershipRepository,
         private readonly ContributionRepository $contributionRepository,
-        private readonly DompdfWrapperInterface $dompdf,
+        private readonly PdfRenderer $pdfRenderer,
     ) {
         parent::__construct($subdomainService);
     }
@@ -187,20 +187,7 @@ class LogbookController extends ExtendedController
             (new \DateTimeImmutable())->format('Ymd')
         );
 
-        $response = $this->dompdf->getStreamResponse($html, $filename, [
-            'format' => 'A4',
-            'orientation' => 'portrait',
-            'margin-top' => '12mm',
-            'margin-right' => '14mm',
-            'margin-bottom' => '12mm',
-            'margin-left' => '14mm',
-            'Attachment' => false,
-        ]);
-
-        $response->headers->set('Content-Type', 'application/pdf');
-        $response->headers->set('Content-Disposition', 'inline; filename="' . $filename . '"');
-
-        return $response;
+        return $this->pdfRenderer->inlineResponse($html, $filename);
     }
 }
 

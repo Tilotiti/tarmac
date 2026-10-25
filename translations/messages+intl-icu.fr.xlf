@@ -4200,6 +4200,11 @@
         <source>purchasesToBuy</source>
         <target>Achats à réaliser</target>
       </trans-unit>
+      <!-- PDF: page numbering -->
+      <trans-unit id="1933" resname="pdfPageNumber">
+        <source>pdfPageNumber</source>
+        <target>Page {page} / {pages}</target>
+      </trans-unit>
     </body>
 </file>
 </xliff>

@@ -3,6 +3,7 @@
 namespace App\Controller\Club;
 
 use App\Service\ClubResolver;
+use App\Service\PdfRenderer;
 use App\Entity\Enum\TaskStatus;
 use App\Service\SubdomainService;
 use App\Repository\TaskRepository;
@@ -15,7 +16,6 @@ use App\Repository\PlanApplicationRepository;
 use App\Form\WelcomeMessageType;
 use App\Service\HealthCheck\ClubHealthCheck;
 use Doctrine\ORM\EntityManagerInterface;
-use Nucleos\DompdfBundle\Wrapper\DompdfWrapperInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -34,7 +34,7 @@ class DashboardController extends ExtendedController
         private readonly SubTaskRepository $subTaskRepository,
         private readonly PlanApplicationRepository $applicationRepository,
         private readonly PurchaseRepository $purchaseRepository,
-        private readonly DompdfWrapperInterface $dompdf,
+        private readonly PdfRenderer $pdfRenderer,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly EntityManagerInterface $entityManager,
         private readonly ClubHealthCheck $clubHealthCheck,
@@ -298,20 +298,7 @@ class DashboardController extends ExtendedController
 
         $filename = sprintf('sous-taches-prioritaires-%s.pdf', $club->getSubdomain());
 
-        $response = $this->dompdf->getStreamResponse($html, $filename, [
-            'format' => 'A4',
-            'orientation' => 'landscape',
-            'margin-top' => '20mm',
-            'margin-right' => '15mm',
-            'margin-bottom' => '20mm',
-            'margin-left' => '15mm',
-            'Attachment' => false,
-        ]);
-
-        $response->headers->set('Content-Type', 'application/pdf');
-        $response->headers->set('Content-Disposition', 'inline; filename="' . $filename . '"');
-
-        return $response;
+        return $this->pdfRenderer->inlineResponse($html, $filename, 15);
     }
 
     #[Route('/edit-welcome-message', name: 'club_dashboard_edit_welcome_message', methods: ['GET', 'POST'])]

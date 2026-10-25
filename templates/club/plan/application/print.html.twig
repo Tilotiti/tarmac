@@ -5,7 +5,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Carte de travail -
 			{{ application.plan.name }}</title>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"/>
 		<style>
 			@page {
 				size: A4 landscape;
@@ -152,8 +151,10 @@
 				border-radius: 2px;
 			}
 
-			.icon-tabler {
-				font-size: 18px;
+			/* DejaVu Sans est livrée avec dompdf ; la police d'icônes Tabler distante coûtait ~40 s par rendu. */
+			.pdf-icon {
+				font-family: "DejaVu Sans", sans-serif;
+				font-size: 14px;
 				vertical-align: middle;
 			}
 
@@ -273,7 +274,7 @@
 							<tr>
 								<td class="tc-column">
 									{% if subtask.requiresInspection %}
-										<i class="ti ti-alert-triangle icon-tabler icon-warning"></i>
+										<span class="pdf-icon icon-warning">&#x26A0;</span>
 									{% endif %}
 								</td>
 								<td class="task-column">
@@ -284,9 +285,9 @@
 								</td>
 								<td class="va-column">
 									{% if subtask.isDone %}
-										<i class="ti ti-checkbox icon-tabler icon-check"></i>
+										<span class="pdf-icon icon-check">&#x2611;</span>
 									{% else %}
-										<i class="ti ti-square icon-tabler icon-square"></i>
+										<span class="pdf-icon icon-square">&#x2610;</span>
 									{% endif %}
 								</td>
 								<td class="visa-column">
@@ -322,18 +323,6 @@
 			</table>
 		</div>
 
-		 <script type="text/php">
-															if (isset($pdf)) {
-																$pdf->page_script('
-																	$font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-																	$size = 8;
-																	$pageText = "Page " . $PAGE_NUM . " sur " . $PAGE_COUNT;
-																	$y = $pdf->get_height() - 55;
-																	$x = $pdf->get_width() - 100;
-																	$pdf->text($x, $y, $pageText, $font, $size);
-																');
-															}
-														</script>
 
 	</body>
 </html>

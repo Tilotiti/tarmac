@@ -216,8 +216,8 @@
 
 		<div class="content">
 			{% if subTasks is not empty %}
-				<table class="subtask-table">
-					{% for item in subTasks %}
+				{% for item in subTasks %}
+					<table class="subtask-table">
 						{% set subtask = item.subTask %}
 						{% set task = subtask.task %}
 						<tr>
@@ -271,8 +271,8 @@
 							</td>
 							{% endif %}
 						</tr>
+					</table>
 					{% endfor %}
-				</table>
 			{% else %}
 				<div style="text-align: center; padding: 40px; color: #666;">
 					<p>{{ 'noPrioritySubTasks'|trans }}</p>
@@ -287,17 +287,5 @@
 			{{ "now"|date('d/m/Y à H:i') }}
 		</div>
 
-		<script type="text/php">
-			if (isset($pdf)) {
-				$pdf->page_script('
-					$font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-					$size = 9;
-					$pageText = "Page " . $PAGE_NUM . " / " . $PAGE_COUNT;
-					$y = $pdf->get_height() - 15;
-					$x = $pdf->get_width() - 100;
-					$pdf->text($x, $y, $pageText, $font, $size);
-				');
-			}
-		</script>
 	</body>
 </html>

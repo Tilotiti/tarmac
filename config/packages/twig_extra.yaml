@@ -1,3 +1,7 @@
 twig_extra:
   string:
     enabled: true
+  # Message d'accueil des clubs : un Gestionnaire ne doit pas pouvoir injecter de HTML (XSS, PHP exécuté par dompdf).
+  commonmark:
+    html_input: escape
+    allow_unsafe_links: false
