@@ -31,6 +31,10 @@ export default class extends Controller {
     }
 
     positionMenu() {
+        // Dans le menu burger, Tabler garde le sous-menu dans le flux (accordéon).
+        // Le passer en fixed le sortait du panneau, sous le contenu de la page (#50).
+        if (getComputedStyle(this.menuTarget).position === 'static') return;
+
         const rect = this.toggleTarget.getBoundingClientRect();
         this.menuTarget.style.position = 'fixed';
         this.menuTarget.style.minWidth = `${Math.max(rect.width, 160)}px`;

@@ -8,7 +8,9 @@ import './bootstrap.js';
  * Tom Select Bootstrap 5 (aligné avec Tabler/Bootstrap) puis app.css.
  */
 import 'tom-select/dist/css/tom-select.bootstrap5.min.css';
-import '@tabler/core';
+// Pas d'import '@tabler/core' : son bundle embarque une seconde copie de Bootstrap,
+// et chaque clic sur un data-bs-toggle était traité deux fois (menu burger qui ne se
+// refermait plus, #49). Le CSS Tabler suffit ; le JS passe par 'bootstrap' ci-dessous.
 import './styles/app.css';
 import * as bootstrap from 'bootstrap';
 import { Modal, Tooltip } from 'bootstrap';

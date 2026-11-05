@@ -25,9 +25,6 @@ return [
     '@hotwired/turbo' => [
         'version' => '8.0.18',
     ],
-    '@tabler/core' => [
-        'version' => '1.4.0',
-    ],
     'bootstrap' => [
         'version' => '5.3.8',
     ],
