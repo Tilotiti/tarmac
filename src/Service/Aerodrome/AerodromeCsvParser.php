@@ -17,6 +17,24 @@ final class AerodromeCsvParser
      */
     private const MUNICIPALITY_FIXES = [
         28915 => 'Le Louroux', // LFJT, en Indre-et-Loire ; la source indique Angers
+        // Contrôle du 17/11/2026 : commune de la source comparée aux coordonnées (geo.api.gouv.fr).
+        28785 => 'Saint-Junien, Haute-Vienne', // LFBJ ; source : Poitiers
+        28787 => 'Dax, Landes', // LFBY ; source : Périgueux
+        28793 => 'Jonzac, Charente-Maritime', // LFCJ ; source : Albi
+        28799 => 'Villefranche-de-Rouergue', // LFCV ; source : Rodez
+        28805 => 'Soulac-sur-Mer', // LFDK ; source : Pamiers
+        28806 => 'Loudun', // LFDL ; source : Pamiers
+        28816 => 'Montayral, Lot-et-Garonne', // LFDX ; source : Rochefort
+        28820 => 'Ouessant', // LFEC ; source : Ushant
+        28877 => 'Le Broc, Puy-de-Dôme', // LFHA ; source : Alpes-Maritimes
+        28889 => 'Beaumont, Haute-Loire', // LFHR ; source : Puy-de-Dôme
+        28900 => 'Clarac, Haute-Garonne', // LFIM ; source : Hautes-Pyrénées
+        28920 => "Saint-Jean-d'Avelanne, Isère", // LFKH ; source : Figari
+        28953 => 'Uzès, Gard', // LFNU ; source : Mont-Lozère-et-Goulet
+        28963 => 'Vernouillet, Eure-et-Loir', // LFON ; source : Yvelines
+        28995 => 'Loyat, Morbihan', // LFRP ; source : Rennes
+        336355 => 'Le Burgaud, Tarn-et-Garonne', // source : Haute-Garonne
+        572127 => 'Vignats, Calvados', // source : Vignat, Orne
     ];
 
     /**
