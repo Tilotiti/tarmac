@@ -9,7 +9,15 @@ namespace App\Service\Aerodrome;
 final class AerodromeCsvParser
 {
     private const TYPES = ['small_airport', 'medium_airport', 'large_airport'];
-    private const COLUMNS = ['id', 'type', 'name', 'latitude_deg', 'longitude_deg', 'iso_country', 'municipality', 'icao_code'];
+    private const COLUMNS = ['id', 'type', 'name', 'latitude_deg', 'longitude_deg', 'iso_country', 'municipality', 'icao_code', 'gps_code'];
+
+    /**
+     * Communes fausses dans OurAirports, corrigées à chaque import (clé : id OurAirports).
+     * Signaler aussi l'erreur sur ourairports.com pour pouvoir retirer la ligne un jour.
+     */
+    private const MUNICIPALITY_FIXES = [
+        28915 => 'Le Louroux', // LFJT, en Indre-et-Loire ; la source indique Angers
+    ];
 
     /**
      * @return iterable<array{sourceId: int, icaoCode: ?string, name: string, municipality: ?string, latitude: float, longitude: float}>
@@ -42,10 +50,17 @@ final class AerodromeCsvParser
                 }
 
                 $icao = trim((string) ($row[$index['icao_code']] ?? ''));
+                // Beaucoup de terrains français n'ont leur code OACI que dans gps_code (ex. LFJT).
+                if ($icao === '' && preg_match('/^[A-Z]{4}$/', $gps = trim((string) ($row[$index['gps_code']] ?? '')))) {
+                    $icao = $gps;
+                }
                 $municipality = trim((string) ($row[$index['municipality']] ?? ''));
 
+                $sourceId = (int) $row[$index['id']];
+                $municipality = self::MUNICIPALITY_FIXES[$sourceId] ?? $municipality;
+
                 yield [
-                    'sourceId' => (int) $row[$index['id']],
+                    'sourceId' => $sourceId,
                     'icaoCode' => $icao === '' ? null : $icao,
                     'name' => trim((string) $row[$index['name']]),
                     'municipality' => $municipality === '' ? null : $municipality,
